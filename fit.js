@@ -937,7 +937,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
 // the app's projection. A horizon that reaches houses gets a red dot on the projection switcher; the fire's screen shows a
 // pulsing red warning that opens the earliest one. Results are kept for 6 hours per fire on this phone.
 (function () {
-  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes6-', MIN_B = 3;
+  var G = { 1: 1.6, 3: 2, 6: 3.6 }, HZ = [1, 3, 6], MEM = {}, TTL = 6 * 3600e3, LK = 'wf-homes7-', MIN_B = 3;
   var NOT = '^(garage|garages|shed|barn|farm_auxiliary|greenhouse|industrial|warehouse|roof|carport|hangar|silo|storage_tank|construction|ruins|service|transformer_tower|bunker|kiosk|toilets|cowshed|stable|sty|bridge)$';
   function toLL(x, y) { return [34.19 - (y - 662) / 2829, (x - 518) / 2345 - 118.13]; }
   function rings(id, ll, px) {
@@ -959,9 +959,11 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   window.__wfHomesCheck = function (id, ll, px, RR) {
     if (!id) return null; var sig = RR && RR[6] ? 'r' + RR[6].length + ':' + RR[6][0].map(function (v) { return v.toFixed(4); }).join(',') + ':' + RR[6][Math.floor(RR[6].length / 2)].map(function (v) { return v.toFixed(4); }).join(',') : (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
     var m = MEM[id]; if (m && m.sig === sig) return m.st === 'done' ? m.res : null;
+    /* (Oct 11, 08:52) screens draw the same fire from slightly different outlines: one query at a time per fire, and a result under 10 min old serves them all (no refetch storm, which left no building red) */
+    if (m && m.st === 'loading' && Date.now() - (m.at || 0) < 45000) return null; if (m && m.st === 'done' && m.res && Date.now() - (m.res.t || 0) < 600000) return m.res;
     var c = load(id); if (c && c.sig === sig) { MEM[id] = { sig: sig, st: 'done', res: c }; return c; }
     var R = RR || rings(id, ll, px); if (!R[0] || !R[6]) return null;
-    MEM[id] = { sig: sig, st: 'loading' };
+    MEM[id] = { sig: sig, st: 'loading', at: Date.now() };
     /* (Oct 10, 22:48) the buildings' own footprints first (out geom, heavier); if the server cannot answer in time, their centres (lighter) */
     var run = function (GEO) { var q = '[out:json][timeout:40];' + [0].concat(HZ).map(function (h) { return 'way["building"]["building"!~"' + NOT + '"](poly:"' + poly(R[h]) + '");out count;'; }).join('') +
       'node["place"~"^(city|town|village|hamlet|suburb|neighbourhood|quarter)$"](poly:"' + poly(R[6]) + '");out body 40;' +
@@ -983,7 +985,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
           /* (Oct 9) the projection only grows: what is at risk at a horizon stays at risk at the later ones (never fewer structures) */
           if (i > 0) { var hp = HZ[i - 1]; res.b[h] = Math.max(res.b[h], res.b[hp]); res.at[h] = res.at[h] || res.at[hp]; if (!res.place[h]) res.place[h] = res.place[hp]; }
           if (res.at[h] && res.first == null) res.first = h; });
-        var hOf = function (P) { if (inside(P, R[0])) return 0; for (var k = 0; k < HZ.length; k++) if (inside(P, R[HZ[k]])) return HZ[k]; return 0; }, r5 = function (v) { return Math.round(v * 1e5) / 1e5; };
+        var hOf = function (P) { if (inside(P, R[0])) return 0.5;   /* (Oct 11, 08:52) a building the fire already covers is at risk now (0.5: before +1 h) */ for (var k = 0; k < HZ.length; k++) if (inside(P, R[HZ[k]])) return HZ[k]; return 0; }, r5 = function (v) { return Math.round(v * 1e5) / 1e5; };
         var seen = {}; res.pts = E.filter(function (e) { if (e.type !== 'way' || !(e.center || e.geometry) || !e.tags || !e.tags.building || seen[e.id]) return false; seen[e.id] = 1; return true; }).map(function (e) { var G0 = e.geometry && e.geometry.length > 2 ? e.geometry : null, P = e.center ? [e.center.lat, e.center.lon] : [G0.reduce(function (a, q) { return a + q.lat; }, 0) / G0.length, G0.reduce(function (a, q) { return a + q.lon; }, 0) / G0.length];
           /* (Oct 10, 21:50) each building's own footprint, painted red (no longer a round) */ return [r5(P[0]), r5(P[1]), hOf(P), G0 ? thin(G0.map(function (q) { return [r5(q.lat), r5(q.lon)]; }), 8) : null]; }).filter(function (q) { return q[2]; });
         res.water = E.filter(function (e) { return e.tags && (e.lat != null || e.center) && (e.tags.emergency || e.tags.man_made || e.tags.natural === 'water' || e.tags.landuse === 'reservoir' || e.tags.leisure === 'swimming_pool'); }).map(function (e) { var P = e.center ? [e.center.lat, e.center.lon] : [e.lat, e.lon]; return [r5(P[0]), r5(P[1]), e.tags.emergency || e.tags.man_made || e.tags.natural || e.tags.landuse || e.tags.leisure]; }).slice(0, 80);
@@ -998,7 +1000,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
             var t = (a[0] * ey - a[1] * ex) / den, s = (a[0] * uy - a[1] * ux) / den; if (t > 0 && s >= 0 && s <= 1) m = Math.max(m, t); } return m; };
           var eta = function (P, h) { var v = xy(P), d = Math.hypot(v[0], v[1]); if (!d) return 0; var ux = v[0] / d, uy = v[1] / d, i = HZ.indexOf(h), hp = i > 0 ? HZ[i - 1] : 0;
             var rp = reach(R[hp], ux, uy), rh = reach(R[h], ux, uy), fr = rh > rp ? Math.min(1, Math.max(0, (d - rp) / (rh - rp))) : 1; return hp + (h - hp) * fr; };
-          var T = (res.pts || []).map(function (q) { return eta([q[0], q[1]], q[2]); });
+          var T = (res.pts || []).filter(function (q) { return q[2] >= 1; }).map(function (q) { return eta([q[0], q[1]], q[2]); });
           pl.forEach(function (e) { var P = [e.lat, e.lon], h = 0; if (inside(P, R[0])) return; for (var z = 0; z < HZ.length; z++) if (inside(P, R[HZ[z]])) { h = HZ[z]; break; } if (h) T.push(eta(P, h)); });
           if (T.length && res.first != null) { res.eta = Math.min.apply(null, T); res.nAt = Math.max((res.pts || []).filter(function (q) { return q[2] && q[2] <= res.first; }).length, res.b[res.first] || 0);   /* (Oct 9) the drawn list is capped: never fewer than the count */ } })();
         MEM[id] = { sig: sig, st: 'done', res: res }; try { localStorage.setItem(LK + id, JSON.stringify(res)); } catch (e) {} emit();
@@ -1007,7 +1009,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     return null; };
   // (Oct 7) the populated areas reached by the projection up to horizon h, as one SVG path in the map's own units
   // (residential areas, and a 24 m round per building so isolated houses show too); one path, so overlaps stay one red
-  window.__wfHomesPath = function (id, h) { var res = window.__wfHomesGet(id); if (!res || !h || (!res.pts && !res.areas)) return '';
+  window.__wfHomesPath = function (id, h) { var res = window.__wfHomesGet(id); h = h || 0.5;   /* (Oct 11, 08:52) at Now, the buildings inside the burning area are red too */ if (!res || (!res.pts && !res.areas)) return '';
     var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; }, d = '';
     /* (Oct 10, 21:50) the buildings at risk themselves, each footprint in red (residential areas and rounds no longer drawn) */
     (res.pts || []).forEach(function (q) { if (q[2] > h) return; if (q[3] && q[3].length > 2) { d += 'M' + q[3].map(function (v) { return X(v[1]).toFixed(2) + ' ' + Y(v[0]).toFixed(2); }).join('L') + 'Z'; return; } var x = X(q[1]), y = Y(q[0]), r = 12 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });

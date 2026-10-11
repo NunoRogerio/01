@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791675609"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791705245"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791673005"></script>
 <script src="station.js?v=1791705051"></script>
@@ -1701,7 +1701,7 @@ class Component extends DCLogic {
       fHoverOn: () => { if (!(this.state || {}).fireHover) this.setState({ fireHover: true }); }, fHoverOff: () => { if ((this.state || {}).fireHover) this.setState({ fireHover: false }); },
       ...modelVals,
       wtD: (() => { const id = isPin ? p.pinId : p.fireId; return id && window.__wfWaterPath && this.layers().water !== false ? window.__wfWaterPath(String(id)) : ''; })(),   /* (Oct 10, 21:50) water points to refill from, in blue */
-      hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && h && window.__wfHomesPath && this.layers().homes !== false ? window.__wfHomesPath(String(id), h) : ''; })(),   /* (Oct 7) populated areas reached by the projection, in red */
+      hmD: (() => { const id = isPin ? p.pinId : p.fireId, h = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0); return id && window.__wfHomesPath && this.layers().homes !== false ? window.__wfHomesPath(String(id), h || 0.5) : ''; })(),   /* (Oct 11) at Now too: the buildings the fire covers */ /* (Oct 7) populated areas reached by the projection, in red */
       ...(isGrow && !modelVals.hasModel ? { fakeSpread: false, growFake: true } : { growFake: false }), gF: { d: LY.grow && !modelVals.hasModel ? this.morphD('fake', grownXY(fakeRing), fakeRing) : '' }, gNowD: LY.burn ? 'inline' : 'none', fakeNowD: window.__wfRingD(fakeRing), r1D: window.__wfRingD(fakeRing), r2D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 576, cy: 314, rx: 62, ry: 30 })), r3D: window.__wfRingD(window.__wfFireRing(p.fireX, p.fireY, { origin: true, cx: 540, cy: 340, rx: 112, ry: 52 })), ...(isPin ? this.pinGrowVals(PX, PY, Number(p.pinGrow) || 0, s) : { pgOn: false, pgD: '' }),
       ...(() => { const stKey = window.__wfLiveMap ? this.osmStations() : null;
         const hwId = isPin ? p.pinId : p.fireId, hwH = isPin ? (Number(p.pinGrow) || 0) : (isGrow ? ({ 1.6: 1, 2: 3, 3.6: 6 })[GR] || 0 : 0);
