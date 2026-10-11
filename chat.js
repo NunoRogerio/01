@@ -193,7 +193,7 @@
   function migrateFlow(c) { if (!c || c.kind === 'dm' || c.flow3) return false; c.flow3 = true;
     (c.people || []).forEach(function (p) { if (p.roleEn) p.roleEn = String(p.roleEn).replace(/^Lieutenant\. /, 'Captain. '); });
     if (c.closed || c.dismissed) return true;
-    var us = isUS(c), ECC = us ? 'ECC' : 'CSREPC', now = Date.now();
+    var us = isUS(c), ECC = dcOf(c), now = Date.now();
     if (c.stage === 0 && !c.flags.initial) {
       (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.done = 'moved'; }); c.queue = (c.queue || []).filter(function (q) { return !(q.m && q.m.reqDecl); });
       initialAttack(c); var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
@@ -607,7 +607,7 @@
          initial attack at once, without waiting for anyone to confirm; the first engine's Captain confirms (or cancels) on arrival,
          declares the fire and has command until the Battalion Chief takes over. */
       c.flags.drone = true;
-      var E = evidOf(c), us = isUS(c), ECC = us ? 'ECC' : 'CSREPC', sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
+      var E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
       var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Evidences', pt: ECC + ' · Evidências' }; card(c, ev0, 300, 0);
       initialAttack(c);
       var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
@@ -625,13 +625,17 @@
       var s = c.stage;
       /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
       if (s >= 1) { var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; card(c, c0, 200, 0); }
-      sys(c, isUS(c) ? 'ECC alerted you and the captains of the nearest stations' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', isUS(c) ? 'O ECC alertou-o e os capitães dos quartéis mais próximos' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', 500, 0);
+      sys(c, isUS(c) ? dcOf(c) + ' alerted you and the captains of the nearest stations' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', isUS(c) ? dcOf(c) + ' alertou-o e os capitães dos quartéis mais próximos' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', 500, 0);
       card(c, stageCard(c, s), 900, 0);
       entry(c, s, 2500);
     }
     save(); emit();
   }
 
+  /* (Oct 11, 17:30) the dispatch center by its real name: LA County Fire's Command and Control in Los Angeles County, a CAL FIRE
+     ECC elsewhere in California, the county's dispatch in other states, the sub-regional command (CSREPC) in Portugal */
+  function dcOf(c) { if (!isUS(c)) return 'CSREPC'; var t = (c.reg || '') + ' ' + (c.stations || []).map(function (q) { return (q.name || '') + ' ' + (q.full || '') + ' ' + (q.short || ''); }).join(' ');
+    return /los angeles/i.test(t) ? 'Command and Control' : c.st === 'CA' ? 'ECC' : 'Dispatch'; }
   /* (Oct 11, 17:05) the dispatch center's initial attack on a candidate: the two nearest stations' engines roll at once; the others stay available */
   function initialAttack(c) { if (c.flags.dispatched) return; c.flags.dispatched = true; c.flags.initial = true;
     c.forces = c.stations.map(function (q, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
@@ -802,7 +806,7 @@
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if ((c.msgs || []).some(function (x) { return x.rec && !x.done && x.to === 4; })) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
-    if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Ask ECC for more', pt: 'Pedir mais meios' });
+    if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Ask dispatch for more', pt: 'Pedir mais meios' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     /* (Oct 9, 13:50, standing) the stage chip only ever shows together with its confirmation card in the chat (never alone) */
     var recOn = hasOpenRec(c);

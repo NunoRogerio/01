@@ -461,14 +461,15 @@ class Component extends DCLogic {
         "Commands the battalion's stations and their area. Takes command of a fire when it grows past the first engine, places the crews and asks dispatch for more, and works with the sheriff on evacuations.", '', 'ca'],
       ['ff', 'DB', 'daniel.brooks', 'Daniel Brooks', 'Captain', 'Los Angeles County Fire Department', 'Station 11. Altadena',
         "Commands Engine 11 and its crew. Often first on scene: confirms the fire, declares it and commands it until the battalion chief takes over.", '', 'ca'],
-      ['eng', 'LW', 'lisa.wong', 'Lisa Wong', 'Engineer', 'Los Angeles County Fire Department', 'Station 11. Altadena',
-        "Drives and pumps Engine 11. Goes where dispatch sends the engine, keeps the water flowing on the line and keeps the crew informed in the incident chat.", '', 'ca'],
       ['fft', 'BO', 'ben.ortega', 'Ben Ortega', 'Firefighter', 'Los Angeles County Fire Department', 'Station 11. Altadena',
         "Works the line on Brush 11. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat.", '', 'ca'],
-      ['admin', 'JW', 'james.whitmore', 'James Whitmore', 'Emergency management director', 'Government overview', 'All countries and regions',
-        'One level above the battalion chiefs: follows every fire and ignition in all countries, where forces are and where risk is rising, and calls in help across borders. Also manages user access and data feeds.', '']
+      /* (Oct 11, 17:30) the top of the chain, one per region (nobody sees several countries): California's state fire mutual aid (Cal OES) and Portugal's national command (ANEPC) */
+      ['ca', 'MR', 'marcus.reyes', 'Marcus Reyes', 'Chief, Fire and Rescue Division', 'Cal OES', 'California',
+        "Runs California's fire mutual aid. Moves strike teams and engines between counties and fires, activates the state mutual aid plan and works with CAL FIRE and the counties when local resources run out.", 'https://images.unsplash.com/photo-1713689824350-929a848279c4?w=240&h=240&fit=crop&crop=faces&auto=format&q=70'],
+      ['pt', 'RC', 'rita.cardoso', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC. Comando Nacional', 'Portugal',
+        'Commands national emergency operations. Sets the alert level, moves reinforcement groups and aerial means between sub-regions, and takes command of a fire when it goes to national level.', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
     ];
-    const RANK = { admin: [L0('Government body', 'Entidade governamental'), 3]   /* (Oct 8) the level above the station captains: a government overview of every country */, coord: [L0('Battalion Chief', 'Chefe de batalhão'), 2], ff: [L0('Captain', 'Capitão'), 1], eng: [L0('Engineer', 'Motorista'), 0], fft: [L0('Firefighter', 'Bombeiro'), 0] };
+    const RANK = { admin: [L0('Government body', 'Entidade governamental'), 3]   /* (Oct 8) the level above the station captains: a government overview of every country */, coord: [L0('Battalion Chief', 'Chefe de batalhão'), 2], ff: [L0('Captain', 'Capitão'), 1], fft: [L0('Firefighter', 'Bombeiro'), 0], ca: [L0('State', 'Estado'), 3], pt: [L0('National command', 'Comando nacional'), 3] };
     const CU = this.customs(), AREAS = { pt: ['Portugal', '20 districts', 'Portugal only', 'Portugal region only', 'PT'], ca: ['California', '58 counties', 'California only', 'California region only', 'US'], nv: ['Nevada', '17 counties', 'Nevada only', 'Nevada region only', 'US'], amz: ['Amazônia Legal', '9 states', 'Amazônia Legal only', 'Amazônia Legal region only', 'BR'], admin: ['All regions', 'All countries and regions', 'all countries and regions', 'All regions', ''] };
     { const E = this.edits(); P.forEach((p) => { const e = E[p[0]]; if (!e) return; p[1] = e.code || p[1]; p[3] = e.name || p[3]; p[4] = e.title; p[5] = e.org; p[7] = e.sum; if (e.photo) p[10] = e.photo; }); }
     { const G = this.gone(); for (let i = P.length - 1; i >= 0; i--) if (G.indexOf(P[i][0]) >= 0) P.splice(i, 1); }
@@ -506,7 +507,7 @@ class Component extends DCLogic {
         rk: (RANK[id] || [L0('Profile', 'Perfil'), 0])[0], rkIc: ['', 'M7 14l5-3 5 3', 'M7 11l5-3 5 3M7 17l5-3 5 3', 'M7 7l5-3 5 3M7 13l5-3 5 3M7 19l5-3 5 3'][(RANK[id] || [0, 0])[1]], rkIcD: RANK[id] ? 'block' : 'none', roleD: RANK[id] && role.toLowerCase().indexOf(RANK[id][0].toLowerCase()) >= 0 ? 'none' : 'block',
         code, user, name, role, org, area, sees: 'Sees ' + area.charAt(0).toLowerCase() + area.slice(1), feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '0' : '0',
-        badgeBg: id === 'admin' ? '#000000' : '#E5E5EA', badgeFg: id === 'admin' ? '#FFFFFF' : '#000000',
+        badgeBg: /^(admin|ca|pt)$/.test(id) ? '#000000' : '#E5E5EA', badgeFg: /^(admin|ca|pt)$/.test(id) ? '#FFFFFF' : '#000000',
         tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: (org || '') + (cc && !base ? ' · ' + cc : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#0062CC' : 'transparent',
         aria: (RANK[id] ? RANK[id][0] + '. ' : '') + name + ', ' + role + ', ' + org + ', ' + area + '. ' + sum + (selId === id ? ' Selected' : ''),
         pick: () => { if (this._lpFired) { this._lpFired = false; return; } this.setState({ sel: id }); this.closePanel(); },
