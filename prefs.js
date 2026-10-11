@@ -381,7 +381,7 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
     var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', 'black-translucent');   /* the map and the blur run under the status bar */
     if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter);   // both tile filters: night, and the less saturated day map
     // Scroll fades take the new theme's colours at once (measured again now and once colour transitions have settled)
-    var refade = function () { if (typeof FSEL === 'undefined' || !FSEL) return; document.querySelectorAll(FSEL).forEach(function (f) { f.__wfCol = null; }); if (window.__wfFade) window.__wfFade(); };
+    var refade = function () { if (typeof FSEL === 'undefined' || !FSEL) return; document.querySelectorAll(FSEL).forEach(function (f) { f.__wfCol = null; f.__wfBc = undefined; }); if (window.__wfFade) window.__wfFade(); };
     refade(); setTimeout(refade, 450);
   }
 
@@ -496,28 +496,50 @@ window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^
   // edge, so the eye reads "there is more". Nothing hidden on a side, no fade on that side; a panel that doesn't scroll
   // never fades. It is a mask on the scrolling panel, so the panel's own background shows through: the right colour in
   // every theme and on every surface (white cards, grey panels, photos), with nothing laid on top that could go astray.
+  // (Oct 11, 12:04) Safari draws a masked scrolling panel at a lower resolution, so the content looked blurred under the fade.
+  // When what lies behind the panel is one solid colour, the fade is a gradient of that colour laid over the edge instead
+  // (the same look, the content untouched and sharp); only over a map, a photo or glass does the panel keep the mask.
+  var CNV = null;
+  function rgbOf(c) { try { CNV = CNV || document.createElement('canvas').getContext('2d'); CNV.fillStyle = '#000'; CNV.fillStyle = c; CNV.clearRect(0, 0, 1, 1); CNV.fillRect(0, 0, 1, 1); var d = CNV.getImageData(0, 0, 1, 1).data; return 'rgb(' + d[0] + ', ' + d[1] + ', ' + d[2] + ')'; } catch (e) { return null; } }
+  function behindCol(el) {
+    for (var q = el; q && q.nodeType === 1; q = q.parentElement) {
+      var cs = getComputedStyle(q), bg = cs.backgroundColor;
+      if (cs.backgroundImage && cs.backgroundImage !== 'none' && q !== el) return null;
+      if ((cs.backdropFilter && cs.backdropFilter !== 'none') || (cs.webkitBackdropFilter && cs.webkitBackdropFilter !== 'none')) return null;
+      var a = bg && bg !== 'transparent' ? (/^color\(/.test(bg) ? (/\/\s*([\d.]+)\)/.exec(bg) ? +/\/\s*([\d.]+)\)/.exec(bg)[1] : 1) : alphaOf(bg)) : 0;
+      if (a >= 0.9) return rgbOf(bg);
+      if (a > 0.05) return null;
+      if (q.nodeName === 'HTML') return null;
+    }
+    return null;
+  }
+  function fadeOv(el, side, on, col, hh) {
+    var key = side === 'top' ? '__wfFadeTop' : '__wfFadeEl', ov = el[key], par = el.parentElement;
+    if (!on || !par || !col) { if (ov) ov.style.opacity = '0'; return; }
+    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.__wfOwn = el; OVS.push(ov); ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease'; el[key] = ov; }
+    if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
+    var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1, cs = getComputedStyle(el);
+    var clear = col.replace(/^rgb\(([^)]+)\)$/, 'rgba($1, 0)'), topY = Math.floor((r.top - pr.top) / k) + (parseFloat(cs.borderTopWidth) || 0), bot = Math.ceil((r.bottom - pr.top) / k) - (parseFloat(cs.borderBottomWidth) || 0);
+    ov.style.left = Math.floor((r.left - pr.left) / k) + 'px'; ov.style.width = Math.ceil(r.width / k) + 'px'; ov.style.height = hh + 'px'; ov.style.top = (side === 'top' ? topY : bot - hh) + 'px';
+    ov.style.borderRadius = side === 'top' ? cs.borderTopLeftRadius + ' ' + cs.borderTopRightRadius + ' 0 0' : '0 0 ' + cs.borderBottomRightRadius + ' ' + cs.borderBottomLeftRadius;
+    ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' 100%)'; ov.style.opacity = '1';
+  }
   function fadeOne(el) {
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
-    if (el.__wfFadeEl || el.__wfFadeTop) { fadeEdge(el, el.parentElement, 'top', false); fadeEdge(el, el.parentElement, 'bottom', false); }   // overlays of the old fade
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY) && !!el.offsetParent;
     var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = sc && el.scrollTop > 1;
     var h = Math.round(Math.min(FH, el.clientHeight * 0.3)), ht = el.classList.contains('wf-snap') ? Math.min(h, 32) : h;   // snapping lists: the top fade fits the 32px band items rest under, never over an item
+    var th = document.documentElement.classList.contains('wf-dark') + '|' + (document.documentElement.getAttribute('style') || '').length;
+    if ((less || more) && (el.__wfBcTh !== th || el.__wfBc === undefined)) { el.__wfBc = behindCol(el); el.__wfBcTh = th; }
+    var col = (less || more) ? el.__wfBc : null;
+    if (col) {
+      if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; el.__wfM = ''; }
+      fadeOv(el, 'top', less, col, ht); fadeOv(el, 'bottom', more, col, h); return;
+    }
+    fadeOv(el, 'top', false); fadeOv(el, 'bottom', false);
     var g = !(less || more) ? '' : 'linear-gradient(to bottom, ' + (less ? 'transparent 0, #000 ' + ht + 'px' : '#000 0') + ', ' + (more ? '#000 calc(100% - ' + h + 'px), transparent 100%' : '#000 100%') + ')';
     if (g !== el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = g; el.__wfM = g; }
-  }
-  function fadeEdge(el, par, side, on) {
-    var key = side === 'top' ? '__wfFadeTop' : '__wfFadeEl', ov = el[key];
-    if (!on || !par) { if (ov) ov.style.opacity = '0'; return; }
-    if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.__wfOwn = el; OVS.push(ov); ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease;height:' + FH + 'px'; el[key] = ov; }
-    if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
-    var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1;
-    var F = fadeCol(el), L = F.l == null ? r.left : Math.max(r.left, F.l), R = F.r == null ? r.right : Math.min(r.right, F.r);
-    var col = F.c, clear = col.replace(/^rgba?\(([^,]+),([^,]+),([^,)]+).*$/, 'rgba($1,$2,$3,0)');
-    // fully solid over the last 8px and snapped to whole pixels, so no sliver of content (a divider, a text edge) peeks under it
-    var bot = Math.ceil((r.bottom - pr.top) / k), topY = Math.floor((r.top - pr.top) / k);
-    ov.style.left = Math.floor((L - pr.left) / k) + 'px'; ov.style.width = Math.ceil((R - L) / k) + 'px'; ov.style.top = (side === 'top' ? topY : bot - FH) + 'px'; ov.style.height = FH + 'px';
-    ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' calc(100% - 8px), ' + col + ' 100%)'; ov.style.opacity = '0.8';   // 20% lighter
   }
   // Fades whose panel has left the page (a view swapped for another) go with it: no ghost fade over the next view
   var OVS = [];
