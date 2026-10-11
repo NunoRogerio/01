@@ -1104,9 +1104,9 @@ class Component extends DCLogic {
         const toSheet = !!m.fire && !c.closed;
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */
         const pendNow = !m.done && !c.closed && acts.length > 0;
-        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', I: m.rec ? null : I });
+        if (pendNow) pends.push({ id: String(m.id), tag: T(m.tag), time, bg: tone(Hd).bg, fg: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', I: m.rec || m.req || m.sreq ? null : I });
         items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: T(m.tag), tagC: Hd && Hd.icon === 'cand' ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: T(m.title), body: T(m.body), bodyD: m.body ? 'block' : 'none',
-          icD: I && !m.rec ? 'flex' : 'none'   /* (Oct 10, 23:38) recommendation cards carry no icon */, ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
+          icD: I && !m.rec && !m.req && !m.sreq ? 'flex' : 'none'   /* (Oct 10, 23:38) recommendation cards carry no icon; (Oct 11, 07:42) nor request cards */, ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
             // a station that joined through a dispatch order is listed too, so every crew sent appears on the card
