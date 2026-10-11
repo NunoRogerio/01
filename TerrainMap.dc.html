@@ -19,7 +19,7 @@
 <script src="prefs.js?v=1791673005"></script>
 <script src="station.js?v=1791678052"></script>
 <script src="i18n.js?v=1791665418"></script>
-<script src="live.js?v=1791678052"></script>
+<script src="live.js?v=1791698021"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -272,7 +272,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
-      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="none" stroke="#3A3A3C" stroke-width="1.5" style="display: {{fm.aidD}}"></circle><circle cx="14" cy="14" r="16" fill="{{fm.sbg}}"></circle><circle cx="14" cy="14" r="17" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle><g transform="translate(6 6) scale(0.6667)"><path d="{{fm.sic}}" fill="none" stroke="{{fm.sfg}}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></g></svg><!-- (Oct 11, 01:18) a fire: its stage icon in a 32px round of its stage colour --></button>
+      <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="none" stroke="#3A3A3C" stroke-width="1.5" style="display: {{fm.aidD}}"></circle><circle cx="14" cy="14" r="16" fill="{{fm.sbg}}"></circle><circle cx="14" cy="14" r="17" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle><g transform="translate(6 6) scale(0.6667)"><path d="{{fm.sic}}" fill="none" stroke="{{fm.sfg}}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></g></svg><!-- (Oct 11, 01:18) a fire: its stage icon in a 32px round of its stage colour --></button>
       <span class="fanchor" style="position: absolute; left: {{fm.left}}px; top: {{fm.top}}px; width: 0; height: 0; z-index: 20; pointer-events: none"><svg width="6" height="5" viewBox="0 0 6 5" aria-hidden="true" style="display: {{fm.riskD}}; position: absolute; left: {{fm.riskL}}px; top: {{fm.riskT}}px; pointer-events: none; overflow: visible"><path d="M3 0.9 5.4 4.4H0.6Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="1" stroke-linejoin="round"></path></svg><span class="{{fm.tip}}" role="tooltip"><b>{{fm.tt}}</b>{{fm.td}}</span></span>
     </sc-for>
     <sc-for list="{{otherMarks}}" as="om" hint-placeholder-count="0">
@@ -298,7 +298,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <sc-if value="{{ig.isSel}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="position: absolute; left: -26px; top: -26px; pointer-events: none; scale: 0.77; overflow: visible">
             <!-- (Oct 4) no pulse on ignition markers -->
-            <circle cx="48" cy="48" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(37.61 37.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
+            <circle cx="48" cy="48" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(37.61 37.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
           </svg>
           <span class="igpill" role="tooltip">
             <span style="display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 16px 0 8px; white-space: nowrap">
@@ -311,12 +311,12 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
           <sc-if value="{{ig.pulse}}" hint-placeholder-val="{{ true }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
             <!-- (Oct 4) no pulse on ignition markers -->
-            <circle cx="32" cy="32" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(21.61 21.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
+            <circle cx="32" cy="32" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(21.61 21.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
           </svg>
           </sc-if>
           <sc-if value="{{ig.still}}" hint-placeholder-val="{{ false }}">
           <svg class="mk" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" style="position: absolute; left: -10px; top: -10px; pointer-events: none; scale: 0.77; overflow: visible">
-            <circle cx="32" cy="32" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(21.61 21.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
+            <circle cx="32" cy="32" r="20.8" fill="{{ig.g.fill}}" stroke="#3A3A3C" stroke-opacity="0.35" stroke-width="1.3"></circle><g transform="translate(21.61 21.61) scale(0.866)"><path d="{{ig.g.dash}}" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round"></path><circle cx="12" cy="15" r="3.6" fill="#3A3A3C"></circle></g><!-- (Oct 11, 01:18) a 32px round in the likelihood yellow: a dot with three strokes rising above it -->
           </svg>
           </sc-if>
           <span class="{{ig.tip}}" role="tooltip"><b>{{ig.tt}}</b>{{ig.td}}</span>
