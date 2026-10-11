@@ -66,7 +66,15 @@
 [data-wf-sthdr] [data-wf-hmin]{max-height:160px;transition:max-height .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .3s cubic-bezier(.2,.8,.2,1)}
 [data-wf-sthdr][data-wf-mini="1"]{padding-bottom:8px!important}
 [data-wf-sthdr][data-wf-mini="1"] [data-wf-hmin]{max-height:0;opacity:0;margin-top:-4px!important;overflow:hidden;pointer-events:none}</style>
-<script>(function(){var on=false;document.addEventListener('scroll',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('wf-page'))return;var h=document.querySelector('[data-wf-sthdr]');if(!h)return;var y=t.scrollTop;if(!on&&y>24){on=true;h.setAttribute('data-wf-mini','1');}else if(on&&y<8){on=false;h.removeAttribute('data-wf-mini');}},true);})();</script>
+<script>/* (Oct 11, 18:55) the header folds over the page instead of pushing it: it floats above the scrolling page, which keeps the
+   unfolded header's height as its top padding, so folding or unfolding never moves the content under the finger (no snap, no jump) */
+(function(){var on=false,H0=0,T=0;
+  function page(){return document.querySelector('.wf-page');}
+  function lay(){var h=document.querySelector('[data-wf-sthdr]'),pg=page();if(!h||!pg)return;
+    if(!h.__wfFloat){var par=h.parentNode;if(!par)return;if(getComputedStyle(par).position==='static')par.style.position='relative';h.__wfFloat=1;h.__wfTop=h.offsetTop;h.style.setProperty('position','absolute','important');h.style.left='0';h.style.right='0';h.style.top=h.__wfTop+'px';}
+    if(!on&&Date.now()-T>450){var hh=h.offsetHeight;if(hh&&Math.abs(hh-H0)>0.5){H0=hh;pg.style.setProperty('padding-top',H0+'px','important');}}}
+  document.addEventListener('scroll',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('wf-page'))return;var h=document.querySelector('[data-wf-sthdr]');if(!h)return;var y=t.scrollTop;if(!on&&y>24){on=true;T=Date.now();h.setAttribute('data-wf-mini','1');}else if(on&&y<8){on=false;T=Date.now();h.removeAttribute('data-wf-mini');}},true);
+  setInterval(lay,300);document.addEventListener('DOMContentLoaded',lay);})();</script>
 </head>
 <body>
 <x-dc>
