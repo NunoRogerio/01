@@ -1701,3 +1701,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Request and recommendation cards (Oct 11, 08:30):** the header says what is needed (the card's subject: "Water refill", "Dispatch crews", "Move to Resolving"), with the time on the right; inside, in bold before the text, who asks ("Request. Daniel Brooks") or "Recommendation". The sticky stack shows the subject too. Approved and Not approved read in the past tense on every request.
 - **Station header tags (Oct 11):** on one line, running under the round buttons past the title column.
 - **Menu over the screen (Oct 11, 08:33):** folded to its icons, only the dark icon column shows over the screen (the menu's page is see-through around it, no light strip); an open section keeps its own page.
+- **Station greeting with incidents (Oct 11):** never says incidents are "waiting": the five lines say they are in progress, need the captain's attention, or show where each one stands.

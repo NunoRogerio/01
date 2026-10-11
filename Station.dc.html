@@ -443,12 +443,13 @@ class Component extends DCLogic {
     /* (Oct 10, 21:45) the greeting speaks of the cards under it: with incidents, they are the ones the station has to resolve (five
        wordings, one picked at random); with none, all is calm and it gives the fire danger in the area, to set the station's alert level */
     const n = Math.max(0, +nInc || 0), one = n === 1, dz = dng ? L(dng.w[0], dng.w[1]).toLowerCase() : '', dn = dng ? dng.n : 0;
+    /* (Oct 11, 08:36) nothing is "waiting": the incidents are in progress or need the captain's attention, and the lines say so */
     const G = n ? [
-      [L('Hello ' + who + (one ? ', this is the incident we have to resolve.' : ', these are the incidents we have to resolve.'), 'Olá ' + who + (one ? ', este é o incidente que temos para resolver.' : ', estes são os incidentes que temos para resolver.'))],
-      [(tod ? tod + ', ' + who + '. ' : L('Working late, ' + who + '? ', 'A trabalhar até tarde, ' + who + '? ')) + L(one ? 'One incident needs the station.' : n + ' incidents need the station.', one ? 'Um incidente precisa do quartel.' : n + ' incidentes precisam do quartel.')],
-      [L('How are things, ' + who + '? ' + (one ? 'This incident needs our crews.' : 'These incidents need our crews.'), 'Como vão as coisas, ' + who + '? ' + (one ? 'Este incidente precisa das nossas equipas.' : 'Estes incidentes precisam das nossas equipas.'))],
-      [L('Hope all is well, ' + who + '. Here’s what we have to resolve.', 'Espero que esteja tudo bem, ' + who + '. Eis o que temos para resolver.')],
-      [L('Howdy ' + who + ', here’s what’s waiting for the station.', 'Viva ' + who + ', eis o que espera pelo quartel.')]
+      [L('Hello ' + who + (one ? ', this is the incident in progress in our area.' : ', these are the incidents in progress in our area.'), 'Olá ' + who + (one ? ', este é o incidente em curso na nossa área.' : ', estes são os incidentes em curso na nossa área.'))],
+      [(tod ? tod + ', ' + who + '. ' : L('Working late, ' + who + '? ', 'A trabalhar até tarde, ' + who + '? ')) + L(one ? 'One incident is in progress and needs your attention.' : n + ' incidents are in progress and need your attention.', one ? 'Um incidente está em curso e precisa da sua atenção.' : n + ' incidentes estão em curso e precisam da sua atenção.')],
+      [L('How are things, ' + who + '? Here is where ' + (one ? 'our incident stands.' : 'each incident stands.'), 'Como vão as coisas, ' + who + '? Eis o ponto de situação ' + (one ? 'do nosso incidente.' : 'de cada incidente.'))],
+      [L('Hope all is well, ' + who + '. ' + (one ? 'This incident needs your attention.' : 'These incidents need your attention.'), 'Espero que esteja tudo bem, ' + who + '. ' + (one ? 'Este incidente precisa da sua atenção.' : 'Estes incidentes precisam da sua atenção.'))],
+      [L('Howdy ' + who + '. ' + (one ? 'One incident in progress, and where it stands.' : n + ' incidents in progress, and where each one stands.'), 'Viva ' + who + '. ' + (one ? 'Um incidente em curso e o seu ponto de situação.' : n + ' incidentes em curso e o ponto de situação de cada um.'))]
     ] : [
       [L('All calm, ' + who + '. Fire danger in our area is ' + dz + ', ' + dn + ' of 5. Set the station’s alert to match.', 'Está tudo calmo, ' + who + '. O risco de incêndio na nossa área é ' + dz + ', ' + dn + ' em 5. Ajuste o nível de alerta do quartel.')],
       [L('Nothing to report today, ' + who + '. Fire danger in our area: ' + dz + ', ' + dn + ' of 5. Set the station’s alert to match.', 'Nada a assinalar hoje, ' + who + '. Risco de incêndio na nossa área: ' + dz + ', ' + dn + ' em 5. Ajuste o nível de alerta do quartel.')]];
