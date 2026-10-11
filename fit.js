@@ -957,7 +957,8 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // id: the fire; ll: its current outline [[lat, lon]…] when mapped; px: else the map's illustrative outline in map pixels
   // RR: the shapes themselves ({ 0, 1, 3, 6 } in [lat, lon]) when the caller draws its own (an ignition candidate's projection)
   window.__wfHomesCheck = function (id, ll, px, RR) {
-    if (!id) return null; var sig = RR && RR[6] ? 'r' + RR[6].length + ':' + RR[6][0].map(function (v) { return v.toFixed(4); }).join(',') + ':' + RR[6][Math.floor(RR[6].length / 2)].map(function (v) { return v.toFixed(4); }).join(',') : (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
+    if (!id) return null; if (RR && RR[0] && RR[6]) (window.__wfHomesRR || (window.__wfHomesRR = {}))[id] = RR;   /* (Oct 11, 22:50) the shapes as drawn now, so the red only marks what they reach */
+    var sig = RR && RR[6] ? 'r' + RR[6].length + ':' + RR[6][0].map(function (v) { return v.toFixed(4); }).join(',') + ':' + RR[6][Math.floor(RR[6].length / 2)].map(function (v) { return v.toFixed(4); }).join(',') : (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));
     var m = MEM[id]; if (m && m.sig === sig) return m.st === 'done' ? m.res : null;
     /* (Oct 11, 08:52) screens draw the same fire from slightly different outlines: one query at a time per fire, and a result under 10 min old serves them all (no refetch storm, which left no building red) */
     if (m && m.st === 'loading' && Date.now() - (m.at || 0) < 45000) return null; if (m && m.st === 'done' && m.res && Date.now() - (m.res.t || 0) < 600000) return m.res;
@@ -1011,8 +1012,14 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   // (residential areas, and a 24 m round per building so isolated houses show too); one path, so overlaps stay one red
   window.__wfHomesPath = function (id, h) { var res = window.__wfHomesGet(id); h = h || 0.5;   /* (Oct 11, 08:52) at Now, the buildings inside the burning area are red too */ if (!res || (!res.pts && !res.areas)) return '';
     var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; }, d = '';
+    /* (Oct 11, 22:50) at risk = inside the projected shape of that horizon or within 100 m of its edge, checked against the shape
+       drawn now (a result fetched for an earlier, different shape never paints buildings far outside it) */
+    var RC = (window.__wfHomesRR || {})[id], ring = RC ? RC[h < 1 ? 0 : h] || RC[6] : null;
+    var near = function (P) { if (!ring) return true; if (inside(P, ring)) return true; var k = Math.cos(P[0] * Math.PI / 180), B = 100 / 111320;
+      for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) { var ax = (ring[j][1] - P[1]) * k, ay = ring[j][0] - P[0], bx = (ring[i][1] - P[1]) * k, by = ring[i][0] - P[0], ex = bx - ax, ey = by - ay, L = ex * ex + ey * ey, u = L ? Math.max(0, Math.min(1, -(ax * ex + ay * ey) / L)) : 0, qx = ax + u * ex, qy = ay + u * ey;
+        if (qx * qx + qy * qy <= B * B) return true; } return false; };
     /* (Oct 10, 21:50) the buildings at risk themselves, each footprint in red (residential areas and rounds no longer drawn) */
-    (res.pts || []).forEach(function (q) { if (q[2] > h) return; if (q[3] && q[3].length > 2) { d += 'M' + q[3].map(function (v) { return X(v[1]).toFixed(2) + ' ' + Y(v[0]).toFixed(2); }).join('L') + 'Z'; return; } var x = X(q[1]), y = Y(q[0]), r = 12 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
+    (res.pts || []).forEach(function (q) { if (q[2] > h || !near([q[0], q[1]])) return; if (q[3] && q[3].length > 2) { d += 'M' + q[3].map(function (v) { return X(v[1]).toFixed(2) + ' ' + Y(v[0]).toFixed(2); }).join('L') + 'Z'; return; } var x = X(q[1]), y = Y(q[0]), r = 12 / 111320 * 2829;   /* (Oct 8, 18:58) 40% smaller round per building (was 40 m) */ d += 'M' + (x - r).toFixed(2) + ' ' + y.toFixed(2) + 'a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (2 * r).toFixed(2) + ' 0a' + r.toFixed(2) + ' ' + r.toFixed(2) + ' 0 1 0 ' + (-2 * r).toFixed(2) + ' 0'; });
     return d; };
   /* (Oct 10, 21:50) the water points around the fire a crew can refill from, as small blue rounds in the map's own units */
   window.__wfWaterPath = function (id) { var res = window.__wfHomesGet(id); if (!res || !res.water || !res.water.length) return '';
