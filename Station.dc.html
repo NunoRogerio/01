@@ -189,7 +189,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <button type="button" class="strow2" onClick="{{cmd.open}}" aria-haspopup="dialog" aria-label="{{cmd.aria}}" style="display: flex; align-items: center; gap: 8px; flex-grow: 1; min-width: 0; min-height: 60px; padding: 16px 0 16px 16px; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
               <span aria-hidden="true" style="display: flex; flex-shrink: 0; padding-left: 12px">
                 <sc-for list="{{cmd.faces}}" as="p" hint-placeholder-count="3">
-                  <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin-left: -12px; border-radius: 50%; background: #E5E5EA; box-shadow: 0 0 0 2px #FFFFFF; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+                  <span style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-left: -8px; border-radius: 50%; background: #E5E5EA; box-shadow: 0 0 0 2px #FFFFFF; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
                 </sc-for>
               </span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
@@ -273,7 +273,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <ul style="display: {{crewPD}}; flex-direction: column; gap: 8px; margin: 0 16px 8px; padding: 0; list-style: none">
           <sc-for list="{{crewP}}" as="p" hint-placeholder-count="4">
             <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
-              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
               <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
                 <span style="font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{p.name}}</span>
                 <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
@@ -346,7 +346,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <ul style="display: flex; flex-direction: column; gap: 8px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
         <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
-          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 16px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
           <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
             <span style="font-size: 18px; font-weight: 700; line-height: 24px; overflow-wrap: anywhere">{{p.name}}</span>
             <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
