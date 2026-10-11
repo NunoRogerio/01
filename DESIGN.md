@@ -1722,3 +1722,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Lists show the stage band (Oct 11):** chat and incident lists carry the full-width stage band at the foot of each row: the stage (or "N% candidate") on the left, area and time (or detection date) on the right.
 - **Clock (Oct 11, app-wide):** 24-hour times ("14:31"), never AM / PM.
 - **Station greeting in two lines (Oct 11, 11:59):** the salutation on the first line ("Hope all is well, **Captain Ortiz**."), then on its own line a sentence in the first person plural ("Together we're on **3** incidents in progress.", "We have **3** incidents in progress in our area."), its counts in bold. With no incidents, the second line gives the fire danger, "**3 of 5**" in bold.
+- **Card text ends with a full stop (Oct 11, 12:01, app-wide):** every request, update and recommendation sentence closes with its punctuation; a card whose stored text lacks it gets the full stop when shown.

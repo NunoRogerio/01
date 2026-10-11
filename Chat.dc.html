@@ -20,7 +20,7 @@
 <script src="station.js?v=1791716515"></script>
 <script src="i18n.js?v=1791716515"></script>
 <script src="live.js?v=1791716515"></script>
-<script src="chat.js?v=1791716515"></script>
+<script src="chat.js?v=1791716537"></script>
 <script src="tour.js?v=1791626920"></script>
 <script src="feedcam.js?v=1791671663"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -1116,7 +1116,7 @@ class Component extends DCLogic {
         /* (Oct 11, 08:30) requests and recommendations: the header says what is needed (the card's subject); inside, in bold before the text, who asks (Request. Name) or Recommendation */
         const ASK = !!((m.rec || m.req || m.sreq) && m.title), hTag = ASK ? T(m.title) : T(m.tag), hTitle = ASK ? String(T(m.tag)).replace(/ · /g, '. ') : T(m.title);
         if (pendNow) pends.push({ id: String(m.id), tag: hTag, time, bg: tone(Hd).bg, fg: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF', I: m.rec || m.req || m.sreq ? null : I });
-        items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: hTag, tagC: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: hTitle, body: T(m.body), bodyD: m.body ? 'block' : 'none',
+        items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: hTag, tagC: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: hTitle, body: ((t) => t && !/[.!?…:]$/.test(t.trim()) ? t.trim() + '.' : t)(T(m.body)), bodyD: m.body ? 'block' : 'none',
           icD: I && !m.rec && !m.req && !m.sreq ? 'flex' : 'none'   /* (Oct 10, 23:38) recommendation cards carry no icon; (Oct 11, 07:42) nor request cards */, ic: I || { d: '', c: 'none', bg: 'none', fill: 'none' },
           hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
