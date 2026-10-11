@@ -533,19 +533,24 @@ class Component extends DCLogic {
     else rows = items.map(areaRow);
     /* (Oct 8, 22:52) mutual aid is To do too: offering help to the station on a fire outside our area, a help request from another
        station, or asking one for help; each conversation stays here until it is marked done (in its chat) */
+    /* (Oct 11, 13:26) a mutual-aid card: Mutual aid is the tag at the top right (on the title's first line); its band is the incident's own stage tag */
+    const aidStage = (id, kind, conf, nt) => { const sid = String(id || '').replace(/^F-/, ''), LF = window.__wfLiveFires || [], r = id ? LF.find((q) => q && (String(q[2]) === String(id) || String(q[2]) === sid || String(q[2]) === 'F-' + sid)) : null;
+      if (kind === 'cand' && C && C.candStage) { const S0 = C.candStage(conf, nt); return { tagTxt: PT ? S0.pt : S0.en, tagFg: S0.c, tagBg: S0.bg, tagIc: S0.icD || '', tagIcD: 'block', tagR: '' }; }
+      if (r) return Object.assign(fireTag(r), { tagR: (C && C.fireMeta ? C.fireMeta(r[2]) : '') || '' });
+      const S1 = C && C.STAGES ? C.STAGES[2] : null; return S1 ? { tagTxt: PT ? S1.pt : S1.en, tagFg: S1.c, tagBg: S1.bg, tagIc: (C.ICON || {})[S1.icon] || '', tagIcD: 'block', tagR: '' } : { tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', tagR: '' }; };
     const MA = (C && C.list && C.mutualOpen ? C.list().filter((c) => C.mutualOpen(c)) : []).map((c) => { const P0 = (c.people || [])[0] || {}, lm = C.lastMsg ? C.lastMsg(c) : null, tx = lm ? (lm.kind === 'card' ? (lm.title ? (PT ? lm.title.pt || lm.title.en : lm.title.en) : '') : (PT ? lm.pt || lm.en : lm.en)) || '' : '';
       const ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);
       return { place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, simD: 'block', ...MK.fire, moonD: 'none',
-        sub: (c.topic ? c.topic.place + '. ' : '') + (P0.name ? P0.name + ': ' : '') + tx, sub2: '', sub2D: 'none', tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '', _t: c.updated || 0 }; }).sort((a, b) => b._t - a._t);
+        sub: (c.topic ? c.topic.place + '. ' : '') + (P0.name ? P0.name + ': ' : '') + tx, sub2: '', sub2D: 'none', ...aidStage(c.topic && c.topic.id, c.topic && c.topic.kind, c.topic && c.topic.conf, c.topic), aidD: 'inline-flex', aidTxt: aidT.label, _t: c.updated || 0 }; }).sort((a, b) => b._t - a._t);
     const HO = !lead && this._helpOffer;
     if (HO) MA.unshift({ place: HO.lbl, aria: HO.lbl, href: 'Chat.dc.html', go: (e) => { if (e && e.preventDefault) e.preventDefault(); HO.go(); }, simD: 'none', ...MK.fire, moonD: 'none',
-      sub: HO.place + '. ' + kmT(HO.km) + L('. Outside our area.', '. Fora da nossa área.'), sub2: '', sub2D: 'none', tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' });
+      sub: HO.place + '. ' + kmT(HO.km) + L('. Outside our area.', '. Fora da nossa área.'), sub2: '', sub2D: 'none', ...aidStage(HO.fid || HO.id, 'fire'), aidD: 'inline-flex', aidTxt: aidT.label });
     /* (Oct 8, 23:21) a crew sent to help on another station's fire: that fire is in our To do (Mutual aid) until it is resolved */
     try { const AA = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}, LFa = window.__wfLiveFires || [];
       Object.keys(AA).forEach((k) => { const a = AA[k], fr = LFa.find((r) => r && String(r[2]) === String(a.id)); if (fr && (fr[9] || {}).resolved) return; if (Date.now() - (a.at || 0) > 864e5) return;
         const v = { id: a.id, place: a.place, note: fr ? fr[4] : '', x: a.x, y: a.y }, veh = 'Engine ' + ((String(S.name).match(/(\d{1,3})\b/) || [])[1] || '11');
         MA.unshift({ place: a.place, aria: a.place + ', ' + aidT.label, href: 'Dispatch.dc.html', go: fireGo(v), simD: 'none', ...MK.fire, moonD: 'none', sub: L('Crew sent: ', 'Equipa enviada: ') + veh + L(' to the command post. ', ' para o posto de comando. ') + (a.station || ''), sub2: kmT(a.km || 0) + '. ' + drv(a.km || 0) + '.', sub2D: 'block',
-          tagTxt: aidT.label, tagFg: aidT.fg || '#3A3A3C', tagBg: aidT.bg || 'rgba(118,118,128,0.14)', tagIc: '', tagIcD: 'none', aidD: 'none', aidTxt: '' }); }); } catch (e) {}
+          ...aidStage(a.id, 'fire'), aidD: 'inline-flex', aidTxt: aidT.label }); }); } catch (e) {}
     rows = MA.concat(rows);
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
