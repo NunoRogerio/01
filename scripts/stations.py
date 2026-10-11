@@ -50,6 +50,13 @@ def main():
                 continue
             t = e.get('tags') or {}
             rows.append([e['id'], 'n' if e['type'] == 'node' else 'w', round(lat, 5), round(lon, 5), t.get('name', ''), t.get('operator', '')])
+        # (Oct 11) the same station mapped twice (two outlines with one name, within 100 m) is one station: keep the first
+        seen, kept = [], []
+        for r in rows:
+            if r[4] and any(q[4] == r[4] and abs(q[2] - r[2]) < 0.001 and abs(q[3] - r[3]) < 0.0012 for q in seen):
+                continue
+            seen.append(r); kept.append(r)
+        rows = kept
         if len(rows) < 20:            # something went wrong: keep the previous file
             print('::warning::too few stations for', cc, len(rows)); continue
         json.dump({'updated': time.strftime('%Y-%m-%dT%H:%MZ', time.gmtime()), 'source': 'OpenStreetMap contributors', 's': rows},

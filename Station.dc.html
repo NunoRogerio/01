@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791736227"></script>
-<script src="station.js?v=1791736227"></script>
+<script src="station.js?v=1791736888"></script>
 <script src="menu.js?v=1791716515"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791736227"></script>
+<script src="chat.js?v=1791736888"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -110,7 +110,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
 </span></span>
       </div>
       <!-- Header actions, as on the main screen: the incident chats, notifications, your profile (always at the top; the chat is an option, not a foot button) -->
-      <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 4px"><a href="Chat.dc.html" class="opt" onClick="{{hx.ch.open}}" aria-label="{{hx.ch.aria}}" style="position: relative; display: {{chD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{hx.ch.badgeD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: #3A3A3C; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ch.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" class="wf-nbadge" style="display: {{hx.ntD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: rgb(215, 0, 21); color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
+      <div data-wf-keepsp="1" style="grid-column: 3; grid-row: 1; display: flex; align-items: flex-start; gap: 16px; flex-shrink: 0; margin-top: 4px"><a href="Chat.dc.html" class="opt" onClick="{{hx.ch.open}}" aria-label="{{hx.ch.aria}}" style="position: relative; display: {{chD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{hx.ch.badgeD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: rgb(215, 0, 21); color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ch.n}}</span></a><button type="button" class="opt" onClick="{{hx.openNt}}" aria-haspopup="dialog" aria-label="{{hx.ntAria}}" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg><span aria-hidden="true" class="wf-nbadge" style="display: {{hx.ntD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: rgb(215, 0, 21); color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center; font-variant-numeric: tabular-nums">{{hx.ntN}}</span></button><button type="button" class="opt" data-wf-burger="1" onClick="{{hx.openPf}}" aria-haspopup="true" aria-label="Preferences" style="position: relative; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></button></div>
     </div>
   </div>
 
@@ -255,6 +255,22 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           </sc-for>
           <button type="button" class="mbtn" onClick="{{pkOpen}}" data-round="1" aria-label="Add or remove cards" style="display: flex; align-items: center; justify-content: center; flex: 0 0 56px; width: 56px; align-self: flex-start; height: 56px; padding: 0; border: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
         </div>
+      </div>
+
+      <!-- (Oct 11, 17:55) the Battalion Chief's battalion: each station's first engine (in service, on a call, or covered by another engine), with a move-up when a station is left empty -->
+      <div style="display: {{bat.d}}; flex-direction: column">
+        <span style="margin: 0 16px 8px; font-size: 16px; font-weight: 600; line-height: 20px; color: #6E6E73">{{bat.title}}</span>
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px; padding: 0; list-style: none">
+          <sc-for list="{{bat.rows}}" as="b" hint-placeholder-count="5">
+            <li style="position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; column-gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 0 10px rgba(0,0,0,0.08)">
+              <span style="font-size: 18px; font-weight: 700; line-height: 24px">{{b.name}}</span>
+              <span style="justify-self: end; align-self: start; padding: 4px 8px; border-radius: 8px; background: {{b.bg}}; color: {{b.fg}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{b.tag}}</span>
+              <span style="grid-column: 1 / -1; font-size: 16px; line-height: 20px; color: #6E6E73">{{b.sub}}</span>
+              <button type="button" class="btn wf-sec" onClick="{{b.go}}" style="display: {{b.btnD}}; grid-column: 1 / -1; margin-top: 16px; height: 48px; font-size: 18px; font-weight: 600">{{b.btn}}</button>
+              <span class="wf-simstar" aria-hidden="true">*</span>
+            </li>
+          </sc-for>
+        </ul>
       </div>
 
       <!-- Resources: vehicles, crews and aircraft of this station, one switcher; a crew opens its people and a chat with its chief -->
@@ -505,7 +521,7 @@ class Component extends DCLogic {
     let rows;
     if (lead) {
       const mineF = (c) => (c.forces || []).find((f) => (f.ck === (S.type === 'way' ? 'w' : 'n') + S.id || f.full === S.name) && f.st !== 'standby' && f.st !== 'released' && (!MINE.unit || !(f.veh || []).length || (f.veh || []).indexOf(MINE.unit) >= 0));   /* (Oct 11, 17:25) a crew sees the incidents its own unit was sent to */
-      const ST = { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };
+      const crewV = MINE.rank === 'ff' || MINE.rank === 'eng', ST = crewV ? { enroute: L('En route to the staging area', 'A caminho do ponto de concentração'), onscene: L('On the line. East flank', 'Na linha. Flanco leste'), watch: L('Patrol', 'Vigilância') } : { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };   /* (Oct 11, 17:50) the line crews see where to go */
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         const nm = window.__wfIncName ? window.__wfIncName(c.place, (c.kind === 'fire' || c.stage >= 1) && !c.dismissed) : c.place;
         return { place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
@@ -532,7 +548,8 @@ class Component extends DCLogic {
     const nDep = lead ? rows.length : 0;
     /* (Oct 8, 18:02) a deployment card carries the incident's own facts too (the area card's first line), then what his crew is doing */
     if (lead) rows.forEach((x) => { const q = items.find((y) => String(y.r[2]) === String(x._id)); if (!q) return; const ar = areaRow(q); x.sub2 = x.sub; x.sub2D = 'block'; x.sub = ar.sub2D === 'block' ? ar.sub : ar.sub; x.moonD = ar.moonD; });
-    if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
+    if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); const rkL = MINE.rank;   /* (Oct 11, 17:50) a Captain sees his missions, then the candidates in his first-due area (his engine would be sent first); the line crews only their missions */
+      if (rkL === 'cap') rows = rows.concat(items.filter((q) => !had[String(q.r[2])] && q.kind === 'cand' && (q.k === 'zone' || q.km < 4)).map(areaRow));   /* first due: in the area or within about 4 km */ else if (rkL !== 'ff' && rkL !== 'eng') rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
     else rows = items.map(areaRow);
     /* (Oct 8, 22:52) mutual aid is To do too: offering help to the station on a fire outside our area, a help request from another
        station, or asking one for help; each conversation stays here until it is marked done (in its chat) */
@@ -642,6 +659,29 @@ class Component extends DCLogic {
       noneTxt: lead ? L('No deployments. The captain sends you from the incident page.', 'Sem destacamentos. O chefe envia-te a partir da página do incidente.') : (A ? L('No incidents in the station area or calling for mutual aid.', 'Sem incidentes na área do quartel nem pedidos de auxílio.') : L('Loading the station area…', 'A carregar a área do quartel…')),
       nDep, nZone, nAid, ign, fires: onMap.filter((q) => q.kind === 'fire').map((q) => q.r),
       view: { homeMapW: W, homeMapH: H, homeFx: Math.round(fx), homeFy: Math.round(fy), homeZ: +z.toFixed(3) } };
+  }
+  /* (Oct 11, 17:55) the battalion's stations and their first engines, for the Battalion Chief. The stations are real (OpenStreetMap);
+     the units' states are simulated (a station's engine is on a call when an incident chat has its crews out, else from a steady hash).
+     A station left empty can get a move-up: the nearest station with its engine in service sends it to cover (kept on this phone). */
+  wfBat(S, MINE, L) {
+    const off = { d: 'none', title: '', rows: [] }; if (!MINE || MINE.rank !== 'bc' || !window.__wfBattalion) return off;
+    const B = window.__wfBattalion(S); if (!B || B.length < 2) return off;
+    const C = window.__wfChat, chats = C && C.list ? C.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm') : [];
+    const short = (n) => { const m = /Station\s*#?\s*(\d+)/i.exec(n || ''); return m ? 'Station ' + m[1] : String(n || 'Station').replace(/\s+Fire Station.*$/i, ''); };
+    const numOf = (n) => { const m = /#?\s*(\d+)\s*$/.exec(String(n || '').replace(/\s*-.*$/, '')) || /(\d+)/.exec(n || ''); return m ? m[1] : ''; };
+    const placeOf = (n) => String(n || '').replace(/\s*Fire Station.*$/i, '').replace(/^Station\s*#?\d+\s*-?\s*/i, '').trim();
+    let cov = {}; try { cov = JSON.parse(localStorage.getItem('wf-cover') || '{}') || {}; } catch (e) {}
+    const h = (t) => String(t).split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
+    const st = B.map((b, i) => { const ck = (b.type === 'way' ? 'w' : 'n') + b.id, n = numOf(b.name), eng = 'Engine ' + (n || (10 + i));
+      const out = chats.some((c) => (c.forces || []).some((f) => (f.ck === ck || f.full === b.name) && (f.st === 'enroute' || f.st === 'onscene'))) || (i > 0 && h(b.id + new Date().toDateString()) % 5 === 0);
+      return { b, ck, eng, name: short(b.name), place: placeOf(b.name), out }; });
+    const rows = st.map((x, i) => { const cv = x.out ? cov[x.ck] : null, free = st.filter((y) => y !== x && !y.out && !Object.values(cov).includes(y.eng));
+      const tag = x.out ? (cv ? L('Covered', 'Coberto') : L('Empty', 'Vazio')) : L('In service', 'Em serviço');
+      const bg = x.out ? (cv ? window.__wfStTag.ok.bg : 'rgba(179,0,27,0.12)') : window.__wfStTag.ok.bg, fg = x.out ? (cv ? window.__wfStTag.ok.fg : '#B3001B') : window.__wfStTag.ok.fg;
+      const sub = (x.place ? x.place + '. ' : '') + x.eng + (x.out ? L(' on a call.', ' em ocorrência.') : L(' in quarters.', ' no quartel.')) + (cv ? ' ' + L('Covered by ', 'Coberto pelo ') + cv + '.' : '');
+      const go = () => { const f = free[0]; if (!f) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} const N = Object.assign({}, cov, { [x.ck]: f.eng }); try { localStorage.setItem('wf-cover', JSON.stringify(N)); } catch (e) {} this.forceUpdate(); };
+      return { name: x.name, tag, bg, fg, sub, btnD: x.out && !cv && free.length ? 'flex' : 'none', btn: free.length ? L('Move up ', 'Cobertura com o ') + free[0].eng : '', go }; });
+    return { d: 'flex', title: L('Battalion ', 'Batalhão ') + (MINE.batt || '') , rows };
   }
   renderVals() {
     const S = this.station(), T = (S && S.tags) || {};
@@ -860,7 +900,7 @@ class Component extends DCLogic {
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
       crewP: lead && crews[MC] ? crews[MC].ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i) === 'ok' && crews[MC].st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[MC] ? 'flex' : 'none',
-      none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
+      bat: this.wfBat(S, MINE, L), none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
       help, risk: (() => { const RK = [[L('Low risk', 'Risco reduzido'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], [L('Moderate risk', 'Risco moderado'), 'rgba(204,153,0,0.16)', '#745200'], [L('High risk', 'Risco elevado'), 'rgba(184,74,0,0.14)', '#963B00'], [L('Very high risk', 'Risco muito elevado'), '#FBE1DC', '#B3261E'], [L('Maximum risk', 'Risco máximo'), '#B3261E', '#FFFFFF']][danger - 1] || [];
         return { d: home && RK[0] ? 'inline-flex' : 'none', txt: RK[0] || '', bg: RK[1] || 'transparent', fg: RK[2] || '#3A3A3C', aria: L('Fire danger today: ', 'Risco de incêndio hoje: ') + danger + L(' of 5', ' em 5') }; })(),   /* (Oct 10, 21:45) the fire danger is a tag now, no longer a key figure (simulated) */

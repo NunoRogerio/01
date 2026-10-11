@@ -8,7 +8,7 @@
 (function () {
   /* (Oct 11, 00:21) A fresh start for the incidents: every chat, outcome, dispatch, order and simulated round kept on this phone is
      cleared once (settings, profiles and keys stay), so the story starts again and the new incidents arrive one at a time. */
-  (function () { var RV = '2026-10-11b';   /* (Oct 11, 17:40) b: the profiles moved to CAL FIRE Temecula: the Altadena story starts again there */ try { if (localStorage.getItem('wf-sim-reset') === RV) return;
+  (function () { var RV = '2026-10-11f';   /* (Oct 11, 17:40) b: the profiles moved to CAL FIRE Temecula: the Altadena story starts again there */ try { if (localStorage.getItem('wf-sim-reset') === RV) return;
     var K = [], i, ONE = { 'wf-sim-rounds': 1, 'wf-sim-t0': 1, 'wf-sim-last': 1, 'wf-evac': 1, 'wf-aid-assign': 1, 'wf-help-offer': 1, 'wf-deploy-ack': 1, 'wf-crew': 1, 'wf-orders': 1, 'wf-nt-read': 1, 'wf-homes-safe': 1 };
     for (i = 0; i < localStorage.length; i++) K.push(localStorage.key(i));
     K.forEach(function (k) { if (ONE[k] || /^wf-(chats3-|fin-|assigned-|offer-snooze-)/.test(k || '')) localStorage.removeItem(k); });
@@ -19,8 +19,8 @@
     tags: { operator: 'California Department of Forestry and Fire Protection' }, cc: 'us', st: 'CA', co: 'Riverside', place: 'Temecula' };
   var ME = {
     coord: { level: 'captain', rank: 'bc', name: 'Frank Ortiz', batt: 15, station: ST11, crew: null },   // (Oct 11, 17:40) the Battalion Chief of Battalion 15 (Temecula); his command vehicle is based at Station 84
-    ff: { level: 'lead', rank: 'cap', name: 'Daniel Brooks', station: ST11, crew: 0, unit: 'Engine 11' },   // the Captain of Engine 11
-    eng: { level: 'lead', rank: 'eng', name: 'Lisa Wong', station: ST11, crew: 0, unit: 'Engine 11' },   // (Oct 11, 17:25) the Engineer of Engine 11: the crew's view, no command
+    ff: { level: 'lead', rank: 'cap', name: 'Daniel Brooks', station: ST11, crew: 0, unit: 'Engine 12' },   // the Captain of Engine 12
+    eng: { level: 'lead', rank: 'eng', name: 'Lisa Wong', station: ST11, crew: 0, unit: 'Engine 12' },   // (Oct 11, 17:25) the Engineer of Engine 12: the crew's view, no command
     fft: { level: 'lead', rank: 'ff', name: 'Ben Ortega', station: ST11, crew: 1, unit: 'Engine 3167' }   // a Firefighter on Engine 3167, the station's CAL FIRE Type 3 wildland engine: the crew's view, no command
   };
   var X = function (lon) { return (lon + 118.13) * 2345 + 518; }, Y = function (lat) { return (34.19 - lat) * 2829 + 662; };
@@ -61,8 +61,8 @@
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
   // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
-  var SIMF = { id: 'SIM-ST11-F1', name: 'Pala Fire', near: 'Pala Road, south Temecula', lat: 33.4705, lon: -117.1335, ac: 38, pc: 0, minAgo: 52 };   /* (Oct 11, 17:40) Temecula places */
-  var SIMC = { lat: 33.5160, lon: -117.1700, place: 'Temecula', near: '2.5 km northwest of Temecula', conf: 88, minAgo: 12 };
+  var SIMF = { id: 'SIM-ST11-F1', name: 'Temecula Canyon Fire', near: 'Temecula Canyon, southwest of Old Town', lat: 33.4700, lon: -117.1750, ac: 38, pc: 0, minAgo: 52 };   /* (Oct 11, 17:40) Temecula places */
+  var SIMC = { lat: 33.4850, lon: -117.1650, place: 'Temecula', near: '2 km southwest of Old Town Temecula', conf: 88, minAgo: 12 };
   /* (Oct 8, 22:21; 22:48) New simulated incidents in the area: when the station's To do has no incident and the screen has been
      left alone for 5 s, a new round comes up: 1 to 2 fires (at First alert) and 1 to 3 ignition candidates, picked at random
      from the places below, with a notification banner for each. Rounds are kept on this phone (wf-sim-rounds); round 0 is the
