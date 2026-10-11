@@ -1847,18 +1847,10 @@
     // (Oct 3, 22:23) the label is the stage's own name, so words, colour and icon always agree (the feed's wording, e.g. "Not contained", spans several stages)
     return { i: i, label: PT() ? S.pt : S.en, src: I.stEn || I.st || (conf ? 'Confirmed' : 'Active'), fg: S.c, bg: S.bg, ic: ICON[S.icon], en: S.en, meta: f && f.id != null ? fireMeta(f.id) : '' }; }   /* (Oct 11) every stage tag carries the burned area and time active */
   window.__wfStageTag = stageTag;
-  /* (Oct 11, 00:46) a stage icon sits 8px from its label as drawn: each stage icon's box is cropped to the glyph's own width (the
-     icons are drawn narrower than their 24px square, which left 15px or more between the glyph and the label) */
-  (function () { var D = {}, busy = false; Object.keys(ICON).forEach(function (k) { if (ICON[k]) D[ICON[k]] = 1; });
-    var crop = function () { busy = false; try { var L0 = document.querySelectorAll('svg > path[d]');
-      for (var i = 0; i < L0.length; i++) { var pa = L0[i], d = pa.getAttribute('d'); if (!D[d]) continue; var sv = pa.parentNode; if (!sv || sv.children.length !== 1 || !sv.getBBox) continue;
-        if (sv.getAttribute('data-wfc') === d && sv.getAttribute('viewBox') !== '0 0 24 24' && sv.style.width) continue;
-        var bb; try { bb = pa.getBBox(); } catch (e) { continue; } if (!bb || !bb.width) continue;
-        var h = sv.getBoundingClientRect().height || +sv.getAttribute('height') || 24, k = h / 24, x0 = Math.max(0, bb.x - 1.2), w = Math.min(24, bb.width + 2.4);
-        sv.setAttribute('data-wfc', d); sv.setAttribute('viewBox', x0.toFixed(2) + ' 0 ' + w.toFixed(2) + ' 24'); sv.style.setProperty('width', (w * k).toFixed(1) + 'px', 'important'); } } catch (e) {} };
-    var go = function () { if (busy) return; busy = true; requestAnimationFrame(crop); };
-    var start = function () { try { new MutationObserver(go).observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ['d', 'viewBox', 'style'] }); } catch (e) {} go(); };
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start(); })();
+  /* (Oct 11, 18:50, supersedes 00:46) stage icons keep their 24px box, centred: in every tag and button tag the label starts at the same
+     place whatever the icon (flame, shield, moon, asterisk), as in the chat cards' headers. Icons cropped by an older page are put back. */
+  (function () { var undo = function () { try { document.querySelectorAll('svg[data-wfc]').forEach(function (sv) { sv.removeAttribute('data-wfc'); sv.setAttribute('viewBox', '0 0 24 24'); sv.style.removeProperty('width'); }); } catch (e) {} };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', undo); else undo(); })();
   // Chats and their counts follow the selected region: an incident chat belongs to its place; a direct message to its
   // country or state (Portugal never shows Brazil's or the US's messages)
   function inScope(c, SC) { if (!SC || !SC.st || !c || !c.st) return true;

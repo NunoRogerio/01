@@ -868,7 +868,8 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
       if (svg.style.marginRight !== mr) svg.style.setProperty('margin-right', mr, 'important');
     } catch (e) {}
   }
-  var q = false; function run() { q = false; document.querySelectorAll(SEL).forEach(ink); }
+  /* (Oct 11, 18:50) off: icons keep their box so labels line up in every tag (DESIGN.md, "Tag inside") */
+  var q = false; function run() { q = false; }
   function later() { if (!q) { q = true; requestAnimationFrame(run); } }
   function go() { later(); try { new MutationObserver(later).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['d', 'style', 'class'] }); } catch (e) {} }
   if (document.body) go(); else document.addEventListener('DOMContentLoaded', go);
