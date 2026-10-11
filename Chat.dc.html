@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791744000"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791746000"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791744000"></script>
-<script src="station.js?v=1791744000"></script>
+<script src="prefs.js?v=1791746000"></script>
+<script src="station.js?v=1791746000"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791735387"></script>
-<script src="chat.js?v=1791744000"></script>
+<script src="chat.js?v=1791746000"></script>
 <script src="tour.js?v=1791734035"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -817,7 +817,7 @@ class Component extends DCLogic {
       forces: L('Forces involved', 'Meios envolvidos'), noForces: L('No forces dispatched yet. Crews are on standby at their stations.', 'Ainda sem meios despachados. As equipas aguardam nos quartéis.'),
       won: L('Fire resolved', 'Incêndio resolvido'), sumTitle: L('Resolution summary', 'Resumo da resolução'), home: L('Go to main screen', 'Ir para o ecrã principal'), home0: L('Main screen', 'Ecrã principal'), homeNote: L('Do not rest on your laurels. There are more fires where you are needed.', 'Não fiques à sombra dos louros, há mais incêndios onde és preciso.'), closedAt: L('Closed', 'Encerrado'), resIn: L('Resolved in', 'Resolvido em'), hist: L('Resolved · history of the movements and decisions', 'Resolvido · histórico de movimentos e decisões'), histDrill: L('Drill finished · your movements and decisions', 'Simulação terminada · os seus movimentos e decisões'), wonBy: L('Crews', 'Equipas'), owner: L('Incident Commander', 'Comandante do incidente'),
       ach: L('Achievements', 'Conquistas'), noAch: L('No resolved fires yet. Achievements appear here when a fire this person worked on is closed.', 'Ainda sem incêndios resolvidos. As conquistas aparecem aqui quando um incêndio em que esta pessoa trabalhou é encerrado.'),
-      demo: L('Simulation: crew coordinators, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
+      demo: L('Simulation: officers and crews, their replies, vehicles and times are role-played. Stations and incidents are real.', 'Simulação: os coordenadores de equipa, as respostas, os veículos e os tempos são encenados. Os quartéis e os incidentes são reais.'),
       simNote: L('Simulation: people, times, area and population figures come from the role-played scenario, not from live data.', 'Simulação: pessoas, tempos, área e população vêm do cenário encenado, não de dados em direto.') };
     const FOR = (window.__wfPhotos || [{ f: 'forest-1.webp', by: 'Mari Potter' }]).map((p) => [p.f, p.by]),   // this visit's random order (fit.js)
       fh = (k) => FOR[String(k || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 0) % FOR.length];
@@ -875,7 +875,7 @@ class Component extends DCLogic {
       /* the area chosen on the main screen: only its chats, and its name under the title */
       const SC = (() => { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope || null;   /* as the main screen reads it */
         let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} const lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r || ''] || null;
-        if (lk && (!v || v.st !== lk)) v = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: 'Los Angeles' }; })();
+        if (lk && (!v || v.st !== lk)) v = { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: null }; })();   /* (Oct 11, 19:45) a government profile: its whole region, as on the main screen */
       const inSc = (c) => window.__wfChat && window.__wfChat.inScope ? window.__wfChat.inScope(c, SC) : true;   /* the selected region only, direct messages included */
       const scName = SC ? (SC.title || SC.co || ({ PT: 'Portugal', CA: 'California', US: 'United States', AMZ: 'Amazon', NV: 'Nevada' })[SC.st] || SC.st || '') : '';
       const all = C.list().filter(inSc);
@@ -887,15 +887,16 @@ class Component extends DCLogic {
           ic: iconFor(S), sep: i ? '0' : '0', aria: c.place + ', ' + T(S) + (u ? ', ' + u + ' unread' : ''),
           go: (e) => { if (e && e.preventDefault) e.preventDefault(); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (x) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: c.key, fromList: true, fromRes: tab === 'resolved', draft: '', stack: [], sheet: false }); } }; };
       const lastT = (c) => { const m = C.lastMsg(c); return m ? m.t : c.updated; };
-      const open = C.mine(all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a)), false, true);   /* (Oct 6) at most 5 incidents are assigned to anyone, the administrator included */
+      const GOV = (() => { try { return /^(ca|pt|nv|amz)$/.test(localStorage.getItem('wf-role') || '') && !localStorage.getItem('wf-custom'); } catch (e) { return false; } })();   /* (Oct 11, 19:45) a government body oversees every incident: none is assigned to it */
+      const open0 = all.filter((c) => !c.closed).sort((a, b) => (C.unread(b) ? 1 : 0) - (C.unread(a) ? 1 : 0) || lastT(b) - lastT(a)), open = GOV ? open0 : C.mine(open0, false, true);   /* (Oct 6) at most 5 incidents are assigned to anyone, the administrator included */
       const done = all.filter((c) => c.closed).sort((a, b) => lastT(b) - lastT(a));
       const tab = s.tab === 'resolved' ? 'resolved' : 'open', shown = tab === 'resolved' ? done : open;
-      const groups = shown.length ? [{ title: tab === 'open' ? L('Incidents assigned to me', 'Incidentes atribuídos a mim') : '', tD: tab === 'open' ? 'block' : 'none', mt: '0', rows: shown.map(row) }] : [];
+      const groups = shown.length ? [{ title: tab === 'open' && !GOV ? L('Incidents assigned to me', 'Incidentes atribuídos a mim') : '', tD: tab === 'open' && !GOV ? 'block' : 'none', mt: '0', rows: shown.map(row) }] : [];
       const tabs = [['open', L('Open', 'Abertas') + (open.length ? ' ' + open.length : '')], ['resolved', L('Resolved', 'Resolvidas') + (done.length ? ' ' + done.length : '')]]
         .map(([k, label]) => ({ label, sel: String(tab === k), w: tab === k ? 600 : 400, pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ tab: k }); } }));
       const tu = C.totalUnread(), tuA = open.reduce((a, c) => a + (C.unread(c) || 0), 0);
       return { isList: true, isChat: false, isSummary: false, isPerson: false, listNote: tab === 'resolved' ? L('Resolved fires are the benchmarks for training: open one and tap Simulate to replay it from ignition and try to beat its time to resolution and area burnt.', 'Os incêndios resolvidos são as referências para o treino: abra um e toque em Simular para o repetir desde a ignição e tentar bater o tempo até à resolução e a área ardida.') : t.demo, winBg, t: { ...t, none: tab === 'resolved' ? L('No resolved fires yet. When a fire is closed its chat moves here, with every movement and decision.', 'Ainda sem incêndios resolvidos. Quando um incêndio é encerrado, a conversa passa para aqui, com todos os movimentos e decisões.') : t.none }, ic, groups, noChats: !shown.length, tabs, tabX: tab === 'resolved' ? '100%' : '0',
-        listTitle: scName || t.chats, listSub: (scName ? L('Assignments. ', 'Atribuições. ') : '') + open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tuA ? '. ' + tuA + ' ' + L('unread', 'por ler') : '') + '.' };
+        listTitle: scName || t.chats, listSub: (scName ? (GOV ? L('Incidents. ', 'Incidentes. ') : L('Assignments. ', 'Atribuições. ')) : '') + open.length + ' ' + L('open', open.length === 1 ? 'aberta' : 'abertas') + (tuA ? '. ' + tuA + ' ' + L('unread', 'por ler') : '') + '.' };
     }
 
     const c = C.get(s.key);
@@ -980,7 +981,7 @@ class Component extends DCLogic {
     const srcKey = c.drill ? c.drill.from : c.key, B = c.drill || null;
     const sim = { can: !!s.fromRes && !!c.closed && !c.dismissed && !!C.get(srcKey),   // only on a fire opened from the Resolved tab
       label: c.drill ? L('Try again', 'Tentar de novo') : L('Simulate this fire', 'Simular este incêndio'),
-      note: L('Replays this fire from its ignition with the same stations and crew coordinators. Your decisions set the outcome, compared with the real one at the end.', 'Repete este incêndio desde a ignição, com os mesmos quartéis e coordenadores. As suas decisões definem o resultado, comparado no fim com o real.'),
+      note: L('Replays this fire from its ignition with the same stations, officers and crews. Your decisions set the outcome, compared with the real one at the end.', 'Repete este incêndio desde a ignição, com os mesmos quartéis, chefias e equipas. As suas decisões definem o resultado, comparado no fim com o real.'),
       go: () => { const k = C.simulate(srcKey); if (!k) return; try { sessionStorage.setItem('wf-chat-open', k); if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this._n = -1; this.setState({ view: 'chat', key: k, fromList: true, stack: [], sheet: false, hTab: 'all' }); } };
     const cmp = (mine, real, better, fmt, time) => { if (!B || mine == null || real == null) return { cmp: '', cmpD: 'none', cmpC: '#545458' }; const d = mine - real, good = better === 'less' ? d <= 0 : d >= 0;
       const w = time ? (d < 0 ? L('faster', 'mais rápido') : L('slower', 'mais lento')) : (d < 0 ? L('less', 'menos') : L('more', 'mais'));

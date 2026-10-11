@@ -39,7 +39,7 @@
   }
   function frame() {
     if (ifr) return ifr;
-    ifr = document.createElement('iframe'); ifr.src = 'Main.dc.html?menu=1'; ifr.title = 'Menu'; ifr.setAttribute('allow', 'web-share; clipboard-write');
+    ifr = document.createElement('iframe'); ifr.src = 'Main.dc.html?menu=1' + (/Login\.dc\.html/.test(location.pathname) ? '&login=1' : '');   /* (Oct 11, 19:30) on the login screen: the app's settings */ ifr.title = 'Menu'; ifr.setAttribute('allow', 'web-share; clipboard-write');
     /* (Oct 11, 00:55) the menu and its settings no longer push or resize the screen: they lie over it. The menu's frame sits inside the
        screen's frame, above the screen and under the menu button, and is uncovered from the right (the icon column, then the section) */
     ifr.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:150;visibility:hidden;background:transparent;clip-path:inset(0px 0px 0px 100%);-webkit-clip-path:inset(0px 0px 0px 100%);transition:clip-path ' + DUR + 'ms ' + EASE + ', -webkit-clip-path ' + DUR + 'ms ' + EASE;

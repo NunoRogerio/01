@@ -13,9 +13,10 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791744000"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791746000"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="i18n.js?v=1791736227"></script>
+<script src="menu.js?v=1791746000"></script>
 
 <title>Log in</title>
 <script src="./support.js"></script>
@@ -33,6 +34,9 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
 .opt{transition:background-color .15s ease}
 .opt:active{background-color:#E5E5EA}
 @media (hover:hover){.opt:hover{background-color:#F2F2F7}}
+/* (Oct 11, 19:30) the app's menu on the login screen: the dark round button, top right, as the menu button on every screen */
+.wf-mb{background:#3A3A3C!important;color:#FFFFFF!important;transition:opacity .25s ease,background-color .15s ease}.wf-mb[data-wf-x]{background:#1C1C1E!important}
+html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
 .go{transition:background-color .15s ease}
 @media (hover:hover){.go:hover{background:#2C2C2E}}
 .go:active{background:#C3DE12}
@@ -48,6 +52,7 @@ html,body,a,button,input,select,textarea,label,[role=button],[role=radio]{touch-
 .wf-seg .segopt[aria-selected=true]{color:#FFFFFF}</style>
 </helmet>
 <div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; padding: 56px 16px 40px; background: transparent; overflow: hidden; opacity: {{lvOp}}; transform: translateY({{lvY}}); transition: opacity .6s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.2,.8,.2,1); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+  <span data-wf-burger="1" aria-hidden="true" style="position: absolute; z-index: 5; top: calc(var(--wf-top, 0px) + 16px); right: 8px; width: 44px; height: 44px; border-radius: 50%; visibility: hidden"></span>
   <!-- The sign-in fields sit at the middle of the screen: equal regions above and below them.
        The logo group is centred in the region above; the hint, log-in button and credits fill the one below. -->
   <div style="flex: 0 0 auto; display: flex; justify-content: center; padding-top: 24px">
@@ -337,7 +342,7 @@ class Component extends DCLogic {
     if (fromX) { this.setState({ spin: true }); this._pt2 = setTimeout(fold, 320); } else fold();
   }
   componentWillUnmount() { clearTimeout(this._eyeT0); clearInterval(this._eyeT); clearTimeout(this._pt); clearInterval(this._bgT); const h = document.getElementById('wf-login-bg'); if (h) h.remove(); }
-  componentDidUpdate() { this.paintBg(); }
+  componentDidUpdate() { this.paintBg(); try { const st = this.state || {}; document.documentElement.classList.toggle('wf-lgbusy', !!(st.open || st.cpOpen || st.leaving)); } catch (e) {} }   /* (Oct 11, 19:30) the menu button gives way to the profile picker, the profile form and sign in */
   // The photos sit behind the whole window (not inside the scaled phone frame), so they reach every edge.
   paintBg() {
     const B = this._bgs; if (!B) return;
@@ -563,6 +568,7 @@ class Component extends DCLogic {
         try { const h = document.getElementById('wf-login-bg'), L = h ? [].slice.call(h.children).filter((d) => d.__on) : [], d = L[0];
           if (d) { const m = /matrix\(([^,]+)/.exec(getComputedStyle(d).transform || ''), u = /splash\/([^")]+)/.exec(d.style.backgroundImage || '');
             if (u) window.__wfSoftPhoto = { f: u[1], s: m ? parseFloat(m[1]) : 1, t: Date.now() }; } } catch (x) {}
+        try { document.documentElement.classList.add('wf-lgbusy'); if (window.__wfMenu && document.documentElement.classList.contains('wf-menuopen')) window.__wfMenu.close(); } catch (x) {}
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
         setTimeout(() => { window.location.href = typeof wfHomeUrl === 'function' ? wfHomeUrl() : 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
         if (window.__wfSetY) window.__wfSetY(sel[9] || sel[0]);   // the signed-in profile's hi-vis colour, from the loading screen on

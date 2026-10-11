@@ -1874,13 +1874,13 @@
     /* (Oct 5) after a fire is finished and the person is back home: the incident newly assigned to them, if any */
     newAssignedPeek: function (snap) { if (snap === null) return null; try { snap = JSON.parse(snap || '[]'); } catch (e) { snap = []; }
       var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
-      if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };
+      if (lk && (!SC || SC.st !== lk)) SC = { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: null };
       var op = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && inScope(c, SC); }).sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
       var n = ownedChats(op, true).filter(function (c) { return snap.indexOf(c.key) < 0; }); return n.length ? n[0].key : null; },
     offer: function () { return offerKey(); }, offerNow: function () { offerRender(); },
     snapAssigned: function () { try { sessionStorage.setItem('wf-assign-snap', JSON.stringify(mineKeys())); } catch (e) {} },
     totalUnread: function () { var db = load(), SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var r0 = null; try { r0 = localStorage.getItem('wf-role'); } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[r0 || ''] || null;
-      if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' };   /* as the chats list reads it */
+      if (lk && (!SC || SC.st !== lk)) SC = { st: lk, co: null }; SC = SC && SC.st ? SC : { st: 'CA', co: null };   /* as the chats list reads it */
       var inSc = function (c) { return inScope(c, SC); };
       var op = Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return !c.closed && inSc(c); }).sort(function (a, b) { return (unread(b) ? 1 : 0) - (unread(a) ? 1 : 0) || (b.updated || 0) - (a.updated || 0); });
       return ownedChats(op, true).reduce(function (a, c) { return a + unread(c); }, 0); },   /* only the incidents assigned to this fire owner count */
@@ -1978,7 +1978,7 @@
   // screen, the incident's own page included, until Enroll or Snooze. Tapping the card opens the incident's page.
   var OFK = 'wf-offer', OFS = 'wf-offer-shown', SNZ = 'wf-offer-snooze-' + RK, SNOOZE = 15 * MIN;
   function scopeNow() { var SC = null; try { SC = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} SC = SC || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role || ''] || null;
-    if (lk && (!SC || SC.st !== lk)) SC = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; return SC && SC.st ? SC : { st: 'CA', co: 'Los Angeles' }; }
+    if (lk && (!SC || SC.st !== lk)) SC = { st: lk, co: null }; return SC && SC.st ? SC : { st: 'CA', co: null }; }
   function isHome() { return /Main\.dc\.html$|\/$/.test(location.pathname); }
   function stationProfile() { try { return !!(window.__wfMine && window.__wfMine()); } catch (e) { return false; } }
   function offerPick() {

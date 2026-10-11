@@ -285,7 +285,7 @@
   function regionLabel() { var G = window.__wfGeo, sc = null; try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} sc = (sc && sc.st) ? sc : (window.__wfMem || {}).scope || null; var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; var st = lk || (sc && sc.st) || 'CA'; return (G && G.states && G.states[st] && G.states[st].label) || S.region; }
   function regionHeat(rg, X, NUM) {
     var G = window.__wfGeo, sc = null, role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {}
-    sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = lk === 'CA' ? { st: 'CA', co: 'Los Angeles' } : { st: lk, co: null }; sc = sc && sc.st ? sc : { st: 'CA', co: 'Los Angeles' };
+    sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = { st: lk, co: null }; sc = sc && sc.st ? sc : { st: 'CA', co: null };
     var g = G && sc && G.states && G.states[sc.st];   /* the whole state or country, whichever county or district is picked */
     if (sc && !(g && g.d)) { var og = outline(sc.st); if (og) g = og; }   /* no outline drawn by the map: use ours */ if (!g || !g.box) return '';
     var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
