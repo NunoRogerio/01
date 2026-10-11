@@ -17,12 +17,12 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791722181"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791726064"></script>
+<script src="prefs.js?v=1791726270"></script>
 <script src="station.js?v=1791720454"></script>
 <script src="menu.js?v=1791716515"></script>
 <script src="i18n.js?v=1791720865"></script>
-<script src="live.js?v=1791720454"></script>
-<script src="chat.js?v=1791720577"></script>
+<script src="live.js?v=1791726270"></script>
+<script src="chat.js?v=1791726270"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -742,7 +742,7 @@ class Component extends DCLogic {
       window.__wfHelpIn = () => { if (taken() || !C.helpIn) return null; return C.helpIn(Object.assign({}, args, { id: 'helpin-' + fid, help: null, helpIn: Object.assign({}, args.help) })); };
       const lbl = L('Ask ' + rn + ' if they need help', 'Perguntar se ' + rn + ' precisa de ajuda');
       try { const v = taken() ? '' : JSON.stringify({ id: fid, place: nf.r[3] || '', km: Math.round(nf.km), rn }); if ((localStorage.getItem('wf-help-offer') || '') !== v) { if (v) localStorage.setItem('wf-help-offer', v); else localStorage.removeItem('wf-help-offer'); } } catch (e) {}
-      return { on: !taken(), lbl, go, fid, place: nf.r[3] || L('Unnamed fire', 'Incêndio sem nome'), km: nf.km, rn }; })();
+      return { on: !taken(), lbl, go, fid, place: (window.__wfFireName ? window.__wfFireName(nf.r[3], nf.r[10] || nf.r[1], nf.r[2]) : nf.r[3]) || nf.r[1] || nf.r[0], km: nf.km, rn }; })();
     if (help.on) { let hg = null; try { hg = sessionStorage.getItem('wf-help-go'); if (hg) sessionStorage.removeItem('wf-help-go'); } catch (e) {} if (hg) setTimeout(() => help.go(), 300); }   /* from the notification */
     /* (Oct 8, 22:52) offering help is a To do item (not a button under the cards): homeAsg lists it on the next draw */
     { const k = help.on ? help.fid : ''; if ((this._helpOffer && this._helpOffer.fid) !== (k || undefined)) { this._helpOffer = help.on ? help : null; setTimeout(() => this.forceUpdate(), 0); } else if (help.on) this._helpOffer = help; }

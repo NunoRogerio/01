@@ -42,7 +42,7 @@ window.__wfRegionUp = function (st, co) {
   var PT_URL='https://api.fogos.pt/v2/incidents/active';
   var STATES=['CA','AZ','OR','NV','NM','WA','ID','CO','UT','MT'];
   var PT_DISTRICTS=['Aveiro','Beja','Braga','Bragança','Castelo Branco','Coimbra','Évora','Faro','Guarda','Leiria','Lisboa','Portalegre','Porto','Santarém','Setúbal','Viana do Castelo','Vila Real','Viseu','Açores','Madeira'];
-  var KEY='wf-live-fires-v15', TTL=5*60*1000;
+  var KEY='wf-live-fires-v16', TTL=5*60*1000;
 
   function toXY(lat,lon){return [Math.round((lon+118.13)*2345+518),Math.round((34.19-lat)*2829+662)];}
   /* (Oct 11, 08:50, app-wide) elapsed time in days, hours and minutes, never hundreds of minutes: "12 min ago", "8 h 7 min ago", "1 d 3 h ago" */
@@ -58,6 +58,9 @@ window.__wfRegionUp = function (st, co) {
   var PT_TYPE={'mato':'Scrubland','povoamento florestal':'Forest stand','agricola':'Agricultural','queimada':'Controlled burn','queima':'Debris burning','consolidacao de rescaldo':'Mop-up','incendio urbano':'Urban'};
   DIST['acores']='Açores';DIST['regiao autonoma dos acores']='Açores';DIST['madeira']='Madeira';DIST['regiao autonoma da madeira']='Madeira';
 
+  // (Oct 11) every US incident has a name: its own, else its point-of-origin town, else its county, else its state
+  function usName(p,st){var ref=p.POOCity?title(p.POOCity):p.POOCounty?title(p.POOCounty)+(st==='LA'?' Parish':' County'):window.__wfRegion(st,'');
+    var raw=title(p.IncidentName||''),nm=window.__wfFireName(raw,ref);if(nm!==raw||!raw){window.__wfNameFix[raw.toUpperCase()]=ref;if(p.UniqueFireIdentifier)window.__wfNameFix[p.UniqueFireIdentifier]=ref;}return nm;}
   function buildUS(fc){
     var out=[];
     (fc.features||[]).forEach(function(f){
@@ -75,7 +78,7 @@ window.__wfRegionUp = function (st, co) {
       var info={src:'NIFC · WFIGS',st:S[0],stEn:S[1],tone:S[2],pc:pc!=null?Math.round(pc):null,beh:p.FireBehaviorGeneral||'',cause:p.FireCause||'',
         startMs:p.FireDiscoveryDateTime||null,updMs:p.ModifiedOnDateTime_dt||null,ac:p.IncidentSize!=null?Math.round(p.IncidentSize):null,ha:p.IncidentSize?+(p.IncidentSize*0.4047).toFixed(1):null,
         resolved:S[0]!=='Active',heldMs:p.ContainmentDateTime||p.ControlDateTime||p.FireOutDateTime||null,heldSrc:'containment report',tCont:p.ContainmentDateTime||null,tCtrl:p.ControlDateTime||null,tOut:p.FireOutDateTime||null,place:[p.POOCounty?p.POOCounty+' County':'',st].filter(Boolean).join(' · ')};
-      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),(window.__wfFireName?window.__wfFireName(title(p.IncidentName||'')):title(p.IncidentName||'Unnamed fire')),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
+      out.push({r:[st,p.POOCounty||'',p.UniqueFireIdentifier||('US-'+out.length),usName(p,st),note,xy[0],xy[1],res,info.ha,info,p.POOCity?title(p.POOCity):''],w:p.IncidentSize||0});
     });
     return out;
   }
@@ -98,7 +101,7 @@ window.__wfRegionUp = function (st, co) {
         startMs:i.dateTime&&i.dateTime.sec?i.dateTime.sec*1000:(i.created&&i.created.sec?i.created.sec*1000:null),updMs:i.updated&&i.updated.sec?i.updated.sec*1000:null,
         ha:BA&&BA.total?Math.round(BA.total*10)/10:null,burn:BA&&BA.total?{forest:BA.povoamento||0,scrub:BA.mato||0,farm:BA.agricola||0}:null,
         resolved:sc>=8,heldMs:sc>=8&&i.updated&&i.updated.sec?i.updated.sec*1000:null,heldSrc:'last status update',sc:sc,place:[i.concelho?title(i.concelho):'',d].filter(Boolean).join(' · ')};
-      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||'Incêndio'),note,xy[0],xy[1],res,info.ha,info,i.freguesia&&i.concelho?title(i.concelho):''],w:man+air*20});
+      out.push({r:['PT',d,'PT-'+(i.id||out.length),title(i.freguesia||i.concelho||i.location||d||'Portugal'),note,xy[0],xy[1],res,info.ha,info,i.freguesia&&i.concelho?title(i.concelho):''],w:man+air*20});
     });
     return out;
   }
@@ -129,7 +132,7 @@ window.__wfRegionUp = function (st, co) {
       var ll=Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W');
       // p[9..11] = nearest named place (GeoNames), km and direction from it; older files have none
       var nm=p[9]||'',km=p[10],dir=p[11]||'';
-      var place=nm||'Hotspot '+ll;   // the distance and direction from it are on the location row
+      var place=nm||window.__wfRegion(p[0],p[1]||'').split(',')[0];   // the distance and direction from it are on the location row
       var DW={N:'north',NE:'northeast',E:'east',SE:'southeast',S:'south',SW:'southwest',W:'west',NW:'northwest'};
       var nearTxt=nm?(km>=1.5?(km<10?km.toFixed(1).replace(/\.0$/,''):Math.round(km))+' km '+(DW[dir]||dir)+' of '+nm:'In '+nm):'';
       var id='HS-'+Math.round((lat+90)*100)+'-'+Math.round((lon+180)*100);
@@ -238,6 +241,9 @@ window.__wfRegionUp = function (st, co) {
   }
   // British Columbia Wildfire Service: active fires with crews / aviation / heavy equipment counts.
   var BC_STAGE={OUT_CNTRL:'Out of control',HOLDING:'Being held',UNDR_CNTRL:'Under control'};
+  // (Oct 11) BC fires known by a code (V11908) take the service's own location line ("Mount Tearse"), else their fire centre
+  function bcName(i){var raw=String(i.incidentName||'').trim(),ref=String(i.incidentLocation||'').trim()||(i.fireCentreName?String(i.fireCentreName).replace(/\s+Fire Centre$/i,''):'British Columbia');
+    var nm=window.__wfFireName(raw,ref);if(nm!==raw){window.__wfNameFix['BC-'+(i.incidentNumberLabel||raw)]=ref;if(raw)window.__wfNameFix[raw.toUpperCase()]=ref;}return nm;}
   function buildBC(js){
     var out=[];
     (js&&js.data||[]).forEach(function(i){
@@ -250,7 +256,7 @@ window.__wfRegionUp = function (st, co) {
       var upd=i.lastUpdatedTimestamp?new Date(i.lastUpdatedTimestamp).toLocaleString([], {day:'numeric',month:'short',hour:'numeric',minute:'2-digit'}):'';
       var res=has?{crews:cnt.crews,aerial:cnt.aerial,heavy:cnt.heavy,imt:cnt.imt,structure:cnt.structure,status:st,start:i.discoveryDate?new Date(i.discoveryDate).toLocaleDateString([], {day:'numeric',month:'short'}):'',updated:upd,src:'BC Wildfire Service'}:null;
       var xy=toXY(lat,lng);
-      out.push({r:['CAN','British Columbia','BC-'+(i.incidentNumberLabel||out.length),title(i.incidentName||i.incidentNumberLabel||'Wildfire'),note,xy[0],xy[1],res,ha||null,undefined,i.fireCentreName||''],w:ha||0});
+      out.push({r:['CAN','British Columbia','BC-'+(i.incidentNumberLabel||out.length),bcName(i),note,xy[0],xy[1],res,ha||null,undefined,i.fireCentreName||''],w:ha||0});
     });
     return out;
   }
@@ -472,7 +478,7 @@ window.__wfRegionUp = function (st, co) {
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows){if(window.__wfFireName)c.rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3]);});window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
+  if(c.rows){if(window.__wfFireName)c.rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3],r[10],r[2]);});window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
   var fresh=function(k){return c[k]&&now-c[k]<TTL;};
   var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};

@@ -145,7 +145,7 @@
       var re = p.name + ' (' + p.org + ') left the chat: station not sent', n0 = c.msgs.length; c.msgs = c.msgs.filter(function (m) { return !(m && m.kind === 'sys' && m.en === re); });
       if (c.queue) c.queue = c.queue.filter(function (q) { return !(q && q.m && q.m.kind === 'sys' && q.m.en === re); });
       if (c.msgs.length !== n0) p.left = false; }); }
-  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code is an Unnamed fire */
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place, c.reg ? String(c.reg).split(',')[0] : '', c.incId); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code takes its nearby reference */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
   /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
@@ -319,7 +319,7 @@
      open chat for the same fire by name within 3 km. One fire, one chat, one stage everywhere */
   function chatFor(inc) { try { if (!inc) return null; var D = load().chats, id = String(inc.id || ''), raw = id.replace(/^F-/, ''), K = [keyOf(inc), 'f:' + id, 'c:' + raw, 'f:' + raw, 'f:F-' + raw];
       for (var i = 0; i < K.length; i++) if (id && D[K[i]]) return D[K[i]];
-      var nm = String((window.__wfFireName ? window.__wfFireName(inc.place || '') : inc.place) || '').toLowerCase().trim(); if (!nm) return null;
+      var nm = String((window.__wfFireName ? window.__wfFireName(inc.place || '', '', inc.id) : inc.place) || '').toLowerCase().trim(); if (!nm) return null;
       var la = +inc.lat, lo = +inc.lon, best = null;
       Object.keys(D).forEach(function (k) { var c = D[k]; if (!c || c.kind === 'dm' || String(c.place || '').toLowerCase().trim() !== nm) return; if (inc.kind === 'cand' ? c.kind !== 'cand' : (c.kind === 'cand' && !(c.stage >= 1))) return;
         if (isFinite(la) && isFinite(lo) && la && c.lat) { var dy = (c.lat - la) * 111, dx = (c.lon - lo) * 111 * Math.cos(la * Math.PI / 180); if (dx * dx + dy * dy > 9) return; }
@@ -331,7 +331,7 @@
     { var ex = chatFor(inc); if (ex) return ex; }   /* (Oct 10) never a second chat for the same fire */
     var now = Date.now();
     var stage = inc.kind === 'cand' ? 0 : stageFromCode(inc.sc);
-    var ch = { key: k, kind: inc.kind, incId: inc.id, place: (window.__wfFireName ? window.__wfFireName(inc.place || '') : inc.place || ''), reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
+    var ch = { key: k, kind: inc.kind, incId: inc.id, place: (window.__wfFireName ? window.__wfFireName(inc.place || '', inc.reg ? String(inc.reg).split(',')[0] : '', inc.id) : inc.place || ''), reg: inc.reg || '', st: inc.st || '', lat: +inc.lat || 0, lon: +inc.lon || 0,
       x: inc.x, y: inc.y, note: inc.note || '', conf: inc.conf || null, src: inc.src || '', det: inc.det || null,
       stage: stage, startStage: stage, started: now, vNow: now, vAt: now, hist: [], people: [], stations: [], forces: [], air: null, evac: null,
       msgs: [], queue: [], seenAt: 0, beat: 0, flags: {}, closed: false, dismissed: false, updated: now };

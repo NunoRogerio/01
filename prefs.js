@@ -37,9 +37,16 @@ window.__wfAirBadge = function () { return 'data:image/svg+xml,' + encodeURIComp
 /* Helicopter badge: the station-crest look (a shield) with a helicopter, for aircraft in crew lists */
 window.__wfHeliBadge = function () { return 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><path d="M20 3 34 7.5v11.5c0 8.6-5.9 14.6-14 17.5C11.9 33.6 6 27.6 6 19V7.5Z" fill="#1F3A68" stroke="#D9A520" stroke-width="1.6" stroke-linejoin="round"/><g fill="#FFFFFF" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.2h19" stroke-width="1.6" fill="none"/><path d="M20 13.2v2.6" stroke-width="1.6" fill="none"/><path d="M14.3 17.6c0-1.1.9-1.8 2-1.8h5.4c3.4 0 6 2.2 6.6 5.2l.2 1.1c.1.7-.4 1.3-1.1 1.3H17.3c-1.7 0-3-1.3-3-3Z" stroke-width="0.6"/><path d="M14.4 19.2H9.6l-1.2-2.6" stroke-width="1.5" fill="none"/><path d="M16.6 26.6h11" stroke-width="1.5" fill="none"/><path d="M18.6 23.6v3M25.2 23.6v3" stroke-width="1.3" fill="none"/></g><path d="M22.4 17.4h3.2c1 .5 1.7 1.3 2 2.3h-5.2Z" fill="#8FB3E8"/></svg>'); };
 /* (Oct 9, 12:11) an incident's name: a candidate is called by its place ("Altadena"); once declared a fire it is "Altadena Fire"
-   (pt "Incêndio de Altadena"), everywhere. Names that already say fire, or say none (Unnamed fire, Near …), are kept */
+   (pt "Incêndio de Altadena"), everywhere. Names that already say fire, or start with Near, are kept */
 window.__wfIncName = function (p, fire) { p = String(p || '').trim(); if (!fire || !p || /\bfire\b|\bincêndio\b|^near |^perto de /i.test(p)) return p; return /^pt/i.test(document.documentElement.lang || '') ? 'Incêndio de ' + p : p + ' Fire'; };
-window.__wfFireName = function (p) { p = String(p || '').trim(); return !p || /^[A-Za-z]{2,5}-?\d{3,}$/.test(p) || /^unnamed$/i.test(p) ? 'Unnamed fire' : p; };   /* a fire known only by its incident code (LAC-350855) is called Unnamed fire on every screen */
+/* (Oct 11, 14:45) no unnamed incidents: a fire known only by its code (LAC-350855, V11908) or by no name takes the nearest
+   place reference its source gives (US: the point-of-origin town, else the county; BC: the official location line, e.g. "Duck FSR";
+   else its region), so it reads "Hemet Fire". __wfNameFix maps a code or an incident id to that reference (live.js fills it) */
+window.__wfNameFix = window.__wfNameFix || {};
+window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(!p || /^[A-Za-z]{2,5}-?\d{3,}$/.test(p) || /^[A-Z]\d{4,}$/i.test(p) || /^unnamed( fire)?$/i.test(p) || /^incêndio sem nome$/i.test(p))) return p;
+  var F = window.__wfNameFix, f = (id && F[id]) || F[p.toUpperCase()] || String(ref || '').trim();
+  if (!f && id) { var r = (window.__wfLiveFiresAll || []).find(function (x) { return x && x[2] === id; }); if (r && r[3] && r[3] !== p) f = window.__wfFireName(r[3], r[10]); }
+  return f || (/unnamed|sem nome/i.test(p) ? '' : p); };
 // User preferences: theme (light / dark) and text size (condensed / normal / comfortable).
 // The screens are written with inline light-theme colours and pixel font sizes, so the preferences are applied as
 // one override style sheet: every known colour and size is matched where the browser writes it and swapped.

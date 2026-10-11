@@ -16,11 +16,11 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791722181"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791726064"></script>
+<script src="prefs.js?v=1791726270"></script>
 <script src="station.js?v=1791720454"></script>
 <script src="i18n.js?v=1791720865"></script>
-<script src="live.js?v=1791720454"></script>
-<script src="chat.js?v=1791720577"></script>
+<script src="live.js?v=1791726270"></script>
+<script src="chat.js?v=1791726270"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -2019,7 +2019,7 @@ class Component extends DCLogic {
         const reg = frow && window.__wfPlaceUp ? window.__wfPlaceUp(frow.st, frow.co) : '';
         const NM = (t) => window.__wfIncName ? window.__wfIncName(t, true) : t;   /* (Oct 9, 12:11) a fire's name says Fire */
         return ign ? { title: NM(fv.place), c: '#000000', sub: reg || 'Confirmed by satellite', kind: s.crew ? 'Configure dispatch' : 'Active', tagD: RO || s.crew ? 'none' : 'flex', pillD: 'none', pre: 'Detected', el, t0, postD: pt ? 'none' : 'inline', detAria: 'Detected ' + el + ' ago' }
-          : { title: fv ? (/^[A-Za-z]{2,5}-?\d{3,}$/.test(fv.place || '') ? (frow && frow.parent ? 'Near ' + frow.parent : 'Unnamed fire') : NM(fv.place)) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held' : 'Active', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
+          : { title: fv ? NM(window.__wfFireName ? window.__wfFireName(fv.place, (frow && frow.parent) || reg, fv.id) : fv.place) : 'North ridge', c: '#000000', sub: reg || ('Fire ' + fireId), kind: HELD ? 'Held' : 'Active', tagD: 'none', pillD: RO ? 'none' : 'flex', pre: '', el: '', t0: 0, postD: 'none', detAria: '' }; })(),
       vmD: !sent ? 'block' : 'none', kpiPad: !sent ? '32px 20px 0' : '16px 20px 0',
       mapOp: !sent && !s.full ? 0 : 1, mapPE: !sent && !s.full ? 'none' : 'auto', mapGap: !sent && !s.full ? 0 : 230, mapCloseX: !sent ? 'true' : 'false', panelRad: !sent && !s.full ? '0' : '28px 28px 0 0', panelSh: !sent && !s.full ? 'none' : '0 0 16px rgba(0,0,0,0.08)', openMap: () => this.setState({ full: true, open: false, cfg: false }),
       fireSt: window.__wfLiveMap ? stC : '', fireId, fireX: FIRE[0], fireY: FIRE[1], hasRes: !!fres, res: resView, fireTitle: fv ? fv.place : 'North ridge', fireSub: 'Fire ' + fireId, sentH: RO ? (844 - (this._hdrB || 170)) + 'px' : (s.sentUp ? Math.min(700, 844 - (this._hdrB || 170) - 8) : (this._sbMin || 250)) - (s.sbDy || 0) + 'px', sbGrabD: RO ? 'none' : 'flex', sbFlat: RO ? 'flat' : '', sbRad: RO ? '0' : '28px 28px 0 0', sbSh: RO ? 'none' : '0 0 16px rgba(0,0,0,0.08)', sbPadT: '0', sbPadB: RO ? '32px' : '30px', actDir: RO ? 'row' : 'column', actGap: RO ? '8px' : '16px', pgCls: RO ? 'wf-page' : 'wf-snap', sbBg: RO ? 'transparent' : '#F2F2F7', pgOn: RO ? '1' : '0', pgMapD: RO ? 'block' : 'none', pgPadT: RO ? '52px' : '0', hdTagD: RO && !s.crew ? 'inline-flex' : 'none', crTagD: s.crew ? 'inline-flex' : 'none', stIcD: s.crew ? 'inline' : 'none',   /* Configure dispatch: the fire-station marker and how many stations are free, as the candidate band shows its state */ backD: s.crew ? 'flex' : 'none', hdPadL: RO ? '4px' : '8px',
@@ -2068,7 +2068,7 @@ class Component extends DCLogic {
         try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
         let ll = { lat: R.lat, lon: R.lon }; try { if (frow && INFO) ll = this.wfFireLL(frow, INFO) || ll; } catch (e) {}
         const ok = isFinite(ll.lat) && isFinite(ll.lon), gps = ok ? Math.abs(ll.lat).toFixed(2) + '\u00b0' + (ll.lat >= 0 ? 'N' : 'S') + ' ' + Math.abs(ll.lon).toFixed(2) + '\u00b0' + (ll.lon >= 0 ? 'E' : 'W') : '';
-        let place = R.place || ''; try { if (window.__wfFireName) place = window.__wfFireName(R.place) || place; } catch (e) {}
+        let place = R.place || ''; try { if (window.__wfFireName) place = window.__wfFireName(R.place, R.co || R.parent || '', R.id) || place; } catch (e) {}
         let startTxt = ''; try { if (window.__wfClock && INFO) startTxt = window.__wfClock(INFO.startMs, R.st, ll.lon) || ''; } catch (e) {}
         let c = null; try { c = C.police({ id: R.id, place, reg: R.co || R.parent || '', st: R.st || '', lat: ll.lat, lon: ll.lon, x: R.x, y: R.y, gps, startTxt, night: !!night }); } catch (e) { try { console.error('Night report', e); } catch (x) {} }
         if (c) { try { sessionStorage.setItem('wf-call-auto', c.key); } catch (e) {} window.location.href = 'Chat.dc.html'; } }, () => this._rgo(true)),
