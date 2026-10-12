@@ -20,7 +20,7 @@
 <script src="station.js?v=1791834155"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791834469"></script>
+<script src="chat.js?v=1791834836"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -31,7 +31,7 @@
 <body>
 <x-dc>
 <helmet>
-<style>
+<style>@keyframes wf-hflip{from{transform:perspective(600px) rotateX(-90deg);opacity:.3}to{transform:none;opacity:1}}
 /* (Oct 9, 17:49) a card put off with Not yet lives in the sticky stack only (minimised there), not twice */
 article.chmsg[data-snz="1"]{display:none!important}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
@@ -120,7 +120,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <!-- (Oct 4, 23:15) the stage as the fire page's stage tag (icon, stage, time in it on the right); a tap unfolds the times and the next step -->
       <div style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 0 16px 24px; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><!-- (Oct 9, 09:03) the stage band is the way into the incident's page (a blade over the chat); stages move from the chat's cards and chips --><button type="button" class="chrow" data-wf-stband="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: 24px; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{c.bg}}; color: {{c.stC}}; font-size: 17px; line-height: 22px; white-space: nowrap; transition: background-color .6s ease">
+        <span style="animation: {{c.flip}}; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{c.bg}}; color: {{c.stC}}; font-size: 17px; line-height: 22px; white-space: nowrap; transition: background-color .6s ease">
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.ic.d}}"></path></svg></span>
           <span style="flex: 0 1 auto; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span>
           <span style="display: {{c.forD}}; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: auto; font-size: 16px; line-height: 20px; font-weight: 400; font-variant-numeric: tabular-nums">{{c.forT}}</span><!-- (Oct 9, 16:06) "Visit fire" in annotation size, 16px before a 20% larger chevron --><span style="flex-shrink: 0; margin-left: {{c.arML}}; font-size: 16px; line-height: 20px; font-weight: 400">{{c.visit}}</span>
@@ -1323,6 +1323,7 @@ class Component extends DCLogic {
           if (window.__wfHomesSafe) window.__wfHomesSafe(safe && !c.closed && document.visibilityState !== 'hidden' ? { id: c.key, title: L('Structures are now safe', 'As habitações estão seguras'), sub: HT.sub } : null); }, 0);
         return { rk: { tagD: HT && !c.closed && !c.dismissed ? 'inline-flex' : 'none', dock: H.ackd || safe ? '1' : '0', id: H.id, tag: HT ? HT.tag : '', txt: HT ? (safe ? L('Structures are now safe', 'As habitações estão seguras') : HT.title) : '', sub: HT ? HT.sub : '', op: safe ? '0.32' : '1', pe: safe ? 'none' : 'auto', flt: safe ? 'grayscale(1)' : 'none' } }; })(),
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + (window.__wfIncName ? window.__wfIncName(c.place, c.kind !== 'dm' && !c.police && (c.stage >= 1 || c.kind === 'fire') && !c.dismissed) : c.place), sub: c.kind === 'dm' ? c.reg : B ? benchTxt : (c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')), subD: c.kind === 'dm' || B || !c.people.length ? 'flex' : 'none',   /* (Oct 10, 23:29) no region under an incident's name in the chat header */
+        flip: (() => { /* (Oct 12, 21:00) the stage moves forward: the stage button flips over (0.99 s, as the duty card) */ const L0 = this._stLast = this._stLast || {}; if (L0[c.key] != null && c.stage > L0[c.key]) { const t = this._stFlipAt = Date.now(); setTimeout(() => { if (this._stFlipAt === t) this.forceUpdate(); }, 1050); } L0[c.key] = c.stage; return Date.now() - (this._stFlipAt || 0) < 1000 ? 'wf-hflip .99s cubic-bezier(.2,.8,.2,1) both' : 'none'; })(),
         st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
           return { forT: d || '', forD: 'none', arML: 'auto', visit: (c.kind === 'fire' || c.stage >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : (!c.dismissed && C.candMeta && C.candMeta(c)) || L('View', 'Ver'),   /* (Oct 11, 07:11) a candidate: when it was detected */ ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
