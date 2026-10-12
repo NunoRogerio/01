@@ -227,6 +227,12 @@
       setStage(c, 2, 1500, 1); return true; }
     return true; }
   function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; if (!(c.stations || []).length) { if (!c.closed && !c.dismissed) teamLater(c); return false; } if (repairEmpty(c)) return true; var ch = migrateFlow(c) || soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
+    /* (Oct 12, 12:20) chats saved before: our engine's crew is led by its Captain (the Battalion Chief is the commander, on no engine), and the
+       Battalion Chief reads as the commander in the team */
+    if (!c.cmdFix) { c.cmdFix = true; ch = true; (c.forces || []).forEach(function (f) { var SF = staffOf((c.stations || [])[f.si] || {}) || staffOf({ ck: f.ck }); if (!SF || f.coord !== SF.captain) return; f.coord = f.second ? SF.lead2 : SF.lead; f.crew = (f.crew || []).filter(function (n) { return n !== f.coord && n !== SF.captain; }); }); }
+    { var CM = commander(c); if (CM) (c.people || []).forEach(function (p, pi) { if (p.name === CM.name && p.kind === 'lead') { if (p.roleEn !== CM.en) { p.roleEn = CM.en; p.rolePt = CM.pt; ch = true; } return; }
+        if (p.kind !== 'lead' || p.roleEn) return; var f = (c.forces || []).find(function (x) { return x.coord === p.name; }), v = f && (f.veh || [])[0]; if (!v) return;   /* every other station in the chat speaks through its engine's Captain */
+        p.roleEn = (isUS(c) ? 'Captain. ' : 'Crew chief. ') + v + '. ' + p.org; p.rolePt = (isUS(c) ? 'Capitão. ' : 'Chefe de equipa. ') + v + '. ' + p.org; ch = true; }); }
     /* (Oct 8, 22:43) chats saved before the reservation: Station 11's people (its captain, lieutenants and crews) are never someone else in another station's chat */
     if (window.__wfReservedNames && !c.fixedRes2) { var RS0 = window.__wfReservedNames(), own = {}; (c.stations || []).forEach(function (q) { if (staffOf(q)) own[q.short] = 1; });
       (c.people || []).forEach(function (p, i) { if (!RS0[p.name] || own[p.org]) return; var old = p.name, nm = pickNames(c, 1, 'res' + i)[0]; if (!nm || RS0[nm]) return; p.name = nm; p.code = initials(nm);
@@ -357,8 +363,9 @@
     // a Type 3 engine 3, a Type 6 brush patrol 2, a water tender 2 (ANEPC; NWCG minimum staffing)
     var veh = staffOf(s) ? ['Engine ' + ((String(s.name).match(/(\d{1,3})\b/) || [])[1] || '11')] : vehiclesFor(c, s, si), seats = veh.reduce(function (a, v) { return a + (/VFCI|CCF|BRP|ABTF/.test(v) ? 5 : /VLCI|VLHR|BFP|UR-/.test(v) ? 3 : /VTTF|Nodriza|CCGC|AT-|Tender/.test(v) ? 2 : /Brush Patrol/.test(v) ? 2 : /^Engine/.test(v) ? 3 : 3); }, 0);
     var crew = pickNames(c, Math.max(1, seats - 1), 'crew' + si);
-    var SF = staffOf(s); if (SF) crew = SF.onDuty && SF.onDuty.length ? SF.onDuty.slice() : [SF.lead];   /* (Oct 8, 19:10) the profile station's first crew is its real crew on duty (not those on sick leave or training) */   /* (Oct 7) the profile station's first crew is led by its team lead */
-    return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: P ? P.name : '', crew: crew, veh: veh, st: st || 'standby' };
+    var SF = staffOf(s); if (SF) crew = SF.onDuty && SF.onDuty.length ? SF.onDuty.slice() : [SF.lead];
+    var cap = SF ? SF.lead : null; if (SF) crew = crew.filter(function (n) { return n !== SF.lead && n !== SF.captain; });   /* (Oct 12, 12:20) our engine is led by its Captain, never by the Battalion Chief: he commands the incident, he rides no engine */   /* (Oct 8, 19:10) the profile station's first crew is its real crew on duty (not those on sick leave or training) */   /* (Oct 7) the profile station's first crew is led by its team lead */
+    return { si: si, ck: s.ck || '', station: s.short, full: s.name, km: s.km, coord: cap || (P ? P.name : ''), crew: crew, veh: veh, st: st || 'standby' };
   }
   function setForces(c, from, to) { (c.forces || []).forEach(function (f) { if (!from || from.indexOf(f.st) >= 0) f.st = to; }); }
 
@@ -698,6 +705,10 @@
     each(function (c, f, ck) { var b = best[ck]; if (!b || better(c, b)) best[ck] = c; });
     each(function (c, f, ck) { var b = best[ck]; if (!b || b === c) return; f.st = 'released'; f.relTo = b.key; var v = (f.veh || [])[0] || f.station, n = nameOf(b);
       push(c, { kind: 'sys', en: v + ' released. Reassigned to ' + n + '.', pt: v + ' libertado. Reafetado a ' + n + '.' }, 0, 0); c.updated = Date.now(); }); }
+  /* (Oct 12, 12:20) the incident's commander in the chat: our Battalion Chief (Comandante in Portugal) when one of our stations is on it;
+     with him, the Captain of each engine sent */
+  function commander(c) { if (!c || c.kind === 'dm') return null; var SF = null, Q = null; (c.stations || []).some(function (q) { SF = staffOf(q); Q = q; return !!SF; }); if (!SF) return null;
+    var us = isUS(c), b = SF.batt || ''; return { name: SF.captain, unit: b, station: Q.short || Q.name, en: us ? 'Battalion Chief. ' + b + '. Commander' : 'Commander. ' + b, pt: us ? 'Chefe de batalhão. ' + b + '. Comandante' : 'Comandante. ' + b }; }
   /* (Oct 12, 12:05) the incident a crew profile (Captain, Engineer, Firefighter) is assigned to: its own engine is committed there */
   function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false;
     return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
@@ -2000,7 +2011,7 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
-    vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, canAct: canAct, sizeUp: sizeUp,
+    vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, canAct: canAct, sizeUp: sizeUp, commander: commander,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
