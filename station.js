@@ -261,7 +261,8 @@
   (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
     var last = Date.now(), busy = false; ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(function (ev) { window.addEventListener(ev, function () { last = Date.now(); }, { passive: true, capture: true }); });   /* only the person's own touches count as activity (a page that scrolls itself is still idle) */
     /* (Oct 12, 13:20) no assignment stays for long: 5 s idle on the home screen (or a tap on the empty state) brings the next one */
-    var load0 = Date.now(), go = function (now) { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden') return;
+    var load0 = Date.now(); ['pageshow', 'focus'].forEach(function (ev) { window.addEventListener(ev, function () { load0 = Date.now(); }); }); document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') load0 = Date.now(); });   /* (Oct 12, 19:20) the 10 s count from each visit to the home screen */
+    var go = function (now) { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden') return;
       /* (Oct 12, 19:15) a fire just finished: the slot stays empty 10 s on the home screen (a tap fills it at once); otherwise 5 s left alone */
       if (!now) { var p0 = 0; try { p0 = +localStorage.getItem('wf-asg-next') || 0; } catch (e) {} if (p0 && Date.now() - p0 < 10 * 60000) { if (Date.now() - Math.max(p0, load0) < 10000) return; } else if (Date.now() - last < 5000) return; }
       if (!now && document.querySelector('.wf-cfm,.wf-amenu')) return;
