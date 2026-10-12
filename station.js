@@ -259,16 +259,28 @@
      screen: 5 s after arriving (left alone), the dispatch center assigns the engine to a new incident nearby. It lands in the "Your
      assignment" empty state, an in-app banner shows and, when allowed, the phone's own notification. */
   (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
-    var last = Date.now(), busy = false; ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, function () { last = Date.now(); }, { passive: true, capture: true }); });
+    var last = Date.now(), busy = false; ['pointerdown', 'touchstart', 'keydown', 'wheel'].forEach(function (ev) { window.addEventListener(ev, function () { last = Date.now(); }, { passive: true, capture: true }); });   /* only the person's own touches count as activity (a page that scrolls itself is still idle) */
     /* (Oct 12, 13:20) no assignment stays for long: 5 s idle on the home screen (or a tap on the empty state) brings the next one */
     var go = function (now) { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden' || (!now && Date.now() - last < 5000)) return;
       if (!now && document.querySelector('.wf-cfm,.wf-amenu')) return;
       if (C.list().some(function (c) { return C.mission(c); })) { try { localStorage.removeItem('wf-asg-next'); } catch (e) {} return; }
-      busy = true; var L = []; try { L = window.__wfSimSpawn(null, true) || []; } catch (e) {} var it = L[0]; if (!it || !it.d) { busy = false; return; }
+      busy = true; var L = [], it = null, LK = 'wf-asg-loop', LP = []; try { LP = JSON.parse(localStorage.getItem(LK) || '[]') || []; } catch (e) {}
+      /* (Oct 12, 15:45) the demo loops after 5 assignments: the oldest of the five comes back as a fresh incident (its old chat forgotten) */
+      if (LP.length >= 5) { var o = LP.shift(); try { C.forget(o.key); window.__wfSim(); } catch (e) {}
+        var row = o.kind === 'cand' ? (window.__wfLiveCands || []).find(function (q) { return q && q[2] === o.id; }) : (window.__wfLiveFires || []).find(function (q) { return q && q[2] === o.id; });
+        if (row) { if (row[9] && o.kind === 'fire') { row[9].resolved = false; row[9].startMs = Date.now() - 6 * 6e4; } it = { kind: o.kind, d: { id: o.id, conf: row[4], live: row[9] } }; } }
+      if (!it) { try { L = window.__wfSimSpawn(null, true) || []; } catch (e) {} it = L[0]; }
+      /* (Oct 12, 15:40) every place of the area already used: the next assignment is an ongoing incident nearby (the nearest active one this engine is not on) */
+      if (!it || !it.d) { try { var S0 = M.station || {}, kmTo = function (la, lo) { return Math.hypot((la - S0.lat) * 110.57, (lo - S0.lon) * 111.32 * Math.cos(S0.lat * Math.PI / 180)); };
+          var pool = (window.__wfLiveCands || []).filter(function (r) { return r && r[2] && r[9] && r[9].lat != null; }).map(function (r) { return { kind: 'cand', r: r, km: kmTo(r[9].lat, r[9].lon) }; })
+            .concat((window.__wfLiveFires || []).filter(function (r) { return r && r[2] && r[9] && !r[9].resolved && r[9].lat != null; }).map(function (r) { return { kind: 'fire', r: r, km: kmTo(r[9].lat, r[9].lon) }; }))
+            .filter(function (q) { var c0 = C.find({ kind: q.kind, id: String(q.r[2]), place: q.r[3] }); return q.km < 15 && !(c0 && (c0.closed || c0.dismissed || (c0.stage || 0) > 3 || C.mission(c0))); }).sort(function (a, b) { return a.km - b.km; });
+          if (pool[0]) it = { kind: pool[0].kind, d: { id: pool[0].r[2], conf: pool[0].r[4], live: pool[0].r[9] } }; } catch (e) {} }
+      if (!it || !it.d) { busy = false; return; }
       var c = null, d = it.d; try { if (it.kind === 'cand') { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
         else { var f = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === d.id; }); if (f) c = C.open(C.incFire({ id: f[2], place: f[3], note: f[4], x: f[5], y: f[6], info: f[9] || {}, st: f[0], co: f[1], res: f[7] || null })); } } catch (e) {}
       if (!c || !C.assignMine(C.get(c.key) || c)) { busy = false; return; }
-      try { localStorage.removeItem('wf-asg-next'); sessionStorage.setItem('wf-asg-new', c.key); } catch (e) {}
+      try { localStorage.removeItem('wf-asg-next'); sessionStorage.setItem('wf-asg-new', c.key); LP = LP.filter(function (q) { return q.key !== c.key; }); LP.push({ key: c.key, kind: it.kind, id: it.d.id }); localStorage.setItem(LK, JSON.stringify(LP)); } catch (e) {}
       var PT = window.__wfLang === 'pt', u = M.unit || 'Engine', nm = (C.nameOf ? C.nameOf(C.get(c.key) || c) : c.place) || '', txt = PT ? u + ' atribuído a ' + nm + '. Responda já.' : u + ' assigned to ' + nm + '. Respond now.';
       banners([{ kind: 'asg', d: d, c: C.get(c.key) || c, txt: txt }]); try { if (window.__wfNotify) window.__wfNotify(PT ? 'Nova atribuição' : 'New assignment', txt, 'Station.dc.html?home=1'); } catch (e) {}
       try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} setTimeout(function () { busy = false; }, 3000); };
