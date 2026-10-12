@@ -14,15 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791796375"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791805059"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791796375"></script>
-<script src="station.js?v=1791782784"></script>
+<script src="station.js?v=1791805059"></script>
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791804734"></script>
+<script src="chat.js?v=1791805059"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -61,6 +61,7 @@
 })();
 </script>
 
+<style>/* (Oct 12, 12:50) a new assignment drops into the empty state: from just above, fading in, no bounce */@keyframes wf-asgdrop{from{transform:translateY(-32px);opacity:0}to{transform:none;opacity:1}}</style>
 <style>/* (Oct 11, 01:20) scrolling up, the station header stays and folds to one bar: the name and the round buttons, 8px under them */
 [data-wf-sthdr]{transition:padding .3s cubic-bezier(.2,.8,.2,1)}
 [data-wf-sthdr] [data-wf-hmin]{max-height:160px;transition:max-height .3s cubic-bezier(.2,.8,.2,1),opacity .2s ease,margin .3s cubic-bezier(.2,.8,.2,1)}
@@ -148,7 +149,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- (Oct 9, 17:46) the Resolved list says what it covers --><span style="display: {{asg.d24}}; margin: 0; padding: 0 16px; text-align: right; font-size: 15px; line-height: 20px; color: #6E6E73">{{asg.t24}}</span>
         <ul data-wf-stack="1" style="display: {{asg.listD}}; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
-            <li style="position: relative; border-radius: 16px">
+            <li style="position: relative; border-radius: 16px; animation: {{f.anim}}">
               <!-- (Oct 12, 12:05) a crew's list in two sections: Your assignment, then For information (Title 3, 20/25 semibold; Subheadline note) -->
               <div style="display: {{f.hdD}}; margin: {{f.hdTop}} 0 8px; padding: 0"><h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 600; color: var(--wf-ink, rgb(0, 0, 0))">{{f.hd}}</h2><p style="display: {{f.hdSubD}}; margin: 4px 0 0; font-size: 15px; line-height: 20px; color: var(--wf-sec, rgb(110, 110, 115))">{{f.hdSub}}</p></div>
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; align-content: center; gap: 4px 16px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
@@ -461,7 +462,8 @@ class Component extends DCLogic {
     try { this.wfStackIn(); } catch (e) {}
     // (Oct 5, 07:58) coming back to this screen from the phone's page cache: its sheets (Key figures, a crew) start closed
     try { window.addEventListener('pageshow', (ev) => { if (ev.persisted) this.forceUpdate(); if (ev.persisted && ((this.state || {}).pick || (this.state || {}).sq)) this.setState({ pick: false, sq: null }); }); } catch (e) {}
-    try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {}   // chat counts follow new messages
+    try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {}
+    try { this._stageT = setInterval(() => { if (document.visibilityState !== 'hidden') this.forceUpdate(); }, 30000); } catch (e) {}   /* (Oct 12, 12:55) stages that move with time (incidents with no chat) and times active refresh on their own */   // chat counts follow new messages
     // Stations from the country snapshot carry only name and operator: read the rest (address, phone, website…) live.
     const S = this.station();
     if (S && S.partial) {
@@ -574,7 +576,7 @@ class Component extends DCLogic {
       const crewV = MINE.rank === 'ff' || MINE.rank === 'eng', ST = crewV ? { enroute: L('En route to the staging area', 'A caminho do ponto de concentração'), onscene: L('On the line. East flank', 'Na linha. Flanco leste'), watch: L('Patrol', 'Vigilância') } : { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };   /* (Oct 11, 17:50) the line crews see where to go */
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (C.mission ? C.mission(c) : (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S)))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         const nm = C.nameOf ? C.nameOf(c) : c.place;
-        return { _mis: true, _st: f.st, place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+        return { _mis: true, _st: f.st, anim: (() => { let k = ''; try { k = sessionStorage.getItem('wf-asg-new') || ''; } catch (e) {} if (k !== c.key) return 'none'; setTimeout(() => { try { sessionStorage.removeItem('wf-asg-new'); } catch (e) {} }, 1500); return 'wf-asgdrop .7s cubic-bezier(.2,.8,.2,1) both'; })(), place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
           _id: c.incId, simD: simOf(c.incId), ...MK[c.kind === 'fire' ? 'fire' : 'cand'], moonD: 'none', sub2: c.lat ? kmT(km(c.lat, c.lon)) + '. ' + drv(km(c.lat, c.lon)) + '.' : '', sub2D: c.lat ? 'block' : 'none', tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: ((Sg && Sg.icD) || C.ICON[Sg.icon]) || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)) || MINE.rank === 'eng' || MINE.rank === 'ff', sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) && MINE.rank !== 'eng' && MINE.rank !== 'ff' ? L('Dispatched. Respond. ', 'Despachado. Responda. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
     }
@@ -629,8 +631,8 @@ class Component extends DCLogic {
       if (mis.length) H(mis[0], L('Your assignment', 'A sua atribuição'), '', true);
       if (fyi.length) H(fyi[0], L('For information', 'Para informação'), L('You join an incident when dispatch assigns your engine.', 'Entra num incidente quando o despacho atribui o seu veículo.'), false);
       this._crewMis = mis.length ? (mis[0].place || '') : ''; this._crewSt = mis.length ? mis[0]._st : ''; this._crewN = fyi.length;
-      if (!mis.length && !fyi.length) {} rows = mis.concat(fyi).map((x) => x.hd ? x : Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
-    else rows = rows.map((x) => Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' }));
+      if (!mis.length && !fyi.length) {} rows = mis.concat(fyi).map((x) => x.hd ? Object.assign(x, { anim: x.anim || 'none' }) : Object.assign(x, { anim: x.anim || 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
+    else rows = rows.map((x) => Object.assign(x, { anim: 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' }));
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
     let fx = S.x, fy = S.y, z = 1.4;

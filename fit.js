@@ -656,6 +656,48 @@ window.__wfBlink=function(path,dur){
   };
 })();
 
+// (Oct 12, 12:50) Phone notifications: a notifications-only service worker (sw.js, no caching), and window.__wfNotify(title, body, url).
+// On iPhone a web app can notify only once it is on the Home Screen (iOS 16.4 or later) and the person has allowed it; the
+// permission is asked on a tap (window.__wfAskNotify), never on its own. Without it the app's own banner still shows.
+(function(){
+  try{if('serviceWorker' in navigator&&!/[?&](under|embed)=1/.test(location.search))navigator.serviceWorker.register('sw.js').catch(function(){});}catch(e){}
+  window.__wfAskNotify=function(){try{if(window.Notification&&Notification.permission==='default'){var r=Notification.requestPermission();if(r&&r.catch)r.catch(function(){});}}catch(e){}};
+  window.__wfNotify=function(title,body,url){try{if(!window.Notification||Notification.permission!=='granted')return false;var o={body:body||'',icon:'icon-192.png?v=4',badge:'icon-192.png?v=4',tag:'wf-'+(url||title),data:{url:url||'Main.dc.html'}};
+    if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(function(r){return r.showNotification(title,o);}).catch(function(){try{new Notification(title,o);}catch(x){}});}else new Notification(title,o);return true;}catch(e){return false;}};
+})();
+
+// (Oct 12, 12:45) Action menu: the composer's + opens it (as Claude's composer). The confirmation dialog's panel, rising from the
+// bottom over the dark scrim, with its title and the actions grouped as an inset list (white rows, full-width dividers), each
+// row its icon (•→ an order, •‑‑‑ a request, none for a report) and label. Tap a row to run it; tap the scrim or swipe down to close.
+// window.__wfActMenu({ title, groups: [{ title, items: [{ label, icon: 'st'|'rq'|'', go }] }] })
+(function(){
+  var ICS={st:'<circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h11M15.5 2.5 20 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>',
+    rq:'<circle cx="4" cy="7" r="3.5" fill="currentColor"></circle><path d="M9 7h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="2.5 2.25"></path>',
+    rp:'<circle cx="4" cy="7" r="3.5" fill="currentColor"></circle>'};
+  window.__wfActMenu=function(o){
+    o=o||{};var root=document.querySelector('[data-wfroot]')||document.body;
+    var old=root.querySelector('.wf-amenu');if(old)old.remove();
+    var w=document.createElement('div');w.className='wf-amenu';w.style.cssText='position:absolute;inset:0;z-index:2147481000';
+    var sc=document.createElement('div');sc.setAttribute('aria-hidden','true');sc.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,0.32);opacity:0;transition:opacity .35s ease';
+    var p=document.createElement('section');p.className='wf-dlg';p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('data-swipe','down');p.setAttribute('aria-label',o.title||'');
+    p.style.cssText='position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;max-height:80%;overflow-y:auto;overscroll-behavior:contain;padding:32px 16px 80px;border-radius:28px 28px 0 0;background:var(--wf-page,#F2F2F7);box-shadow:0 0 40px rgba(0,0,0,.14);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
+    var gb=document.createElement('button');gb.type='button';gb.setAttribute('aria-label','Close');gb.setAttribute('data-swipe-go','1');gb.style.cssText='position:absolute;left:50%;top:0;width:96px;height:24px;margin-left:-48px;padding:0;border:0;background:transparent;cursor:pointer';gb.innerHTML='<span aria-hidden="true" style="display:block;width:36px;height:5px;margin:10px auto 0;border-radius:3px;background:rgba(60,60,67,0.3)"></span>';p.appendChild(gb);
+    var h=document.createElement('h2');h.textContent=o.title||'';h.style.cssText='margin:0 8px;font-size:26px;line-height:32px;font-weight:600;letter-spacing:-0.01em;color:var(--wf-ink,#000000)';p.appendChild(h);
+    var done=false,close=function(fn){if(done)return;done=true;sc.style.opacity='0';p.style.transform='translateY(105%)';setTimeout(function(){w.remove();},520);if(fn)setTimeout(function(){try{fn();}catch(x){}},120);};
+    (o.groups||[]).forEach(function(g){if(!g.items||!g.items.length)return;var box=document.createElement('div');box.style.cssText='display:flex;flex-direction:column;gap:8px';
+      if(g.title){var t=document.createElement('h3');t.textContent=g.title;t.style.cssText='margin:0 8px;font-size:15px;line-height:20px;font-weight:400;color:var(--wf-sec,#6E6E73)';box.appendChild(t);}
+      var ul=document.createElement('div');ul.setAttribute('role','list');ul.style.cssText='display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--wf-surface,#FFFFFF)';
+      g.items.forEach(function(it,i){var b=document.createElement('button');b.type='button';b.setAttribute('role','listitem');b.className='chbtn';
+        b.style.cssText='display:flex;align-items:center;gap:16px;min-height:52px;padding:0 16px;border:0;'+(i?'border-top:1px solid rgba(60,60,67,0.12);':'')+'background:transparent;color:var(--wf-ink,#000000);font:inherit;font-size:17px;line-height:22px;text-align:left;cursor:pointer';
+        var ic=ICS[it.icon]||ICS.rp;b.innerHTML='<svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="flex-shrink:0;color:var(--wf-ink2,#3A3A3C)">'+ic+'</svg>';
+        var sp=document.createElement('span');sp.textContent=it.label;b.appendChild(sp);b.onclick=function(){try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}if(it.notify&&window.__wfAskNotify)window.__wfAskNotify();close(it.go);};   /* asked on this tap (a gesture), as iOS requires */ul.appendChild(b);});
+      box.appendChild(ul);p.appendChild(box);});
+    w.appendChild(sc);w.appendChild(p);root.appendChild(w);sc.onclick=function(){close();};gb.onclick=function(){close();};
+    requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.transform='translateY(0)';});});
+    return {close:close};
+  };
+})();
+
 // Install offer (Oct 3): a shared link (Share with other people: …/#install; the administrator's …/#invite=…) offers to put
 // the app on the Home Screen when it opens in a browser tab. Android and desktop Chrome: the browser's own install
 // prompt behind an Install button (Not now | Install). iPhone and iPad (Safari, Chrome): no page can install there, so a

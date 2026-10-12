@@ -709,6 +709,10 @@
      with him, the Captain of each engine sent */
   function commander(c) { if (!c || c.kind === 'dm') return null; var SF = null, Q = null; (c.stations || []).some(function (q) { SF = staffOf(q); Q = q; return !!SF; }); if (!SF) return null;
     var us = isUS(c), b = SF.batt || ''; return { name: SF.captain, unit: b, station: Q.short || Q.name, en: us ? 'Battalion Chief. ' + b + '. Commander' : 'Commander. ' + b, pt: us ? 'Chefe de batalhão. ' + b + '. Comandante' : 'Comandante. ' + b }; }
+  /* (Oct 12, 12:50) the dispatch center assigns our engine to this incident (a crew's next assignment) */
+  function assignMine(c) { if (!c || c.kind === 'dm' || c.closed || c.dismissed) return false; if (mission(c)) return true; var i = ownIdx(c, true); if (i < 0) return false;
+    var f = (c.forces || []).find(function (x) { return x.si === i && !x.second; }); if (!f) { f = forceFor(c, i, 'enroute'); (c.forces = c.forces || []).push(f); } else f.st = 'enroute';
+    c.flags.dispatched = true; var v = (f.veh || [])[0] || 'Engine'; sys(c, dcOf(c) + ' assigned ' + v + ' to this incident', dcOf(c) + ' atribuiu o ' + v + ' a este incidente', 300, 0); ensureLts(c); c.updated = Date.now(); save(); emit(); return true; }
   /* (Oct 12, 12:05) the incident a crew profile (Captain, Engineer, Firefighter) is assigned to: its own engine is committed there */
   function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false;
     return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
@@ -1210,11 +1214,11 @@
     if (window.__wfChatIsOurs && window.__wfChatIsOurs(c, S)) return true;
     if (M.rank === 'bc' && isFinite(+S.lat) && isFinite(+c.lat) && +c.lat) return kmBetween({ lat: +S.lat, lon: +S.lon }, { lat: +c.lat, lon: +c.lon }) <= 25;
     return !window.__wfChatIsOurs; }
-  function ownIdx(c) { var i = (c.stations || []).findIndex(function (s) { return !!staffOf(s); }); if (i >= 0) return i;
+  function ownIdx(c, force) { var i = (c.stations || []).findIndex(function (s) { return !!staffOf(s); }); if (i >= 0) return i;
     var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!S) return -1;
-    if (!ours(c)) return -1;   /* (Oct 12) a station never joins an incident outside its area on its own: only through a mutual aid request */
+    if (!force && !ours(c)) return -1;   /* (Oct 12) a station never joins an incident outside its area on its own: only through a mutual aid request */
     c.stations.push({ ck: (S.type === 'way' ? 'w' : 'n') + S.id, name: S.name, short: shortStation(S.name), km: S.lat && c.lat ? Math.round(kmBetween({ lat: S.lat, lon: S.lon }, { lat: c.lat, lon: c.lon }) * 10) / 10 : 3, min: 6 });
-    var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: true }); return c.stations.length - 1; }
+    var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: M.level !== 'lead' || undefined }); return c.stations.length - 1; }
   /* (Oct 9, 06:52) every unit of the station's fleet (station.js), with who rides it; a unit out on another fire or in the shop
      cannot be picked */
   function ownCrews(c) { var i = ownIdx(c); if (i < 0) return []; var st = c.stations[i], ck = st.ck || '', id = String(ck).replace(/^[nw]/, ''), FL = window.__wfFleet ? window.__wfFleet(id) : null;
@@ -1794,7 +1798,7 @@
         else if (m.kind === 'arrive') arrive(c);
         else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
         else if (m.kind === 'cancelled') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, false); markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c); sys(c, 'Candidate cancelled · the crews are back in service', 'Candidato cancelado · equipas de volta ao serviço', 600, 0); } }
-        else if (m.kind === 'capt' && m.a === 'release') { (c.forces || []).forEach(function (f) { if (LIVE[f.st] && ownForce(c, f)) f.st = 'released'; }); }   /* (Oct 12, 12:40) the commander releases the Captain's engine: back in service, no assignment */
+        else if (m.kind === 'capt' && m.a === 'release') { (c.forces || []).forEach(function (f) { if (LIVE[f.st] && ownForce(c, f)) f.st = 'released'; }); try { localStorage.setItem('wf-asg-next', String(Date.now())); } catch (e) {} }   /* the next assignment comes on the home screen (station.js) */   /* (Oct 12, 12:40) the commander releases the Captain's engine: back in service, no assignment */
         else if (m.kind === 'capt' && m.a === 'next') { if (!c.closed && !c.dismissed && c.stage === m.from) captMove(c, m.to); }   /* (Oct 12, 12:30) the commander accepts the Captain's recommendation */
         else if (m.kind === 'capt' && (m.a === 'air' || m.a === 'more')) { var ck2 = c.key, k2 = m.a === 'air' ? 'approveAir' : 'more'; if (!c.closed && !c.dismissed && !(k2 === 'approveAir' ? c.flags.air : c.flags.more || !c.reserve)) setTimeout(function () { QUIET = true; try { act(ck2, k2); } catch (e) {} QUIET = false; }, 0); }   /* the commander orders what the Captain asked for */
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
@@ -2022,7 +2026,11 @@
   /* (Oct 8, 23:09) one status everywhere: a fire with a chat is at the chat's stage (incident page, map, lists, notifications) */
   function chatStage(f) { try { var id = String((f && f.id) || ''); if (!id) return null; var c = chatFor(f.kind ? f : Object.assign({ kind: 'fire' }, f));
       return c && !c.dismissed && c.stage >= 1 ? Math.min(7, c.stage) : null; } catch (e) { return null; } }
-  function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I = (f && f.info) || {}, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
+  function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I0 = (f && f.info) || {};
+    /* (Oct 12, 12:55) a simulated fire with no chat moves on with time, as a small fire does: First alert (15 min), Ongoing (to 30 min),
+       Crews on scene (to 1 h 30), Resolving (to 4 h), Concluding (to 12 h), then Surveillance; never stuck on First alert */
+    if (I0.sim && I0.startMs && !I0.resolved) { var mn = (Date.now() - I0.startMs) / MIN; return mn < 15 ? 1 : mn < 30 ? 2 : mn < 90 ? 3 : mn < 240 ? 4 : mn < 720 ? 5 : 6; }
+    var I = I0, sc = /^F-/.test((f && f.id) || '') && !I.sc ? 4 : (I.sc || ({ hot: 5, warn: 5, amber: 7, blue: 7, ok: 8, watch: 9, off: 10 })[I.tone] || 5);
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
   function fireMeta(id, c) {   /* (Oct 10, 23:52) one stage button everywhere, the chat as the reference: the fire's burned area and time active as its chat has them ("8 ac. 1 d 7 h"); the live feed only for a fire with no chat */
       try { var PT = window.__wfLang === 'pt', raw = String(id || '').replace(/^f:/, ''); if (!c && raw) c = chatFor({ kind: 'fire', id: raw });
@@ -2049,7 +2057,7 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
-    vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, canAct: canAct, sizeUp: sizeUp, commander: commander,
+    vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, assignMine: assignMine, canAct: canAct, sizeUp: sizeUp, commander: commander,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };

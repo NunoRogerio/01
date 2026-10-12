@@ -225,6 +225,7 @@
       var hq = it.kind === 'help', hc = it.c || {}, hp = (hc.people || [])[0] || {};
       var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? (CUR === 'pt' ? ': Despacho de 1.º alerta' : ': Primeiro alerta') : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
       var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + (CUR === 'pt' ? (Math.round(d.ac * 0.4047 * 10) / 10) + ' ha.' : d.ac + ' ac.') :   /* (Oct 11, 19:20) Portugal measures in hectares */ (d.place || 'Altadena') + '. ' + d.conf + (PT ? '% candidato. ' : '% candidate. ') + d.near + '.';
+      if (it.kind === 'asg') { ttl = PT ? 'Nova atribuição' : 'New assignment'; txt = it.txt || ''; }   /* (Oct 12, 12:50) the crew's next assignment */
       var S1 = C && C.STAGES ? C.STAGES[1] : null;   /* (Oct 11, 01:18) the incident's round: a candidate's dot and strokes on its likelihood yellow; a new fire's First alert icon on its stage colour */
       b.innerHTML = (!fire && !hq && window.__wfIgnSvg ? '<span aria-hidden="true" style="display:flex;flex-shrink:0">' + window.__wfIgnSvg(d.conf, 32, d) + '</span>' : fire && S1 ? '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:' + S1.bg + '"><svg width="20" height="20" viewBox="0 0 24 24"><path d="' + ((S1 && S1.icD) || C.ICON[S1.icon]) + '" fill="none" stroke="' + S1.c + '" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>' : '<span aria-hidden="true" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;flex-shrink:0;border-radius:50%;background:' + (fire ? '#FCE9E1' : '#ECECEF') + '"><svg width="20" height="20" viewBox="0 0 14 14">' + mk + '</svg></span>') +
         '<span style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto"><span style="display:flex;justify-content:space-between;gap:8px"><b style="font-size:16px;line-height:20px;font-weight:600;color:var(--wf-ink, #1C1C1E);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + ttl + '</b><span style="font-size:16px;line-height:20px;color:var(--wf-ink2, #6E6E73);flex-shrink:0">' + (PT ? 'agora' : 'now') + '</span></span>' +
@@ -233,7 +234,7 @@
       var gone = false, out = function () { if (gone) return; gone = true; b.style.transform = 'translateY(-140%)'; b.style.opacity = '0'; setTimeout(function () { b.remove(); }, 520); };
       var y0 = null; b.addEventListener('pointerdown', function (e) { y0 = e.clientY; }); b.addEventListener('pointerup', function (e) { var dy = y0 == null ? 0 : e.clientY - y0; y0 = null; if (dy < -20) { out(); return; }
         out(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
-        try { if (!C) return; var c = hq ? hc : fire ? C.find({ id: d.id, kind: 'fire' }) : null;
+        try { if (!C) return; var c = hq ? hc : it.kind === 'asg' ? it.c : fire ? C.find({ id: d.id, kind: 'fire' }) : null;
           if (!c && !fire && !hq && C.incCand && C.open) { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
           if (c) { sessionStorage.setItem('wf-chat-open', c.key); location.href = 'Chat.dc.html'; } } catch (x) {} });
       box.appendChild(b); requestAnimationFrame(function () { requestAnimationFrame(function () { b.style.transform = 'none'; b.style.opacity = '1'; }); });
@@ -254,6 +255,22 @@
       try { if (window.__wfHelpIn && Math.random() < 0.15) { var hc = window.__wfHelpIn(); if (hc) L = [{ kind: 'help', c: hc }]; } if (!L.length) L = window.__wfSimSpawn(null, true) || []; } catch (e) {}
       try { localStorage.setItem('wf-sim-last' + SFX, String(Date.now())); } catch (e) {} gap = 25000 + Math.random() * 35000;
       banners(L); last = Date.now(); setTimeout(function () { busy = false; }, 3000); }, 1000); })();
+  /* (Oct 12, 12:50) a crew that finished its assignment (Sector done, the commander released the engine) gets the next one on its home
+     screen: 5 s after arriving (left alone), the dispatch center assigns the engine to a new incident nearby. It lands in the "Your
+     assignment" empty state, an in-app banner shows and, when allowed, the phone's own notification. */
+  (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
+    var last = Date.now(), busy = false; ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, function () { last = Date.now(); }, { passive: true, capture: true }); });
+    setInterval(function () { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden' || Date.now() - last < 5000) return;
+      var p = 0; try { p = +localStorage.getItem('wf-asg-next') || 0; } catch (e) {} if (!p) return; if (document.querySelector('.wf-cfm,.wf-amenu')) return;
+      if (C.list().some(function (c) { return C.mission(c); })) { try { localStorage.removeItem('wf-asg-next'); } catch (e) {} return; }
+      busy = true; var L = []; try { L = window.__wfSimSpawn(null, true) || []; } catch (e) {} var it = L[0]; if (!it || !it.d) { busy = false; return; }
+      var c = null, d = it.d; try { if (it.kind === 'cand') { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
+        else { var f = (window.__wfLiveFires || []).find(function (q) { return q && q[2] === d.id; }); if (f) c = C.open(C.incFire({ id: f[2], place: f[3], note: f[4], x: f[5], y: f[6], info: f[9] || {}, st: f[0], co: f[1], res: f[7] || null })); } } catch (e) {}
+      if (!c || !C.assignMine(C.get(c.key) || c)) { busy = false; return; }
+      try { localStorage.removeItem('wf-asg-next'); sessionStorage.setItem('wf-asg-new', c.key); } catch (e) {}
+      var PT = window.__wfLang === 'pt', u = M.unit || 'Engine', nm = (C.nameOf ? C.nameOf(C.get(c.key) || c) : c.place) || '', txt = PT ? u + ' atribuído a ' + nm + '. Responda já.' : u + ' assigned to ' + nm + '. Respond now.';
+      banners([{ kind: 'asg', d: d, c: C.get(c.key) || c, txt: txt }]); try { if (window.__wfNotify) window.__wfNotify(PT ? 'Nova atribuição' : 'New assignment', txt, 'Station.dc.html?home=1'); } catch (e) {}
+      try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} setTimeout(function () { busy = false; }, 3000); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----
