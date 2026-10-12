@@ -1604,8 +1604,10 @@ class Component extends DCLogic {
              OpenStreetMap has no double-density tiles, so on phone screens it loads one level closer */
           const OSM = window.__wfTiles && window.__wfTiles.get() === 'osm', ZMAX = OSM ? 19 : 20;
           const zf = Math.log2(2345 * s * 360 / 256) + (OSM && (window.devicePixelRatio || 1) >= 1.5 ? 1 : 0);
+          /* (Oct 12, 06:15) sharp tiles: a tile is never stretched past ~1.2x its own pixels (it was up to 1.54x, blurry and jagged on
+             phone screens); the level only steps down once the tiles would shrink below ~0.55x (small labels) */
           let z = this._tz;
-          if (!(z >= 2) || Math.abs(zf - z) > 0.62) z = Math.round(zf);
+          if (!(z >= 2) || zf > z + 0.26 || zf < z - 0.86) z = Math.ceil(zf - 0.26);
           z = Math.max(2, Math.min(ZMAX, z));
           let n, tX, tY, lonT, latT, x0, x1, y0, y1, PAD = 1;
           const setZ = () => {
@@ -1650,17 +1652,24 @@ class Component extends DCLogic {
           im.onload = fin; im.onerror = () => { TS.busy.delete(h); };
           im.src = h;
         });
-        const freeAt = (A) => { const i = A.indexOf(null); return i < 0 ? A.length : i; };
-        // Old tiles leave once the new set has fully loaded (plus a frame or two), or after a safety limit.
+        /* (Oct 12, 06:15) no flicker when the map changes size or zoom (maximize, minimize, a zoom step): an image element never
+           changes picture while it is shown. A tile that leaves stays in its own element, underneath nothing new, until the new set
+           has loaded; new tiles go into fresh elements (appended, so drawn above the leaving ones), or into an element that was
+           already empty in the previous frame. Swapping a shown element's picture made Safari blank it while decoding. */
         const keepOld = pending > 0 ? now + 4000 : now + 250;
-        TS.cur = TS.cur.map((sl) => { if (!sl || want.has(sl.href)) return sl; if (!TS.old.some((o) => o && o.href === sl.href)) TS.old[freeAt(TS.old)] = { ...sl, until: keepOld }; return null; });
-        want.forEach((t, h) => { if (TS.done.has(h) && !TS.cur.some((sl) => sl && sl.href === h)) TS.cur[freeAt(TS.cur)] = { ...t }; });
-        TS.old = TS.old.map((o) => { if (!o || want.has(o.href)) return null; if (o.until > keepOld) o.until = keepOld; return o.until > now ? o : null; });
-        const trim = (A) => { while (A.length && !A[A.length - 1]) A.pop(); return A; }; trim(TS.cur); trim(TS.old);
-        if (TS.old.length && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, pending > 0 ? 4100 : 300);
+        TS.cur = TS.cur.map((sl) => { if (sl === false) return null; if (!sl) return sl;
+          if (want.has(sl.href)) { if (sl.until) delete sl.until; return sl; }
+          if (!sl.until || sl.until > keepOld) sl.until = sl.until ? Math.min(sl.until, keepOld) : keepOld;
+          return sl.until > now ? sl : false; });
+        const anyOld = TS.cur.some((sl) => sl && sl.until);
+        want.forEach((t, h) => { if (!TS.done.has(h) || TS.cur.some((sl) => sl && sl.href === h)) return;
+          let i = anyOld ? -1 : TS.cur.indexOf(null); if (i < 0) i = TS.cur.length; TS.cur[i] = { ...t }; });
+        while (TS.cur.length && TS.cur[TS.cur.length - 1] === null) TS.cur.pop();
+        TS.old = [];
+        if (TS.cur.some((sl) => sl === false || (sl && sl.until)) && !this._tsT) this._tsT = setTimeout(() => { this._tsT = 0; this.forceUpdate(); }, pending > 0 ? 4100 : 300);
         const EMPTY = { href: 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', x: 0, y: 0, w: 0, h: 0, mask: 'none' };
         return {
-          tiles: TS.cur.map((t) => t || EMPTY), tilesOld: TS.old.map((t) => t || EMPTY),
+          tiles: TS.cur.map((t) => t || EMPTY), tilesOld: [],
           pal: pl,
           ms: { pressed: st === 'vector' ? 'true' : 'false', name: (PAL[st] || PAL.standard).name,
             icon: st === 'vector' ? 'M12 3 2 8l10 5 10-5-10-5ZM2 12.5l10 5 10-5M2 17l10 5 10-5' : 'M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20ZM9 4v13.5M15 6.5V20',
