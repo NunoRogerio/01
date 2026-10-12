@@ -22,7 +22,7 @@
 <script src="station.js?v=1791754661"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791776032"></script>
+<script src="chat.js?v=1791778668"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791754661"></script>
@@ -1607,7 +1607,11 @@ class Component extends DCLogic {
     const confirmedFires = W.cands.filter((c) => cf[c.id]).sort((a, b) => cf[a.id] - cf[b.id]).map((c, i) => ({ st: c.st, co: c.co, id: 'F-' + c.id, place: window.__wfIncName ? window.__wfIncName(c.place, true) : c.place, note: 'Confirmed from ' + c.id,   /* (Oct 9, 12:11) declared: "Altadena Fire" */ x: c.x, y: c.y, det: c.live && c.live.t ? Date.parse(c.live.t) || null : null,
       /* the same facts as the fire page (status, start), so its map card reads like every other fire card */
       info: { src: 'Confirmed from ' + (c.src || c.id), st: 'Not contained', stEn: 'Not contained', tone: 'hot', startMs: c.live && c.live.t ? Date.parse(c.live.t) || cf[c.id] : cf[c.id], updMs: cf[c.id], place: c.place, lat: c.live && c.live.lat, lon: c.live && c.live.lon } }));
-    const allFires = W.fires.concat(confirmedFires);
+    /* (Oct 12, 05:14) one truth per fire, everywhere: a fire whose chat is closed is resolved (map, legend, counts, list), and a
+       declared candidate whose chat dismissed it is no fire at all. Counts of fires are active fires only, as the legend says */
+    const CH = (() => { const o = { done: {}, gone: {} }; try { (window.__wfChat ? window.__wfChat.list() : []).forEach((c) => { if (!c || c.kind === 'dm') return; const ids = [String(c.incId || ''), 'F-' + String(c.incId || '').replace(/^F-/, '')]; if (c.dismissed) ids.forEach((i) => { o.gone[i] = 1; }); else if (c.closed) ids.forEach((i) => { o.done[i] = c.closedVt || c.updated || Date.now(); }); }); } catch (e) {} return o; })();
+    const allFires = W.fires.concat(confirmedFires.filter((f) => !CH.gone[f.id])).map((f) => (CH.done[f.id] && !(f.info && f.info.resolved)) ? Object.assign({}, f, { info: Object.assign({}, f.info || {}, { resolved: true, tone: 'ok', st: 'Closed', stEn: 'Closed', heldMs: CH.done[f.id] }) }) : f);
+    const live = (f) => !(f.info && f.info.resolved);
     const openCands = W.cands.filter((c) => !dz[c.id] && !cf[c.id]);
     // Counts per area from one pass over the data (the area table asks for dozens of areas on every render).
     const IX = { sc: {}, s: {}, US: [0, 0, 0], AMZ: [0, 0, 0], AMZc: {} }, AMZ = window.__wfAMZ || [];
@@ -1618,9 +1622,9 @@ class Component extends DCLogic {
       if (/^[A-Z]{2}$/.test(r.st || '') && r.st !== 'PT') top(IX.US);
       if (r.st === 'BRA' && AMZ.indexOf(r.co) >= 0) { top(IX.AMZ); top(IX.AMZc[r.co] || (IX.AMZc[r.co] = [0, 0, 0])); }
     };
-    openCands.forEach((c) => tally(c, 0)); allFires.forEach((f) => tally(f, 1));
+    openCands.forEach((c) => tally(c, 0)); allFires.filter(live).forEach((f) => tally(f, 1));
     const count = (st, co) => {
-      if (co && String(co).indexOf('sr:') === 0) { const I = (r) => inA(r, st, co); const C0 = openCands.filter(I); return { cands: C0.length, fires: allFires.filter(I).length, top: C0.reduce((a, c) => Math.max(a, c.conf || 0), 0) }; }   /* (Oct 11, 21:20) a Portuguese sub-region: by coordinates */
+      if (co && String(co).indexOf('sr:') === 0) { const I = (r) => inA(r, st, co); const C0 = openCands.filter(I); return { cands: C0.length, fires: allFires.filter(live).filter(I).length, top: C0.reduce((a, c) => Math.max(a, c.conf || 0), 0) }; }   /* (Oct 11, 21:20) a Portuguese sub-region: by coordinates */
       const RC = window.__wfRegionCo ? window.__wfRegionCo(st, co) : null;   /* (Oct 11, 21:00) a Cal OES region: its counties together */
       if (RC) return RC.reduce((a, n) => { const v = IX.sc[st + '|' + n]; return v ? { cands: a.cands + v[0], fires: a.fires + v[1], top: Math.max(a.top, v[2] || 0) } : a; }, { cands: 0, fires: 0, top: 0 });
       const v = st === 'US' ? IX.US : st === 'AMZ' ? (co ? IX.AMZc[co] : IX.AMZ) : (co ? IX.sc[st + '|' + co] : IX.s[st]);
@@ -1801,7 +1805,7 @@ class Component extends DCLogic {
     const SC = this.wfScoped();
     const CANDS = SC.cands;
     const FIRES = SC.fires;
-    const NF = FIRES.length;
+    const NF = FIRES.filter((f) => !(f.info && f.info.resolved)).length;   /* active fires, as the map's legend counts them */
     const N = CANDS.length;
     const AL = N;
     const top = CANDS[0] || { place: '', ago: '', conf: 0 };

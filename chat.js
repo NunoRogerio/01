@@ -1308,7 +1308,7 @@
   function nearby(c, maxKm) {
     maxKm = maxKm || 50; var me = { lat: +c.lat, lon: +c.lon }; if (!isFinite(me.lat) || !isFinite(me.lon) || (!me.lat && !me.lon)) return [];
     var out = [];
-    (window.__wfLiveFires || []).forEach(function (r) { if (!r || r[5] == null) return; var inc = incFire({ id: r[2], place: r[3], co: r[1], st: r[0], note: r[4], x: r[5], y: r[6], info: r[7] || null }), km = kmBetween(me, inc);
+    (window.__wfLiveFires || []).forEach(function (r) { if (!r || r[5] == null || (r[9] || {}).resolved) return; var inc = incFire({ id: r[2], place: r[3], co: r[1], st: r[0], note: r[4], x: r[5], y: r[6], info: r[9] || null, res: r[7] || null }), km = kmBetween(me, inc);   /* (Oct 12) a resolved fire is not something to talk about as active; its facts are r[9], its resources r[7] */
       if (km <= maxKm) out.push({ inc: inc, km: km, kind: 'fire' }); });
     (window.__wfLiveCands || []).forEach(function (r) { if (!r) return; var L0 = r[9] || {}, inc = incCand({ id: r[2], place: r[3], co: r[1], st: r[0], conf: r[4], srcList: String(r[5] || '').replace(/^sat:/, 'Satellite '), x: r[7], y: r[8], live: L0 }), km = kmBetween(me, inc);
       if (km <= maxKm) out.push({ inc: inc, km: km, kind: 'cand' }); });
