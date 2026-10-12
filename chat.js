@@ -20,7 +20,7 @@
   var MIN = 60000;
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
-  var LIVE = { enroute: 1, onscene: 1, watch: 1 };   /* a unit committed to an incident */
+  var LIVE = { enroute: 1, onscene: 1, watch: 1 }, QUIET = false;   /* a unit committed to an incident */
   var STAGES = [
     { en: 'Candidate', pt: 'Candidato', c: '#3A3A3C', bg: '#FFE680', icon: 'cand' },   /* (Oct 11, 11:37) the candidate stage, as everywhere: Candidate, on the middle likelihood yellow (the likelihood's own yellow where it is known: candStage) */   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
     // The stages run along one spectrum: yellow (first alert), orange, red-orange, blue, light green, dark green, grey (closed)
@@ -885,7 +885,12 @@
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     /* (Oct 11, 17:50) the line's own tools: the Captain asks the commander for more; the crew checks in (on the line, water, injury) */
     var rk = myRank();
-    if (isLt() && s >= 3 && s <= 5) { if (rk === 'cap' && !c.flags.capMore) A.unshift({ key: 'capMore', en: 'Ask for more', pt: 'Pedir reforço' });
+    /* (Oct 12, 12:30) the Captain recommends and requests (the same chips as the commander, with the request icon •…): the commander decides */
+    if (isLt() && rk === 'cap' && s >= 2 && s <= 6 && ours(c)) { var CF = c.flags.capReq || {};
+      if (s >= 3 && s <= 5 && !CF['next' + s]) A.push({ key: 'capNext', rq: true, en: 'To ' + STAGES[s + 1].en, pt: 'Para ' + STAGES[s + 1].pt });
+      if (s === 3 && !c.flags.air && !CF.air) A.push({ key: 'capAir', rq: true, en: 'Air support', pt: 'Meio aéreo' });
+      if (s >= 2 && s <= 4 && !c.flags.capMore) A.push({ key: 'capMore', rq: true, en: 'Ask for more', pt: 'Pedir reforço' }); }
+    if (isLt() && s >= 3 && s <= 5) {
       if (rk === 'ff' || rk === 'eng') { A.length = 0; A.push({ key: 'ckLine', en: 'On the line', pt: 'Na linha' }, { key: 'ckWater', en: 'Need water', pt: 'Preciso de água' }, { key: 'ckHurt', en: 'Injury', pt: 'Ferido', danger: true }); } }
     if (isLt() && (rk === 'ff' || rk === 'eng') && s < 3) A.length = 0;   /* the line crews decide nothing before they are on scene */
     /* (Oct 9, 13:50, standing) the stage chip only ever shows together with its confirmation card in the chat (never alone) */
@@ -968,7 +973,7 @@
     if (a === 'maFill' || a === 'maHold' || a === 'fmag') { if (mC) mC.done = a; govAct(c, a, mC); return; }   /* (Oct 11, 20:10) the government's own decisions */
     /* (Oct 9, 09:07) Not yet on a recommendation is no answer: the card stays open (and sticks to the top when scrolled away) */
     if (mC && !notYet) mC.done = a;
-    var me = function (en, pt) { mine(c, en, pt); };
+    var me = function (en, pt) { if (!QUIET) mine(c, en, pt); };   /* (Oct 12, 12:30) a Captain's request carried out by the commander: his own words, not mine */
     if ((a === 'sreqYes' || a === 'sreqNo') && mC && mC.sreq) { c.reqAt = Date.now(); var k0 = mC.sreq, z0 = mC.z || ZONES[0], u0 = mC.unit || 'Engine 12', by = typeof mC.by === 'number' ? mC.by : 0, yes = a === 'sreqYes';
       var T = { drone: yes ? [['Approved. Fly the ' + z0[0] + '.', 'Aprovado. Sobrevoem ' + z0[1] + '.'], ['Drone D-5 up. Thermal pass on the ' + z0[0] + ' in 5 min.', 'Drone D-5 no ar. Passagem térmica sobre ' + z0[1] + ' em 5 min.']] : [['Not yet. Eyes on the ground for now.', 'Ainda não. Por agora, observação no terreno.'], ['Copy. We keep watching it from the line.', 'Entendido. Continuamos a vigiar da linha.']],
         rest: yes ? [['Approved. ' + u0 + ' crew, stand down and rest.', 'Aprovado. Equipa do ' + u0 + ', saiam e descansem.'], ['Thanks. Handing over the line and resting at the command post.', 'Obrigado. Passamos a linha e descansamos no posto de comando.']] : [['Not yet. One more hour, then relief.', 'Ainda não. Mais uma hora e depois são rendidos.'], ['Understood. We hold one more hour.', 'Entendido. Aguentamos mais uma hora.']],
@@ -980,8 +985,13 @@
       if (yes && k0 === 'drone') card(c, { tag: { en: 'Drone D-5 · ' + z0[0], pt: 'Drone D-5 · ' + z0[1] }, tagC: '#0A66CC', title: { en: 'Thermal pass done', pt: 'Passagem térmica feita' }, body: { en: (1 + Math.floor(Math.random() * 4)) + ' hot spots marked on the ' + z0[0], pt: (1 + Math.floor(Math.random() * 4)) + ' pontos quentes marcados n' + z0[2].replace(/^o /, 'o ').replace(/^a /, 'a ') }, fire: true }, 9000, 5);
       if (yes && k0 === 'release') { var rf0 = (c.forces || []).find(function (f) { return f.st === 'onscene' && (f.veh || []).some(function (v) { return String(v).indexOf(u0) >= 0; }); }); if (rf0 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) rf0.st = 'released'; }
       c.updated = Date.now(); save(); emit(); return; }
+    if (a === 'capNext' || a === 'capAir') { var cr = c.flags.capReq = c.flags.capReq || {}, ic2 = icIdx(c), u2 = ((window.__wfMine && window.__wfMine()) || {}).unit || 'Engine 12';
+      if (a === 'capNext') { var nx2 = Math.min(6, c.stage + 1); cr['next' + c.stage] = 1; me(u2 + ' to command: recommend moving to ' + STAGES[nx2].en + '. ' + (nx2 === 4 ? 'Head held, working the flanks.' : nx2 === 5 ? 'Line secured all around.' : 'No active edge left, mop-up done.'), u2 + ' para o comando: recomendo passar a ' + STAGES[nx2].pt + '. ' + (nx2 === 4 ? 'Cabeça dominada, a trabalhar os flancos.' : nx2 === 5 ? 'Perímetro seguro em toda a volta.' : 'Sem frente ativa, rescaldo feito.'));
+        push(c, { kind: 'capt', a: 'next', to: nx2, from: c.stage }, 3500, 0); }
+      if (a === 'capAir') { cr.air = 1; me(u2 + ' to command: request air support on the head. It is running upslope.', u2 + ' para o comando: pedimos meio aéreo na cabeça. Está a subir a encosta.'); say(c, ic2, 'Copy. Requesting a helicopter through dispatch.', 'Entendido. Peço um helicóptero ao despacho.', 2200, 1); push(c, { kind: 'capt', a: 'air' }, 4500, 0); }
+      c.updated = Date.now(); save(); emit(); return; }
     if (a === 'capMore' || a === 'ckLine' || a === 'ckWater' || a === 'ckHurt' || a === 'lces') { var M1 = window.__wfMine ? window.__wfMine() : null, u1 = (M1 && M1.unit) || 'Engine 12', ic1 = icIdx(c), cap1 = firstDue(c);
-      if (a === 'capMore') { c.flags.capMore = true; me(u1 + ' to command: we need two more engines on the east flank.', u1 + ' para o comando: precisamos de mais duas autobombas no flanco leste.'); say(c, ic1, 'Copy. Ordering two Type 3 engines through dispatch, about 20 min out.', 'Entendido. Peço duas autobombas florestais ao despacho, a cerca de 20 min.', 2200, 2); }
+      if (a === 'capMore') { c.flags.capMore = true; me(u1 + ' to command: request two more engines on the east flank.', u1 + ' para o comando: pedimos mais duas autobombas no flanco leste.'); say(c, ic1, 'Copy. Ordering more engines through dispatch' + (c.reserve && !c.flags.more ? ': ' + c.reserve.short + ' is the closest.' : ', about 20 min out.'), 'Entendido. Peço mais meios ao despacho' + (c.reserve && !c.flags.more ? ': ' + c.reserve.short + ' é o mais próximo.' : ', a cerca de 20 min.'), 2200, 2); if (c.reserve && !c.flags.more) push(c, { kind: 'capt', a: 'more' }, 4500, 0); }
       if (a === 'ckLine') { me(u1 + ': on the line at the east flank.', u1 + ': na linha, no flanco leste.'); say(c, cap1, 'Copy. Keep your lookout posted.', 'Entendido. Mantenham o vigia no posto.', 1800, 1); }
       if (a === 'ckWater') { me(u1 + ': running low on water.', u1 + ': estamos com pouca água.'); say(c, cap1, 'Copy. The water tender is heading to your position.', 'Entendido. O autotanque vai a caminho da vossa posição.', 1800, 1); }
       if (a === 'ckHurt') { me(u1 + ': injury on the line. Minor burn, walking.', u1 + ': ferido na linha. Queimadura ligeira, a andar.'); say(c, cap1, 'Copy. Paramedic on the way. Move to the safety zone.', 'Entendido. Paramédico a caminho. Vão para a zona de segurança.', 1600, 1); sys(c, 'Medical: Engine 12 paramedic responding', 'Emergência médica: paramédico do Engine 12 a caminho', 2600, 0); }
@@ -1759,6 +1769,8 @@
         else if (m.kind === 'arrive') arrive(c);
         else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
         else if (m.kind === 'cancelled') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, false); markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c); sys(c, 'Candidate cancelled · the crews are back in service', 'Candidato cancelado · equipas de volta ao serviço', 600, 0); } }
+        else if (m.kind === 'capt' && m.a === 'next') { if (!c.closed && !c.dismissed && c.stage === m.from) captMove(c, m.to); }   /* (Oct 12, 12:30) the commander accepts the Captain's recommendation */
+        else if (m.kind === 'capt' && (m.a === 'air' || m.a === 'more')) { var ck2 = c.key, k2 = m.a === 'air' ? 'approveAir' : 'more'; if (!c.closed && !c.dismissed && !(k2 === 'approveAir' ? c.flags.air : c.flags.more || !c.reserve)) setTimeout(function () { QUIET = true; try { act(ck2, k2); } catch (e) {} QUIET = false; }, 0); }   /* the commander orders what the Captain asked for */
         else if (m.kind === 'capt' && m.a === 'evac') { if (!c.closed && !c.dismissed && !c.flags.evac) { var ec = c.msgs.find(function (x) { return x.req === 'evac' && !x.done; }); if (ec) ec.done = 'evac'; evacDo(c, 0); } }
         else if (m.kind === 'capt') { if (!c.closed && !c.dismissed && c.sEnt === m.ent && !c.flags.rekindled) { var rc = c.msgs.find(function (x) { return x.rekindle && !x.done; }); if (rc) rc.done = 'back'; captMove(c, 3, true); } }
         else {
