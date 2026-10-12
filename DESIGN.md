@@ -1829,3 +1829,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Oct 12, 04:11
 - A full-screen map opened from the chat's incident blade fills the whole screen: the blade opens to the screen's foot (no grabber, no gap, no rounded foot), the map takes exactly the height on screen, so its controls and its exit button are never cut. Leaving full screen brings the blade and its scroll back.
 - A full-screen map's location card wraps its title and coordinates onto more lines beside the legend instead of cutting them with "…".
+- Oct 12, 04:49: the tour is hidden for now (no Tour button; tour.js WF_TOUR_ON = false brings it back when set to true). Stripe Pattern 4 points lighter everywhere: black 7% (was 11%), dark theme white 9% (was 13%), on photos white 12% (was 16%), screen headers 3.5% (was 7.5%).

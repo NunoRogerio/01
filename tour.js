@@ -5,7 +5,7 @@
 // Steps either wait for a tap on the control they point at ('tap'), offer a Next button ('next'), or wait until
 // something has happened on screen ('until'). A step whose control can't be found after a while shows Next instead.
 // WF_TOUR_ON = false switches the tour off: it never runs or blocks touches, any tour left running is cleared, and the Tour button says it is coming back.
-var WF_TOUR_ON = true;
+var WF_TOUR_ON = false;   /* (Oct 12, 04:49) the tour is hidden for now: no Tour button anywhere */
 if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
   // While the tour is off, the Tour button stays and opens a dark-glass tooltip saying it is coming back (X or a tap outside closes it)
   var wfTourSoon = function (anchor) {
@@ -24,6 +24,7 @@ if (!WF_TOUR_ON) { try { sessionStorage.removeItem('wf-tour'); } catch (e) {}
     setTimeout(function () { document.addEventListener('pointerdown', off, true); }, 0);
   };
   window.__wfTour = { start: function () {}, end: function () {}, warn: wfTourSoon, active: function () { return false; } };
+  try { var wfTourHide = document.createElement('style'); wfTourHide.textContent = '[data-wf-tourbtn]{display:none!important}'; (document.head || document.documentElement).appendChild(wfTourHide); } catch (e) {}
   var wfTourGone = function () { ['wf-tour', 'wf-tourwarn', 'wf-tour-css'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); }); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wfTourGone); else wfTourGone(); }
 // Two guides (Oct 3): the "Chopper tour test" demo profile keeps the guide helicopter; every other profile gets a light-blue
