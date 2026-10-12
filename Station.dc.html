@@ -184,7 +184,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </sc-if>
     <sc-if value="{{some}}" hint-placeholder-val="{{ true }}">
       <!-- Under the map, as on the incident screens: the GPS component (coordinates, Directions, copy), then the fires near the station, 8px apart -->
-      <div style="display: {{awayD}}; flex-direction: column; gap: 8px; margin-top: -40px; padding: 0 16px">
+      <div style="display: {{awayD}}; flex-direction: column; gap: 16px; margin-top: -40px; padding: 0 16px">
         <div style="display: flex; align-items: center; gap: 16px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; box-shadow: none">
           <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{loc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{loc.rows}}; opacity: {{loc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
           <!-- Directions: an arrow going up and turning right, 16px left of the copy icon -->
@@ -323,7 +323,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
         <span style="margin: {{rs.sumMt}} 16px 8px; font-size: 15px; line-height: 20px; color: #6E6E73">{{rs.sum}}</span>
         <!-- (Oct 8, 14:00) the team lead's home: his team's people, with their photos, as on the crew sheet (the same person cards), then the vehicle it rides in -->
-        <ul style="display: {{crewPD}}; flex-direction: column; gap: 8px; margin: 0 16px 8px; padding: 0; list-style: none">
+        <ul style="display: {{crewPD}}; flex-direction: column; gap: 16px; margin: 0 16px 16px; padding: 0; list-style: none">
           <sc-for list="{{crewP}}" as="p" hint-placeholder-count="4">
             <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
               <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
@@ -396,7 +396,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
       <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{sq.hdChatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -12px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 0; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 24px; text-align: center">{{sq.bN}}</span></button>
     </div>
-    <ul style="display: flex; flex-direction: column; gap: 8px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
+    <ul style="display: flex; flex-direction: column; gap: 16px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
         <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
           <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>

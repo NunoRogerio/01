@@ -307,7 +307,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </div>
       </header>
       <!-- One card per member, 8px apart (related cards in one group) -->
-      <div role="list" class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px">
+      <div role="list" class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px">
         <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
           <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
             <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 14px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
@@ -331,7 +331,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 style="margin: 0; font-size: 28px; font-weight: 700; line-height: 34px">{{tp.title}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{tp.sub}}</span></span>
       </div>
       <!-- (Oct 5, 07:10) one card per incident, the same card as the station's Incidents nearby: marker, place and distance, stage tag and drive time, arrow -->
-      <div class="chscroll" role="listbox" style="display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; margin: 0 -16px; padding: 4px 16px 0">
+      <div class="chscroll" role="listbox" style="display: flex; flex-direction: column; gap: 16px; min-height: 0; overflow-y: auto; margin: 0 -16px; padding: 4px 16px 0">
         <sc-for list="{{tp.rows}}" as="r" hint-placeholder-count="4">
           <button type="button" role="option" class="chrow" data-wf-keepsp="1" onClick="{{r.pick}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
@@ -405,7 +405,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{ds.title}}</span>
         </div>
       </header>
-      <div class="chscroll" style="display: flex; flex-direction: column; gap: 8px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 16px">
+      <div class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 16px 16px">
         <!-- (Oct 9, 13:54) the AI recommendation first (the fire page's AI suggested pack card), then the list -->
         <!-- (Oct 9, 15:58) the same card structure as the unit cards under it: 44px icon tile (dark grey, white icon) top-left, name, description, Suggested tag under it -->
         <button type="button" class="chbtn" onClick="{{ds.ai.go}}" aria-label="{{ds.ai.aria}}" style="display: {{ds.ai.d}}; grid-template-columns: 32px minmax(0, 1fr); gap: 4px 16px; align-items: center; min-height: 60px; margin-bottom: 16px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="grid-row: 1 / -1; grid-column: 1; align-self: center; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgb(58, 58, 60); color: rgb(255, 255, 255)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M10 3.5 11.6 8a2.5 2.5 0 0 0 1.5 1.5L17.5 11l-4.4 1.6a2.5 2.5 0 0 0-1.5 1.5L10 18.5 8.4 14.1a2.5 2.5 0 0 0-1.5-1.5L2.5 11l4.4-1.5A2.5 2.5 0 0 0 8.4 8Z"></path><path d="M18 3v4M16 5h4M19 15v3M17.5 16.5h3"></path></svg></span><span style="grid-column: 2; min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{ds.ai.title}}</span><span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{ds.ai.sub}}</span><span class="wf-stag" style="grid-column: 2; justify-self: start; margin-top: 4px; display: {{ds.ai.tagD}}; align-items: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{ds.ai.tagBg}}; color: {{ds.ai.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{ds.ai.tagT}}</span></button>
@@ -568,7 +568,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h2 style="margin: 0; padding: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px">{{t.ach}}</h2>
         <sc-if value="{{pp.none}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; font-size: 15px; line-height: 20px; color: #545458">{{t.noAch}}</p></sc-if>
         <!-- (Oct 9, 12:06) a list: its cards 8px apart; the trophy 8px from the card's top and left edges, as the resource cards' icons -->
-        <div role="list" style="display: flex; flex-direction: column; gap: 8px">
+        <div role="list" style="display: flex; flex-direction: column; gap: 16px">
         <sc-for list="{{pp.ach}}" as="a" hint-placeholder-count="2">
           <article role="listitem" style="display: flex; align-items: flex-start; gap: 8px; padding: 8px 16px 16px 8px; border-radius: 16px; background: #FFFFFF">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--wf-y)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C1C1E" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="{{ic.trophy}}"></path></svg></span>
