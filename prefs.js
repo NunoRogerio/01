@@ -802,7 +802,14 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
   /* (Oct 11, 13:23) the end of a screen's scroll: a shorter clear part (10%), then from 20% rising to full at the foot */
   var MASKE = 'linear-gradient(to bottom, transparent 0, transparent 10%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 70%, rgba(0,0,0,0.85) 85%, #000 100%)';
   var css = document.createElement('style');
-  css.textContent = '.wf-stripes:not([data-wf-sp]):not([data-wf-ride]){display:none!important}' +
+  /* (Oct 12, 13:15, app-wide) one stripe pattern: the same colour, opacity and size everywhere (black at 7%, white at 9% in dark; bands
+     8.49px at 60 degrees). Normal (-60deg) at the foot of what sits at or comes from the top (screen headers, top blades, panels' feet);
+     flipped (60deg) at the top of what sits at or comes from the bottom (sheets, dialogs, the composer and other bars at the foot) */
+  var SPN = 'repeating-linear-gradient(-60deg,var(--wf-sp-c) 0 8.49px,transparent 8.49px 16.97px)', SPF = 'repeating-linear-gradient(60deg,var(--wf-sp-c) 0 8.49px,transparent 8.49px 16.97px)';
+  css.textContent = ':root{--wf-sp-c:rgba(0,0,0,0.07)}html.wf-dark{--wf-sp-c:rgba(255,255,255,0.09)}' +
+    '[data-wf-sp]{background:' + SPN + '!important}[data-wf-sb]::after,[data-wf-se]::after{background:' + SPN + '!important}' +
+    '.wf-dlg::before,section[role=dialog][data-swipe="down"]::before,section[role=alertdialog][data-swipe="down"]::before,.wf-spx,.wf-stripes[data-wf-ride],[data-wf-sb="bar"]::after{background:' + SPF + '!important}' +
+    '.wf-stripes:not([data-wf-sp]):not([data-wf-ride]){display:none!important}' +
     '.wf-stripes[data-wf-ride]{display:block!important;height:96px!important;z-index:-1!important;opacity:1!important;border-top-left-radius:28px;border-top-right-radius:28px;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px)!important;-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +
     'html.wf-dark .wf-stripes[data-wf-ride]{background:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px)!important}' +
     '.wf-spx{position:absolute;left:0;right:0;top:0;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:' + MASKB + ';mask-image:' + MASKB + '}' +

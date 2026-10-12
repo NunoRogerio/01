@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791805444"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791796375"></script>
+<script src="prefs.js?v=1791806284"></script>
 <script src="station.js?v=1791806155"></script>
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1791736227"></script>
@@ -383,6 +383,26 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             </li>
           </sc-for>
         </ul>
+        <!-- (Oct 12, 13:15) a crew's other incidents, for awareness: the last group on the page -->
+        <sc-if value="{{asg.fyiOn}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 56px"><h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 600; color: var(--wf-ink, rgb(0, 0, 0))">{{asg.fyiT}}</h2><p style="margin: 0 0 8px; font-size: 15px; line-height: 20px; color: var(--wf-sec, rgb(110, 110, 115))">{{asg.fyiSub}}</p>
+        <ul data-wf-stack="1" style="display: flex; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{asg.fyiRows}}" as="f" hint-placeholder-count="2">
+            <li style="position: relative; border-radius: 16px; animation: {{f.anim}}">
+              <!-- (Oct 12, 12:05) a crew's list in two sections: Your assignment, then For information (Title 3, 20/25 semibold; Subheadline note) -->
+              <div style="display: {{f.hdD}}; margin: {{f.hdTop}} 0 8px; padding: 0"><h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 600; color: var(--wf-ink, rgb(0, 0, 0))">{{f.hd}}</h2><p style="display: {{f.hdSubD}}; margin: 4px 0 0; font-size: 15px; line-height: 20px; color: var(--wf-sec, rgb(110, 110, 115))">{{f.hdSub}}</p></div>
+              <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; align-content: center; gap: 4px 16px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
+              <!-- (Oct 8, 18:55) the incident's map marker, the same as its map and legend marker -->
+              <!-- (Oct 11, 06:53) no round at the top left: the incident's icon lives in its band at the bottom (the stage icon, or the candidate's dot and strokes) -->
+              <span style="display: flex; align-items: flex-start; gap: 8px; min-width: 0"><span style="flex: 1 1 auto; min-width: 0; line-height: 22px; font-size: 17px; font-weight: 600; overflow-wrap: anywhere">{{f.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{f.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span><span class="wf-ctag" style="display: {{f.aidD}}; flex-shrink: 0; align-self: flex-start; margin-top: -2px; margin-left: auto; min-height: 28px; padding: 4px 8px; font-size: 16px; line-height: 20px; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{f.aidTxt}}</span></span><!-- (Oct 11, 00:57) Mutual aid on the title line, at the card's right -->
+                            <span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; min-width: 0"><span style="min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; overflow-wrap: anywhere">{{f.s1.a0}}<b style="font-weight: 600; color: #3A3A3C">{{f.s1.b0}}</b>{{f.s1.a1}}<b style="font-weight: 600; color: #3A3A3C">{{f.s1.b1}}</b>{{f.s1.a2}}<b style="font-weight: 600; color: #3A3A3C">{{f.s1.b2}}</b>{{f.s1.a3}}</span></span>
+              <span style="display: {{f.sub2D}}; grid-column: 1 / -1; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; overflow-wrap: anywhere">{{f.s2.a0}}<b style="font-weight: 600; color: #3A3A3C">{{f.s2.b0}}</b>{{f.s2.a1}}<b style="font-weight: 600; color: #3A3A3C">{{f.s2.b1}}</b>{{f.s2.a2}}<b style="font-weight: 600; color: #3A3A3C">{{f.s2.b2}}</b>{{f.s2.a3}}</span>
+              <!-- (Oct 10, 22:21) the stage tag is the chat's stage band, under the texts, full width, with View --><span style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 12px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{f.tagBg}}; color: {{f.tagFg}}; font-size: 17px; line-height: 22px"><span aria-hidden="true" style="display: {{f.tagIcD}}; width: 20px; height: 20px; flex-shrink: 0; text-align: center; line-height: 0"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{f.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{f.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 15px; line-height: 20px; font-variant-numeric: tabular-nums">{{f.tagR}}</span></span>
+            </a>
+            <span class="wf-simstar" aria-hidden="true" style="display: {{f.simD}}">*</span>
+            </li>
+          </sc-for>
+        </ul>
+        </div></sc-if>
         <p class="wf-note" style="margin: 16px 16px 0">{{tx.note}} <a href="{{st.osm}}" target="_blank" rel="noopener" style="color: inherit">{{st.osmLbl}}</a>.</p>
       </div>
     </sc-if>
@@ -629,9 +649,9 @@ class Component extends DCLogic {
     if (lead) { const vU = MINE.unit || L('Your engine', 'O seu veículo'), mis = rows.filter((x) => x._mis), fyi = rows.filter((x) => !x._mis);
       const H = (x, t, sub, first) => Object.assign(x, { hdD: 'block', hd: t, hdSub: sub, hdSubD: sub ? 'block' : 'none', hdTop: first ? '0' : '16px' });
       if (mis.length) H(mis[0], L('Your assignment', 'A sua atribuição'), '', true);
-      if (fyi.length) H(fyi[0], L('For information', 'Para informação'), L('You join an incident when dispatch assigns your engine.', 'Entra num incidente quando o despacho atribui o seu veículo.'), false);
+      /* (Oct 12, 13:15) the other incidents are a group of their own, "Ongoing incidents", the last on the page (see fyiRows) */
       this._crewMis = mis.length ? (mis[0].place || '') : ''; this._crewSt = mis.length ? mis[0]._st : ''; this._crewN = fyi.length;
-      if (!mis.length && !fyi.length) {} rows = mis.concat(fyi).map((x) => x.hd ? Object.assign(x, { anim: x.anim || 'none' }) : Object.assign(x, { anim: x.anim || 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
+      this._fyi = fyi.map((x) => Object.assign(x, { anim: 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); rows = mis.map((x) => x.hd ? Object.assign(x, { anim: x.anim || 'none' }) : Object.assign(x, { anim: x.anim || 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
     else rows = rows.map((x) => Object.assign(x, { anim: 'none', hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' }));
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
@@ -710,7 +730,12 @@ class Component extends DCLogic {
     const shownRows = resolvedTab ? closedNew.slice(0, rLim) : rows, shownDuties = [];
     const rMore = resolvedTab && closedNew.length + doneNew.length > rLim;
     const nTodo = rows.length, nDone = closedRows.length;
-    return { title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows.map((x) => { const isC = x.mkStroke === '#3A3A3C', G = isC && window.__wfIgn ? window.__wfIgn(x._conf || 0, x._nt) : null, FL = (C && C.ICON && C.ICON.flame) || '';
+    const fyiAll = lead ? (this._fyi || []) : [];
+    return { fyiOn: fyiAll.length > 0, fyiT: L('Ongoing incidents', 'Incidentes em curso'), fyiSub: L('You join an incident when dispatch assigns your engine.', 'Entra num incidente quando o despacho atribui o seu veículo.'),
+      fyiRows: fyiAll.map((x) => { const isC = x.mkStroke === '#3A3A3C', G = isC && window.__wfIgn ? window.__wfIgn(x._conf || 0, x._nt) : null, FL = (C && C.ICON && C.ICON.flame) || '';
+        const ic = G ? { icBg: G.fill, icSh: 'inset 0 0 0 1px rgba(58, 58, 60, 0.25)', icD: G.dash, icFg: '#3A3A3C', icSw: '2', dotD: 'inline' } : x.tagIc && x.tagIcD !== 'none' ? { icBg: x.tagBg, icSh: 'none', icD: x.tagIc, icFg: x.tagFg, icSw: '2', dotD: 'none' } : { icBg: x.mkFill || '#E8590C', icSh: 'none', icD: FL, icFg: '#FFFFFF', icSw: '2', dotD: 'none' };
+        return Object.assign({}, x, ic, { s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2), tagR: x.tagR || '' }); }),
+      title: lead ? L('Incidents', 'Incidentes') : L('Assignments', 'Atribuições'), rows: shownRows.map((x) => { const isC = x.mkStroke === '#3A3A3C', G = isC && window.__wfIgn ? window.__wfIgn(x._conf || 0, x._nt) : null, FL = (C && C.ICON && C.ICON.flame) || '';
       const ic = G ? { icBg: G.fill, icSh: 'inset 0 0 0 1px rgba(58, 58, 60, 0.25)', icD: G.dash, icFg: '#3A3A3C', icSw: '2', dotD: 'inline' } : x.tagIc && x.tagIcD !== 'none' ? { icBg: x.tagBg, icSh: 'none', icD: x.tagIc, icFg: x.tagFg, icSw: '2', dotD: 'none' } : { icBg: x.mkFill || '#E8590C', icSh: 'none', icD: FL, icFg: '#FFFFFF', icSw: '2', dotD: 'none' };
       return Object.assign({}, x, ic, { s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2), tagR: x.tagR || '' }); }), none: false, listD: shownRows.length ? 'flex' : 'none',
       duties: shownDuties, dutyD: shownDuties.length ? 'flex' : 'none', subD: (lead ? !nDep : !rows.length) ? 'block' : 'none',
