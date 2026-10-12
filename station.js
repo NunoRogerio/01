@@ -236,7 +236,7 @@
         out(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {}
         try { if (!C) return; var c = hq ? hc : it.kind === 'asg' ? it.c : fire ? C.find({ id: d.id, kind: 'fire' }) : null;
           if (!c && !fire && !hq && C.incCand && C.open) { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
-          if (c) { sessionStorage.setItem('wf-chat-open', c.key); location.href = 'Chat.dc.html'; } } catch (x) {} });
+          if (c) { sessionStorage.setItem('wf-chat-open', c.key); if (it.kind === 'asg') sessionStorage.setItem('wf-chat-top', c.key); location.href = 'Chat.dc.html'; } } catch (x) {} });
       box.appendChild(b); requestAnimationFrame(function () { requestAnimationFrame(function () { b.style.transform = 'none'; b.style.opacity = '1'; }); });
       try { if (navigator.vibrate) navigator.vibrate([10, 60, 10]); } catch (x) {}
       /* (Oct 9, 13:52) no auto-dismiss: a banner stays until it is put away (swipe up) or tapped to open its incident */ }, i * 700); }); }

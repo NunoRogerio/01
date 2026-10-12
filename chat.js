@@ -656,7 +656,8 @@
     (c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).forEach(function (m) {
       if (m.reqDecl && !m.done) m.done = (declared && m.actions[1].key === 'reqConfirm') || (!declared && m.actions[1].key === 'reqDismiss') ? m.actions[1].key : 'reqNo'; });
   }
-  function start(c) {
+  function start(c) { start0(c); if (c.asgMine) { c.asgMine = false; assignMine(c); } }
+  function start0(c) {
     var P = c.people, n = P.length;
     var names = P.map(function (p) { return p.org; }).join(', ');
     if (c.kind === 'cand') {
@@ -720,11 +721,11 @@
   function commander(c) { if (!c || c.kind === 'dm') return null; var SF = null, Q = null; (c.stations || []).some(function (q) { SF = staffOf(q); Q = q; return !!SF; }); if (!SF) return null;
     var us = isUS(c), b = SF.batt || ''; return { name: SF.captain, unit: b, station: Q.short || Q.name, en: us ? 'Battalion Chief. ' + b + '. Commander' : 'Commander. ' + b, pt: us ? 'Chefe de batalhão. ' + b + '. Comandante' : 'Comandante. ' + b }; }
   /* (Oct 12, 12:50) the dispatch center assigns our engine to this incident (a crew's next assignment) */
-  function assignMine(c) { if (!c || c.kind === 'dm' || c.closed || c.dismissed) return false; if (mission(c)) return true; var i = ownIdx(c, true); if (i < 0) return false;
+  function assignMine(c) { if (!c || c.kind === 'dm' || c.closed || c.dismissed) return false; if (mission(c)) return true; if (!(c.stations || []).length) { c.asgMine = true; c.updated = Date.now(); save(); emit(); return true; }   /* the team is still loading: the assignment is applied once it is in (start) */ var i = ownIdx(c, true); if (i < 0) return false;
     var f = (c.forces || []).find(function (x) { return x.si === i && !x.second; }); if (!f) { f = forceFor(c, i, 'enroute'); (c.forces = c.forces || []).push(f); } else f.st = 'enroute';
-    c.flags.dispatched = true; var v = (f.veh || [])[0] || 'Engine'; sys(c, dcOf(c) + ' assigned ' + v + ' to this incident', dcOf(c) + ' atribuiu o ' + v + ' a este incidente', 300, 0); ensureLts(c); c.updated = Date.now(); save(); emit(); return true; }
+    c.flags.dispatched = true; var v = (f.veh || [])[0] || 'Engine'; sys(c, dcOf(c) + ' assigned ' + v + ' to this incident', dcOf(c) + ' atribuiu o ' + v + ' a este incidente', 2500, 0);   /* after the evidences: the story starts with them */ ensureLts(c); c.updated = Date.now(); save(); emit(); return true; }
   /* (Oct 12, 12:05) the incident a crew profile (Captain, Engineer, Firefighter) is assigned to: its own engine is committed there */
-  function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false;
+  function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false; if (c.asgMine) return true;
     return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
   /* (Oct 12, 12:05) who answers a card: a size-up is the first engine's Captain's call; every other request the commander's (never a crew profile) */
   function sizeUp(m) { return !!(m && m.reqDecl && (m.ask === 'ff' || /^Size-up/.test(((m.tag || {}).en) || ''))); }
@@ -762,9 +763,9 @@
     } else if (s === 2) {
       var eta = c.stations[0] ? c.stations[0].min : 15;
       if (!c.acked) {   /* (Oct 5) the leads already confirmed the order on their way: no second "leaving now" */
-      if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 2000, 1);
-      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 4500, 2); }
-      setStage(c, 3, d + 7000, Math.max(4, eta - 3));   /* (Oct 12, 15:20) about 10 s from the dispatch to crews on scene; (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
+      if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
+      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2); }
+      setStage(c, 3, d + 12000, Math.max(4, eta - 3));   /* (Oct 12, 15:55) about 20 s from the dispatch to crews on scene (10 s was too fast); (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
     } else if (s === 3 && c.flags.rekindled) {   /* (Oct 8, 21:06) back on scene after a rekindle */
       say(c, ltOf(c, 0), 'Back on the rekindle. Knocking it down.', 'De volta ao reacendimento. A apagá-lo.', d + 3000, 3);
     } else if (s === 3) {
@@ -1830,7 +1831,7 @@
           actions: [{ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }] }, 600, 0); changed = true; }
       if (c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage >= 2 && c.stage <= 6 && !(c.queue || []).some(function (x) { return x.m && (x.m.kind === 'stage' || x.m.kind === 'capt'); }) && !(c.msgs || []).some(function (x) { return x.rekindle && !x.done; })) {
         if (!c.stageAt) c.stageAt = now; var pk = 'pace' + c.stage + '_' + (c.sEnt || 0);
-        if (!openReq(c) && (c.stage === 2 || now - (c.reqAt || 0) > 9000) && (!c.flags[pk] || (c.stage >= 4 && !isLt() && !hasOpenRec(c) && !(c.queue || []).length && now - (c.recGone || 0) > 8000)) && now - c.stageAt > (c.stage === 2 ? 4000 : 8000))   /* (Oct 12, 15:20) en route takes about 4 s: a dispatched fire is on scene within about 10 s */   /* (Oct 11, 07:04) never while a request waits for an answer; 9 s after the last answer */   /* a stage whose card went away (a rekindle, a reload) gets a new one: chip and card always together */   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
+        if (!openReq(c) && (c.stage === 2 || now - (c.reqAt || 0) > 9000) && (!c.flags[pk] || (c.stage >= 4 && !isLt() && !hasOpenRec(c) && !(c.queue || []).length && now - (c.recGone || 0) > 8000)) && now - c.stageAt > 8000)   /* (Oct 11, 07:04) never while a request waits for an answer; 9 s after the last answer */   /* a stage whose card went away (a rekindle, a reload) gets a new one: chip and card always together */   /* (Oct 9, 09:03) 8 s at most per stage: a confirmation card every ~8 s to walk the story quickly */ { c.flags[pk] = true; paceDue(c, c.stage); changed = true; } }
       // A question left before its answer arrived (the screen that asked was closed): answer it here, so it still lands and counts as unread
       if (c.pending && c.pending.q && !INF[k] && now - c.pending.at > 4000) { var q0 = c.pending.q; c.pending = null; if (aiKey()) aiReply(c, q0, function (cc) { ruleReply(cc, q0); }); else ruleReply(c, q0); changed = true; }
       if (idle(c, now)) changed = true;
