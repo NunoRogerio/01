@@ -196,7 +196,7 @@
   /* (Oct 11, 17:15) chats started on the old flow move to the real one, once: a candidate still waiting for someone to approve the
      declaration gets the dispatch center's initial attack and the first engine's arrival; a declared fire still waiting for
      Configure dispatch gets the dispatch center's dispatch; old ranks read as today's */
-  function migrateFlow(c) { if (!c || c.kind === 'dm' || c.flow3) return false; c.flow3 = true;
+  function migrateFlow(c) { if (!c || c.kind === 'dm' || c.flow3 || !(c.stations || []).length) return false; c.flow3 = true;
     (c.people || []).forEach(function (p) { if (p.roleEn) p.roleEn = String(p.roleEn).replace(/^Lieutenant\. /, 'Captain. '); });
     if (c.closed || c.dismissed) return true;
     var us = isUS(c), ECC = dcOf(c), now = Date.now();
@@ -211,7 +211,7 @@
       card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Crews dispatched', pt: 'Equipas despachadas' }, body: { en: (c.stations || []).slice(0, 2).map(function (q) { return q.short; }).join(' and ') + ' responding.', pt: (c.stations || []).slice(0, 2).map(function (q) { return q.short; }).join(' e ') + ' em marcha.' } }, 600, 0);
       setStage(c, 2, 1500, 1); return true; }
     return true; }
-  function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = migrateFlow(c) || soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
+  function ensureLts(c) { if (!c || c.kind === 'dm' || !c.people) return false; if (!(c.stations || []).length) { if (!c.closed && !c.dismissed) teamLater(c); return false; } if (repairEmpty(c)) return true; var ch = migrateFlow(c) || soloSim(c), M = window.__wfMine ? window.__wfMine() : null;
     /* (Oct 8, 22:43) chats saved before the reservation: Station 11's people (its captain, lieutenants and crews) are never someone else in another station's chat */
     if (window.__wfReservedNames && !c.fixedRes2) { var RS0 = window.__wfReservedNames(), own = {}; (c.stations || []).forEach(function (q) { if (staffOf(q)) own[q.short] = 1; });
       (c.people || []).forEach(function (p, i) { if (!RS0[p.name] || own[p.org]) return; var old = p.name, nm = pickNames(c, 1, 'res' + i)[0]; if (!nm || RS0[nm]) return; p.name = nm; p.code = initials(nm);
@@ -233,6 +233,15 @@
     return ch; }
   /* (Oct 8, 23:30) every station in an incident chat has its lieutenant there too, not only its captain (also before any
      dispatch); when a station leaves (not sent, released), its lieutenant leaves with it */
+  /* (Oct 12) a candidate chat damaged before the fix: a dispatch card naming no units (" responding.") means its story ran before its
+     team was known. While still a candidate, the story starts again with its team, once */
+  function repairEmpty(c) { if (c.kind !== 'cand' || c.stage !== 0 || c.closed || c.dismissed || c.fixEmpty) return false; c.fixEmpty = true;
+    var bad = (c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).some(function (m) { return m && m.body && /^\s*(responding|em marcha)\./.test(m.body.en || m.body.pt || ''); });
+    if (!bad) return false;
+    c.msgs = []; c.queue = []; c.forces = []; c.flags = {}; c.flow3 = true;
+    (c.people || []).forEach(function (p) { if (p.kind === 'lead') p.left = undefined; });
+    c.people = (c.people || []).filter(function (p) { return p.kind === 'lead'; });
+    start(c); return true; }
   function ltsOfLeads(c) { if (!c || c.kind === 'dm' || !c.people) return false; var ch = false, me = (window.__wfPrefs && window.__wfPrefs.person) || {}, M = window.__wfMine ? window.__wfMine() : null, us = isUS(c);
     c.people.slice().forEach(function (p) { if (p.kind !== 'lead') return; var org = p.org, st = (c.stations || []).find(function (q) { return q.short === org; }) || {}, SF = staffOf(st);
       var lts = c.people.filter(function (q) { return q.kind === 'lt' && q.org === org; }), working = (c.forces || []).some(function (f) { return f.station === org && f.st !== 'standby' && f.st !== 'released'; });
@@ -384,9 +393,21 @@
       ch.hist = H;
     }
     try { plausibleEarly(ch); } catch (e) {}
+    ch.flow3 = true;   /* (Oct 12) a new chat starts on today's flow: never 'migrated' while its team is still loading */
     db.chats[k] = ch; save();
-    stationsFor(ch.st, ch.lat, ch.lon, function (S) {
-      var d = load(), c = d.chats[k]; if (!c) return;
+    TEAM[k] = 1; stationsFor(ch.st, ch.lat, ch.lon, function (S) { fillTeam(k, S); });
+    return ch;
+  }
+  /* (Oct 12, 04:11) the chat's team (the nearest stations and their captains) and the start of its story. The page that creates a
+     chat may be left before the stations arrive (tap a candidate, then its chat at once): whichever page holds the chat finishes
+     it (ensureLts), so no chat is ever left with a lone, empty dispatch card */
+  var TEAM = {};
+  function teamLater(c) { if (UNDER || TEAM[c.key]) return; TEAM[c.key] = 1; stationsFor(c.st, c.lat, c.lon, function (S) { fillTeam(c.key, S); }); }
+  function fillTeam(k, S) {
+      var d = load(), c = d.chats[k]; if (!c || (c.stations || []).length) return;
+      if (c.closed || c.dismissed) return;
+      /* anything written before the team was known (an old page's dispatch with no units) is dropped: the story starts again */
+      c.msgs = []; c.queue = []; c.forces = []; c.flags = { air: !!c.flags.air, evac: !!c.flags.evac }; c.flow3 = true;
       c.stations = S.slice(0, 4);   // (Oct 3, 22:04) while a candidate: the leads of the four nearest stations
       c.reserve = S[4] || null;
       var nm = pickNames(c, c.stations.length, 'coord');
@@ -402,8 +423,6 @@
       if (kept && c.stage <= 1) dispatched(k, kept, 2400);
       if (c.past) closePast(c);
       save(); emit();
-    });
-    return ch;
   }
 
   // ---- messages -----------------------------------------------------------------------------------------------------
@@ -643,7 +662,7 @@
   function dcOf(c) { if (!isUS(c)) return 'CSREPC'; var t = (c.reg || '') + ' ' + (c.stations || []).map(function (q) { return (q.name || '') + ' ' + (q.full || '') + ' ' + (q.short || ''); }).join(' ');
     return /los angeles/i.test(t) ? 'Command and Control' : c.st === 'CA' ? 'ECC' : 'Dispatch'; }
   /* (Oct 11, 17:05) the dispatch center's initial attack on a candidate: the two nearest stations' engines roll at once; the others stay available */
-  function initialAttack(c) { if (c.flags.dispatched) return; c.flags.dispatched = true; c.flags.initial = true;
+  function initialAttack(c) { if (c.flags.dispatched || !(c.stations || []).length) return; c.flags.dispatched = true; c.flags.initial = true;
     c.forces = c.stations.map(function (q, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
     c.forces.forEach(function (f) { f.st = f.si < 2 ? 'enroute' : 'standby'; });
     c.people.forEach(function (p, pi) { if (p.kind !== 'lead' || p.self || p.left) return; var f = c.forces.find(function (x) { return x.si === pi; }); if (f && f.st === 'standby') p.left = true; }); }

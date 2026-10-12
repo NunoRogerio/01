@@ -1825,3 +1825,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Candidate and drone pages: the header's chat button opens that incident's own chat (candidate chat), never a generic or fire chat.
 - Map tiles: MapTiler double-density tiles on phone screens; zoom up to the provider's limit (MapTiler 20, OpenStreetMap 19 with one level closer on phone screens), so close-ups are never blurry.
 - Structures at risk: only buildings inside the projected shape of that horizon or within 100 m of its edge, checked against the shape drawn now.
+
+## Oct 12, 04:11
+- A full-screen map opened from the chat's incident blade fills the whole screen: the blade opens to the screen's foot (no grabber, no gap, no rounded foot), the map takes exactly the height on screen, so its controls and its exit button are never cut. Leaving full screen brings the blade and its scroll back.
+- A full-screen map's location card wraps its title and coordinates onto more lines beside the legend instead of cutting them with "…".

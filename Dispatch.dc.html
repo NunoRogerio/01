@@ -20,7 +20,7 @@
 <script src="station.js?v=1791754661"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791754661"></script>
+<script src="chat.js?v=1791775326"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -929,7 +929,18 @@ class Component extends DCLogic {
   wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); }
     /* (Oct 11, 08:56) the map band sits under the Situation | Crews switcher inside the page: its offset there moves the map's window */
     const b = document.querySelector('[data-wf-band]'), pg = document.querySelector('[data-wf-page]'); if (b && pg && b.offsetHeight) { const o = b.offsetTop - pg.offsetTop; if (o >= 0 && Math.abs(o - (this._bandOff || 0)) > 1) { this._bandOff = o; this.forceUpdate(); } } } catch (x) {} }
-  componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); this.planFlip(); }
+  componentDidUpdate() { this.wfHdrMeasure(); this.wfSbMeasure(); this.planFlip(); this.wfEmbFull(); }
+  /* (Oct 12, 04:11) in the chat's incident blade the page is an iframe: a full-screen map asks the chat to open the blade over the
+     whole screen (no grabber, no gap at the foot), the page goes back to its top and stops scrolling, and the map takes exactly the
+     height the screen shows, so its controls and its foot are never cut. Back from full screen, the blade and the scroll return. */
+  wfEmbFull() { if (window === window.top) return; const on = !!(this.state || {}).full; if (this._embFull === on) return; this._embFull = on;
+    try { const P = window.parent; if (P && P.__wfIbFull) P.__wfIbFull(on); } catch (e) {}
+    try { const se = document.scrollingElement || document.documentElement; if (on) { this._embY = se.scrollTop; se.scrollTop = 0; }
+      [document.documentElement, document.body].forEach((el) => { if (el) el.style.overflowY = on ? 'hidden' : 'auto'; });
+      if (!on && this._embY) { const y = this._embY; this._embY = 0; setTimeout(() => { try { se.scrollTop = y; } catch (e) {} }, 60); } } catch (e) {}
+    /* the chat's status bar inset, which an iframe cannot read itself (its env() is 0): the map's title and legend start below the clock */
+    try { const P = window.parent, pr = P.document.createElement('div'); pr.style.cssText = 'position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)'; P.document.body.appendChild(pr); const cs = P.getComputedStyle(pr), sc = (window.__wfVP || {}).s || 1; document.documentElement.style.setProperty('--wf-safe-t', ((parseFloat(cs.paddingTop) || 0) / sc) + 'px'); document.documentElement.style.setProperty('--wf-safe-b', ((parseFloat(cs.paddingBottom) || 0) / sc) + 'px'); pr.remove(); } catch (e) {}
+    setTimeout(() => { try { this.forceUpdate(); } catch (e) {} }, 620); }
   // Chosen stations: a new one comes out from under Add (newest on top) and settles (no bounce, Oct 9); the ones already
   // there slide down to make room (FLIP on their positions in the page's own pixels)
   planFlip() {
@@ -953,7 +964,7 @@ class Component extends DCLogic {
       if (h > 120 && Math.abs(h - (this._sbMin || 0)) > 2) { this._sbMin = h; this.forceUpdate(); } } catch (e) {} }
   // Where the fire is: its own coordinates when known, else from its place on the map
   wfFireLL(frow, I) { const lat = I && isFinite(I.lat) && I.lat != null ? +I.lat : frow && isFinite(frow.lat) && frow.lat != null ? +frow.lat : frow ? 34.19 - (frow.y - 662) / 2829 : NaN, lon = I && isFinite(I.lon) && I.lon != null ? +I.lon : frow && isFinite(frow.lon) && frow.lon != null ? +frow.lon : frow ? (frow.x - 518) / 2345 - 118.13 : NaN; return { lat, lon }; }
-  componentDidMount() { this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); window.__wfDispPlanReset = () => this.setState({ plan: [], flow: null });   /* the tour empties the plan so the AI suggested pack shows (Oct 3, 20:06) */ window.__wfFluidLand = true; try { window.dispatchEvent(new Event('resize')); } catch (e) {} try { this._wfVpU = () => this.forceUpdate(); window.addEventListener('wf-vp', this._wfVpU); } catch (e) {}   /* landscape: the fire's full-screen map fills the whole screen, as on the candidate */
+  componentDidMount() { this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); window.__wfDispPlanReset = () => this.setState({ plan: [], flow: null });   /* the tour empties the plan so the AI suggested pack shows (Oct 3, 20:06) */ window.__wfFluidLand = true; try { window.dispatchEvent(new Event('resize')); } catch (e) {} try { this._wfVpU = () => this.forceUpdate(); window.addEventListener('wf-vp', this._wfVpU); if (window !== window.top) window.addEventListener('resize', this._wfVpU); } catch (e) {}   /* landscape: the fire's full-screen map fills the whole screen, as on the candidate */
     try { this._chatSync = () => this.forceUpdate(); window.addEventListener('wf-chat', this._chatSync); } catch (e) {} this.wfNudge(); setTimeout(() => this.wfHdrMeasure(), 0); this._actT = setInterval(() => this.forceUpdate(), 20000);
     // The current stage's elapsed time counts every second (only its text is updated).
     const tick = () => { try { document.querySelectorAll('[data-tl-since]').forEach((el) => { const t = +el.getAttribute('data-tl-since'); if (!t) { el.textContent = ''; return; } let x = Math.max(0, Math.floor((Date.now() - t) / 1000)); const d = Math.floor(x / 86400); x %= 86400; const h = Math.floor(x / 3600); x %= 3600; const m = Math.floor(x / 60), sec = x % 60; const txt = d ? d + ' d ' + h + ' h' : h ? h + ' h ' + m + ' min' : m + ' min'; if (el.textContent !== txt) el.textContent = txt; }); } catch (e) {} };
@@ -2375,7 +2386,7 @@ class Component extends DCLogic {
       sugAria: isRecCfg ? 'Suggested forces already selected' : 'Reset to the suggested forces',
       cfgY: cfg ? '0%' : 'calc(100% + 120px)', cfgHidden: cfg ? 'false' : 'true', cfgOpenStr: cfg ? 'true' : 'false', cfgChevRot: cfg ? '180deg' : '0deg',
       cfgAria: 'Configure dispatch: ' + fmt(counts),
-      ...(() => { const V = window.__wfVP || {}, LND = !!V.land && !!s.full; return { mapW: LND || V.rail ? V.w : 390, mapH: LND ? V.h : 844, mapCL: LND ? (V.sl || 0) : 0, mapCR: LND ? Math.min(V.sr || 0, 16) : 0 }; })(),   /* landscape full screen: the map fills the turned phone; the camera side keeps its safe area, the other side 32px */ no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : RO ? (MAPH < 310 ? 16 : 82) : 38,   /* (07:24) no projection switcher: the credit sits 16px from the band's foot */
+      ...(() => { const V = window.__wfVP || {}, LND = !!V.land && !!s.full; const EMBF = !!s.full && window !== window.top && !LND, EH = EMBF ? Math.floor(window.innerHeight / (V.s || 1)) : 0; return { mapW: LND || V.rail ? V.w : 390, mapH: LND ? V.h : EMBF && EH > 300 ? Math.min(844, EH) : 844, mapCL: LND ? (V.sl || 0) : 0, mapCR: LND ? Math.min(V.sr || 0, 16) : 0 }; })(),   /* landscape full screen: the map fills the turned phone; the camera side keeps its safe area, the other side 32px */ no: false, yes: true, radius: 0, attrBottom: s.full ? 34 : RO ? (MAPH < 310 ? 16 : 82) : 38,   /* (07:24) no projection switcher: the credit sits 16px from the band's foot */
       full: !!s.full, toggleFull: () => { const st = this.state || {}; this.setState({ full: !st.full, open: false, cfg: false }); },
       tipSafe: s.full ? 70 : (sent ? 186 : 192) + HD, clipT: s.full ? 0 : (RO && sent ? (this._hdrB || 170) + (this._bandOff || 0) : 128 + HD), clipBleed: s.full ? 0 : 40, clipB: s.full ? 0 : (sent ? (RO ? 844 - (this._hdrB || 170) - (this._bandOff || 0) - MAPH : Math.max(160, (this._sbMin || 250) - 28)) : 458), ctrlTop: RO && sent && !s.full && MAPH < 310 ? (this._hdrB || 170) + (this._bandOff || 0) + 16 : (sent ? 266 - 38 : 243) + HD,   /* (07:24) a shorter band: its round buttons start 16px under its top */ hzTop: s.full ? -68 : (sent ? 12 : 16),
       downPE: (s.full || sent) ? 'none' : 'auto',
