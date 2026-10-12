@@ -509,8 +509,10 @@ class Component extends DCLogic {
        Each variant is [salutation, [before, bold, after]] */
     const N = String(n), inc = one ? L('incident', 'incidente') : L('incidents', 'incidentes');
     /* (Oct 12, 12:30) a crew's greeting speaks of its assignment, never of incidents it cannot join */
-    if (lead && this._crewMis != null) { const u = (M0 && M0.unit) || L('Our engine', 'O nosso veículo'), nm = this._crewMis, k0 = who ? 0 : -1;
-      return nm ? { a: L('Hello ', 'Olá '), who, b: '.', c0: L('Our assignment: ', 'A nossa atribuição: '), cn: nm, c1: '.' } : { a: L('Hello ', 'Olá '), who, b: '.', c0: u + L(' is available. ', ' está disponível. '), cn: String(this._crewN || 0), c1: ' ' + ((this._crewN || 0) === 1 ? L('incident nearby, for information.', 'incidente perto, para informação.') : L('incidents nearby, for information.', 'incidentes perto, para informação.')) }; }
+    if (lead && this._crewMis != null) { const PTg = window.__wfLang === 'pt' && !!(M0 && M0.unit), u = (M0 && M0.unit) || L('Our engine', 'O nosso veículo'), nm = this._crewMis, k0 = who ? 0 : -1;
+      /* (Oct 12, 12:35) a Captain's focus is his assignment: the welcome names it and where the engine is; nearby incidents stay in the list (awareness for a move-up), never in the welcome */
+      const V = { enroute: L(' is en route to ', ' está a caminho: '), onscene: L(' is on scene at ', ' está no local: '), watch: L(' is on watch at ', ' está em vigilância: ') }[this._crewSt] || L(' is assigned to ', ' está atribuído a: ');
+      return nm ? { a: L('Hello ', 'Olá '), who, b: '.', c0: (PTg ? 'O ' : '') + u + V, cn: nm, c1: '.' } : { a: L('Hello ', 'Olá '), who, b: '.', c0: (PTg ? 'O ' : '') + u + L(' is available, in quarters.', ' está disponível, no quartel.'), cn: '', c1: '' }; }
     const G = n ? [
       [L('Hello ' + who + '.', 'Olá ' + who + '.'), [L('We have ', 'Temos '), N, ' ' + inc + L(' in progress in our area.', ' em curso na nossa área.')]],
       [tod ? tod + ', ' + who + '.' : L('Working late, ' + who + '?', 'A trabalhar até tarde, ' + who + '?'), [L('We’re working ', 'Estamos a trabalhar '), N, ' ' + inc + L(one ? '. Here is where it stands.' : '. Here is where each one stands.', one ? '. Eis o ponto de situação.' : '. Eis o ponto de situação de cada um.')]],
@@ -572,7 +574,7 @@ class Component extends DCLogic {
       const crewV = MINE.rank === 'ff' || MINE.rank === 'eng', ST = crewV ? { enroute: L('En route to the staging area', 'A caminho do ponto de concentração'), onscene: L('On the line. East flank', 'Na linha. Flanco leste'), watch: L('Patrol', 'Vigilância') } : { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };   /* (Oct 11, 17:50) the line crews see where to go */
       rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (C.mission ? C.mission(c) : (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S)))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         const nm = C.nameOf ? C.nameOf(c) : c.place;
-        return { _mis: true, place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+        return { _mis: true, _st: f.st, place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
           _id: c.incId, simD: simOf(c.incId), ...MK[c.kind === 'fire' ? 'fire' : 'cand'], moonD: 'none', sub2: c.lat ? kmT(km(c.lat, c.lon)) + '. ' + drv(km(c.lat, c.lon)) + '.' : '', sub2D: c.lat ? 'block' : 'none', tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: ((Sg && Sg.icD) || C.ICON[Sg.icon]) || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)) || MINE.rank === 'eng' || MINE.rank === 'ff', sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) && MINE.rank !== 'eng' && MINE.rank !== 'ff' ? L('Dispatched. Respond. ', 'Despachado. Responda. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
     }
@@ -626,7 +628,7 @@ class Component extends DCLogic {
       const H = (x, t, sub, first) => Object.assign(x, { hdD: 'block', hd: t, hdSub: sub, hdSubD: sub ? 'block' : 'none', hdTop: first ? '0' : '16px' });
       if (mis.length) H(mis[0], L('Your assignment', 'A sua atribuição'), '', true);
       if (fyi.length) H(fyi[0], L('For information', 'Para informação'), L('You join an incident when dispatch assigns your engine.', 'Entra num incidente quando o despacho atribui o seu veículo.'), false);
-      this._crewMis = mis.length ? (mis[0].place || '') : ''; this._crewN = fyi.length;
+      this._crewMis = mis.length ? (mis[0].place || '') : ''; this._crewSt = mis.length ? mis[0]._st : ''; this._crewN = fyi.length;
       if (!mis.length && !fyi.length) {} rows = mis.concat(fyi).map((x) => x.hd ? x : Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
     else rows = rows.map((x) => Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' }));
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
