@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791805444"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791806284"></script>
+<script src="prefs.js?v=1791835545"></script>
 <script src="station.js?v=1791834155"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
@@ -478,10 +478,10 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 0 16px 8px"><h2 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap">{{t.timeline}}</h2><span style="font-size: 15px; line-height: 20px; color: #545458; font-variant-numeric: tabular-nums; white-space: nowrap">{{tlTotal}}</span></div>
         <sc-for list="{{tl}}" as="r" hint-placeholder-count="8">
           <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; opacity: {{r.op}}">
-            <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.bg}}"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
-            <span style="min-width: 0; font-size: 17px; line-height: 22px"><span style="font-weight: 700">{{r.name}}</span> <span style="color: #6E6E73">{{r.at}}</span></span>
+            <span aria-hidden="true" style="grid-row: {{r.icRow}}; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.bg}}"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
+            <!-- (Oct 12, 21:10) the stage's name, its time under it --><span style="display: flex; flex-direction: column; min-width: 0; font-size: 17px; line-height: 22px"><span style="font-weight: 700">{{r.name}}</span><span style="color: #6E6E73">{{r.at}}</span></span>
             <span style="font-size: 17px; font-weight: {{r.w}}; line-height: 22px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
-            <!-- (Oct 11, 00:14) the bar in the stage's colour, starting where the previous stage ended (one time line across the cards) --><span style="position: relative; display: {{r.barD}}; grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.14); overflow: hidden"><span class="chbar" style="position: absolute; top: 0; bottom: 0; left: {{r.off}}; display: block; width: {{r.pctT}}; min-width: {{r.bMin}}; border-radius: 999px; background: {{r.bc}}"></span></span>
+            <!-- (Oct 11, 00:14) the bar in the stage's colour, starting where the previous stage ended (one time line across the cards) --><span style="position: relative; display: {{r.barD}}; grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.14); overflow: hidden"><sc-for list="{{r.segs}}" as="g" hint-placeholder-count="1"><span class="chbar" style="position: absolute; top: 0; bottom: 0; left: {{g.l}}; display: block; width: {{g.w}}; min-width: {{g.mn}}; border-radius: 999px; background: {{g.c}}; opacity: {{g.op}}"></span></sc-for></span><!-- (Oct 12, 21:10) the stages before stack on the left at 40%, this stage at full colour -->
           </div>
         </sc-for>
       </section>
@@ -949,7 +949,8 @@ class Component extends DCLogic {
       const pt = i === 1 || i === 7;   /* (Oct 12, 19:35) First alert and Closed are moments: their time, no bar, no duration */
       return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : pt ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? (St.icon === 'cand' ? '#000000' : '#FFFFFF') : '#6E6E73', nameC: d && d.cur && St.icon !== 'cand' ? '#FFFFFF' : '#000000', atC: d && d.cur && St.icon !== 'cand' ? 'rgba(255,255,255,0.9)' : '#6E6E73',
         pct: d && !pt ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', off: offP.toFixed(2) + '%', pctT: pt ? '0%' : wP.toFixed(2) + '%', bc: tone(St).bg, bMin: d && !pt ? '8px' : '0px', barD: pt ? 'none' : 'block', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '',
-        rowBg: d && d.cur ? I.bg : 'transparent', circBg: d && d.cur ? 'transparent' : I.bg }; });   /* (Oct 9) the current stage: its colour fills the whole row, not only the icon's circle */
+        rowBg: d && d.cur ? I.bg : 'transparent', circBg: d && d.cur ? 'transparent' : I.bg, icRow: pt ? '1' : '1 / span 2', _d: !!d && !pt }; });
+    { const SG = tl.map((r, i) => r._d ? { i, l: r.off, w: r.pctT, c: r.bc, mn: r.bMin } : null).filter(Boolean); tl.forEach((r, i) => { r.segs = SG.filter((x) => x.i <= i && r._d).map((x) => ({ l: x.l, w: x.w, c: x.c, op: x.i === i ? 1 : 0.4, mn: x.i === i ? x.mn : '0px' })); }); }   /* (Oct 9) the current stage: its colour fills the whole row, not only the icon's circle */
     const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
 
     // Forces

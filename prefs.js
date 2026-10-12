@@ -546,7 +546,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY) && !!el.offsetParent;
-    var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = sc && el.scrollTop > 1;
+    var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = false;   /* (Oct 12, 21:10) the fade at the bottom only: the top one is gone (the bottom says enough) */
     var h = Math.round(Math.min(FH, el.clientHeight * 0.3)), ht = el.classList.contains('wf-snap') ? Math.min(h, 32) : h;   // snapping lists: the top fade fits the 32px band items rest under, never over an item
     var th = document.documentElement.classList.contains('wf-dark') + '|' + (document.documentElement.getAttribute('style') || '').length;
     if ((less || more) && (el.__wfBcTh !== th || el.__wfBc === undefined)) { el.__wfBc = behindCol(el); el.__wfBcTh = th; }
