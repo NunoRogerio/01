@@ -346,6 +346,8 @@
   window.__wfIncidentFor = function (lat, lon, st) { st = st || ((window.__wfMine() || {}).station); if (!st || !isFinite(lat) || !isFinite(lon)) return '';
     var a = window.__wfStationArea(st); if (inArea(a, lat, lon)) return 'zone';
     var d0 = km(st.lat, st.lon, lat, lon); if (d0 > 25) return '';   // too far for a closest-unit response
+    /* (Oct 12, 06:25) the Battalion Chief's area is his battalion (about 25 km around his base): everything in it is his own, never mutual aid */
+    try { var M0 = window.__wfMine ? window.__wfMine() : null; if (M0 && M0.rank === 'bc' && M0.station && String(M0.station.id) === String(st.id)) return 'zone'; } catch (e) {}
     var S = stations(st.cc || 'us'); if (!S) return '';
     var k = lat.toFixed(4) + ',' + lon.toFixed(4); if (MEMO[k] != null) return MEMO[k];
     var near = 0; for (var i = 0; i < S.length; i++) { var r = S[i]; if (Math.abs(r[2] - lat) > 0.3 || Math.abs(r[3] - lon) > 0.4 || /airport|aeroporto/i.test(r[4] || '')) continue;

@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791778255"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791777044"></script>
-<script src="station.js?v=1791754661"></script>
+<script src="station.js?v=1791782784"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
 <script src="chat.js?v=1791782489"></script>
@@ -1724,7 +1724,7 @@ class Component extends DCLogic {
         sep: i ? '0' : '0', aria: (un ? 'Unread. ' : '') + n.title + '. ' + n.text + '. ' + ageTxt(n.t),
         pick: (e) => { this.wfNtRead(nid(n)); if (n.pick) n.pick(e); } };   // the link itself navigates; the panel stays until the page changes
     });
-    const where = MINE ? (String(MINE.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '') || 'Station') : ((scope && scope.title) || 'All areas');
+    const where = MINE ? ((() => { try { return sessionStorage.getItem('wf-home-title') || ''; } catch (e) { return ''; } })() || (MINE.rank === 'bc' ? 'Battalion ' + (MINE.batt || '') : String(MINE.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '')) || 'Station') : ((scope && scope.title) || 'All areas');   /* (Oct 12) the same name as the home it opens from (Battalion 15 for the Battalion Chief, the crew for a Captain) */
     return {
       items, none: items.length === 0, mine: mn, mineD: MINE || mn.gov ? 'none' : 'flex', noneTxt: MINE ? (MINE.level === 'lead' ? 'No deployments so far.' : 'No updates in the station area so far.') : mn.on ? 'No updates on your incidents so far.' : 'No updates in this area so far.', quiet: ['All is quiet.', 'Quiet so far.', 'All calm out there.', 'Nothing on the radio.', 'Steady and quiet.'][this._ntQ == null ? (this._ntQ = Math.floor(Math.random() * 5)) : this._ntQ], listD: items.length ? 'flex' : 'none', title: where, sub: 'Notifications' + (unread ? '. ' + unread + ' unread' : items.length ? '. ' + items.length + (items.length === 1 ? ' update' : ' updates') : '') + '.',   /* (Oct 8) empty: the empty state says it, the subtitle does not repeat it */ unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
