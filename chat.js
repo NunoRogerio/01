@@ -1128,9 +1128,16 @@
   /* (Oct 8, 23:25) a station captain dispatches only their own station: its crews (Engine, Brush), each under its lieutenant */
   /* (Oct 12) our station agreed to help on this incident (mutual aid): it is ours to work, wherever it is */
   function aided(c) { try { var A = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}, id = String((c && c.incId) || ''), raw = id.replace(/^F-/, ''); return !!(A[id] || A[raw] || A['F-' + raw]); } catch (e) { return false; } }
+  /* (Oct 12, 06:19) an incident is ours to work when it is in our station's area, when our station gave mutual aid there, when we
+     already command it, or, for a Battalion Chief, anywhere in his battalion (about 25 km around his base: Temecula for Battalion 15) */
+  function ours(c) { var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!c || !S) return true;
+    if (aided(c) || (c.flags && c.flags.cmd === 'me') || (c.people || []).some(function (p) { return p.self && !p.left; })) return true;
+    if (window.__wfChatIsOurs && window.__wfChatIsOurs(c, S)) return true;
+    if (M.rank === 'bc' && isFinite(+S.lat) && isFinite(+c.lat) && +c.lat) return kmBetween({ lat: +S.lat, lon: +S.lon }, { lat: +c.lat, lon: +c.lon }) <= 25;
+    return !window.__wfChatIsOurs; }
   function ownIdx(c) { var i = (c.stations || []).findIndex(function (s) { return !!staffOf(s); }); if (i >= 0) return i;
     var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!S) return -1;
-    if (window.__wfChatIsOurs && !window.__wfChatIsOurs(c, S) && !aided(c)) return -1;   /* (Oct 12) a station never joins an incident outside its area on its own: only through a mutual aid request */
+    if (!ours(c)) return -1;   /* (Oct 12) a station never joins an incident outside its area on its own: only through a mutual aid request */
     c.stations.push({ ck: (S.type === 'way' ? 'w' : 'n') + S.id, name: S.name, short: shortStation(S.name), km: S.lat && c.lat ? Math.round(kmBetween({ lat: S.lat, lon: S.lon }, { lat: c.lat, lon: c.lon }) * 10) / 10 : 3, min: 6 });
     var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: true }); return c.stations.length - 1; }
   /* (Oct 9, 06:52) every unit of the station's fleet (station.js), with who rides it; a unit out on another fire or in the shop
@@ -1996,7 +2003,7 @@
     rename: function (key, place) { var c = load().chats[key]; if (!c || !place || c.place === place) return; c.place = place; save(); emit(); },   /* (Oct 9, 13:47) a simulated incident's own name */
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
-    aided: aided,
+    aided: aided, ours: ours,
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },

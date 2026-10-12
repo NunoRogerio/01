@@ -20,7 +20,7 @@
 <script src="station.js?v=1791754661"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791781770"></script>
+<script src="chat.js?v=1791782489"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -851,7 +851,7 @@ class Component extends DCLogic {
        an incident outside its station's area that its station is not on; an Engineer, a Firefighter (Bombeiro) watches: the Captain
        speaks for the crew. Watching = no message box, no quick replies, no actions, one line saying why */
     const RID = (() => { try { return localStorage.getItem('wf-custom') || ''; } catch (e) { return ''; } })(), MINE = window.__wfMine ? window.__wfMine() : null;
-    const WCREW = /^(eng|fft|ptbo)$/.test(RID), cW = s.key && C.get(s.key), WOUT = !!(cW && MINE && MINE.station && window.__wfChatIsOurs && cW.kind !== 'dm' && !window.__wfChatIsOurs(cW, MINE.station) && !(cW.people || []).some((p) => p.self && !p.left) && !(C.aided && C.aided(cW)));
+    const WCREW = /^(eng|fft|ptbo)$/.test(RID), cW = s.key && C.get(s.key), WOUT = !!(cW && MINE && MINE.station && cW.kind !== 'dm' && C.ours && !C.ours(cW));
     const WATCH = !GOVV && !!cW && cW.kind !== 'dm' && (WCREW || WOUT);   /* (Oct 11, 20:10) a government body watches the incident chats: the commander decides, the government fills what climbs the chain */
     const photo = (p) => (p && p.photo ? 'url("' + p.photo + '")' : 'none');
     const openPerson = (name) => () => this.go('person', { person: name });
