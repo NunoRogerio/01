@@ -219,7 +219,7 @@
       (c.msgs || []).forEach(function (m) { if (m.reqDecl && !m.done) m.done = 'moved'; }); c.queue = (c.queue || []).filter(function (q) { return !(q.m && q.m.reqDecl); });
       initialAttack(c); var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
       card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' }, body: { en: units.join(', ') + ' responding.', pt: units.join(', ') + ' em marcha.' } }, 600, 0);
-      c.eta = vary(c, 4, 8, 'eta2'); push(c, { kind: 'arrive' }, c.eta * MIN, 0); return true; }
+      c.eta = vary(c, 4, 8, 'eta2'); push(c, { kind: 'arrive' }, 12000, 0); return true; }
     if (c.stage === 1 && !c.flags.dispatched) {
       (c.msgs || []).forEach(function (m) { if (!m.done && (m.dispCard || (m.actions || []).some(function (a) { return a.key === 'dispatch'; }))) m.done = 'ecc'; }); c.queue = (c.queue || []).filter(function (q) { return !(q.m && q.m.dispCard); });
       initialAttack(c); c.flags.initial = true;
@@ -230,6 +230,7 @@
     /* (Oct 12, 12:20) chats saved before: our engine's crew is led by its Captain (the Battalion Chief is the commander, on no engine), and the
        Battalion Chief reads as the commander in the team */
     if (!c.cmdFix) { c.cmdFix = true; ch = true; (c.forces || []).forEach(function (f) { var SF = staffOf((c.stations || [])[f.si] || {}) || staffOf({ ck: f.ck }); if (!SF || f.coord !== SF.captain) return; f.coord = f.second ? SF.lead2 : SF.lead; f.crew = (f.crew || []).filter(function (n) { return n !== f.coord && n !== SF.captain; }); }); }
+    (c.queue || []).forEach(function (q) { if (q.m && q.m.kind === 'arrive' && q.due > Date.now() + 15000) { q.due = Date.now() + 15000; ch = true; } });   /* (Oct 12, 19:30) chats saved before: the first engine never takes minutes */
     /* (Oct 12, 13:25) a fire stuck at First alert waiting for a dispatch order from a crew profile (it never gives one): the dispatch center sends the initial attack */
     if (M && M.level === 'lead' && c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && (c.stations || []).length && !(c.queue || []).some(function (q) { return q.m && q.m.kind === 'stage'; })) {
       initialAttack(c); (c.msgs || []).forEach(function (m) { if (!m.done && (m.dispCard || (m.actions || []).some(function (a) { return a.key === 'dispatch'; }))) m.done = 'ecc'; });
@@ -637,7 +638,11 @@
         { a: { en: 'Satellite', pt: 'Satélite' }, b: { en: 'Heat anomaly. ' + src + (c.det ? ' at ' + hhmm(c.det) : '') + '.', pt: 'Anomalia térmica. ' + src.replace('Satellite', 'Satélite') + (c.det ? ' às ' + hhmm(c.det) : '') + '.' } },
         { a: { en: 'Drone D-5' + (from ? ' from ' + from : ''), pt: 'Drone D-5' + (from ? ' de ' + from : '') }, sim: true,
           b: strong ? { en: 'Smoke and a hot spot on the thermal feed.', pt: 'Fumo e um ponto quente na imagem térmica.' } : { en: 'A warm patch on the thermal feed. No smoke.', pt: 'Uma zona quente na imagem térmica. Sem fumo.' } }
-      ] };
+      ].concat(/* (Oct 12, 19:30) often (at random, by incident) a connected car's front camera and a resident's phone photo with a 911 call also caught it (simulated) */
+        hash(c.key + 'car') % 10 < 6 ? [{ pic: 'assets/evid/car-' + (strong ? 'smoke' : 'haze') + '.svg', sim: true, a: { en: 'Car camera', pt: 'Câmara de automóvel' },
+          b: strong ? { en: 'A connected car passing by: a smoke column over the ridge.', pt: 'Um automóvel conectado a passar: uma coluna de fumo sobre a cumeada.' } : { en: 'A connected car passing by: a light haze over the hills.', pt: 'Um automóvel conectado a passar: uma neblina ligeira sobre os montes.' } }] : [],
+        hash(c.key + 'phone') % 10 < 6 ? [{ pic: 'assets/evid/phone-' + (strong ? 'smoke' : 'haze') + '.svg', sim: true, a: { en: 'Phone photo', pt: 'Fotografia de telemóvel' },
+          b: strong ? { en: 'Sent with a ' + (isUS(c) ? '911' : '112') + ' call: smoke and flames behind the houses.', pt: 'Enviada com uma chamada para o ' + (isUS(c) ? '911' : '112') + ': fumo e chamas atrás das casas.' } : { en: 'Sent with a ' + (isUS(c) ? '911' : '112') + ' call: a faint haze behind the houses.', pt: 'Enviada com uma chamada para o ' + (isUS(c) ? '911' : '112') + ': uma neblina ténue atrás das casas.' } }] : []) };
   }
   function evidCard(c) {
     return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidences', pt: 'Evidências' }, body: null });
@@ -678,7 +683,7 @@
       var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
       var Q = c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
-      { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, Math.max(1500, at - now0), 0); }
+      { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, Math.max(1500, Math.min(15000, at - now0)), 0); }   /* (Oct 12, 19:30) the first engine is on scene within 15 s: an incident runs about a minute in the chat */
     } else {
       var s = c.stage;
       /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
@@ -1845,7 +1850,15 @@
   // ---- resolution: stats, and the achievement that goes into each firefighter's profile ---------------------------------
   function stageDurs(c) {
     var H = c.hist || [], end = vnow(c);
-    return H.map(function (h, i) { return { s: h.s, vt: h.vt, ms: Math.max(0, (H[i + 1] ? H[i + 1].vt : end) - h.vt), cur: !H[i + 1] && !c.closed }; });
+    var D = H.map(function (h, i) { return { s: h.s, vt: h.vt, ms: Math.max(0, (H[i + 1] ? H[i + 1].vt : end) - h.vt), cur: !H[i + 1] && !c.closed }; });
+    /* (Oct 12, 19:35) First alert is a moment (the declaration): its time, no duration. Ongoing (the crews en route) always has its time:
+       when the engines rolled before the declaration (the dispatch center's initial attack), the drive is taken out of the candidate stage */
+    var on = D.find(function (d) { return d.s === 3; }), cand = D.find(function (d) { return d.s === 0; });
+    if (on && !D.some(function (d) { return d.s === 2; })) { var drive = Math.min(cand ? cand.ms * 0.6 : 8 * MIN, (c.eta || vary(c, 6, 14, 'drv')) * MIN);
+      if (cand) cand.ms = Math.max(0, cand.ms - drive); var i3 = D.indexOf(on); D.splice(i3, 0, { s: 2, vt: on.vt - drive, ms: drive, cur: false, sim: true }); }
+    if (on && !D.some(function (d) { return d.s === 1; })) { var i2 = D.findIndex(function (d) { return d.s === 2; }); D.splice(i2 >= 0 ? i2 : D.indexOf(on), 0, { s: 1, vt: (D[i2 >= 0 ? i2 : D.indexOf(on)] || on).vt, ms: 0, cur: false, sim: true }); }
+    D.forEach(function (d) { if (d.s === 1) d.ms = 0; });
+    return D;
   }
   function stats(c) {
     var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
@@ -1856,7 +1869,9 @@
     var ha = c.drill && c.drill.ha ? Math.round(c.drill.ha * Math.min(2.2, Math.max(0.45, Math.pow(((at(3) != null ? at(3) - tF : 0) || c.drill.resp || 1) / (c.drill.resp || 1), 0.7))) * (c.flags.air ? 0.85 : c.flags.airNo ? 1.3 : 1.1) * 10) / 10
       : c.realHa || Math.round((2.5 + h % 23 + (c.flags.airNo ? 12 : 0) + (c.flags.evac ? 5 : 0) + (h % 10) / 10) * 10) / 10;
     var F = (c.forces || []).filter(function (f) { return f.st !== 'standby'; });
-    return { t0: t0, end: end, ver: at(1) != null ? at(1) - t0 : c.dismissed && c.closedVt ? c.closedVt - t0 : null, disp: at(2) != null ? at(2) - tF : null, resp: at(3) != null ? at(3) - tF : null, res: end - t0,
+    /* (Oct 12, 19:35) no empty key figure: a timing the story did not record is simulated, within what such a fire takes */
+    var ver0 = at(1) != null ? at(1) - t0 : c.dismissed && c.closedVt ? c.closedVt - t0 : (4 + h % 11) * MIN, disp0 = at(2) != null ? at(2) - tF : (1 + h % 5) * MIN, resp0 = at(3) != null && at(3) - tF > disp0 ? at(3) - tF : disp0 + (5 + h % 7) * MIN;
+    return { t0: t0, end: end, ver: ver0, disp: disp0, resp: resp0, res: end - t0,
       ha: ha, acres: Math.round(ha * 2.471), us: isUS(c), pop: c.evac ? c.evac.people : 40 + h % 160, evac: !!c.evac,
       people: (function () { var u = {}; F.forEach(function (f) { [f.coord].concat(f.crew || []).forEach(function (n) { if (n) u[n] = 1; }); }); return Object.keys(u).length; })(),   /* (Oct 8, 23:09) each person once (a captain over two crews is one person) */ veh: F.reduce(function (a, f) { return a + f.veh.reduce(function (n, x) { return n + (+((String(x).match(/^(\d+)\s*×/) || [])[1]) || 1); }, 0); }, 0), air: c.air || (c.flags && c.flags.air) ? 1 : 0, stations: F.filter(function (f, i) { return F.findIndex(function (g) { return g.station === f.station; }) === i; }).length, est: !!c.estF };
   }

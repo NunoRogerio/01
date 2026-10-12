@@ -20,7 +20,7 @@
 <script src="station.js?v=1791829204"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791828837"></script>
+<script src="chat.js?v=1791830152"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -198,7 +198,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
               <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: {{m.tagC}}">{{m.tag}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: {{m.tagC}}; font-variant-numeric: tabular-nums">{{m.time}}</span><!-- (Oct 11, 00:19) the time on the right, as on the other cards -->
             </div>
             <div style="display: flex; flex-wrap: {{m.kpiWrap}}; align-items: flex-start; gap: 8px; padding: 16px 16px">
-              <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+              <div style="display: {{m.ttlD}}; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
                 <span style="display: flex; align-items: flex-start; gap: 8px; font-size: 17px; font-weight: 600; line-height: 22px"><span style="flex: 1 1 auto; min-width: 0">{{m.title}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{m.chevD}}; flex-shrink: 0; margin-top: 2px"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <span style="display: {{m.bodyD}}; font-size: 17px; line-height: 22px; color: #000000">{{m.body}}</span>
               </div>
@@ -221,6 +221,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                       <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 8px; color: #FFFFFF; font-size: 15px; font-weight: 600; line-height: 20px; text-align: left; text-shadow: 0 0 4px rgba(0,0,0,0.8)"><i aria-hidden="true" style="width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: #FF453A"></i>{{e.live}}</span>
                       <span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 20px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">*</span>
                     </button>
+                    <span role="img" aria-label="{{e.aria}}" style="position: relative; display: {{e.picD}}; border-radius: 16px; overflow: hidden; aspect-ratio: 358 / 202; background: #E5E5EA"><img src="{{e.pic}}" alt="" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 20px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">*</span></span>
                     <span role="img" aria-label="{{e.aria}}" style="position: relative; display: {{e.imgD}}; border-radius: 16px; overflow: hidden; aspect-ratio: 358 / 202; background: #E5E5EA">
                       <img src="{{e.img}}" alt="" loading="lazy" style="position: absolute; left: 50%; top: 50%; width: 512px; height: 512px; max-width: none; transform: translate({{e.tx}}, {{e.ty}})">
                       <span aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -16px 0 0 -16px; border-radius: 50%; background: {{e.dotBg}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{e.dotD}}" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round"></path></svg></span>
@@ -480,7 +481,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
             <span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{r.bg}}"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{r.d}}" fill="{{r.fill}}" stroke="{{r.c}}" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
             <span style="min-width: 0; font-size: 17px; line-height: 22px"><span style="font-weight: 700">{{r.name}}</span> <span style="color: #6E6E73">{{r.at}}</span></span>
             <span style="font-size: 17px; font-weight: {{r.w}}; line-height: 22px; color: {{r.durC}}; text-align: right; font-variant-numeric: tabular-nums">{{r.dur}}</span>
-            <!-- (Oct 11, 00:14) the bar in the stage's colour, starting where the previous stage ended (one time line across the cards) --><span style="position: relative; grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.14); overflow: hidden"><span class="chbar" style="position: absolute; top: 0; bottom: 0; left: {{r.off}}; display: block; width: {{r.pctT}}; min-width: {{r.bMin}}; border-radius: 999px; background: {{r.bc}}"></span></span>
+            <!-- (Oct 11, 00:14) the bar in the stage's colour, starting where the previous stage ended (one time line across the cards) --><span style="position: relative; display: {{r.barD}}; grid-column: 2 / span 2; height: 8px; border-radius: 999px; background: rgba(118,118,128,0.14); overflow: hidden"><span class="chbar" style="position: absolute; top: 0; bottom: 0; left: {{r.off}}; display: block; width: {{r.pctT}}; min-width: {{r.bMin}}; border-radius: 999px; background: {{r.bc}}"></span></span>
           </div>
         </sc-for>
       </section>
@@ -945,8 +946,9 @@ class Component extends DCLogic {
     const D = C.stageDurs(c), maxMs = Math.max(1, ...D.map((d) => d.ms));
     const totMs = Math.max(1, D.filter((x) => x.s < 7).reduce((a, x) => a + (x.ms || 0), 0)); let accMs = 0;
     const tl = C.STAGES.slice(0, c.dismissed ? 1 : 8).map((St0, i) => { const St = i === 0 && C.candStage ? C.candStage(c.conf, c) : St0;   /* (Oct 11, 07:51) the candidate stage: Candidate and its likelihood, its round on the likelihood's yellow */ const d = D.find((x) => x.s === i), I = iconFor(St); const offP = Math.min(100, accMs / totMs * 100), wP = d && i < 7 ? Math.min(100 - offP, (d.ms || 0) / totMs * 100) : 0; if (d && i < 7) accMs += d.ms || 0;
-      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : i === 7 ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? (St.icon === 'cand' ? '#000000' : '#FFFFFF') : '#6E6E73', nameC: d && d.cur && St.icon !== 'cand' ? '#FFFFFF' : '#000000', atC: d && d.cur && St.icon !== 'cand' ? 'rgba(255,255,255,0.9)' : '#6E6E73',
-        pct: d && i < 7 ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', off: offP.toFixed(2) + '%', pctT: wP.toFixed(2) + '%', bc: tone(St).bg, bMin: d && i < 7 ? '8px' : '0px', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '',
+      const pt = i === 1 || i === 7;   /* (Oct 12, 19:35) First alert and Closed are moments: their time, no bar, no duration */
+      return { name: T(St), d: I.d, c: I.c, bg: I.bg, fill: I.fill, at: d ? C.hhmm(d.vt) : '', atTxt: d ? L('From ', 'Desde as ') + C.hhmm(d.vt) + '.' : L('Not reached.', 'Por atingir.'), dur: d ? (d.cur ? C.clock(d.ms) : pt ? '' : C.dur(d.ms)) : '—', w: d && d.cur ? 600 : 400, durC: d && d.cur ? (St.icon === 'cand' ? '#000000' : '#FFFFFF') : '#6E6E73', nameC: d && d.cur && St.icon !== 'cand' ? '#FFFFFF' : '#000000', atC: d && d.cur && St.icon !== 'cand' ? 'rgba(255,255,255,0.9)' : '#6E6E73',
+        pct: d && !pt ? Math.max(2, Math.round(d.ms / maxMs * 100)) + '%' : '0%', off: offP.toFixed(2) + '%', pctT: pt ? '0%' : wP.toFixed(2) + '%', bc: tone(St).bg, bMin: d && !pt ? '8px' : '0px', barD: pt ? 'none' : 'block', op: d ? 1 : 0.45, nowCls: d && d.cur ? 'chnow' : '',
         rowBg: d && d.cur ? I.bg : 'transparent', circBg: d && d.cur ? 'transparent' : I.bg }; });   /* (Oct 9) the current stage: its colour fills the whole row, not only the icon's circle */
     const tlTotal = L('Total ', 'Total ') + C.dur(vn - t0);
 
@@ -1157,7 +1159,7 @@ class Component extends DCLogic {
         if (pendNow) pends.push({ id: String(m.id), tag: hTag, time, bg: tone(Hd).bg, fg: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF', I: m.rec || m.req || m.sreq ? null : I });
         items.push({ pend: pendNow ? String(m.id) : '', snz: pendNow && m.snooze ? '1' : '0', isCard: true, time, tag: hTag, tagC: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF', bandBg: tone(Hd).bg, title: hTitle, body: ((t) => t && !/[.!?…:]$/.test(t.trim()) ? t.trim() + '.' : t)(T(m.body)), bodyD: m.body ? 'block' : 'none',
           icD: I && !m.rec && !m.req && !m.sreq ? 'flex' : 'none'   /* (Oct 10, 23:38) recommendation cards carry no icon; (Oct 11, 07:42) nor request cards */, ic: I ? Object.assign({}, I, { c: Hd && (Hd.icon === 'cand' || /^#1C1C1E$/i.test(Hd.c)) ? '#3A3A3C' : '#FFFFFF' }) : { d: '', c: 'none', bg: 'none', fill: 'none' },   /* (Oct 11, 12:10) the icon takes the band's text colour (dark grey on the yellows), whatever stage it names */
-          hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
+          ttlD: 'flex', hasKpi: !!m.kpi, kpiV: m.kpi ? m.kpi.v : '', kpiL: m.kpi ? T(m.kpi.l) : '', kpiC: m.kpi ? (DK ? '#E8E8ED' : '#3A3A3C') : '#000000', kpiCls: '', kpiFs: '30px', kpiLh: '32px', kpiWrap: 'nowrap', kpiBasis: 'auto', kpiPad: '0',   /* the likelihood as a small KPI beside the text, as in the map tooltip */
           hasRows: !!(m.rows && m.rows.length), rows: ((m.stage === 1 && (c.stations || []).length > (m.rows || []).length)
             // a station that joined through a dispatch order is listed too, so every crew sent appears on the card
             ? (c.stations || []).map((x, i) => (m.rows || [])[i] || { a: x.short, b: (x.km < 10 ? (+x.km || 0).toFixed(1) : Math.round(x.km)) + ' km · ~' + (x.min || 0) + ' min', r: { en: 'Standby', pt: 'Prevenção' }, rc: '#875800', i })
@@ -1169,7 +1171,7 @@ class Component extends DCLogic {
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           ...(() => { const ev = m.stage === 0 && c.kind === 'cand' && C.evid, E = ev ? C.evid(c) : null;   /* every candidate's first card is its evidence (older chats too) */
             const feedOpen = (src, lv, who) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src, cross: true, title: 'Drone feed', label: lv, who: who || '' }); };
-            const NO = { vidD: 'none', vid: '', live: '', imgD: 'none', img: '', tx: '0px', ty: '0px', dotBg: 'transparent', dotD: '', open: null, aria: '' };
+            const NO = { picD: 'none', pic: '', vidD: 'none', vid: '', live: '', imgD: 'none', img: '', tx: '0px', ty: '0px', dotBg: 'transparent', dotD: '', open: null, aria: '' };
             if (!E && m.feed) { const lv = L('Live. Drone ' + (m.drone || 'D-5'), 'Em direto. Drone ' + (m.drone || 'D-5'));   /* (Oct 11, 11:47) a drone pass: its feed in the card */
               return { hasEv: true, evNote: '', evNoteD: 'none', evRows: [Object.assign({}, NO, { aD: 'none', a: '', bD: 'none', b: '', pad: '0 16px 16px', sep: '0', vidD: 'block', vid: m.feed, live: lv, aria: L('Drone feed. Open', 'Imagem do drone. Abrir'), open: feedOpen(m.feed, lv) })] }; }
             if (!E) return { hasEv: false, evRows: [] };
@@ -1177,10 +1179,11 @@ class Component extends DCLogic {
             /* the satellite's detection point on the map: the OpenStreetMap tile around it (zoom 15), the candidate's round at the point */
             const sat = (() => { const la = +c.lat, lo = +c.lon; if (!isFinite(la) || !isFinite(lo) || (!la && !lo)) return null; const z = 15, n = Math.pow(2, z), xf = (lo + 180) / 360 * n, yr = la * Math.PI / 180, yf = (1 - Math.log(Math.tan(yr) + 1 / Math.cos(yr)) / Math.PI) / 2 * n, tx = Math.floor(xf), ty = Math.floor(yf);
               return { img: 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + ty + '.png', tx: (-(xf - tx) * 512).toFixed(0) + 'px', ty: (-(yf - ty) * 512).toFixed(0) + 'px' }; })(), G = window.__wfIgn ? window.__wfIgn(c.conf || 0, c) : { fill: '#FFE680', dash: '' };
-            return { hasEv: true, title: L('Evidences', 'Evidências'), bodyD: 'none', evNote: L('* Simulation', '* Simulação'), evNoteD: 'block',
+            return { hasEv: true, title: '', ttlD: 'none', kpiBasis: '100%', bodyD: 'none',   /* (Oct 12, 19:30) the header already says Evidences: no title, the likelihood centred */ evNote: L('* Simulation', '* Simulação'), evNoteD: 'block',
               evRows: E.rows.map((r, i) => { const drone = !!r.sim, R = Object.assign({}, NO, { aD: 'block', a: T(r.a), bD: 'block', b: T(r.b) + (r.sim ? ' *' : ''), pad: '16px', sep: i ? '1px solid rgba(60,60,67,0.18)' : '0' });
+                if (r.pic) return Object.assign(R, { picD: 'block', pic: r.pic, aria: T(r.a) });
                 if (drone) return Object.assign(R, { vidD: 'block', vid: E.video, live, aria: L('Drone feed. Open', 'Imagem do drone. Abrir'), open: feedOpen(E.video, live, E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '') });
-                if (sat) return Object.assign(R, { imgD: 'block', img: sat.img, tx: sat.tx, ty: sat.ty, dotBg: G.fill, dotD: G.dash, aria: L('Where the satellite saw the heat', 'Onde o satélite viu o calor') });
+                if (sat && i === 0) return Object.assign(R, { imgD: 'block', img: sat.img, tx: sat.tx, ty: sat.ty, dotBg: G.fill, dotD: G.dash, aria: L('Where the satellite saw the heat', 'Onde o satélite viu o calor') });
                 return R; }) }; })(),
           hasActions: acts.length > 0 && (!c.closed || !!m.done) && true, actions: acts,
           /* (Oct 9) a team recommendation moves on with a light round arrow button at the card's bottom right, not a big grey button; once chosen, the usual past-tense band */

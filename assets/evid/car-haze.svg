@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 716 404" width="716" height="404">
+<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9C7D3"/><stop offset="1" stop-color="#E3E8EC"/></linearGradient>
+<filter id="b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter><filter id="b2"><feGaussianBlur stdDeviation="6"/></filter>
+<radialGradient id="v" cx="0.5" cy="0.5" r="0.75"><stop offset="0.6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="0.55"/></radialGradient></defs>
+<rect width="716" height="404" fill="url(#s)"/>
+<g filter="url(#b)"><circle cx="296" cy="236" r="17" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="314" cy="207" r="25" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="324" cy="179" r="33" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="340" cy="150" r="41" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="353" cy="122" r="50" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="357" cy="93" r="58" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="369" cy="65" r="66" fill="rgb(200,196,190)" opacity="0.35"/><circle cx="395" cy="36" r="74" fill="rgb(200,196,190)" opacity="0.35"/></g>
+<path d="M0 250 C120 205 220 215 320 236 C430 210 560 200 716 232 L716 404 L0 404Z" fill="#7C8C5A"/>
+<path d="M0 270 C160 248 300 262 420 254 C540 248 640 258 716 262 L716 404 L0 404Z" fill="#6B7A4C"/>
+
+<path d="M300 404 L352 262 L372 262 L560 404Z" fill="#5B5F63"/>
+<path d="M358 270 L361 262 M362 292 L366 280 M367 322 L372 306 M374 362 L381 342 M383 404 L390 382" stroke="#E8E2C8" stroke-width="4"/>
+<path d="M0 340 C200 320 520 320 716 340 L716 404 L0 404Z" fill="#141518"/>
+<rect width="716" height="404" fill="url(#v)"/>
+<text x="20" y="36" font-family="Menlo, monospace" font-size="20" fill="#FFFFFF" opacity="0.9">● REC  14:02:37  45 MPH</text>
+<text x="20" y="62" font-family="Menlo, monospace" font-size="16" fill="#FFFFFF" opacity="0.75">FRONT CAM  HWY 79</text>
+</svg>
