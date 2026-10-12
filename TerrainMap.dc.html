@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791778255"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791796375"></script>
 <script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791777044"></script>
+<script src="prefs.js?v=1791796375"></script>
 <script src="station.js?v=1791782784"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
@@ -155,7 +155,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
 
   <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
-    <span data-wf-maplbl="1" style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 16px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
+    <span data-wf-maplbl="1" style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
   </sc-for>
   <sc-for list="{{countyLabels}}" as="cl" hint-placeholder-count="0">
     <span data-wf-maplbl="1" style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
@@ -232,7 +232,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: calc({{ttlTop}}px + {{safeT}}); display: {{pinTtlD}}; flex-direction: column; gap: 4px; box-sizing: border-box; height: {{pinTtlH}}; max-width: {{pinTtlMax}}; padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <!-- (Oct 5, 03:24) a station's card leads with its crest, 32px, on the left -->
       <span style="display: flex; align-items: center; gap: 16px; min-width: 0"><img src="{{pinCrest}}" alt="" aria-hidden="true" style="display: {{pinCrestD}}; width: 32px; height: 32px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-      <span style="font-size: 18px; font-weight: 700; line-height: 24px; color: #000000; white-space: {{pinWs}}; text-wrap: pretty; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
+      <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000; white-space: {{pinWs}}; text-wrap: pretty; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinLabel}}</span>
       <span style="font-size: 16px; line-height: 20px; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: {{pinWs}}; text-wrap: pretty; overflow: hidden; text-overflow: ellipsis" class="wf-halo">{{pinCoords}}</span>
       </span></span>
     </div>
@@ -245,13 +245,13 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <div style="position: absolute; z-index: 50; left: {{ttlL}}px; right: {{ttlR}}px; top: calc({{ttlTop}}px + {{safeT}}); display: flex; flex-direction: {{hdrDir}}; align-items: {{hdrAlign}}; justify-content: space-between; gap: 16px; box-sizing: border-box; padding: 16px; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
         <!-- the same title, subtitle and status band as the fire page's header, so the stage tag and its stack sit exactly as there -->
-        <span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em; line-height: 32px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
-        <span style="font-size: 18px; line-height: 24px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
+        <span style="font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000; overflow-wrap: anywhere">{{mapTtl}}</span>
+        <span style="font-size: 17px; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapSub}}</span>
       </span>
       <span data-wf-hdrst="1" style="display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 0; box-sizing: border-box; min-height: 52px; padding: 0 8px 0 16px; border-radius: 26px; background: rgba(118,118,128,0.12); width: {{hdrStW}}">
         <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" style="flex-shrink: 0"><path d="M7 2.2a4.8 4.8 0 1 1 0 9.6a4.8 4.8 0 1 1 0-9.6Z" fill="{{mapDot}}"></path></svg>
-        <span style="min-width: 0; font-size: 18px; font-weight: 600; line-height: 24px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
-        <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 16px; box-sizing: border-box; border-radius: 8px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 16px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
+        <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{mapKind}}</span>
+        <span style="display: {{mapTagD}}; margin-left: auto; flex-shrink: 0; align-items: center; min-height: 32px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{mapTagBg}}; color: {{mapTagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; white-space: nowrap">{{mapTag}}</span>
       </span>
     </div>
   </sc-if>
@@ -262,7 +262,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <!-- the title sits in its own solid container (the legend chips' surface and shadow) so the map never runs through it -->
     <div style="position: absolute; z-index: 50; left: {{ttlLeftCss}}; right: {{ttlRightCss}}; top: calc({{ttlTop}}px + {{safeT}}); max-width: calc(100% - {{ttlL}}px - {{ttlR}}px - {{ttlLegW}}px); display: flex; flex-direction: column; justify-content: center; gap: 4px; box-sizing: border-box; min-height: {{ttlH}}px; padding: {{ttlPad}}; border-radius: 20px; background: {{legBg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">
       <!-- (Oct 3, 23:36) lines size with the text (any text size setting), the card grows with them, so the title is never cropped -->
-      <span style="font-size: 18px; font-weight: 700; line-height: 1.3; flex-shrink: 0; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapTtl}}</span>
+      <span style="font-size: 17px; font-weight: 600; line-height: 1.3; flex-shrink: 0; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapTtl}}</span>
       <span style="font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSub}}</span>
       <!-- (Oct 4) the room of the fire's stage tag: the page lays its live tag (and the stack that unfolds from it) over this row, under the place, as on the page -->
       <span style="display: {{mapSinceD}}; font-size: 16px; line-height: 1.33; flex-shrink: 0; color: #3A3A3C; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-bottom: 1px">{{mapSince}}</span>
@@ -394,7 +394,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
         <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 28px; padding: 4px 8px; font-size: 16px; line-height: 20px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 8px">{{pop.place}}</b>
-        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         <span style="display: {{pop.igNightD}}; align-items: center; gap: 8px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg>Night detection</span>
       </div>
     </sc-if>
@@ -406,7 +406,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <!-- (Oct 7) mutual aid: the same tag as in the station's list, 8px under the tag above (the marker's outer ring explained) -->
         <span class="wf-ctag" role="status" style="display: {{pop.aidD}}; margin-top: 8px; min-height: 28px; padding: 4px 8px; font-size: 16px; line-height: 20px; white-space: nowrap; color: rgb(58, 58, 60); background: rgba(118, 118, 128, 0.14)">{{pop.aidTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: 8px">{{pop.fkName}}</b>
-        <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
+        <span class="wf-dot" style="display: {{pop.fkRegD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.fkReg}}</span>
         <span style="display: none; align-items: center; gap: 4px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C">{{pop.fkLbl}}<b style="margin-left: 4px; font-weight: 600; font-variant-numeric: tabular-nums">{{pop.fkNum}}</b></span>
       </div>
     </sc-if>
@@ -414,7 +414,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 16px calc({{pop.stPadB}} + 8px)">
         <span class="wf-ctag" role="status" style="display: none; align-self: stretch; margin-top: 8px; color: {{pop.tagFg}}; background: {{pop.tagBg}}">{{pop.tagTxt}}</span>
         <b class="wf-title-xs" style="display: block; margin-top: {{pop.stTtMt}}">{{pop.tt}}</b>
-        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 16px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
+        <span class="wf-dot" style="display: {{pop.regD}}; margin-top: -1px; font-size: 15px; line-height: 20px; color: #6E6E73">{{pop.reg}}</span>
         <span style="display: {{pop.stKD}}; align-items: center; gap: 4px; margin-top: 8px; font-size: 16px; line-height: 20px; color: #3A3A3C">{{pop.stDistLbl}}<b style="margin-left: 4px; font-weight: 600; font-variant-numeric: tabular-nums">{{pop.stKm}}</b></span>
       </div>
     </sc-if>
@@ -430,7 +430,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   <!-- While the first map tiles load (detail maps): the search grey, the app's flame in the middle, "Loading map" under it -->
   <div data-wf-maploader="1" aria-live="polite" style="position: absolute; left: 0; right: 0; top: {{clipV}}px; bottom: {{clipB}}px; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-sizing: border-box; padding-top: {{ldPadT}}px; background: #E5E5EA; opacity: {{ld.op}}; pointer-events: none; transition: opacity .6s ease">
     <svg width="22" height="27" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible"><path class="base wf-flick" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path><path d="M12 21.3V24M5.2 25.2Q12 23.3 18.8 23.8" fill="none" stroke="#3A3A3C" stroke-width="1.1" stroke-linecap="round"></path></svg>
-    <span style="font-size: 16px; line-height: 20px; color: #6E6E73"><span>{{ld.txt}}</span><span aria-hidden="true">…</span></span>
+    <span style="font-size: 15px; line-height: 20px; color: #6E6E73"><span>{{ld.txt}}</span><span aria-hidden="true">…</span></span>
   </div>
   <!-- Map controls, one order everywhere: Find a place (main maps only), Re-centre (dimmed while the map is centred), then Send drone and full screen. A column on the map in the page; a row along the bottom on full screen -->
   <div onPointerDown="{{stop}}" data-wf-keepsp="1" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: {{ctrlDir}}; align-items: flex-end; gap: 16px">   <!-- (Oct 3, 21:41) round buttons 16px apart, in a column or a row -->
@@ -460,7 +460,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </div>
 
-  <span class="wf-note wf-note-t" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 14px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <span class="wf-note wf-note-t" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"inset":{"editor":"int","default":0},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>

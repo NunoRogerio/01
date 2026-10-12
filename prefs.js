@@ -190,7 +190,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   var WFP = (function () { var P = (window.__wfPhotos || []).slice(0, 3), D = [{ f: 'forest-1.webp', b: 1 }, { f: 'forest-2.webp', b: 1 }, { f: 'forest-3.webp', b: 1 }]; while (P.length < 3) P.push(D[P.length]); return P; })();
   var BTN = '.sqrow::after{display:none!important}' +
     // The likelihood tag, one component (Oct 3, 20:26): the stage tags' pill; colours from live.js __wfConfTag. Incident list, candidate picker, map
-    '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 16px;box-sizing:border-box;border-radius:8px;font-size:16px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
+    '.wf-ctag{display:inline-flex;align-items:center;justify-content:center;min-height:28px;padding:4px 12px;box-sizing:border-box;border-radius:999px;font-size:15px;line-height:20px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}' +
     // Stage tags (Oct 3, 18:50; 21:09): the icon sits at the left, 8px in; the label is centred in the space between the icon and the tag's right edge
     /* (Oct 9, 11:03) the stage band in every incident header is the chat's: 52px tall, 16px in, 18px text, icon then stage on the left, time on the right */
     /* (Oct 10, 22:01, app-wide) every round button is dark: dark grey with a white icon (it was light grey with a dark icon); the counters on them get a ring of the page colour so they stay apart */

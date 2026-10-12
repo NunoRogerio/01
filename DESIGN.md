@@ -14,22 +14,24 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 
 ## 1. Text
 
-### Styles
+### Styles (Oct 12, 10:08: the Apple iOS type scale, app-wide)
 
 | Style | Size / weight | Use |
 |---|---|---|
-| Title M | 26px semibold, 32px line | Title of a screen, blade or panel (area name, profile name, "Notifications") |
-| Title S | 17px bold | First line of a list item; titles inside cards |
-| Title XS | 16px semibold (`.wf-title-xs`) | Place name in map tooltips |
-| Normal text | 17px regular, same colour as titles | The line under a screen title; body text |
-| Annotation | 16px regular, mid grey `#6E6E73` | Secondary sentence under content; ends with a full stop |
-| Label | Same look as annotation | Names a switcher, dropdown or group of controls; no full stop |
-| Note | 13px regular, mid grey (`.wf-note`) | Estimate and simulation notices only ("Simulated", "Estimated from…", "… (estimate)", demo notices) |
-| KPI | Large bold, dark grey `#3A3A3C` (`.wf-like-xs` in tooltips) | Big numbers; the label is centred with the number |
+| Large Title | 34px bold, 41px line | A home screen's title (area name on the main screen, Battalion 15, About) |
+| Title 1 | 28px bold, 34px line | Title of a blade, panel or sheet (was Title M, 26px semibold) |
+| Headline | 17px semibold, 22px line | First line of a list item, titles inside cards (was Title S, 18px bold) |
+| Body | 17px regular, 22px line | Body text, the line under a screen title (was 18px) |
+| Callout | 16px regular | Body text where it was 16px and black |
+| Subheadline | 15px, 20px line, grey `#6E6E73` | Secondary sentences, group titles (semibold), tags and capsules (semibold), card details with values in semibold dark grey (was 16px) |
+| Footnote | 13px, 18px line, grey | Notes, the location line (was 14px) |
+| KPI | Large bold, dark grey `#3A3A3C` | Big numbers |
+
+Shape with it: status tags are capsules (12px side padding); stage bands are 44px tall (Apple's touch height); white list cards sit on the grouped page without a shadow. Secondary text stays `#6E6E73`: Apple's own secondary grey fails WCAG contrast on the grouped page.
 
 ### Rules
 
-- **Only these sizes** exist in the app: 26 (Title M), 18 (Title S or normal text; 17 until Oct 8, 21:18), 16 (Title XS, annotation, label; it replaced 15), 14 (note, for estimates and simulations, and the location line; 13 until Oct 11, 12:55). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
+- **Only these sizes** exist in the app (Oct 12, the Apple scale): 34 (Large Title), 28 (Title 1), 17 (Headline, Body), 16 (Callout), 15 (Subheadline), 13 (Footnote). The exceptions are KPI numbers (responsive), cartographic labels drawn on the maps, small badges and pills (count badges, 18–22px tags), avatar initials and the logo. New sizes are added here first, and only when truly needed.
 - **Save space whenever possible:** put things on one line when they fit (a band and its tag, two actions), drop repeats. When Claude spots such a chance it applies it and says so in one line.
 - **Hierarchy follows the references** (user preferences, map tooltips, ignition detail): conclusion first (the KPI and state a firefighter acts on), then where, then evidence and detail, then actions. Every screen should help a Portuguese or Californian firefighter decide faster and better.
 - **Case:** sentence case everywhere. No all caps.
@@ -1839,3 +1841,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 12, 06:19: an incident is ours to work (write, answer its cards) when it is in our station's area, our station gave mutual aid there, we already command it, or, for the Battalion Chief, anywhere in his battalion (about 25 km around his base). Otherwise we watch.
 - Oct 12, 06:27: the open burger menu shows only its dark icon pill over the screen: no white (or page-coloured) strip down the right edge.
 - Oct 12, 09:18 (trial, the whole station / battalion screen, 09:28: its station lists, units, neighbours, GPS card and switchers too): aligned to Apple's iOS type scale and spacing. Large Title 34/41 bold for the screen title; Subheadline 15/20 grey under it; header tags as capsules, 15/20 semibold, 12px side padding; greeting as Body 17/22 (names in semibold); incident and duty cards 16px apart with no shadow (white on the grouped page, as iOS inset cards), title as Headline 17/22 semibold, detail lines as Subheadline 15/20 grey with values in semibold dark grey; the stage band 44px tall (Apple's touch height), 17/22 semibold label, 15/20 figures, 20px icon, 16px under the text. Secondary text stays #6E6E73 (Apple's own secondary grey fails WCAG contrast on the grouped page). To spread app-wide once approved.
+- Oct 12, 10:08: one name rule: an incident once declared is a fire and is called so everywhere ("Temecula Fire", "Incêndio de Temecula"): station and battalion homes, notifications, assignments, chats, map and fire pages; a candidate keeps its place name (chat.js nameOf).
+- Oct 12, 10:08: the Apple iOS type scale and shapes (tested on the battalion home) now apply app-wide; see section 1.
