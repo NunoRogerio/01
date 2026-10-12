@@ -151,7 +151,7 @@
       var re = p.name + ' (' + p.org + ') left the chat: station not sent', n0 = c.msgs.length; c.msgs = c.msgs.filter(function (m) { return !(m && m.kind === 'sys' && m.en === re); });
       if (c.queue) c.queue = c.queue.filter(function (q) { return !(q && q.m && q.m.kind === 'sys' && q.m.en === re); });
       if (c.msgs.length !== n0) p.left = false; }); }
-  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place, c.reg ? String(c.reg).split(',')[0] : '', c.incId); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code takes its nearby reference */
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; try { var CR = JSON.parse(sessionStorage.getItem(KEY + '-carry') || 'null'); if (CR && CR.chats) Object.keys(CR.chats).forEach(function (k) { var a = CR.chats[k], b = DB.chats[k]; var fa = function (c) { return [c.closed || c.dismissed ? 1 : 0, (c.stations || []).length ? 1 : 0, c.stage || 0, (c.msgs || []).length, c.updated || 0]; }, A = a && fa(a), B = b && fa(b), more = false; if (a && b) for (var z = 0; z < A.length; z++) { if (A[z] !== B[z]) { more = A[z] > B[z]; break; } } if (a && (!b || more)) DB.chats[k] = a; }); } catch (e) {} Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place, c.reg ? String(c.reg).split(',')[0] : '', c.incId); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code takes its nearby reference */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
   /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
@@ -168,7 +168,21 @@
         Object.keys(OC).forEach(function (k) { var o = OC[k], m = DB.chats[k]; if (!o) return; var mine = m ? JSON.stringify(m) : null;
           if (!m || mine === BASE[k] || ahead(o, m)) DB.chats[k] = o; });
         Object.keys(O).forEach(function (k) { if (k !== 'chats' && DB[k] == null) DB[k] = O[k]; }); }
-      fin(); LASTRAW = JSON.stringify(DB); localStorage.setItem(KEY, LASTRAW); snap(); } catch (e) {} }
+      fin(); LASTRAW = JSON.stringify(DB); if (store(LASTRAW)) snap(); else { try { LASTRAW = localStorage.getItem(KEY); } catch (e) {} } } catch (e) {} }   /* not stored: this page's copy is not taken for what is on disk, so a later save never swaps it back for the older one */
+  /* (Oct 12, 04:25) the phone's storage is small (about 5 MB for the whole app) and a full one used to fail silently: a chat opened
+     on one screen was never written, so the next screen could not find it (an empty "Assignments" page). Now, when the chats do not
+     fit: the live map cache (fetched again in minutes) goes first, then the oldest resolved chats beyond the latest 12; a copy of the
+     chats is also kept for this visit (sessionStorage), so the next screen always finds the chat it was sent to */
+  function store(raw) {
+    var put = function (v) { try { localStorage.setItem(KEY, v); return true; } catch (e) { return false; } };
+    if (put(raw)) { try { sessionStorage.removeItem(KEY + '-carry'); } catch (e) {} return true; }
+    try { Object.keys(localStorage).forEach(function (k) { if (/^wf-live-fires-/.test(k) || /^wf-chats2?-/.test(k)) localStorage.removeItem(k); }); } catch (e) {}
+    if (put(raw)) return true;
+    try { var cur = sessionStorage.getItem('wf-chat-open') || '', old = Object.keys(DB.chats).map(function (k) { return DB.chats[k]; }).filter(function (c) { return c && c.closed && c.key !== cur; })
+      .sort(function (a, b) { return (b.updated || 0) - (a.updated || 0); }).slice(12);
+      old.forEach(function (c) { delete DB.chats[c.key]; }); if (old.length) { LASTRAW = JSON.stringify(DB); raw = LASTRAW; } } catch (e) {}
+    if (put(raw)) return true;
+    try { sessionStorage.setItem(KEY + '-carry', raw); } catch (e) {} return false; }
   var BASE = {};   /* each chat as this page last read or wrote it */
   /* (Oct 10, 23:25) a fire closed or dismissed stays so, whatever copy any page holds: the outcome is kept on its own (wf-fin-<role>)
      and every read and write of the chats honours it */
@@ -1949,7 +1963,7 @@
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
     }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, candStage: candStage, candMeta: candMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
-    get: function (k) { return load().chats[k] || null; },
+    get: function (k) { var c = load().chats[k] || null; if (c && c.kind !== 'dm' && !(c.stations || []).length && !c.closed && !c.dismissed) teamLater(c); return c; },   /* (Oct 12) a chat still without its team gets it on the screen showing it */
     find: function (inc) { return chatFor(inc); },
     list: function () { var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }); },
     badge: function (n) { n = Number(n) || 0; return n > 20 ? '20+' : String(n); },   // counts on badges: 20+ past twenty
