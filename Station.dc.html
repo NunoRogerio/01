@@ -22,7 +22,7 @@
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791799406"></script>
+<script src="chat.js?v=1791803360"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -148,6 +148,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <ul data-wf-stack="1" style="display: {{asg.listD}}; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{asg.rows}}" as="f" hint-placeholder-count="2">
             <li style="position: relative; border-radius: 16px">
+              <!-- (Oct 12, 12:05) a crew's list in two sections: Your assignment, then For information (Title 3, 20/25 semibold; Subheadline note) -->
+              <div style="display: {{f.hdD}}; margin: {{f.hdTop}} 0 8px; padding: 0"><h2 style="margin: 0; font-size: 20px; line-height: 25px; font-weight: 600; color: var(--wf-ink, rgb(0, 0, 0))">{{f.hd}}</h2><p style="display: {{f.hdSubD}}; margin: 4px 0 0; font-size: 15px; line-height: 20px; color: var(--wf-sec, rgb(110, 110, 115))">{{f.hdSub}}</p></div>
               <a href="{{f.href}}" role="link" class="sqrow stfire" data-wf-keepsp="1" onClick="{{f.go}}" aria-label="{{f.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; align-content: center; gap: 4px 16px; flex-shrink: 0; min-height: 60px; padding: 16px; border: 0; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; font: inherit; text-align: left; text-decoration: none; cursor: pointer">
               <!-- (Oct 8, 18:55) the incident's map marker, the same as its map and legend marker -->
               <!-- (Oct 11, 06:53) no round at the top left: the incident's icon lives in its band at the bottom (the stage icon, or the candidate's dot and strokes) -->
@@ -564,9 +566,9 @@ class Component extends DCLogic {
     if (lead) {
       const mineF = (c) => (c.forces || []).find((f) => (f.ck === (S.type === 'way' ? 'w' : 'n') + S.id || f.full === S.name) && f.st !== 'standby' && f.st !== 'released' && (!MINE.unit || !(f.veh || []).length || (f.veh || []).indexOf(MINE.unit) >= 0));   /* (Oct 11, 17:25) a crew sees the incidents its own unit was sent to */
       const crewV = MINE.rank === 'ff' || MINE.rank === 'eng', ST = crewV ? { enroute: L('En route to the staging area', 'A caminho do ponto de concentração'), onscene: L('On the line. East flank', 'Na linha. Flanco leste'), watch: L('Patrol', 'Vigilância') } : { enroute: L('En route', 'A caminho'), onscene: L('On scene', 'No local'), watch: L('Watching', 'Em vigilância') };   /* (Oct 11, 17:50) the line crews see where to go */
-      rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
+      rows = (C && C.list ? C.list() : []).filter((c) => c && !c.closed && !c.dismissed && mineF(c) && (C.mission ? C.mission(c) : (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, S)))).map((c) => { const f = mineF(c), Sg = C.stageOf(c);
         const nm = C.nameOf ? C.nameOf(c) : c.place;
-        return { place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+        return { _mis: true, place: nm, aria: nm, href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
           _id: c.incId, simD: simOf(c.incId), ...MK[c.kind === 'fire' ? 'fire' : 'cand'], moonD: 'none', sub2: c.lat ? kmT(km(c.lat, c.lon)) + '. ' + drv(km(c.lat, c.lon)) + '.' : '', sub2D: c.lat ? 'block' : 'none', tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: ((Sg && Sg.icD) || C.ICON[Sg.icon]) || '', tagIcD: 'block', aidD: 'none', aidTxt: '', _ack: !!(window.__wfDeploy && window.__wfDeploy.acked(c.key)) || MINE.rank === 'eng' || MINE.rank === 'ff', sub: (window.__wfDeploy && !window.__wfDeploy.acked(c.key) && MINE.rank !== 'eng' && MINE.rank !== 'ff' ? L('Dispatched. Respond. ', 'Despachado. Responda. ') : (ST[f.st] || '') + '. ') + (f.veh || []).join(', ') + '.' }; })
         .sort((a, b) => (a._ack ? 1 : 0) - (b._ack ? 1 : 0));   /* a new deployment (not yet confirmed) goes to the top */
     }
@@ -591,7 +593,7 @@ class Component extends DCLogic {
     /* (Oct 8, 18:02) a deployment card carries the incident's own facts too (the area card's first line), then what his crew is doing */
     if (lead) rows.forEach((x) => { const q = items.find((y) => String(y.r[2]) === String(x._id)); if (!q) return; const ar = areaRow(q); x.sub2 = x.sub; x.sub2D = 'block'; x.sub = ar.sub2D === 'block' ? ar.sub : ar.sub; x.moonD = ar.moonD; });
     if (lead) { const had = {}; rows.forEach((x) => { had[String(x._id)] = 1; }); const rkL = MINE.rank;   /* (Oct 11, 17:50) a Captain sees his missions, then the candidates in his first-due area (his engine would be sent first); the line crews only their missions */
-      if (rkL === 'cap') rows = rows.concat(items.filter((q) => !had[String(q.r[2])] && q.kind === 'cand' && (q.k === 'zone' || q.km < 4)).map(areaRow));   /* first due: in the area or within about 4 km */ else if (rkL !== 'ff' && rkL !== 'eng') rows = rows.concat(items.filter((q) => !had[String(q.r[2])]).map(areaRow)); }
+      rows = rows.concat(items.filter((q) => !had[String(q.r[2])] && (q.k === 'zone' || q.km < 4)).map(areaRow)); }   /* (Oct 12, 12:05) every crew: the incidents of its first-due area (in the area or within about 4 km), for information */
     else rows = items.map(areaRow);
     /* (Oct 8, 22:52) mutual aid is To do too: offering help to the station on a fire outside our area, a help request from another
        station, or asking one for help; each conversation stays here until it is marked done (in its chat) */
@@ -614,6 +616,14 @@ class Component extends DCLogic {
         MA.unshift({ place: a.place, aria: a.place + ', ' + aidT.label, href: 'Dispatch.dc.html', go: fireGo(v), simD: 'none', ...MK.fire, moonD: 'none', sub: L('Crew sent: ', 'Equipa enviada: ') + veh + L(' to the command post. ', ' para o posto de comando. ') + (a.station || ''), sub2: kmT(a.km || 0) + '. ' + drv(a.km || 0) + '.', sub2D: 'block',
           ...aidStage(a.id, 'fire'), aidD: 'inline-flex', aidTxt: aidT.label }); }); } catch (e) {}
     rows = MA.concat(rows);
+    /* (Oct 12, 12:05) a crew (Captain, Engineer, Firefighter) sees first the one incident its engine is assigned to, under "Your
+       assignment"; every other incident follows under "For information": it can be watched, not joined (dispatch assigns the engine) */
+    if (lead) { const vU = MINE.unit || L('Your engine', 'O seu veículo'), mis = rows.filter((x) => x._mis), fyi = rows.filter((x) => !x._mis);
+      const H = (x, t, sub, first) => Object.assign(x, { hdD: 'block', hd: t, hdSub: sub, hdSubD: sub ? 'block' : 'none', hdTop: first ? '0' : '16px' });
+      if (mis.length) H(mis[0], L('Your assignment', 'A sua atribuição'), '', true);
+      if (fyi.length) H(fyi[0], L('For information', 'Para informação'), (mis.length ? '' : vU + L(' has no assignment. ', ' sem atribuição. ')) + L('You join an incident when dispatch assigns your engine.', 'Entra num incidente quando o despacho atribui o seu veículo.'), !mis.length);
+      if (!mis.length && !fyi.length) {} rows = mis.concat(fyi).map((x) => x.hd ? x : Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' })); }
+    else rows = rows.map((x) => Object.assign(x, { hdD: 'none', hd: '', hdSub: '', hdSubD: 'none', hdTop: '0' }));
     // The map: the area framed when it has loaded, else the station; only this station's incidents on it
     const A = window.__wfStationArea ? window.__wfStationArea(S) : null, W = Math.min((window.__wfVP && window.__wfVP.w) || 390, 600) - 32, H = 280;   /* (Oct 10, 20:20, fix) the card's width in the page's own frame (fit.js), not the phone's: on a wider phone the map overflowed the card and cut the full-screen button */
     let fx = S.x, fy = S.y, z = 1.4;

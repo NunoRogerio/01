@@ -20,6 +20,7 @@
   var MIN = 60000;
 
   // ---- stages (ANEPC vocabulary), each with its colour, light background and icon --------------------------------
+  var LIVE = { enroute: 1, onscene: 1, watch: 1 };   /* a unit committed to an incident */
   var STAGES = [
     { en: 'Candidate', pt: 'Candidato', c: '#3A3A3C', bg: '#FFE680', icon: 'cand' },   /* (Oct 11, 11:37) the candidate stage, as everywhere: Candidate, on the middle likelihood yellow (the likelihood's own yellow where it is known: candStage) */   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
     // The stages run along one spectrum: yellow (first alert), orange, red-orange, blue, light green, dark green, grey (closed)
@@ -151,7 +152,7 @@
       var re = p.name + ' (' + p.org + ') left the chat: station not sent', n0 = c.msgs.length; c.msgs = c.msgs.filter(function (m) { return !(m && m.kind === 'sys' && m.en === re); });
       if (c.queue) c.queue = c.queue.filter(function (q) { return !(q && q.m && q.m.kind === 'sys' && q.m.en === re); });
       if (c.msgs.length !== n0) p.left = false; }); }
-  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; try { var CR = JSON.parse(sessionStorage.getItem(KEY + '-carry') || 'null'); if (CR && CR.chats) Object.keys(CR.chats).forEach(function (k) { var a = CR.chats[k], b = DB.chats[k]; var fa = function (c) { return [c.closed || c.dismissed ? 1 : 0, (c.stations || []).length ? 1 : 0, c.stage || 0, (c.msgs || []).length, c.updated || 0]; }, A = a && fa(a), B = b && fa(b), more = false; if (a && b) for (var z = 0; z < A.length; z++) { if (A[z] !== B[z]) { more = A[z] > B[z]; break; } } if (a && (!b || more)) DB.chats[k] = a; }); } catch (e) {} Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place, c.reg ? String(c.reg).split(',')[0] : '', c.incId); }); fin(); snap(); return DB; }   /* one name everywhere: a fire known only by its code takes its nearby reference */
+  function load() { if (DB) return DB; try { LASTRAW = localStorage.getItem(KEY); DB = JSON.parse(LASTRAW || 'null'); } catch (e) {} if (!DB || !DB.chats) DB = { chats: {} }; try { var CR = JSON.parse(sessionStorage.getItem(KEY + '-carry') || 'null'); if (CR && CR.chats) Object.keys(CR.chats).forEach(function (k) { var a = CR.chats[k], b = DB.chats[k]; var fa = function (c) { return [c.closed || c.dismissed ? 1 : 0, (c.stations || []).length ? 1 : 0, c.stage || 0, (c.msgs || []).length, c.updated || 0]; }, A = a && fa(a), B = b && fa(b), more = false; if (a && b) for (var z = 0; z < A.length; z++) { if (A[z] !== B[z]) { more = A[z] > B[z]; break; } } if (a && (!b || more)) DB.chats[k] = a; }); } catch (e) {} Object.keys(DB.chats).forEach(function (k) { try { noFuture(DB.chats[k]); plausibleEarly(DB.chats[k]); sentBack(DB.chats[k]); } catch (e) {} }); if (window.__wfFireName) Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (c && c.place && c.kind !== 'dm') c.place = window.__wfFireName(c.place, c.reg ? String(c.reg).split(',')[0] : '', c.incId); }); fin(); try { oneUnit(); } catch (e) {} snap(); return DB; }   /* one name everywhere: a fire known only by its code takes its nearby reference */
   /* (Oct 9, 12:18) a page shown only as a backdrop under the main screen's panels (?under=1) reads the chats but never runs or writes them */
   var UNDER = /[?&]under=1/.test(location.search);
   /* (Oct 10, 21:08) a page holding an older copy of the chats (back from the back-forward cache, the app back from the background, another
@@ -652,10 +653,10 @@
       var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
       card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
         body: { en: (units.join(', ') || sent.join(' and ')) + ' responding. Drone D-5 over the point.', pt: (units.join(', ') || sent.join(' e ')) + ' em marcha. Drone D-5 sobre o ponto.' } }, 700, 0);
-      var fi = firstDue(c), F0 = (c.forces || []).find(function (f) { return f.si === 0; }) || {}, v0 = (F0.veh || [])[0] || (us ? 'Engine' : 'VFCI'), eta = c.eta = vary(c, 8, 15, 'eta');
+      var fi = firstDue(c), F0 = firstF(c) || {}, v0 = (F0.veh || [])[0] || (us ? 'Engine' : 'VFCI'), eta = c.eta = vary(c, 8, 15, 'eta');
       if (!meFirst(c)) say(c, fi, v0 + ' responding, about ' + eta + ' min out. ' + (E.strong ? 'On the drone feed: a hot spot about 30 m across and a thin column of smoke.' : 'On the drone feed: a warm patch, no smoke yet.'),
         v0 + ' em marcha, a cerca de ' + eta + ' min. ' + (E.strong ? 'Na imagem do drone: um ponto quente com cerca de 30 m e uma coluna de fumo fina.' : 'Na imagem do drone: uma zona quente, ainda sem fumo.'), 4500, 2);
-      if (sent[1] && c.people[1]) say(c, 1, 'Second engine rolling from ' + sent[1] + '.', 'Segundo veículo a sair de ' + sent[1] + '.', 9000, 2);
+      { var F1 = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).sort(function (a, b) { return a.si - b.si; })[1]; if (F1 && c.people[F1.si]) say(c, F1.si, 'Second engine rolling from ' + F1.station + '.', 'Segundo veículo a sair de ' + F1.station + '.', 9000, 2); }
       var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
       var Q = c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
@@ -678,18 +679,41 @@
   /* (Oct 11, 17:05) the dispatch center's initial attack on a candidate: the two nearest stations' engines roll at once; the others stay available */
   function initialAttack(c) { if (c.flags.dispatched || !(c.stations || []).length) return; c.flags.dispatched = true; c.flags.initial = true;
     c.forces = c.stations.map(function (q, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
-    c.forces.forEach(function (f) { f.st = f.si < 2 ? 'enroute' : 'standby'; });
+    var nGo = 0; c.forces.forEach(function (f) { var go = nGo < 2 && !busyElse(c, f); f.st = go ? 'enroute' : 'standby'; if (go) nGo++; });   /* (Oct 12, 12:05) the dispatch center sends the closest available engines: one already committed to another incident is skipped */
     c.people.forEach(function (p, pi) { if (p.kind !== 'lead' || p.self || p.left) return; var f = c.forces.find(function (x) { return x.si === pi; }); if (f && f.st === 'standby') p.left = true; }); }
   /* the voice of the first engine on scene: its Captain (Station 11's engine captain when it is the first station) */
-  function firstDue(c) { var SF = staffOf(c.stations[0] || {}); if (SF) { var j = (c.people || []).findIndex(function (p) { return p.name === SF.lead; }); if (j >= 0) return j; } return 0; }
-  function meFirst(c) { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.key === 'ff' && staffOf(c.stations[0] || {})); }
+  function firstF(c) { return (c.forces || []).filter(function (f) { return LIVE[f.st]; }).sort(function (a, b) { return a.si - b.si; })[0] || null; }
+  function firstSt(c) { var f = firstF(c); return (c.stations || [])[f ? f.si : 0] || {}; }
+  function firstDue(c) { var f = firstF(c), SF = staffOf(firstSt(c)); if (SF) { var j = (c.people || []).findIndex(function (p) { return p.name === SF.lead; }); if (j >= 0) return j; } return f ? Math.min(f.si, Math.max(0, (c.people || []).length - 1)) : 0; }
+  function meFirst(c) { var M = window.__wfMine ? window.__wfMine() : null; return !!(M && M.key === 'ff' && staffOf(firstSt(c))); }
+  /* (Oct 12, 12:05) one unit, one incident: an engine committed to an active incident (en route, on scene or on watch, before Resolving) is busy; one in mop-up can be pulled to a new start */
+  function ownForce(c, f) { return !!(staffOf({ ck: f.ck }) || staffOf((c.stations || [])[f.si] || {})); }
+  function ckOf(c, f) { return f.ck || ((c.stations || [])[f.si] || {}).ck || ''; }
+  function busyElse(c, f) { if (!ownForce(c, f) || !DB || !DB.chats) return false; var ck = ckOf(c, f);
+    return Object.keys(DB.chats).some(function (k) { var o = DB.chats[k]; return o && k !== c.key && o.kind !== 'dm' && !o.closed && !o.dismissed && (o.stage || 0) <= 3 && (o.forces || []).some(function (g) { return LIVE[g.st] && ckOf(o, g) === ck; }); }); }
+  /* chats saved before: an engine found on several open incidents stays on the one that needs it (an active fire before one in
+     mop-up, then the newest) and is released from the others, which say so */
+  function oneUnit() { if (!DB || !DB.chats) return; var best = {}, rk = function (c) { return [(c.stage || 0) <= 3 ? 1 : 0, c.started || 0]; }, better = function (a, b) { var A = rk(a), B = rk(b); return A[0] !== B[0] ? A[0] > B[0] : A[1] > B[1]; };
+    var each = function (fn) { Object.keys(DB.chats).forEach(function (k) { var c = DB.chats[k]; if (!c || c.kind === 'dm' || c.closed || c.dismissed) return; (c.forces || []).forEach(function (f) { if (LIVE[f.st] && ownForce(c, f)) fn(c, f, ckOf(c, f)); }); }); };
+    each(function (c, f, ck) { var b = best[ck]; if (!b || better(c, b)) best[ck] = c; });
+    each(function (c, f, ck) { var b = best[ck]; if (!b || b === c) return; f.st = 'released'; f.relTo = b.key; var v = (f.veh || [])[0] || f.station, n = nameOf(b);
+      push(c, { kind: 'sys', en: v + ' released. Reassigned to ' + n + '.', pt: v + ' libertado. Reafetado a ' + n + '.' }, 0, 0); c.updated = Date.now(); }); }
+  /* (Oct 12, 12:05) the incident a crew profile (Captain, Engineer, Firefighter) is assigned to: its own engine is committed there */
+  function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false;
+    return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
+  /* (Oct 12, 12:05) who answers a card: a size-up is the first engine's Captain's call; every other request the commander's (never a crew profile) */
+  function sizeUp(m) { return !!(m && m.reqDecl && (m.ask === 'ff' || /^Size-up/.test(((m.tag || {}).en) || ''))); }
+  function canAct(c, m) { if (!m || m.done || !c || c.closed || c.dismissed) return false; var M = window.__wfMine ? window.__wfMine() : null, gov = isGov();
+    if (gov) return !!m.govOnly; if (m.govOnly) return false;
+    if (sizeUp(m)) return !!(M && M.key === 'ff' && mission(c));
+    return !(M && M.level === 'lead') && ours(c); }
   /* the first engine arrives: the Captain's size-up confirms the fire and declares it, or finds nothing and cancels */
   function arrive(c) { if (c.closed || c.dismissed || c.stage > 0 || c.flags.arrived) return; c.flags.arrived = true;
-    var E = evidOf(c), us = isUS(c), fi = firstDue(c), F0 = (c.forces || []).find(function (f) { return f.si === 0; }), v0 = (F0 && (F0.veh || [])[0]) || (us ? 'Engine' : 'VFCI'), ac = 1 + hash(c.key + 'ac') % 4;
+    var E = evidOf(c), us = isUS(c), fi = firstDue(c), F0 = firstF(c), v0 = (F0 && (F0.veh || [])[0]) || (us ? 'Engine' : 'VFCI'), ac = 1 + hash(c.key + 'ac') % 4;
     if (F0) F0.st = 'onscene';
     var sz = { en: 'On scene. About ' + (us ? ac + (ac === 1 ? ' acre' : ' acres') : (ac * 0.4).toFixed(1) + ' ha') + ', moving upslope in light fuels, one structure nearby.', pt: 'No local. Cerca de ' + (us ? ac + ' acres' : (ac * 0.4).toFixed(1).replace('.', ',') + ' ha') + ', a subir a encosta em combustível ligeiro, uma habitação perto.' };
     if (E.strong && meFirst(c)) {   /* you are the first engine's Captain: the call is yours */
-      card(c, { req: 'decl', reqDecl: true, by: 0, tag: { en: 'Size-up · ' + v0, pt: 'Reconhecimento · ' + v0 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: sz,
+      card(c, { req: 'decl', reqDecl: true, ask: 'ff', by: 0, tag: { en: 'Size-up · ' + v0, pt: 'Reconhecimento · ' + v0 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: sz,
         actions: [{ key: 'reqDismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 600, 0); return; }
     if (E.strong) { say(c, fi, sz.en + ' Fire confirmed. I am declaring it and taking command: ' + (us ? v0 + ', ' + (c.place || 'the fire') + ' IC.' : 'I am the COS.'), sz.pt + ' Incêndio confirmado. Declaro-o e assumo o comando: ' + (us ? v0 + ', ' + (c.place || 'o incêndio') + ' IC.' : 'sou o COS.'), 600, 0);
       push(c, { kind: 'declared' }, 2200, 0); return; }
@@ -1135,6 +1159,7 @@
   /* (Oct 12, 06:19) an incident is ours to work when it is in our station's area, when our station gave mutual aid there, when we
      already command it, or, for a Battalion Chief, anywhere in his battalion (about 25 km around his base: Temecula for Battalion 15) */
   function ours(c) { var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!c || !S) return true;
+    if (M.level === 'lead' && c.kind !== 'dm') return mission(c) || aided(c) || !!(c.flags && c.flags.cmd === 'me');   /* (Oct 12, 12:05) a crew joins only the incident its engine is assigned to; the others are for information */
     if (aided(c) || (c.flags && c.flags.cmd === 'me') || (c.people || []).some(function (p) { return p.self && !p.left; })) return true;
     if (window.__wfChatIsOurs && window.__wfChatIsOurs(c, S)) return true;
     if (M.rank === 'bc' && isFinite(+S.lat) && isFinite(+c.lat) && +c.lat) return kmBetween({ lat: +S.lat, lon: +S.lon }, { lat: +c.lat, lon: +c.lon }) <= 25;
@@ -1623,12 +1648,16 @@
   function nag(c, now) {
     var m = null; for (var i = c.msgs.length - 1; i >= 0; i--) { var x = c.msgs[i]; if (x.kind === 'card' && x.req && x.actions && x.actions.length && !x.done) { m = x; break; } }
     if (!m) return false;
+    if (!canAct(c, m)) return false;   /* (Oct 12, 12:05) nobody nags a card this profile cannot answer (or cannot see the buttons of) */
     if (m.req === 'air' && (c.flags.air || c.flags.airNo)) return false;   // answered from a suggestion instead
     if (m.reqDecl && !c.seenAt) return false;   // nobody has looked yet: no reminder
     var n = m.nag || 0; if (n >= 2 || now - (m.nagAt || m.t || now) < (n ? 90000 : 45000)) return false;
     m.nag = n + 1; m.nagAt = now;
     // (Oct 5, 09:53) the button to tap is the request's primary one (Approve), whatever its place on the card
     var who = m.by != null ? m.by : lead(c, 1), yes = m.actions.filter(function (a) { return a.primary; })[0] || m.actions[0], no = m.actions.filter(function (a) { return a !== yes; })[0], T = m.title || { en: 'this request', pt: 'este pedido' };
+    if (sizeUp(m)) { var dc = dcOf(c);   /* the Captain's own size-up: the dispatch center waits for it, nobody's "request" */
+      sys(c, dc + (n ? ' still waiting for your size-up: Declare fire or Dismiss fire, on your card above.' : ' waiting for your size-up. Declare fire or Dismiss fire, on your card above.'), dc + (n ? ' continua a aguardar o seu reconhecimento: Declarar incêndio ou Descartar incêndio, no seu cartão acima.' : ' aguarda o seu reconhecimento. Declarar incêndio ou Descartar incêndio, no seu cartão acima.'), 800, 0);
+      return true; }
     if (m.reqDecl) { var dz = yes.key === 'reqDismiss';
       if (!n) say(c, who, 'We still need your call. Tap Approve on my request above to ' + (dz ? 'dismiss it' : 'declare the fire') + ', or Not yet to keep watching.', 'Ainda precisamos da sua decisão. Toque em Aprovar no meu pedido acima para ' + (dz ? 'o descartar' : 'declarar o incêndio') + ', ou em Ainda não para continuar a vigiar.', 800, 2);
       else say(c, who, 'The drone is still over the point. Your decision, please: Approve or Not yet, on the request card above.', 'O drone continua sobre o ponto. A sua decisão, por favor: Aprovar ou Ainda não, no cartão do pedido acima.', 800, 3);
@@ -1971,7 +2000,7 @@
   window.__wfChat = {
     incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
-    vnow: vnow, since: since, photo: photoOf, evid: evidOf,
+    vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, canAct: canAct, sizeUp: sizeUp,
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
