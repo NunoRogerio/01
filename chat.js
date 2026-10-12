@@ -230,6 +230,11 @@
     /* (Oct 12, 12:20) chats saved before: our engine's crew is led by its Captain (the Battalion Chief is the commander, on no engine), and the
        Battalion Chief reads as the commander in the team */
     if (!c.cmdFix) { c.cmdFix = true; ch = true; (c.forces || []).forEach(function (f) { var SF = staffOf((c.stations || [])[f.si] || {}) || staffOf({ ck: f.ck }); if (!SF || f.coord !== SF.captain) return; f.coord = f.second ? SF.lead2 : SF.lead; f.crew = (f.crew || []).filter(function (n) { return n !== f.coord && n !== SF.captain; }); }); }
+    /* (Oct 12, 13:25) a fire stuck at First alert waiting for a dispatch order from a crew profile (it never gives one): the dispatch center sends the initial attack */
+    if (M && M.level === 'lead' && c.kind !== 'dm' && !c.closed && !c.dismissed && c.stage === 1 && !c.flags.dispatched && (c.stations || []).length && !(c.queue || []).some(function (q) { return q.m && q.m.kind === 'stage'; })) {
+      initialAttack(c); (c.msgs || []).forEach(function (m) { if (!m.done && (m.dispCard || (m.actions || []).some(function (a) { return a.key === 'dispatch'; }))) m.done = 'ecc'; });
+      var u1 = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
+      card(c, { tag: { en: dcOf(c) + ' · Dispatch', pt: dcOf(c) + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Crews dispatched', pt: 'Equipas despachadas' }, body: { en: u1.join(', ') + ' responding.', pt: u1.join(', ') + ' em marcha.' } }, 400, 0); setStage(c, 2, 1500, 1); ch = true; }
     /* (Oct 12, 13:05) our engine on scene at a candidate and the call ours: its size-up card is in the chat (chats saved before had none) */
     if (c.kind === 'cand' && !c.closed && !c.dismissed && (c.stage || 0) === 0 && M && M.key === 'ff' && mission(c) && (c.forces || []).some(function (f) { return f.st === 'onscene' && ownForce(c, f); }) && !(c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).some(function (m) { return m && m.reqDecl && !m.done; })) {
       var v5 = ((c.forces || []).find(function (f) { return ownForce(c, f); }) || {}).veh; v5 = (v5 && v5[0]) || 'Engine';
@@ -1045,6 +1050,7 @@
     if (a === 'confirm') {
       me('Fire confirmed. Declaring it, I have command.', 'Incêndio confirmado. Declaro-o, assumo o comando.');
       markConfirmed(c);
+      if (!c.flags.initial && isLt()) { initialAttack(c); var u0 = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; }); card(c, { tag: { en: dcOf(c) + ' · Dispatch', pt: dcOf(c) + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' }, body: { en: u0.join(', ') + ' responding.', pt: u0.join(', ') + ' em marcha.' } }, 400, 0); }   /* (Oct 12, 13:25) a Captain declares: the dispatch center sends the initial attack, nobody asks him for a dispatch order */
       if (c.flags.initial) { setStage(c, 3, 600, 1); commandTransfer(c); } else setStage(c, 1, 600, 1);   /* (Oct 11, 17:05) the initial attack is already there */
     } else if (a === 'drone') {
       c.flags.drone = true; me('Sending the drone to check before I confirm.', 'Vou enviar o drone para verificar antes de confirmar.');
@@ -1167,6 +1173,7 @@
   function areaTxt(c, pt) { var ha = areaNow(c); return isUS(c) ? Math.round(ha * 2.471) + ' acres' : String(ha).replace('.', pt ? ',' : '.') + ' ha'; }
   function onSceneFor(c) { var H = c.hist || [], on = H.find(function (h) { return h.s === 3; }); return on ? dur(vnow(c) - on.vt) : ''; }
   function reply(c, who, it, text) {
+    var CR = isLt(), myCall = CR && myRank() === 'cap' && mission(c) && (c.stage || 0) === 0;   /* (Oct 12, 13:25) a crew profile is not the commander: nobody waits for its orders or decisions, except the Captain's own size-up */
     var s = c.stage, V = VOICE[who % 3], us = isUS(c), P = c.people, eta = c.stations[who] ? c.stations[who].min : 15;
     var dir = ['north-east', 'nordeste'], wind = ['south-west, about 18 km/h with gusts to 30', 'sudoeste, cerca de 18 km/h com rajadas de 30'];
     var r = function (en, pt) { return [V.ack[0] + ' ' + en, V.ack[1] + ' ' + pt]; };
@@ -1174,16 +1181,16 @@
     if (it === 'safety') return s < 2 ? r('Crew is rested and ready to go.', 'Equipa descansada e pronta para sair.') : s < 6
       ? r('All ' + (c.forces[who] ? c.forces[who].crew.length + 1 : 5) + ' of us accounted for, no injuries. Rotating on the hose line every 40 min.', 'Os ' + (c.forces[who] ? c.forces[who].crew.length + 1 : 5) + ' contabilizados, sem feridos. Rodamos na linha de mangueira a cada 40 min.')
       : r('Everyone is fine and back or heading back to the station.', 'Todos bem, já no quartel ou a regressar.');
-    if (it === 'eta') return s < 2 ? r('We are ' + eta + ' min away once you give the order.', 'Estamos a ' + eta + ' min assim que der a ordem.') : s === 2 ? r('About ' + Math.max(2, eta - 6) + ' min to the fire line.', 'Cerca de ' + Math.max(2, eta - 6) + ' min até à linha de fogo.') : r('We are already on scene, ' + onSceneFor(c) + ' now.', 'Já estamos no local, há ' + onSceneFor(c) + '.');
+    if (it === 'eta') return s < 2 ? (CR ? r('About ' + eta + ' min out once dispatch sends us.', 'Cerca de ' + eta + ' min assim que o despacho nos enviar.') : r('We are ' + eta + ' min away once you give the order.', 'Estamos a ' + eta + ' min assim que der a ordem.')) : s === 2 ? r('About ' + Math.max(2, eta - 6) + ' min to the fire line.', 'Cerca de ' + Math.max(2, eta - 6) + ' min até à linha de fogo.') : r('We are already on scene, ' + onSceneFor(c) + ' now.', 'Já estamos no local, há ' + onSceneFor(c) + '.');
     if (it === 'wind') return r('Wind from the ' + wind[0] + '. Humidity dropping in the afternoon, that is what drives the head ' + dir[0] + '.', 'Vento de ' + wind[1] + '. A humidade desce à tarde, é isso que empurra a cabeça para ' + dir[1] + '.');
     if (it === 'water') return s < 3 ? r('Tanks full, ' + (us ? 'hydrants mapped along the road' : 'pontos de água identificados') + '.', 'Tanques cheios, pontos de água identificados.') : r((s >= 5 ? 'Plenty for the mop-up.' : 'Half a tank left, ' + (us ? 'the water tender' : 'o autotanque') + ' refills us in 15 min.'), (s >= 5 ? 'Chega bem para o rescaldo.' : 'Meio tanque, o autotanque reabastece-nos em 15 min.'));
     if (it === 'homes') return c.evac ? r(c.evac.people + ' residents moved out, the homes to the ' + dir[0] + ' are being protected.', c.evac.people + ' moradores retirados, as casas a ' + dir[1] + ' estão a ser protegidas.')
       : s >= 4 ? r('No homes at risk any more.', 'Já não há casas em risco.') : r('Homes about 1 km ' + dir[0] + '. If the head is not held in the next hour I would evacuate.', 'Casas a cerca de 1 km a ' + dir[1] + '. Se a cabeça não for dominada na próxima hora, eu evacuaria.');
     if (it === 'need') return s === 3 && !c.flags.air ? r('Air support would make the difference on the head.', 'Um meio aéreo faria a diferença na cabeça.') : s >= 5 ? r('We are fine with what we have for the mop-up.', 'Estamos bem com o que temos para o rescaldo.') : r('We are holding with what we have, will shout if that changes.', 'Estamos a aguentar com o que temos, avisamos se mudar.');
-    if (it === 'order') { var q = String(text).trim().replace(/[.!]+$/, ''); return [V.ok[0] + ' "' + q + '". Moving now.', V.ok[1] + ' "' + q + '". A avançar.']; }
+    if (it === 'order') { var q = String(text).trim().replace(/[.!]+$/, ''); if (CR) return [V.ok[0] + ' Noted.', V.ok[1] + ' Anotado.']; return [V.ok[0] + ' "' + q + '". Moving now.', V.ok[1] + ' "' + q + '". A avançar.']; }
     if (it === 'status') {
       if (s === 0) return r('Smoke column still visible from here, drifting ' + dir[0] + '.', 'Coluna de fumo ainda visível daqui, a derivar para ' + dir[1] + '.');
-      if (s === 1) return r('Crew kitted up and waiting for your dispatch order.', 'Equipa equipada, à espera da sua ordem de despacho.');
+      if (s === 1) return CR ? r('Crew kitted up. Dispatch is sending the initial attack.', 'Equipa equipada. O despacho está a enviar o 1.º alerta.') : r('Crew kitted up and waiting for your dispatch order.', 'Equipa equipada, à espera da sua ordem de despacho.');
       if (s === 2) return r('En route, ' + Math.max(2, eta - 6) + ' min out, smoke clearly visible ahead.', 'A caminho, a ' + Math.max(2, eta - 6) + ' min, fumo bem visível à frente.');
       if (s === 3) return r('About ' + areaTxt(c) + ' burnt so far. Head running ' + dir[0] + ', we are anchored on the south flank.' + (c.air && c.air.st === 'onscene' ? ' The helicopter is slowing it.' : ''), 'Cerca de ' + areaTxt(c, 1) + ' ardidos até agora. Cabeça a correr para ' + dir[1] + ', estamos ancorados no flanco sul.' + (c.air && c.air.st === 'onscene' ? ' O helicóptero está a abrandá-la.' : ''));
       if (s === 4) return r('Head held at ' + areaTxt(c) + '. Closing the flanks, maybe two hours to go.', 'Cabeça dominada com ' + areaTxt(c, 1) + '. A fechar os flancos, talvez mais duas horas.');
@@ -1192,7 +1199,7 @@
       return ['All done here. Crew back at the station.', 'Tudo terminado. Equipa de volta ao quartel.'];
     }
     // anything else: acknowledge in context
-    return s < 2 ? [V.ok[0] + ' Standing by for your decision.', V.ok[1] + ' A aguardar a sua decisão.'] : s < 6 ? [V.ok[0] + ' We will factor that in on the line.', V.ok[1] + ' Vamos ter isso em conta na linha.'] : [V.ok[0], V.ok[1]];
+    return s < 2 ? (CR && !myCall ? [V.ok[0], V.ok[1]] : [V.ok[0] + ' Standing by for your decision.', V.ok[1] + ' A aguardar a sua decisão.']) : s < 6 ? [V.ok[0] + ' We will factor that in on the line.', V.ok[1] + ' Vamos ter isso em conta na linha.'] : [V.ok[0], V.ok[1]];
   }
   // Who answers: whoever you name (by first name or station), else whoever that topic belongs to
   function responder(c, t) {
