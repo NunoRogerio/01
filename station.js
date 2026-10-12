@@ -260,8 +260,9 @@
      assignment" empty state, an in-app banner shows and, when allowed, the phone's own notification. */
   (function () { if (!/Station\.dc\.html/.test(location.pathname) || !/[?&]home=1/.test(location.search)) return;
     var last = Date.now(), busy = false; ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) { window.addEventListener(ev, function () { last = Date.now(); }, { passive: true, capture: true }); });
-    setInterval(function () { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden' || Date.now() - last < 5000) return;
-      var p = 0; try { p = +localStorage.getItem('wf-asg-next') || 0; } catch (e) {} if (!p) return; if (document.querySelector('.wf-cfm,.wf-amenu')) return;
+    /* (Oct 12, 13:20) no assignment stays for long: 5 s idle on the home screen (or a tap on the empty state) brings the next one */
+    var go = function (now) { var M = window.__wfMine && window.__wfMine(), C = window.__wfChat; if (busy || !M || M.level !== 'lead' || M.rank !== 'cap' || !C || !C.assignMine || document.visibilityState === 'hidden' || (!now && Date.now() - last < 5000)) return;
+      if (!now && document.querySelector('.wf-cfm,.wf-amenu')) return;
       if (C.list().some(function (c) { return C.mission(c); })) { try { localStorage.removeItem('wf-asg-next'); } catch (e) {} return; }
       busy = true; var L = []; try { L = window.__wfSimSpawn(null, true) || []; } catch (e) {} var it = L[0]; if (!it || !it.d) { busy = false; return; }
       var c = null, d = it.d; try { if (it.kind === 'cand') { var r = (window.__wfLiveCands || []).find(function (q) { return q && q[2] === d.id; }); if (r) c = C.open(C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] })); }
@@ -270,7 +271,8 @@
       try { localStorage.removeItem('wf-asg-next'); sessionStorage.setItem('wf-asg-new', c.key); } catch (e) {}
       var PT = window.__wfLang === 'pt', u = M.unit || 'Engine', nm = (C.nameOf ? C.nameOf(C.get(c.key) || c) : c.place) || '', txt = PT ? u + ' atribuído a ' + nm + '. Responda já.' : u + ' assigned to ' + nm + '. Respond now.';
       banners([{ kind: 'asg', d: d, c: C.get(c.key) || c, txt: txt }]); try { if (window.__wfNotify) window.__wfNotify(PT ? 'Nova atribuição' : 'New assignment', txt, 'Station.dc.html?home=1'); } catch (e) {}
-      try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} setTimeout(function () { busy = false; }, 3000); }, 1000); })();
+      try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} setTimeout(function () { busy = false; }, 3000); };
+    window.__wfAsgNow = function () { last = 0; go(true); }; setInterval(function () { go(false); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };
 
   // ---- the station's area, kept 30 days on this phone ----
