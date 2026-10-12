@@ -692,6 +692,7 @@ window.__wfBlink=function(path,dur){
         var ic=ICS[it.icon]||ICS.rp;b.innerHTML='<svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true" style="flex-shrink:0;color:var(--wf-ink2,#3A3A3C)">'+ic+'</svg>';
         var sp=document.createElement('span');sp.textContent=it.label;b.appendChild(sp);b.onclick=function(){try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}if(it.notify&&window.__wfAskNotify)window.__wfAskNotify();close(it.go);};   /* asked on this tap (a gesture), as iOS requires */ul.appendChild(b);});
       box.appendChild(ul);p.appendChild(box);});
+    if(!(o.groups||[]).some(function(g){return g.items&&g.items.length;})){var em=document.createElement('p');em.textContent=o.empty||'';em.style.cssText='margin:0 8px;font-size:17px;line-height:22px;color:var(--wf-sec,#6E6E73)';p.appendChild(em);}
     w.appendChild(sc);w.appendChild(p);root.appendChild(w);sc.onclick=function(){close();};gb.onclick=function(){close();};
     requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.transform='translateY(0)';});});
     return {close:close};
