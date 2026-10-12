@@ -45,7 +45,7 @@
     ifr.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;border:0;z-index:150;visibility:hidden;background:transparent;clip-path:inset(0px 0px 0px 100%);-webkit-clip-path:inset(0px 0px 0px 100%);transition:clip-path ' + DUR + 'ms ' + EASE + ', -webkit-clip-path ' + DUR + 'ms ' + EASE;
     ifr.addEventListener('load', function () { ready = true;
       /* (Oct 11, 08:33) lying over the screen, the menu's page is see-through: only the icon column and the open section paint, never a light strip beside them */
-      try { var d = ifr.contentDocument, st = d.createElement('style'); st.textContent = 'html,body,[data-wfroot],[data-wf-menu]{background:transparent!important;box-shadow:none!important}html.wf-see [data-wf-menu] > :not([data-wf-rail]){visibility:hidden!important}';   /* (Oct 11, 21:30) folded to the icons: only the icon pill shows over the screen, no page colour or edge under it */ d.documentElement.classList.add('wf-see'); d.head.appendChild(st); } catch (e) {}
+      try { var d = ifr.contentDocument, st = d.createElement('style'); st.textContent = 'html,body,[data-wfroot],[data-wf-menu],html.wf-see,html.wf-see body,html.wf-see.wf-back,html.wf-see.wf-back body{background:transparent!important;background-color:transparent!important;box-shadow:none!important}html.wf-see [data-wf-menu] > :not([data-wf-rail]){visibility:hidden!important}';   /* (Oct 11, 21:30) folded to the icons: only the icon pill shows over the screen, no page colour or edge under it */ d.documentElement.classList.add('wf-see'); d.head.appendChild(st); } catch (e) {}
       if (want) { var w = want; want = null; w(); } });
     var h = host(); if (h) { h.style.position = 'relative'; h.appendChild(ifr); } else document.body.appendChild(ifr);
     return ifr;
@@ -92,7 +92,10 @@
   /* (Oct 9, 19:40) the screen's width in design pixels, as fit.js lays it out (not offsetWidth: Safari reads it through the frame's zoom,
      which left the narrowed screen wider than the space beside the icon column, its right margin hidden under the column) */
   function dw() { var V = vp0 || window.__wfVP; return (V && V.w) || (host() ? host().offsetWidth : 390); }
-  function rail(on, p) { var V = window.__wfVP; if (!V) return; var HW = dw();
+  /* (Oct 12, 06:27) folded to the icons, the strip beside the narrowed screen shows the screen's own background, never a white band */
+  function stripBg(on, p) { var h = host(); if (!h) return; if (!on) { h.style.background = ''; return; }
+    try { var r = (p && p.querySelector && p.querySelector('[data-wfroot]')) || p, c = r ? getComputedStyle(r).backgroundColor : ''; if (!c || /rgba\(0, 0, 0, 0\)|transparent/.test(c)) c = 'var(--wf-page, #F2F2F7)'; h.style.background = c; } catch (e) {} }
+  function rail(on, p) { stripBg(on, p); var V = window.__wfVP; if (!V) return; var HW = dw();
     // (Oct 8, 14:25) the resize animates: the screen's width eases in step with the slide, uncovering the icon column as it narrows
     // (and covering it again as it widens). Shrinking, the content lays out narrow once the screen has arrived; widening, at once
     // (the growing screen reveals it), so nothing reflows mid-motion.
