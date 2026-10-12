@@ -867,7 +867,7 @@
      climbs the mutual aid chain: a request from the county's Operational Area through its Cal OES region (or, in Portugal, the sub-regional
      command CSREPC asking the national command CNEPC for a national reinforcement group, GRIR), to fill or hold; in California the state can
      also ask FEMA for a Fire Management Assistance Grant (FMAG). */
-  function isGov() { try { return /^(ca|pt|nv|amz)$/.test(localStorage.getItem('wf-role') || '') && !localStorage.getItem('wf-custom'); } catch (e) { return false; } }
+  function isGov() { try { return /^(ca|pt|nv|amz|admin)$/.test(localStorage.getItem('wf-role') || '') && !localStorage.getItem('wf-custom'); } catch (e) { return false; } }   /* (Oct 12) the admin is the government overview above the stations: it watches, as the other government profiles do */
   var govQ = [], AUTO_NO = ['stayStage', 'reqNo', 'declineAir', 'evacNo', 'helpNo', 'sreqNo', 'cmdNo', 'maHold'];
   /* who the commander is in this chat: the profile who ran it (its own "me"), else the commander by the chain (Battalion Chief or the first engine's officer) */
   function icOf(c) { var j = (c.people || []).findIndex(function (p) { return p.self && !p.left; }); return j >= 0 ? j : icIdx(c); }
@@ -1126,8 +1126,11 @@
   // the dispatch screen was opened from the chat or not: orders sent before the chat existed are kept (pend) and posted
   // when it is first opened, so the team has already received them there. delay: ms before the beats start.
   /* (Oct 8, 23:25) a station captain dispatches only their own station: its crews (Engine, Brush), each under its lieutenant */
+  /* (Oct 12) our station agreed to help on this incident (mutual aid): it is ours to work, wherever it is */
+  function aided(c) { try { var A = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}, id = String((c && c.incId) || ''), raw = id.replace(/^F-/, ''); return !!(A[id] || A[raw] || A['F-' + raw]); } catch (e) { return false; } }
   function ownIdx(c) { var i = (c.stations || []).findIndex(function (s) { return !!staffOf(s); }); if (i >= 0) return i;
     var M = window.__wfMine ? window.__wfMine() : null, S = M && M.station; if (!S) return -1;
+    if (window.__wfChatIsOurs && !window.__wfChatIsOurs(c, S) && !aided(c)) return -1;   /* (Oct 12) a station never joins an incident outside its area on its own: only through a mutual aid request */
     c.stations.push({ ck: (S.type === 'way' ? 'w' : 'n') + S.id, name: S.name, short: shortStation(S.name), km: S.lat && c.lat ? Math.round(kmBetween({ lat: S.lat, lon: S.lon }, { lat: c.lat, lon: c.lon }) * 10) / 10 : 3, min: 6 });
     var nm = (staffOf(c.stations[c.stations.length - 1]) || {}).captain || pickNames(c, 1, 'own')[0]; c.people.push({ name: nm, code: initials(nm), org: shortStation(S.name), kind: 'lead', self: true }); return c.stations.length - 1; }
   /* (Oct 9, 06:52) every unit of the station's fleet (station.js), with who rides it; a unit out on another fire or in the shop
@@ -1993,6 +1996,7 @@
     rename: function (key, place) { var c = load().chats[key]; if (!c || !place || c.place === place) return; c.place = place; save(); emit(); },   /* (Oct 9, 13:47) a simulated incident's own name */
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
+    aided: aided,
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },

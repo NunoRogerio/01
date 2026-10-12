@@ -155,13 +155,13 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
 
   <sc-for list="{{stateLabels}}" as="sl" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 16px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
+    <span data-wf-maplbl="1" style="position: absolute; left: {{sl.left}}px; top: {{sl.top}}px; transform: translate(-50%, -50%); font-size: 16px; font-weight: 600; letter-spacing: 0.02em; color: {{sl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{sl.label}}</span>
   </sc-for>
   <sc-for list="{{countyLabels}}" as="cl" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
+    <span data-wf-maplbl="1" style="position: absolute; left: {{cl.left}}px; top: {{cl.top}}px; transform: translate(-50%, -50%); font-size: {{cl.size}}px; font-weight: {{cl.weight}}; letter-spacing: 0.01em; color: {{cl.fg}}; text-shadow: 0 0 3px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{cl.label}}</span>
   </sc-for>
   <sc-for list="{{cityLabels}}" as="ct" hint-placeholder-count="0">
-    <span style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
+    <span data-wf-maplbl="1" style="position: absolute; left: {{ct.left}}px; top: {{ct.top}}px; display: flex; align-items: center; transform: translate(-50%, -50%); font-size: {{ct.size}}px; font-weight: {{ct.weight}}; font-style: {{ct.style}}; color: {{ct.fg}}; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; white-space: nowrap; pointer-events: none; transition: {{mv}}">{{ct.label}}</span>
   </sc-for>
   <sc-if value="{{showSea}}" hint-placeholder-val="{{ false }}">
     <span style="position: absolute; left: {{sea.left}}px; top: {{sea.top}}px; transform: translate(-50%, -50%); font-size: 16px; font-style: italic; letter-spacing: 0.04em; color: #3E7CB1; white-space: nowrap; pointer-events: none; transition: {{mv}}">Pacific Ocean</span>
@@ -621,7 +621,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { setTimeout(() => this.wfLblClear(), 600); this._lblI = setInterval(() => this.wfLblClear(), 1200); this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
@@ -631,8 +631,11 @@ class Component extends DCLogic {
     this._orient = () => { const p = this.props; if (typeof p.onFull !== 'function' || window.__wfDesk) return; const land = window.innerWidth > window.innerHeight, full = p.isFull === true || p.isFull === 'true';
       if (land && !full) { this._autoFull = true; p.onFull(); } else if (!land && full && this._autoFull) { this._autoFull = false; p.onFull(); } else if (!land) this._autoFull = false; this.forceUpdate(); };
     window.addEventListener('resize', this._orient); window.addEventListener('orientationchange', this._orient); setTimeout(this._orient, 300); }
+  /* (Oct 12) a place name never shows under something drawn over the map (the legend chips, the title card, the round controls): it is hidden there */
+  wfLblClear() { try { const L = document.querySelectorAll('[data-wf-maplbl]'); if (!L.length) return; const ov = [].slice.call(document.querySelectorAll('[data-wf-leg] > *, [data-wf-leg] button, .mbtn, .avbtn, .wf-note-t, [style*="z-index: 50"]')).filter((e) => { const c = getComputedStyle(e); return c.visibility !== 'hidden' && +c.opacity > 0.05 && c.display !== 'none'; }).map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0 && r.width * r.height < 60000);   /* real overlays only: not the page's veils or the map's own layer */
+      L.forEach((el) => { const r = el.getBoundingClientRect(), hit = ov.some((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top < q.bottom + 4 && r.bottom > q.top - 4); const v = hit ? 'hidden' : ''; if (el.style.visibility !== v) el.style.visibility = v; }); } catch (e) {} }
   componentDidUpdate(prev) {
-    this._pv = null;
+    this._pv = null; clearTimeout(this._lblT); this.wfLblClear(); this._lblT = setTimeout(() => this.wfLblClear(), 450);
     // full screen: the title box keeps clear of the legend column on the right, so it is told the column's width
     try { const full = this.props.isFull === true || this.props.isFull === 'true'; if (full) { const L = [...document.querySelectorAll('[data-wf-leg]')].find((e) => e.offsetWidth); const w = L ? Math.max(0, L.offsetWidth - 16) : 0;
       if (Math.abs(w - (this._legWpx || 0)) > 1) { this._legWpx = w; clearTimeout(this._legWT); this._legWT = setTimeout(() => this.forceUpdate(), 0); } } } catch (e) {}
@@ -649,7 +652,7 @@ class Component extends DCLogic {
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
-  componentWillUnmount() { clearInterval(this._hswT); try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
+  componentWillUnmount() { clearInterval(this._hswT); clearInterval(this._lblI); clearTimeout(this._lblT); try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
     if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);

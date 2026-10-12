@@ -1,7 +1,9 @@
 /* Statistics (Oct 5): the main screen's dashboard. A round button on the map's controls opens it: a panel rises over the map and
-   hides the incident blade (the top blade stays, for the region). Cards with simulated numbers for the selected region and period:
+   hides the incident blade (the top blade stays, for the region). Cards for the selected region and period:
    charts chosen for what they say, in the mini KPIs' mood (lime, greys). Press and hold a card to reorder; the + tile shows or
-   hides charts; the X closes. Everything here is simulated and says so ("* Simulation"). */
+   hides charts; the X closes. (Oct 12, 05:54) Real data only: every card is computed from the live feeds the map uses (CAL FIRE,
+   fogos.pt / ANEPC, INPE, NASA FIRMS). A card says plainly when the feeds hold nothing for it. Charts with no real source
+   (evacuations, projection accuracy, time to declare, response times, confirmed vs dismissed) were removed. */
 (function () {
   if (window.__wfStats) return;
   var LS = function (k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} return null; };
@@ -18,13 +20,9 @@
     { id: 'h', label: '6 months', word: 'Last 6 months', n: 26, step: 'week', mult: 5.5 },
     { id: 'y', label: '1 year', word: 'Last year', n: 12, step: 'month', mult: 11 }
   ];
-  var FIRES_PT = ['Serra da Estrela', 'Monchique', 'Arouca', 'Pampilhosa da Serra', 'Sertã', 'Oleiros', 'Mação', 'Odemira', 'Vila de Rei', 'Proença-a-Nova', 'Sever do Vouga', 'Ponte da Barca'];
-  var FIRES = ['Maceira', 'Green Valley', 'Tujunga', 'Santa Clarita', 'Topanga', 'Eaton Canyon', 'Big Tujunga', 'Cajon Pass', 'Lytle Creek', 'Temescal Cyn', 'North ridge', 'Mt Wilson Rd'];
-  var STATIONS_PT = ['Bombeiros Voluntários de Arouca', 'Bombeiros Sapadores do Porto', 'Bombeiros de Monchique', 'Bombeiros de Sertã', 'Bombeiros de Mação', 'Bombeiros de Odemira', 'Bombeiros de Seia', 'Bombeiros de Oleiros'];
-  var STATIONS = ['LAFD Station 18', 'Station #73', 'LAFD Station 8', 'Texas Canyon FCS', 'LACoFD Station 157', 'Green Valley Station', 'San Francisquito Station', 'LAFD Station 91'];
-  var STAGES = ['First alert', 'Ongoing', 'Crews on scene', 'Resolving', 'Concluding', 'Surveillance'];
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  function fmtA(n) { return n > 0 && n < 10 ? (Math.round(n * 10) / 10).toString() : fmt(n); }   /* small areas keep a decimal (0.4 ha, not 0) */
   function fmt1(n) { return (Math.round(n * 10) / 10).toString(); }
   function pick(R, list, k) { var a = list.slice(), out = []; while (out.length < k && a.length) out.push(a.splice(Math.floor(R() * a.length), 1)[0]); return out; }
   function xLabels(rg) {
@@ -148,13 +146,15 @@
   // time of day against likelihood: the heat map's rounded squares and colours, sized and shaded by how many candidates fall in each slot
   function bubbles(R, X) {
     var cols = 12, rows = 5, pl = 36, pw = W - pl, cw = pw / cols, rh = 30, H = rows * rh + 24, v = [], mx = 0, i, j;
-    for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var hr = i * 2 + 1, t = (0.25 + 1.0 * Math.exp(-Math.pow((hr - 15) / 4.5, 2))) * (0.35 + 0.65 * Math.exp(-Math.pow((j - 2.2) / 1.6, 2))) * (0.7 + R() * 0.6); v.push(t); mx = Math.max(mx, t); }
+    for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) v.push(0);
+    (X.D ? X.D.cands : []).forEach(function (c) { var ci = Math.floor(locHour(c) / 2), rj = Math.min(rows - 1, Math.floor((c.conf || 0) / 20)); v[rj * cols + ci]++; });   /* (Oct 12) the real candidates: local 2-hour slot by likelihood band */
+    v.forEach(function (t) { mx = Math.max(mx, t); }); mx = mx || 1;
     var o = '', q = 0, best = 0, bi = 0, colSum = []; for (i = 0; i < cols; i++) colSum.push(0);
     for (j = rows - 1; j >= 0; j--) { o += '<line x1="' + pl + '" x2="' + W + '" y1="' + ((rows - 1 - j) * rh + rh / 2) + '" y2="' + ((rows - 1 - j) * rh + rh / 2) + '" stroke="rgba(60,60,67,0.10)" stroke-dasharray="3 4"/>'; }
     for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var f = v[q++] / mx; colSum[i] += f;
-      var b = f < 0.15 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = Math.max(8, 22.1 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
-      o += '<rect class="tsq an-b" data-bx="' + cx.toFixed(1) + '" data-by="' + cy.toFixed(1) + '" data-z="' + sz.toFixed(1) + '"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
-      o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + ['Very few', 'Few', 'Some', 'Many', 'Most'][b] + ' candidates.', cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
+      var b = f <= 0 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = f <= 0 ? 4 : Math.max(8, 22.1 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
+      o += '<rect class="tsq an-b" data-bx="' + cx.toFixed(1) + '" data-by="' + cy.toFixed(1) + '" data-z="' + sz.toFixed(1) + '"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
+      o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
     colSum.forEach(function (c, k) { if (c > best) { best = c; bi = k; } });
     var ty = function (y, t) { return '<text x="0" y="' + (y + 4) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + t + '</text>'; };
     var lbl = [[0, '0 h'], [3, '6 h'], [6, '12 h'], [9, '18 h'], [12, '24 h']].map(function (a) { return '<text x="' + (pl + a[0] * cw).toFixed(1) + '" y="' + (H - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="' + (a[0] === 0 ? 'start' : a[0] === 12 ? 'end' : 'middle') + '">' + a[1] + '</text>'; }).join('');
@@ -162,26 +162,91 @@
     return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and likelihood" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
   }
 
+  // ---- real data (Oct 12): the live feeds' fires and ignition candidates in the selected area and period ----------------
+  function scopeNow() { var sc = null, role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {}
+    sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = { st: lk, co: null }; return sc && sc.st ? sc : { st: 'CA', co: null }; }
+  var SPAN = { day: 864e5, week: 6048e5, month: 2592e6 };
+  function real(rg) {
+    var sc = scopeNow(), inA = window.__wfInArea || function (r, st, co) { return r.st === st && (!co || r.co === co); }, now = Date.now(), step = SPAN[rg.step] || 864e5, t0 = now - rg.n * step;
+    var us = /^[A-Z]{2}$/.test(sc.st) && sc.st !== 'PT' || sc.st === 'US';
+    var F = (window.__wfLiveFiresAll || window.__wfLiveFires || []).map(function (r) { var I = r[9] || {}; return { st: r[0], co: r[1], id: r[2], place: r[3], x: r[5], y: r[6], res: r[7] || null, ha: +(I.ha != null ? I.ha : r[8]) || 0, hasHa: I.ha != null || r[8] != null, I: I, t: I.startMs || I.updMs || 0 }; })
+      .filter(function (f) { try { return inA(f, sc.st, sc.co); } catch (e) { return false; } });
+    var C = (window.__wfLiveCands || []).map(function (r) { var L0 = r[9] || {}; return { st: r[0], co: r[1], id: r[2], place: r[3], conf: +r[4] || 0, src: String(L0.sat || r[5] || '').replace(/^sat:/, ''), x: r[7], y: r[8], lat: L0.lat, lon: L0.lon, t: Date.parse(L0.t || '') || 0, night: L0.night }; })
+      .filter(function (c) { try { return inA(c, sc.st, sc.co); } catch (e) { return false; } });
+    var inP = function (o) { return o.t && o.t >= t0 && o.t <= now; }, bucket = function (t) { return Math.max(0, Math.min(rg.n - 1, rg.n - 1 - Math.floor((now - t) / step))); };
+    var srcs = {}; F.forEach(function (f) { if (f.I.src) srcs[String(f.I.src).split(' · ')[0]] = 1; }); if (C.length) srcs['NASA FIRMS'] = 1;
+    return { sc: sc, us: us, au: us ? 'ac' : 'ha', ak: us ? 2.4711 : 1, fires: F.filter(inP), firesNow: F, cands: C.filter(inP), bucket: bucket, src: Object.keys(srcs) };
+  }
+  /* (Oct 12) the panel's own words in Portuguese too (the cards are built as text, so they are translated here) */
+  var PTW = { 'Ignition candidates vs burned area': 'Candidatos a ignição e área ardida', 'Burned area': 'Área ardida', 'Top 5 fires by area burned': 'Os 5 maiores incêndios', 'Fastest time to containment': 'Dominados mais depressa',
+    'Fires by size class': 'Incêndios por classe de área', 'Fires by stage': 'Incêndios por fase', 'Resources on fires now': 'Meios nos incêndios agora', 'Detection sources': 'Fontes de deteção', 'Night vs day detections': 'Deteções de noite e de dia',
+    'Time of day vs likelihood': 'Hora do dia e probabilidade', 'Detections by hour of the day': 'Deteções por hora do dia', candidates: 'candidatos', candidate: 'candidato', fire: 'incêndio', fires: 'incêndios', 'fire now': 'incêndio agora', 'fires now': 'incêndios agora',
+    people: 'pessoas', source: 'fonte', sources: 'fontes', 'busiest slot': 'período com mais', 'busiest hour': 'hora com mais', 'Local time.': 'Hora local.', People: 'Pessoas', Vehicles: 'Veículos', Aircraft: 'Meios aéreos', Night: 'Noite', Day: 'Dia', Others: 'Outras',
+    'Each fire\'s stage in its official feed.': 'A fase de cada incêndio na sua fonte oficial.', 'Start to contained, as the feed reports it.': 'Do início a dominado, como a fonte indica.', 'Which satellite saw each candidate.': 'O satélite que viu cada candidato.',
+    'A is under 0.25 ac. G is over 5,000 ac.': 'A é menos de 0,1 ha. G é mais de 2000 ha.', 'A is under 0.1 ha. G is over 2,000 ha.': 'A é menos de 0,1 ha. G é mais de 2000 ha.',
+    'No burned area reported for fires that started in this period.': 'Sem área ardida indicada para os incêndios iniciados neste período.', 'No fire with a reported size started in this period.': 'Nenhum incêndio com área indicada começou neste período.',
+    'No fire in this period reports when it was contained.': 'Nenhum incêndio deste período indica quando foi dominado.', 'No fires in this area right now.': 'Sem incêndios nesta área agora.', 'No active fires in this area right now.': 'Sem incêndios ativos nesta área agora.',
+    'The feeds for this area do not report crews or vehicles.': 'As fontes desta área não indicam meios.', 'No ignition candidates in this period.': 'Sem candidatos a ignição neste período.', 'Partly contained': 'Parcialmente dominado', Unknown: 'Sem fase', Metrics: 'Indicadores', Charts: 'Gráficos', 'Drag to reorder. + to add or remove charts.': 'Arraste para reordenar. + para pôr ou tirar gráficos.', 'Show or hide charts.': 'Mostre ou esconda gráficos.', '1 month': '1 mês', '6 months': '6 meses', '1 year': '1 ano', 'Drag to reorder.': 'Arraste para reordenar.' };
+  var PTR = [[/^By start date\. (\d+) fires? with a reported size\.$/, function (m, n) { return 'Pela data de início. ' + n + (n === '1' ? ' incêndio' : ' incêndios') + ' com área indicada.'; }],
+    [/^([\d.,]+) (ha|ac) burned by (\d+) fires?\.$/, function (m, v, u, n) { return v + ' ' + u + ' ardidos em ' + n + (n === '1' ? ' incêndio.' : ' incêndios.'); }],
+    [/^As reported for (\d+) active fires?\.$/, function (m, n) { return 'Como indicado para ' + n + (n === '1' ? ' incêndio ativo.' : ' incêndios ativos.'); }],
+    [/^([\d.,]+) fires?$/, function (m, n) { return n + (n === '1' ? ' incêndio' : ' incêndios'); }]];
+  function PTL() { return window.__wfLang === 'pt'; }
+  function tr(t) { if (!PTL() || t == null) return t; t = String(t); if (PTW[t]) return PTW[t]; for (var i = 0; i < PTR.length; i++) if (PTR[i][0].test(t)) return t.replace(PTR[i][0], PTR[i][1]); return t; }
+  var EXPL_PT = {
+    region: 'Onde foram detetados candidatos a ignição em {r} {p} (na cor principal) e onde ardem os incêndios que começaram nesse tempo (cinzento escuro, maior nos incêndios maiores). {v} candidatos ao todo.',
+    burned: 'Área ardida pelos incêndios que começaram em {r} {p}, somada pela data de início, como a fonte oficial de cada um indica. {v} {u} ao todo.',
+    top5: 'Os cinco maiores incêndios que começaram {p}, como as suas fontes os indicam. Juntos arderam {v} {u}.',
+    mitig: 'Os incêndios que começaram {p} e indicam quando foram dominados, do mais rápido ao mais lento. O mais rápido levou {v} h.',
+    size: 'Os incêndios que começaram {p}, por área indicada, da classe A (menores) à G (maiores).',
+    stage: 'Todos os incêndios em {r} agora, pela fase que a sua fonte oficial lhes dá: {v} ao todo.',
+    res: 'Pessoas, veículos e meios aéreos que as fontes indicam nos incêndios ativos em {r} agora. Incêndios sem essa indicação não contam (sem estimativas).',
+    src: 'O satélite que detetou cada candidato a ignição em {r} {p} (NASA FIRMS).',
+    night: 'Os candidatos a ignição {p}, consoante foram detetados de noite ou de dia: {v} ao todo. Os incêndios noturnos são mais difíceis de ver e de alcançar.',
+    tod: 'Quando foram detetados os candidatos a ignição, em hora local, e a probabilidade de serem incêndios reais. Quadrados maiores e mais escuros têm mais candidatos; o período com mais começa às {v}.',
+    hour: 'Os candidatos a ignição pela hora do dia em que foram detetados, em hora local. A hora com mais começa às {v}.' };
+  function none(t) { return { v: '', u: '', n: t, h: '' }; }   /* says plainly there is no data: no number, no chart */
+  var CLS = [['A', 0.25], ['B', 10], ['C', 100], ['D', 300], ['E', 1000], ['F', 5000], ['G', Infinity]];   // NWCG size classes, in acres
+  function locHour(c) { var d = new Date(c.t); return ((d.getUTCHours() + Math.round((+c.lon || 0) / 15)) % 24 + 24) % 24; }
+
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
-    { k: 'region', t: 'Ignition candidates vs burned area', on: 1, f: function (R, rg, X) { var c = Math.round(R() * 20 + 150 * X.sc * rg.mult / 2), RB = rng(S.region + '|' + rg.id + '|burned'), cb = cum(series(RB, rg.n, 260 * X.sc * rg.mult * X.ak / (rg.n / 12), 1.4, 0.3)), a = Math.round(cb[cb.length - 1]), h = regionHeat(rg, X, { c: fmt(c), b: fmt(a) + ' ' + X.au });   /* (Oct 6, 23:20) the burned figure is the Burned area card's own total, so the two cards agree */ return { v: fmt(c), u: 'candidates', n: fmt(a) + ' ' + X.au + ' burned.', h: h || '<div style="font-size:16px;line-height:20px;color:#6E6E73">No outline for this area yet.</div>' }; } },
-    { k: 'split', t: 'Candidates confirmed vs dismissed', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(140 * X.sc * rg.mult * (0.9 + R() * 0.2)), cf = Math.round(tot * (0.5 + R() * 0.2)); return { v: fmt(tot), u: 'candidates', n: '', h: stack({ n: 'Confirmed as fires', v: cf }, { n: 'Dismissed', v: tot - cf }) }; } },
-    { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 260 * X.sc * rg.mult * X.ak / (rg.n / 12), 1.4, 0.3), c = cum(s); return { v: fmt(c[c.length - 1]), u: X.au, n: delta(R), h: area(c, X.x, X.au) }; } },
-    { k: 'top5', t: 'Top 5 fires by area burned', on: 1, f: function (R, rg, X) { var names = pick(R, X.fires, 5), top = 900 * X.sc * rg.mult * X.ak, a = names.map(function (n, i) { return { l: n, a: top * Math.pow(0.66, i) * (0.9 + R() * 0.2) }; }); return { v: fmt(a.reduce(function (t, x) { return t + x.a; }, 0)), u: X.au, n: '', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt(x.a) + ' ' + X.au }; }), a[0].a, 0) }; } },
-    { k: 'mitig', t: 'Fastest time to mitigation', on: 1, f: function (R, rg, X) { var names = pick(R, X.fires, 5), a = names.map(function (n, i) { return { l: n, a: 2 + i * 1.3 + R() * 1.2 }; }); return { v: fmt1(a[0].a), u: 'h', n: '', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' h' }; }), a[4].a * 1.1, 0) }; } },
-    { k: 'evac', t: 'People evacuated', on: 1, f: function (R, rg, X) { var s = series(R, rg.n, 140 * X.sc * rg.mult / (rg.n / 12), 1.6, 0.2), tot = s.reduce(function (a, b) { return a + b; }, 0), hi = s.indexOf(Math.max.apply(null, s)); return { v: fmt(tot), u: 'people', n: delta(R), h: columns(s, [], hi, 'people', [[0, X.x[0]], [rg.n - 1, X.x[1]]]) }; } },
-    { k: 'proj', t: 'Projection accuracy', on: 1, f: function (R, rg, X) { var names = pick(R, X.fires, 5), a = names.map(function (n) { return { l: n, a: 62 + R() * 34 }; }).sort(function (x, y) { return y.a - x.a; }), avg = a.reduce(function (s, x) { return s + x.a; }, 0) / a.length; return { v: Math.round(avg), u: '%', n: 'Against the real perimeter. 5 fires.', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: Math.round(x.a) + '%' }; }), 100, 0) }; } },
-    { k: 'size', t: 'Fires by size class', on: 1, f: function (R, rg, X) { var base = 40 * X.sc * rg.mult / 3, c = [base * 1.9, base * 2.6, base * 1.5, base * 0.7, base * 0.32, base * 0.13, base * 0.05].map(function (v) { return Math.max(1, Math.round(v * (0.85 + R() * 0.3))); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: fmt(tot), u: 'fires', n: (X.au === 'ha' ? 'A is under 0.1 ha. G is over 2,000 ha.' : 'A is under 0.25 ac. G is over 5,000 ac.'), h: columns(c, ['A', 'B', 'C', 'D', 'E', 'F', 'G'], c.indexOf(Math.max.apply(null, c)), 'fires', null, ['Class A', 'Class B', 'Class C', 'Class D', 'Class E', 'Class F', 'Class G']) }; } },
-    { k: 'stage', t: 'Time spent in each stage', on: 1, f: function (R, rg, X) { var a = [1.5, 5.5, 9, 6, 7, 18].map(function (v) { return v * (0.8 + R() * 0.4); }), tot = a.reduce(function (s, v) { return s + v; }, 0); return { v: fmt(tot), u: 'h per fire', n: 'First alert to closed.', h: hbars(a.map(function (v, i) { return { l: STAGES[i], v: v, t: fmt1(v) + ' h' }; }), Math.max.apply(null, a), a.indexOf(Math.max.apply(null, a))) }; } },
-    { k: 'res', t: 'Resources in use', on: 1, f: function (R, rg, X) { var cr = series(R, rg.n, 36 * X.sc, 0.7, 0.2).map(Math.round), ve = series(R, rg.n, 18 * X.sc, 0.7, 0.2).map(Math.round), ai = series(R, rg.n, 3 * X.sc, 1, 0).map(Math.round); return { v: fmt(Math.max.apply(null, cr)), u: 'crews at peak', n: delta(R), h: lines([{ n: 'Crews', v: cr }, { n: 'Vehicles', v: ve }, { n: 'Aircraft', v: ai }], X.x, '') }; } },
-    { k: 'resp', t: 'Station speed of response', on: 1, f: function (R, rg, X) { var names = pick(R, X.sta, 5), a = names.map(function (n, i) { return { l: n, a: 5.5 + i * 1.7 + R() * 1.4 }; }); return { v: fmt1(a[2].a), u: 'min median', n: '', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' min' }; }), a[4].a * 1.1, 0) }; } },
-    { k: 'src', t: 'Detection sources', on: 0, f: function (R) { var p = [['Satellite', 38], ['Cameras on the ground', 24], ['Drones', 14], ['Calls to 911', 14], ['Cars and phones', 10]].map(function (x) { return { n: x[0], v: x[1] * (0.8 + R() * 0.4) }; }); return { v: p.length, u: 'sources', n: 'Which saw each candidate first.', h: donut(p) }; } },
-    { k: 'night', t: 'Night vs day ignitions', on: 1, top: 1, f: function (R, rg, X) { var tot = Math.round(150 * X.sc * rg.mult * (0.9 + R() * 0.2)), ni = Math.round(tot * (0.24 + R() * 0.12)); return { v: fmt(tot), u: 'ignitions', n: '', h: donut([{ n: 'Night', v: ni, c: INK }, { n: 'Day', v: tot - ni, c: LIME }], true) }; } },
-    { k: 'tod', t: 'Time of day vs likelihood', on: 1, top: 1, f: function (R, rg, X) { var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: '', h: b.h }; } },
-    { k: 'conf', t: 'Candidate conversion rate', on: 1, top: 1, f: function (R, rg, X) { var s = series(R, rg.n, 58, 0.18, 0.2).map(function (v) { return Math.min(96, v); }), avg = s.reduce(function (a, b) { return a + b; }, 0) / s.length; return { v: Math.round(avg), u: '%', n: delta(R), h: area(s, X.x, '%') }; } },
-    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R) { var s = [], i, v; for (i = 0; i < 24; i++) { v = 6 + 12 * Math.exp(-Math.pow((i - 15) / 4.5, 2)) + R() * 3; if (i >= 21 || i < 6) v *= 0.7; s.push(v); } var pk = s.indexOf(Math.max.apply(null, s)); return { v: pk + ':00', u: 'busiest hour', n: 'Local time.', h: (function () { var h = columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']], s.map(function (v, i) { return i + ':00 to ' + (i + 1) + ':00'; })); return h; })() }; } },
-    { k: 'decl', t: 'Time to declare a fire', on: 0, f: function (R) { var c = [18, 34, 26, 14, 8].map(function (v) { return Math.round(v * (0.8 + R() * 0.4)); }), tot = c.reduce(function (a, b) { return a + b; }, 0); return { v: Math.round(100 * (c[0] + c[1]) / tot), u: '% within 30 min', n: '', h: columns(c, ['< 10 min', '10 to 30', '30 to 60', '1 to 2 h', '> 2 h'], 1, 'fires') }; } }
+    { k: 'region', t: 'Ignition candidates vs burned area', on: 1, f: function (R, rg, X) { var D = X.D, b = D.fires.reduce(function (a, f) { return a + f.ha * D.ak; }, 0);
+        return { v: fmt(D.cands.length), u: D.cands.length === 1 ? 'candidate' : 'candidates', n: fmtA(b) + ' ' + D.au + ' burned by ' + D.fires.length + ' fire' + (D.fires.length === 1 ? '' : 's') + '.', h: regionHeat(rg, X, D) }; } },
+    { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < rg.n; i++) s.push(0); var known = D.fires.filter(function (f) { return f.hasHa; });
+        if (!known.length) return none('No burned area reported for fires that started in this period.');
+        known.forEach(function (f) { s[D.bucket(f.t)] += f.ha * D.ak; }); var c = cum(s); return { v: fmtA(c[c.length - 1]), u: D.au, n: 'By start date. ' + known.length + ' fire' + (known.length === 1 ? '' : 's') + ' with a reported size.', h: area(c, X.x, D.au) }; } },
+    { k: 'top5', t: 'Top 5 fires by area burned', on: 1, f: function (R, rg, X) { var D = X.D, a = D.fires.filter(function (f) { return f.ha > 0; }).sort(function (p, q) { return q.ha - p.ha; }).slice(0, 5);
+        if (!a.length) return none('No fire with a reported size started in this period.');
+        return { v: fmtA(a.reduce(function (t, f) { return t + f.ha * D.ak; }, 0)), u: D.au, n: '', h: hbars(a.map(function (f) { return { l: f.place, v: f.ha, t: fmtA(f.ha * D.ak) + ' ' + D.au }; }), a[0].ha, 0) }; } },
+    { k: 'mitig', t: 'Fastest time to containment', on: 1, f: function (R, rg, X) { var D = X.D, a = D.fires.filter(function (f) { return f.I.heldMs && f.I.startMs && f.I.heldMs > f.I.startMs && !/last/i.test(f.I.heldSrc || ''); }).map(function (f) { return { l: f.place, a: (f.I.heldMs - f.I.startMs) / 36e5 }; }).sort(function (p, q) { return p.a - q.a; }).slice(0, 5);
+        if (!a.length) return none('No fire in this period reports when it was contained.');
+        return { v: fmt1(a[0].a), u: 'h', n: 'Start to contained, as the feed reports it.', h: hbars(a.map(function (x) { return { l: x.l, v: x.a, t: fmt1(x.a) + ' h' }; }), a[a.length - 1].a * 1.1, 0) }; } },
+    { k: 'size', t: 'Fires by size class', on: 1, f: function (R, rg, X) { var D = X.D, k = D.fires.filter(function (f) { return f.hasHa; }), c = CLS.map(function () { return 0; });
+        if (!k.length) return none('No fire with a reported size started in this period.');
+        k.forEach(function (f) { var ac = f.ha * 2.4711; for (var i = 0; i < CLS.length; i++) if (ac < CLS[i][1]) { c[i]++; break; } });
+        return { v: fmt(k.length), u: k.length === 1 ? 'fire' : 'fires', n: D.us ? 'A is under 0.25 ac. G is over 5,000 ac.' : 'A is under 0.1 ha. G is over 2,000 ha.', h: columns(c, CLS.map(function (q) { return q[0]; }), 0, 'fires') }; } },
+    { k: 'stage', t: 'Fires by stage', on: 1, f: function (R, rg, X) { var D = X.D, m = {}; D.firesNow.forEach(function (f) { var t = f.I.stEn || f.I.st || 'Unknown'; t = /contained/i.test(t) && !/^100/.test(t) ? 'Partly contained' : t; m[t] = (m[t] || 0) + 1; });
+        var a = Object.keys(m).map(function (k) { return { l: k, v: m[k] }; }).sort(function (p, q) { return q.v - p.v; }); if (!a.length) return none('No fires in this area right now.');
+        return { v: fmt(D.firesNow.length), u: D.firesNow.length === 1 ? 'fire now' : 'fires now', n: 'Each fire\'s stage in its official feed.', h: hbars(a.map(function (x) { return { l: tr(x.l), v: x.v, t: tr(fmt(x.v) + (x.v === 1 ? ' fire' : ' fires')) }; }), a[0].v, 0) }; } },
+    { k: 'res', t: 'Resources on fires now', on: 1, f: function (R, rg, X) { var D = X.D, rep = D.firesNow.filter(function (f) { return f.res && !f.res.est && !f.I.resolved; }), m = 0, t = 0, a = 0;
+        if (!rep.length) return none(D.firesNow.some(function (f) { return !f.I.resolved; }) ? 'The feeds for this area do not report crews or vehicles.' : 'No active fires in this area right now.');
+        rep.forEach(function (f) { m += +f.res.man || 0; t += +f.res.terrain || 0; a += +f.res.aerial || 0; });
+        var it = [{ l: tr('People'), v: m }, { l: tr('Vehicles'), v: t }, { l: tr('Aircraft'), v: a }];
+        return { v: fmt(m), u: 'people', n: 'As reported for ' + rep.length + ' active fire' + (rep.length === 1 ? '' : 's') + '.', h: hbars(it.map(function (x) { return { l: x.l, v: x.v, t: fmt(x.v) }; }), Math.max(1, m, t, a), 0) }; } },
+    { k: 'src', t: 'Detection sources', on: 1, f: function (R, rg, X) { var D = X.D, m = {}; D.cands.forEach(function (c) { var k = c.src || 'Unknown'; m[k] = (m[k] || 0) + 1; });
+        var p = Object.keys(m).map(function (k) { return { n: k, v: m[k] }; }).sort(function (a, b) { return b.v - a.v; }); if (!p.length) return none('No ignition candidates in this period.');
+        if (p.length > 5) { var rest = p.slice(4).reduce(function (a, x) { return a + x.v; }, 0); p = p.slice(0, 4).concat([{ n: tr('Others'), v: rest }]); }
+        return { v: p.length, u: p.length === 1 ? 'source' : 'sources', n: 'Which satellite saw each candidate.', h: donut(p, true) }; } },
+    { k: 'night', t: 'Night vs day detections', on: 1, top: 1, f: function (R, rg, X) { var D = X.D, k = D.cands.filter(function (c) { return c.night != null || (window.__wfNightAt && c.lat != null); });
+        if (!k.length) return none('No ignition candidates in this period.');
+        var ni = k.filter(function (c) { return c.night != null ? !!c.night : window.__wfNightAt(c.t, c.lat, c.lon); }).length;
+        return { v: fmt(k.length), u: k.length === 1 ? 'candidate' : 'candidates', n: '', h: donut([{ n: tr('Night'), v: ni, c: INK }, { n: tr('Day'), v: k.length - ni, c: LIME }], true) }; } },
+    { k: 'tod', t: 'Time of day vs likelihood', on: 1, top: 1, f: function (R, rg, X) { if (!X.D.cands.length) return none('No ignition candidates in this period.'); var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Local time.', h: b.h }; } },
+    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < 24; i++) s.push(0); if (!D.cands.length) return none('No ignition candidates in this period.');
+        D.cands.forEach(function (c) { s[locHour(c)]++; }); var pk = s.indexOf(Math.max.apply(null, s));
+        return { v: pk + ':00', u: 'busiest hour', n: 'Local time.', h: columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]) }; } }
   ];
   var BYK = {}; DEFS.forEach(function (d) { BYK[d.k] = d; });
 
@@ -236,38 +301,32 @@
   function chev() { return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'; }
   // (Oct 6) the back of each card (long press): its title, then 8px, then a short paragraph (body text, not a description) explaining the chart's data ({v} {u} the headline, {p} the period, {r} the area)
   var EXPL = {
-    region: 'Where ignition candidates were spotted in {r} over {p}. Darker squares had more of them, so they show where to watch and where to place crews ahead of time. {v} candidates in all.',
-    split: 'Of the ignition candidates checked over {p}, how many were declared fires and how many were dismissed. A large dismissed share means many false alarms reach the team.',
-    burned: 'Area burned in {r}, adding up over {p}. Steep stretches are the days when fires grew fastest. {v} {u} in total.',
-    top5: 'The five fires that burned the most over {p}, largest first. Each bar is that fire\'s burned area; together they burned {v} {u}.',
-    mitig: 'The five fires brought under control fastest over {p}, from first alert to mitigation. The quickest took {v} h: the responses worth learning from.',
-    evac: 'People moved out of harm\'s way in {r} over {p}, each column one interval. Tall columns mark when fires came close to homes. {v} people in all.',
-    proj: 'How well the predicted fire spread matched the perimeter that actually burned, for five fires. Higher is better: {v}% on average.',
-    size: 'Fires over {p} sorted by how much land each burned, from class A (smallest) to G (largest). Most fires stay small; the few large ones take most of the effort.',
-    stage: 'The average hours a fire spends in each stage, from first alert to closed: {v} h in all. The longest bar shows where the time goes.',
-    res: 'Crews, vehicles and aircraft committed to fires over {p}. Peaks show when resources were stretched: {v} crews at the busiest point.',
-    resp: 'How quickly five stations get crews to a fire after the alert, fastest first. The median across them is {v} min.',
-    src: 'Which source spotted each ignition candidate first: satellites, cameras on the ground, drones, emergency calls, or cars and phones. It shows which eyes catch fires earliest.',
-    night: 'Ignitions over {p} split by whether they started at night or by day: {v} in all. Night fires are harder to see and to reach.',
-    tod: 'When ignition candidates appear during the day, against how likely they are to be real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
-    conf: 'The share of ignition candidates that turned out to be real fires over {p}: {v}% on average. A rising line means detections are getting more reliable.',
-    hour: 'Detections grouped by the hour of the day they came in, in local time. The busiest hour starts at {v}.',
-    decl: 'How long it took to declare a fire after its first alert, over {p}. {v}% were declared within 30 minutes.'
+    region: 'Where ignition candidates were detected in {r} over {p} (the primary colour), and where the fires that started then are burning (dark grey, bigger for larger fires). {v} candidates in all.',
+    burned: 'Area burned by the fires that started in {r} over {p}, added up by start date, as each fire\'s official feed reports its size. {v} {u} in total.',
+    top5: 'The five largest fires that started over {p}, as their feeds report them. Together they burned {v} {u}.',
+    mitig: 'The fires that started over {p} and report a containment time, fastest first, from start to contained. The quickest took {v} h.',
+    size: 'Fires that started over {p}, sorted by reported size from class A (smallest) to G (largest), the national size classes.',
+    stage: 'Every fire in {r} now, by the stage its official feed gives it: {v} in all.',
+    res: 'People, vehicles and aircraft that the feeds report on the active fires in {r} now. Fires without a report are not counted (no estimates).',
+    src: 'Which satellite detected each ignition candidate in {r} over {p} (NASA FIRMS).',
+    night: 'Ignition candidates over {p} split by whether they were detected at night or by day: {v} in all. Night fires are harder to see and to reach.',
+    tod: 'When ignition candidates were detected, in local time, against how likely they are to be real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
+    hour: 'Ignition candidates by the hour of the day they were detected, in local time. The busiest hour starts at {v}.'
   };
-  function explain(d, rg, o) { var t = EXPL[d.k]; if (!t) return '';
+  function explain(d, rg, o) { var t = (PTL() && EXPL_PT[d.k]) || EXPL[d.k]; if (!t) return ''; if (PTL()) return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, tr(o.u)).replace(/\{p\}/g, ({ m: 'no último mês', h: 'nos últimos 6 meses', y: 'no último ano' })[rg.id] || '').replace(/\{r\}/g, regionName());
     return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()); }   /* (Oct 6) no 'Simulated data.': the * and the * Simulation footnote already say it */
   function cardHtml(d, rg, X) {
     var R = rng(S.region + '|' + rg.id + '|' + d.k), o = d.f(R, rg, X);
     var ex = !!(S.ex && S.ex[d.k]), para = explain(d, rg, o);
-    return '<article class="cd' + (ex ? ' ex' : '') + '" data-k="' + d.k + '" aria-label="' + esc(d.t) + '"><span class="wf-simstar" aria-label="Simulation">*</span>' +
+    return '<article class="cd' + (ex ? ' ex' : '') + '" data-k="' + d.k + '" aria-label="' + esc(tr(d.t)) + '">' +
       (para ? '<button type="button" class="mo" aria-expanded="' + ex + '" aria-label="' + (ex ? 'Less' : 'More info') + '"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle class="mo-c" cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path class="mo-i" d="M12 11v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle class="mo-d" cx="12" cy="7.75" r="1.25" fill="currentColor"/></svg></button>' : '') +
-      '<div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:' + (para ? 40 : 0) + 'px">' + esc(d.t) + '</div>' +
+      '<div style="font-size:16px;font-weight:600;line-height:20px;color:#6E6E73;padding-right:' + (para ? 40 : 0) + 'px">' + esc(tr(d.t)) + '</div>' +
       // the value line, with More at its right end (no line of its own); the note, when there is one, under it
-      '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73;flex:1 1 auto;min-width:0">' + esc(o.u) + '</span>' +
-        '' + '</div>' +
-      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(o.n) + '</div>' : '') +
+      (o.v === '' ? '<div style="height:4px"></div>' : '<div style="display:flex;align-items:baseline;gap:8px;margin-top:4px"><span style="font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.01em;color:#3A3A3C;font-variant-numeric:tabular-nums">' + esc(o.v) + '</span><span style="font-size:16px;line-height:20px;color:#6E6E73;flex:1 1 auto;min-width:0">' + esc(tr(o.u)) + '</span>' +
+        '' + '</div>') +
+      (o.n ? '<div style="font-size:16px;line-height:20px;color:#6E6E73">' + esc(tr(o.n)) + '</div>' : '') +
       (para ? '<div class="xp"><div><p style="margin:0;padding-top:8px;font-size:18px;line-height:24px;color:#3A3A3C">' + esc(para) + '</p></div></div>' : '') +
-      '<div style="height:16px"></div>' + o.h + '</article>';
+      (o.h ? '<div style="height:16px"></div>' + o.h : '') + '</article>';
   }
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
@@ -290,9 +349,9 @@
     if (sc && !(g && g.d)) { var og = outline(sc.st); if (og) g = og; }   /* no outline drawn by the map: use ours */ if (!g || !g.box) return '';
     var b = g.box, bw = Math.max(1, b[2] - b[0]), bh = Math.max(1, b[3] - b[1]), pad = Math.max(bw, bh) * 0.06, vw = bw + 2 * pad, vh = bh + 2 * pad, vx = b[0] - pad, vy = b[1] - pad;
     var pts = g.pts, ins = function (x, y) { if (!pts) return true; var c = false; for (var i = 0, j = pts.length - 1; i < pts.length; j = i++) { if ((pts[i][1] > y) !== (pts[j][1] > y) && x < (pts[j][0] - pts[i][0]) * (y - pts[i][1]) / (pts[j][1] - pts[i][1]) + pts[i][0]) c = !c; } return c; };
-    var R = rng(S.region + '|' + rg.id + '|heat'), mxd = Math.max(bw, bh), spots = function (nc, per, r0, r1, wt, spread) { var o = [], t = 0, c = 0; while (c < nc && t++ < 4000) { var x = b[0] + R() * bw, y = b[1] + R() * bh; if (!ins(x, y)) continue; c++;
-        for (var k = 0; k < per; k++) { var a = R() * 6.283, d = R() * R() * mxd * spread, px = x + Math.cos(a) * d, py = y + Math.sin(a) * d; if (ins(px, py)) o.push([px, py, mxd * (r0 + R() * (r1 - r0)), wt * (0.4 + R() * 0.6)]); } } return o; };
-    var hotC = spots(10, 26, 0.005, 0.016, 0.7, 0.1), hotB = spots(6, 20, 0.0065, 0.018, 0.65, 0.08), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.0065, hh = Math.min(300, Math.round(326 * vh / vw));
+    var mxd = Math.max(bw, bh);
+    var D = NUM && NUM.cands ? NUM : null, mp = !!(G && G.states && G.states[sc.st] && G.states[sc.st].d), at = function (o) { if (mp) return o.x != null ? [o.x, o.y] : null; if (o.lat == null) return null; var k = Math.cos(39.5 * Math.PI / 180); return [o.lon * k * 100, -o.lat * 100]; };   /* (Oct 12) the real points: candidates where they were detected, fires where they burn (bigger for larger fires) */
+    var hotC = (D ? D.cands : []).map(at).filter(Boolean).map(function (q) { return [q[0], q[1], mxd * 0.012, 0.75]; }), hotB = (D ? D.fires : []).map(function (f) { var q = at(f); return q ? [q[0], q[1], mxd * Math.min(0.05, 0.008 + 0.0009 * Math.sqrt(f.ha || 0)), 0.8] : null; }).filter(Boolean), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.0065, hh = Math.min(300, Math.round(326 * vh / vw));
     var blobs = function (a, col) { return a.map(function (q) { return '<circle class="an-p" data-o="' + q[3].toFixed(2) + '" cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" style="fill:' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
     var shape = g.d ? '<path d="' + g.d + '"/>' : '<rect x="' + b[0] + '" y="' + b[1] + '" width="' + bw + '" height="' + bh + '"/>';
     var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(regionLabel()) + '" style="display:block">' +
@@ -302,7 +361,7 @@
     var key = function (k, c, t) { var on = S.lay[k]; return '<button type="button" data-lg="' + k + '" aria-pressed="' + (!!on) + '" style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 16px 0 12px;border:0;border-radius:999px;background:rgba(118,118,128,.12);font:inherit;font-size:16px;line-height:20px;color:' + (on ? '#3A3A3C' : '#8E8E93') + ';cursor:pointer"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;box-sizing:border-box;background:' + (on ? c : 'transparent') + ';border:' + (on ? '0' : '1.5px solid #8E8E93') + '"></span>' + t + (NUM && NUM[k] ? '<b style="font-weight:600;margin-left:4px">' + NUM[k] + '</b>' : '') + '</button>'; };
     return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', INK, 'Burned area') + '</div>';
   }
-  function ctxX(rg) { PTS = ptLabels(rg); var ptq = /portugal/i.test(regionLabel()); return { x: xLabels(rg), sc: 0.55 + (seedOf(S.region) % 100) / 100, ak: ptq ? 0.4047 : 1, au: ptq ? 'ha' : 'ac', fires: ptq ? FIRES_PT : FIRES, sta: ptq ? STATIONS_PT : STATIONS }; }
+  function ctxX(rg) { PTS = ptLabels(rg); var D = real(rg); return { x: xLabels(rg), D: D, au: D.au }; }
   function render(keepScroll) {
     if (!S.el) return;
     S.region = regionName();
@@ -312,11 +371,11 @@
     var prev = S.el.querySelector('.sc'), st = prev && keepScroll ? prev.scrollTop : 0;
     S.el.innerHTML =
       '<div style="flex-shrink:0;padding:44px 16px 16px;display:flex;flex-direction:column;gap:16px">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:18px;font-weight:700;line-height:24px;color:#000">Metrics</h2><span data-sub="1" style="font-size:18px;line-height:24px;color:#000">Drag to reorder. + to add or remove charts.</span></div>' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px"><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h2 style="margin:0;font-size:18px;font-weight:700;line-height:24px;color:#000">' + tr('Metrics') + '</h2><span data-sub="1" style="font-size:18px;line-height:24px;color:#000">' + tr('Drag to reorder. + to add or remove charts.') + '</span></div>' +
         '<button type="button" class="xb" data-act="close" aria-label="Close">' + chev() + '</button></div>' +
-        '<div class="wf-seg" role="tablist" aria-label="Period"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 3);transform:translateX(' + (ri * 100) + '%)"><span class="segblob"></span></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" class="segopt" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '" style="font-size:18px"><span style="display:inline-grid"><span style="grid-area:1/1">' + r.label + '</span><span aria-hidden="true" style="grid-area:1/1;visibility:hidden;font-weight:600">' + r.label + '</span></span></button>'; }).join('') + '</div>' +
+        '<div class="wf-seg" role="tablist" aria-label="Period"><span class="segthumb" aria-hidden="true" style="width:calc((100% - 16px) / 3);transform:translateX(' + (ri * 100) + '%)"><span class="segblob"></span></span>' + RANGES.map(function (r) { return '<button type="button" role="tab" class="segopt" data-r="' + r.id + '" aria-selected="' + (r.id === S.range) + '" style="font-size:18px"><span style="display:inline-grid"><span style="grid-area:1/1">' + tr(r.label) + '</span><span aria-hidden="true" style="grid-area:1/1;visibility:hidden;font-weight:600">' + tr(r.label) + '</span></span></button>'; }).join('') + '</div>' +
       '</div>' +
-      '<div class="sc"><div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' +
+      '<div class="sc"><div data-list="1">' + keys.map(function (k) { return cardHtml(BYK[k], rg, X); }).join('') + '</div>' + (X.D.src.length ? '<p style="margin:0 0 16px;font-size:14px;line-height:18px;color:#6E6E73">' + (PTL() ? 'Fontes: ' : 'Sources: ') + esc(X.D.src.join(', ')) + (PTL() ? '. As fontes guardam só os incêndios recentes: períodos mais longos mostram o que ainda listam.</p>' : '. Feeds keep recent fires only, so longer periods show what they still list.</p>') : '') +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin:8px 0 0"><button type="button" class="add" data-act="add" aria-label="Add or remove charts"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>' +
         '</div>' +
       '<div class="scr" data-act="shut"></div><div class="sh" role="dialog" aria-label="Charts" aria-hidden="true"></div>';
@@ -327,7 +386,7 @@
     var hid = hidden(), ks = order();
     return '<div class="wf-stripes" aria-hidden="true" style="flex-shrink:0;position:relative;height:8px"></div>' +
       '<div role="button" tabindex="0" aria-label="Close" data-act="shut" style="flex-shrink:0;display:flex;justify-content:center;padding:8px 0 16px;cursor:pointer"><span style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,.2)"></span></div>' +
-      '<div style="flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 16px 24px"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#000">Charts</h2><span style="font-size:18px;line-height:24px;color:#000">Show or hide charts.</span><span style="font-size:18px;line-height:24px;color:#000">Drag to reorder.</span></div>' +
+      '<div style="flex-shrink:0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:0 16px 24px"><div style="display:flex;flex-direction:column;gap:4px"><h2 style="margin:0;font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:32px;color:#000">' + tr('Charts') + '</h2><span style="font-size:18px;line-height:24px;color:#000">' + tr('Show or hide charts.') + '</span><span style="font-size:18px;line-height:24px;color:#000">' + tr('Drag to reorder.') + '</span></div>' +
       '<span style="display:flex;align-items:center;gap:8px;flex-shrink:0"><button type="button" data-act="reset" class="wf-reset wf-rpill" aria-disabled="' + (LS(K_ORDER) || LS(K_HIDE) || (LS('wf-stats-lay') && (!S.lay.c || !S.lay.b)) ? 'false' : 'true') + '" style="height:32px;padding:0 16px;border:0;border-radius:999px;background:rgba(118,118,128,.12);color:#3A3A3C;font:inherit;font-size:16px;font-weight:600;cursor:pointer">Reset</button><button type="button" class="xb" data-act="shut" aria-label="Close" style="margin-top:-6px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span></div>' +
       '<div style="flex:1 1 auto;min-height:0;overflow-y:auto;scrollbar-width:none;padding:0 16px 56px"><div style="background:#FFFFFF;border-radius:16px;padding:8px 16px;box-shadow:0 0 10px rgba(0,0,0,.08)">' +
       ks.map(function (k) { var on = hid.indexOf(k) < 0; return '<div role="switch" tabindex="0" aria-checked="' + on + '" data-tg="' + k + '" style="position:relative;display:flex;align-items:center;gap:8px;height:60px;box-sizing:border-box;cursor:pointer"><span class="gp" data-gp="' + k + '" aria-label="Drag to reorder" style="display:flex;align-items:center;justify-content:center;width:32px;height:44px;margin-left:-8px;flex-shrink:0;color:#8E8E93;touch-action:none;cursor:grab"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span style="flex:1 1 auto;min-width:0;font-size:18px;line-height:24px;color:#000">' + esc(BYK[k].t) + '</span><span class="sw' + (on ? ' on' : '') + '"><i></i></span></div>'; }).join('') + '</div></div>';
@@ -515,7 +574,7 @@
   // preferences match, so the chosen palette, text size and spacing reach the statistics like every other screen
   function norm(root) { if (!root) return; var L = root.querySelectorAll ? root.querySelectorAll('[style]') : []; Array.prototype.forEach.call(L, function (el) { var t = el.style && el.style.cssText; if (t && t !== el.getAttribute('style')) el.setAttribute('style', t); }); if (root.getAttribute && root.getAttribute('style') && root.style.cssText) root.setAttribute('style', root.style.cssText); }
   function cardsWire() {
-    norm(S.el); tipHide(); tipWire(); [0, 120, 700].forEach(function (t) { setTimeout(function () { if (window.__wfSimMark) window.__wfSimMark(); }, t); });   // the shared "* Simulation" footnote (prefs.js)
+    norm(S.el); tipHide(); tipWire();   /* (Oct 12) real data: no "* Simulation" footnote */
     if (S.anim) { S.anim = false; animWire(); }   // (Oct 6, fix) this call had slipped behind the comment above, so no chart animated
     Array.prototype.forEach.call(S.el.querySelectorAll('[data-lg]'), function (b) { b.onclick = function (e) { e.stopPropagation(); var k = b.getAttribute('data-lg'); S.lay[k] = S.lay[k] ? 0 : 1; LS('wf-stats-lay', S.lay); buzz(8); render(true); }; });
     dragWire();
