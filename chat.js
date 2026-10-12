@@ -638,11 +638,13 @@
         { a: { en: 'Satellite', pt: 'Satélite' }, b: { en: 'Heat anomaly. ' + src + (c.det ? ' at ' + hhmm(c.det) : '') + '.', pt: 'Anomalia térmica. ' + src.replace('Satellite', 'Satélite') + (c.det ? ' às ' + hhmm(c.det) : '') + '.' } },
         { a: { en: 'Drone D-5' + (from ? ' from ' + from : ''), pt: 'Drone D-5' + (from ? ' de ' + from : '') }, sim: true,
           b: strong ? { en: 'Smoke and a hot spot on the thermal feed.', pt: 'Fumo e um ponto quente na imagem térmica.' } : { en: 'A warm patch on the thermal feed. No smoke.', pt: 'Uma zona quente na imagem térmica. Sem fumo.' } }
-      ].concat(/* (Oct 12, 19:30) often (at random, by incident) a connected car's front camera and a resident's phone photo with a 911 call also caught it (simulated) */
-        hash(c.key + 'car') % 10 < 6 ? [{ pic: 'assets/evid/car-' + (strong ? 'smoke' : 'haze') + '.svg', sim: true, a: { en: 'Car camera', pt: 'Câmara de automóvel' },
+      ].concat(/* (Oct 12, 21:15) often (at random, by incident) a connected car's front camera and a phone's passive fire detection also caught it:
+         real photos of one wildfire's smoke column seen from the road (Unsplash, Malachi Brooks), different shots of the same plume */
+        hash(c.key + 'car') % 10 < 6 ? [{ pic: UNS(strong ? ['1602980068989-cb21869ab2c7', '1602980069131-51eca8b9557d'] : ['1602980045360-d94be60e4775'], 'car', 800, 450), pa: '16 / 9', pw: '100%', rec: true, sim: true, a: { en: 'Car camera', pt: 'Câmara de automóvel' },
           b: strong ? { en: 'A connected car passing by: a smoke column over the ridge.', pt: 'Um automóvel conectado a passar: uma coluna de fumo sobre a cumeada.' } : { en: 'A connected car passing by: a light haze over the hills.', pt: 'Um automóvel conectado a passar: uma neblina ligeira sobre os montes.' } }] : [],
-        hash(c.key + 'phone') % 10 < 6 ? [{ pic: 'assets/evid/phone-' + (strong ? 'smoke' : 'haze') + '.svg', sim: true, a: { en: 'Phone photo', pt: 'Fotografia de telemóvel' },
-          b: strong ? { en: 'Sent with a ' + (isUS(c) ? '911' : '112') + ' call: smoke and flames behind the houses.', pt: 'Enviada com uma chamada para o ' + (isUS(c) ? '911' : '112') + ': fumo e chamas atrás das casas.' } : { en: 'Sent with a ' + (isUS(c) ? '911' : '112') + ' call: a faint haze behind the houses.', pt: 'Enviada com uma chamada para o ' + (isUS(c) ? '911' : '112') + ': uma neblina ténue atrás das casas.' } }] : []) };
+        hash(c.key + 'phone') % 10 < 6 ? [{ pic: UNS(strong ? ['1602980085374-7e743fff3cc6', '1602980085421-578025fd903d', '1602980068801-8dd3f84cca0a'] : ['1603661885651-c909f20987a5'], 'ph', 600, 800), pa: '3 / 4', pw: '72%', sim: true, a: { en: 'Phone detection', pt: 'Deteção por telemóvel' },
+          b: strong ? { en: 'A phone\'s passive fire detection nearby: smoke picked up on its camera.', pt: 'A deteção passiva de incêndios de um telemóvel próximo: fumo captado pela câmara.' } : { en: 'A phone\'s passive fire detection nearby: a faint haze on its camera.', pt: 'A deteção passiva de incêndios de um telemóvel próximo: uma neblina ténue na câmara.' } }] : []) };
+    function UNS(ids, k, w, h) { var id = ids[hash(c.key + k) % ids.length]; return 'https://images.unsplash.com/photo-' + id + '?w=' + w + '&h=' + h + '&fit=crop&auto=format&q=70'; }
   }
   function evidCard(c) {
     return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidences', pt: 'Evidências' }, body: null });

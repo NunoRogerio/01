@@ -20,7 +20,7 @@
 <script src="station.js?v=1791834155"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791834836"></script>
+<script src="chat.js?v=1791835889"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -221,7 +221,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                       <span style="position: absolute; left: 16px; top: 16px; display: flex; align-items: center; gap: 8px; color: #FFFFFF; font-size: 15px; font-weight: 600; line-height: 20px; text-align: left; text-shadow: 0 0 4px rgba(0,0,0,0.8)"><i aria-hidden="true" style="width: 6px; height: 6px; flex-shrink: 0; border-radius: 50%; background: #FF453A"></i>{{e.live}}</span>
                       <span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 20px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">*</span>
                     </button>
-                    <span role="img" aria-label="{{e.aria}}" style="position: relative; display: {{e.picD}}; border-radius: 16px; overflow: hidden; aspect-ratio: 358 / 202; background: #E5E5EA"><img src="{{e.pic}}" alt="" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 20px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">*</span></span>
+                    <span role="img" aria-label="{{e.aria}}" style="position: relative; display: {{e.picD}}; align-self: center; width: {{e.pw}}; border-radius: 16px; overflow: hidden; aspect-ratio: {{e.pa}}; background: #E5E5EA"><img src="{{e.pic}}" alt="" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><span aria-hidden="true" style="position: absolute; left: 16px; top: 16px; display: {{e.recD}}; color: #FFFFFF; font-family: Menlo, monospace; font-size: 13px; line-height: 16px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">{{e.rec}}</span><span aria-hidden="true" style="position: absolute; right: 16px; top: 16px; color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 20px; text-shadow: 0 0 4px rgba(0,0,0,0.8)">*</span></span>
                     <span role="img" aria-label="{{e.aria}}" style="position: relative; display: {{e.imgD}}; border-radius: 16px; overflow: hidden; aspect-ratio: 358 / 202; background: #E5E5EA">
                       <img src="{{e.img}}" alt="" loading="lazy" style="position: absolute; left: 50%; top: 50%; width: 512px; height: 512px; max-width: none; transform: translate({{e.tx}}, {{e.ty}})">
                       <span aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -16px 0 0 -16px; border-radius: 50%; background: {{e.dotBg}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{e.dotD}}" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round"></path></svg></span>
@@ -1172,7 +1172,7 @@ class Component extends DCLogic {
           hasChecks: !!m.checks, checks: (m.checks || []).map((k) => ({ t: T(k) })),
           ...(() => { const ev = m.stage === 0 && c.kind === 'cand' && C.evid, E = ev ? C.evid(c) : null;   /* every candidate's first card is its evidence (older chats too) */
             const feedOpen = (src, lv, who) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const F = window.__wfCamFeed; if (F) F.open({ anchor: e && e.currentTarget, src, cross: true, title: 'Drone feed', label: lv, who: who || '' }); };
-            const NO = { picD: 'none', pic: '', vidD: 'none', vid: '', live: '', imgD: 'none', img: '', tx: '0px', ty: '0px', dotBg: 'transparent', dotD: '', open: null, aria: '' };
+            const NO = { picD: 'none', pic: '', pa: '358 / 202', pw: '100%', recD: 'none', rec: '', vidD: 'none', vid: '', live: '', imgD: 'none', img: '', tx: '0px', ty: '0px', dotBg: 'transparent', dotD: '', open: null, aria: '' };
             if (!E && m.feed) { const lv = L('Live. Drone ' + (m.drone || 'D-5'), 'Em direto. Drone ' + (m.drone || 'D-5'));   /* (Oct 11, 11:47) a drone pass: its feed in the card */
               return { hasEv: true, evNote: '', evNoteD: 'none', evRows: [Object.assign({}, NO, { aD: 'none', a: '', bD: 'none', b: '', pad: '0 16px 16px', sep: '0', vidD: 'block', vid: m.feed, live: lv, aria: L('Drone feed. Open', 'Imagem do drone. Abrir'), open: feedOpen(m.feed, lv) })] }; }
             if (!E) return { hasEv: false, evRows: [] };
@@ -1182,7 +1182,7 @@ class Component extends DCLogic {
               return { img: 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + ty + '.png', tx: (-(xf - tx) * 512).toFixed(0) + 'px', ty: (-(yf - ty) * 512).toFixed(0) + 'px' }; })(), G = window.__wfIgn ? window.__wfIgn(c.conf || 0, c) : { fill: '#FFE680', dash: '' };
             return { hasEv: true, title: '', ttlD: 'none', kpiBasis: '100%', bodyD: 'none',   /* (Oct 12, 19:30) the header already says Evidences: no title, the likelihood centred */ evNote: L('* Simulation', '* Simulação'), evNoteD: 'block',
               evRows: E.rows.map((r, i) => { const drone = !!r.sim, R = Object.assign({}, NO, { aD: 'block', a: T(r.a), bD: 'block', b: T(r.b) + (r.sim ? ' *' : ''), pad: '16px', sep: i ? '1px solid rgba(60,60,67,0.18)' : '0' });
-                if (r.pic) return Object.assign(R, { picD: 'block', pic: r.pic, aria: T(r.a) });
+                if (r.pic) return Object.assign(R, { picD: 'block', pic: r.pic, pa: r.pa || '358 / 202', pw: r.pw || '100%', recD: r.rec ? 'block' : 'none', rec: '● REC ' + C.hhmm(c.det || c.started || Date.now()), aria: T(r.a) });
                 if (drone) return Object.assign(R, { vidD: 'block', vid: E.video, live, aria: L('Drone feed. Open', 'Imagem do drone. Abrir'), open: feedOpen(E.video, live, E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '') });
                 if (sat && i === 0) return Object.assign(R, { imgD: 'block', img: sat.img, tx: sat.tx, ty: sat.ty, dotBg: G.fill, dotD: G.dash, aria: L('Where the satellite saw the heat', 'Onde o satélite viu o calor') });
                 return R; }) }; })(),
