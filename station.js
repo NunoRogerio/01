@@ -285,7 +285,7 @@
       if (!c || !C.assignMine(C.get(c.key) || c)) { busy = false; return; }
       try { localStorage.removeItem('wf-asg-next'); sessionStorage.setItem('wf-asg-new', c.key); LP = LP.filter(function (q) { return q.key !== c.key; }); LP.push({ key: c.key, kind: it.kind, id: it.d.id }); localStorage.setItem(LK, JSON.stringify(LP)); } catch (e) {}
       var PT = window.__wfLang === 'pt', u = M.unit || 'Engine', nm = (C.nameOf ? C.nameOf(C.get(c.key) || c) : c.place) || '', txt = PT ? u + ' atribuído a ' + nm + '. Responda já.' : u + ' assigned to ' + nm + '. Respond now.';
-      banners([{ kind: 'asg', d: d, c: C.get(c.key) || c, txt: txt }]); try { if (window.__wfNotify) window.__wfNotify(PT ? 'Nova atribuição' : 'New assignment', txt, 'Station.dc.html?home=1'); } catch (e) {}
+      /* (Oct 12, 20:50) no banner: the card lands in the Active duty slot and the assignment is in the notifications */ try { if (window.__wfNotify) window.__wfNotify(PT ? 'Nova atribuição' : 'New assignment', txt, 'Station.dc.html?home=1'); } catch (e) {}
       try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} setTimeout(function () { busy = false; }, 3000); };
     window.__wfAsgNow = function () { last = 0; go(true); }; setInterval(function () { go(false); }, 1000); })();
   window.__wfHomeUrl = function () { return window.__wfMine() ? 'Station.dc.html?home=1' : 'Main.dc.html'; };

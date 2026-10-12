@@ -661,7 +661,7 @@
     (c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).forEach(function (m) {
       if (m.reqDecl && !m.done) m.done = (declared && m.actions[1].key === 'reqConfirm') || (!declared && m.actions[1].key === 'reqDismiss') ? m.actions[1].key : 'reqNo'; });
   }
-  function start(c) { start0(c); if (c.asgMine) { c.asgMine = false; assignMine(c); } }
+  function start(c) { start0(c); if (c.asgMine && !c.hold) { c.asgMine = false; assignMine(c); } }
   function start0(c) {
     var P = c.people, n = P.length;
     var names = P.map(function (p) { return p.org; }).join(', ');
@@ -671,7 +671,24 @@
          declares the fire and has command until the Battalion Chief takes over. */
       c.flags.drone = true;
       var E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
-      var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Evidences', pt: ECC + ' · Evidências' }; card(c, ev0, 300, 0);
+      var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Evidences', pt: ECC + ' · Evidências' };
+      /* (Oct 12, 20:45) a crew's new assignment waits for the Captain: the evidences, then the dispatch order to answer; the story starts once he responds */
+      if (c.asgMine) { holdFor(c, ev0); return; }
+      card(c, ev0, 300, 0); candRest(c, false); return; }
+    fireStart(c); }
+  function holdFor(c, ev) { var now = Date.now(), M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
+    ev.kind = 'card'; ev.id = newId(); ev.t = ev.vt = now - 60000; ev.st0 = c.stage; c.msgs.push(ev);
+    c.msgs.push({ kind: 'card', id: newId(), t: now, vt: now, st0: c.stage, asgOrder: true, ask: 'ff', req: 'order', tag: { en: dcOf(c) + ' · Dispatch order', pt: dcOf(c) + ' · Ordem de despacho' }, tagC: '#0A66CC', title: { en: 'Respond', pt: 'Responder' },
+      body: { en: u + ' assigned to this incident. Read the evidences, then respond.', pt: 'O ' + u + ' foi atribuído a este incidente. Leia as evidências e responda.' }, actions: [{ key: 'respond', en: 'Responding', pt: 'A responder', primary: true }] });
+    c.hold = true; c.holdAt = now; c.updated = now; }
+  function release(c) { if (!c.hold) return; c.hold = false; var dz = Date.now() - (c.holdAt || Date.now()) + 3000; (c.queue || []).forEach(function (q) { q.due += dz; }); c.queue.sort(function (a, b) { return a.due - b.due; });   /* what waited during the hold comes after the start of the story */ var M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
+    (c.msgs || []).forEach(function (m) { if (m.asgOrder && !m.done) m.done = 'respond'; });
+    mine(c, u + ' responding.', 'O ' + u + ' a responder.');
+    try { var A0 = depAcks(); A0[c.key] = Date.now(); localStorage.setItem(DAK, JSON.stringify(A0)); } catch (e) {}
+    if (c.kind === 'cand') candRest(c, true); else fireRest(c);
+    c.asgMine = false; assignMine(c); }
+  function candRest(c, live) { var P = c.people, E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
+    {
       initialAttack(c);
       var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
       card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
@@ -681,19 +698,23 @@
         v0 + ' em marcha, a cerca de ' + eta + ' min. ' + (E.strong ? 'Na imagem do drone: um ponto quente com cerca de 30 m e uma coluna de fumo fina.' : 'Na imagem do drone: uma zona quente, ainda sem fumo.'), 4500, 2);
       { var F1 = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).sort(function (a, b) { return a.si - b.si; })[1]; if (F1 && c.people[F1.si]) say(c, F1.si, 'Second engine rolling from ' + F1.station + '.', 'Segundo veículo a sair de ' + F1.station + '.', 9000, 2); }
       var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
-      var Q = c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
+      var Q = live ? [] : c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
       { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, Math.max(1500, Math.min(15000, at - now0)), 0); }   /* (Oct 12, 19:30) the first engine is on scene within 15 s: an incident runs about a minute in the chat */
-    } else {
-      var s = c.stage;
-      /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
-      if (s >= 1) { var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; card(c, c0, 200, 0); }
-      sys(c, isUS(c) ? dcOf(c) + ' alerted you and the captains of the nearest stations' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', isUS(c) ? dcOf(c) + ' alertou-o e os capitães dos quartéis mais próximos' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', 500, 0);
-      card(c, stageCard(c, s), 900, 0);
-      entry(c, s, 2500);
     }
     save(); emit();
   }
+  function fireStart(c) { var s = c.stage;
+    /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
+    var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' };
+    if (c.asgMine) { holdFor(c, c0); save(); emit(); return; }   /* (Oct 12, 20:45) a crew's new assignment waits for the Captain's response */
+    if (s >= 1) card(c, c0, 200, 0);
+    fireRest(c); }
+  function fireRest(c) { var s = c.stage;
+      sys(c, isUS(c) ? dcOf(c) + ' alerted you and the captains of the nearest stations' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', isUS(c) ? dcOf(c) + ' alertou-o e os capitães dos quartéis mais próximos' : 'O CSREPC alertou-o e os chefes de equipa dos quartéis mais próximos', 500, 0);
+    card(c, stageCard(c, s), 900, 0);
+    entry(c, s, 2500);
+    save(); emit(); }
 
   /* (Oct 11, 17:30) the dispatch center by its real name: LA County Fire's Command and Control in Los Angeles County, a CAL FIRE
      ECC elsewhere in California, the county's dispatch in other states, the sub-regional command (CSREPC) in Portugal */
@@ -737,6 +758,7 @@
   function canAct(c, m) { if (!m || m.done || !c || c.closed || c.dismissed) return false; var M = window.__wfMine ? window.__wfMine() : null, gov = isGov();
     if (gov) return !!m.govOnly; if (m.govOnly) return false;
     if (sizeUp(m)) return !!(M && M.key === 'ff' && mission(c));
+    if (m.ask) return !!(M && M.key === m.ask && mission(c));
     return !(M && M.level === 'lead') && ours(c); }
   /* the first engine arrives: the Captain's size-up confirms the fire and declares it, or finds nothing and cancels */
   function arrive(c) { if (c.closed || c.dismissed || c.stage > 0 || c.flags.arrived) return; c.flags.arrived = true;
@@ -1031,6 +1053,7 @@
       if (a === 'capHurt') { tell('injury on the line. Minor burn, walking. Moving them to the safety zone.', 'ferido na linha. Queimadura ligeira, a andar. A levá-lo para a zona de segurança.'); ok('Copy. Paramedic on the way.', 'Entendido. Paramédico a caminho.', 1600); sys(c, 'Medical: paramedic responding to ' + u3, 'Emergência médica: paramédico a caminho do ' + u3, 2600, 0); }
       if (a === 'capDone') { cq.done = 1; tell('mop-up done in our sector. Available for another assignment.', 'rescaldo concluído no nosso setor. Disponíveis para outra tarefa.'); ok('Copy. ' + u3 + ' released, back in service. Thank you.', 'Entendido. ' + u3 + ' libertado, de volta ao serviço. Obrigado.'); if (F3) push(c, { kind: 'capt', a: 'release' }, 2600, 0); }
       c.updated = Date.now(); save(); emit(); return; }
+    if (a === 'respond') { release(c); c.updated = Date.now(); save(); emit(); return; }   /* (Oct 12, 20:45) the Captain answers the dispatch order: the story starts */
     if (a === 'capNext' || a === 'capAir') { var cr = c.flags.capReq = c.flags.capReq || {}, ic2 = icIdx(c), u2 = ((window.__wfMine && window.__wfMine()) || {}).unit || 'Engine 12';
       if (a === 'capNext') { var nx2 = Math.min(6, c.stage + 1); cr['next' + c.stage] = 1; me(u2 + ' to command: recommend moving to ' + STAGES[nx2].en + '. ' + (nx2 === 4 ? 'Head held, working the flanks.' : nx2 === 5 ? 'Line secured all around.' : 'No active edge left, mop-up done.'), u2 + ' para o comando: recomendo passar a ' + STAGES[nx2].pt + '. ' + (nx2 === 4 ? 'Cabeça dominada, a trabalhar os flancos.' : nx2 === 5 ? 'Perímetro seguro em toda a volta.' : 'Sem frente ativa, rescaldo feito.'));
         push(c, { kind: 'capt', a: 'next', to: nx2, from: c.stage }, 3500, 0); }
@@ -1782,6 +1805,7 @@
     var db = load(), now = Date.now(), changed = false;
     Object.keys(db.chats).forEach(function (k) {
       var c = db.chats[k];
+      if (c && c.hold) return;   /* (Oct 12, 20:45) waiting for the Captain to respond to the dispatch order: nothing moves */
       delete c._vOne;
       /* (Oct 5, 10:50) in the tour the team's chatter waits while a step points at something (the evidence, Declare the fire), and is left out after: nothing moves under the cursor */
       var mute = tourMute();
@@ -2297,13 +2321,13 @@
   function depAcks() { try { return JSON.parse(localStorage.getItem(DAK) || '{}') || {}; } catch (e) { return {}; } }
   function myForce(c, M) { var ck = (M.station.type === 'way' ? 'w' : 'n') + M.station.id; return (c.forces || []).find(function (f) { return (f.ck === ck || f.full === M.station.name) && f.st !== 'standby' && f.st !== 'released' && (!M.unit || !(f.veh || []).length || (f.veh || []).indexOf(M.unit) >= 0); }) || null; }   /* (Oct 11, 17:25) only the incidents the profile's own unit was sent to */
   function deployments() { var M = window.__wfMine ? window.__wfMine() : null; if (!M || M.level !== 'lead') return [];
-    var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && myForce(c, M) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, M.station)); })   /* only the station's own incidents: its area or mutual aid */
-      .map(function (c) { return { c: c, f: myForce(c, M), acked: !!depAcks()[c.key] || M.rank === 'eng' || M.rank === 'ff' }; }); }   /* (Oct 11, 17:25) the Captain acknowledges the dispatch for the engine; the Engineer and Firefighters just see it */
+    var db = load(); return Object.keys(db.chats).map(function (k) { return db.chats[k]; }).filter(function (c) { return c && !c.closed && !c.dismissed && c.kind !== 'dm' && ((c.hold && c.asgMine) || (myForce(c, M) && (!window.__wfChatIsOurs || window.__wfChatIsOurs(c, M.station)))); })   /* (Oct 12, 20:50) a new assignment waiting for the Captain's response is a deployment too (in the notifications) */   /* only the station's own incidents: its area or mutual aid */
+      .map(function (c) { return { c: c, f: myForce(c, M) || { veh: [M.unit || 'Engine'], si: 0, station: '' }, hold: !!c.hold, acked: !c.hold && (!!depAcks()[c.key] || M.rank === 'eng' || M.rank === 'ff') }; }); }   /* (Oct 11, 17:25) the Captain acknowledges the dispatch for the engine; the Engineer and Firefighters just see it */
   var dpEl = null, dpBusy = false;
   function depHide(anim) { var el = dpEl; dpEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
   function depRender() {
     if (dpBusy) return;
-    var L0 = deployments().filter(function (d) { return !d.acked; }).sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); }), d = L0[0];
+    var L0 = deployments().filter(function (d) { return !d.acked && !d.hold; })   /* a held assignment is answered in its chat, after the evidences: no floating card */.sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); }), d = L0[0];
     if (!d || tourMute() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { depHide(false); return; }
     var PT = window.__wfLang === 'pt', c = d.c, S = stageOf(c) || {}, here = onPage(c);
     var veh = (d.f.veh || []).join('. '), min = (c.stations[d.f.si] || {}).min;
