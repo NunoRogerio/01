@@ -763,9 +763,9 @@
     } else if (s === 2) {
       var eta = c.stations[0] ? c.stations[0].min : 15;
       if (!c.acked) {   /* (Oct 5) the leads already confirmed the order on their way: no second "leaving now" */
-      if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 3000, 1);
-      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 6000, 2); }
-      setStage(c, 3, d + 12000, Math.max(4, eta - 3));   /* (Oct 12, 15:55) about 20 s from the dispatch to crews on scene (10 s was too fast); (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
+      if (P[0]) say(c, 0, 'Leaving now. ETA ' + eta + ' min.', 'A sair. Chegada prevista em ' + eta + ' min.', d + 5000, 1);
+      if (P[1]) say(c, 1, 'On our way behind them.', 'A caminho, logo atrás.', d + 10000, 2); }
+      setStage(c, 3, d + 22000, Math.max(4, eta - 3));   /* (Oct 12, 19:15) about 30 s from the dispatch to crews on scene; (15:55) 20 s; (Oct 8, 19:28) a demo storyline: the crews reach the fire within ~12 s of leaving (well under 30 s); the clock still advances the drive time */
     } else if (s === 3 && c.flags.rekindled) {   /* (Oct 8, 21:06) back on scene after a rekindle */
       say(c, ltOf(c, 0), 'Back on the rekindle. Knocking it down.', 'De volta ao reacendimento. A apagá-lo.', d + 3000, 3);
     } else if (s === 3) {
