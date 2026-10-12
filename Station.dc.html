@@ -22,7 +22,7 @@
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791796375"></script>
+<script src="chat.js?v=1791799406"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -325,13 +325,16 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- (Oct 8, 14:00) the team lead's home: his team's people, with their photos, as on the crew sheet (the same person cards), then the vehicle it rides in -->
         <ul style="display: {{crewPD}}; flex-direction: column; gap: 16px; margin: 0 16px 16px; padding: 0; list-style: none">
           <sc-for list="{{crewP}}" as="p" hint-placeholder-count="4">
-            <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
-              <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
-              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-                <span style="font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
-                <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
+            <li style="border-radius: 16px; background: #FFFFFF; overflow: hidden; flex-shrink: 0">
+              <span style="display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; min-height: 76px; padding: 16px; box-sizing: border-box">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 13px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
+                <span class="wf-stag" data-wf-eqw="res-tags" style="justify-self: end; align-self: start; margin-top: -2px; display: {{p.tagD}}; align-items: center; justify-content: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
+                <span style="grid-column: 2 / -1; display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">
+                  <span>{{p.role}}</span>
+                  <span style="display: {{p.misD}}"><span style="color: {{p.tagFg}}">{{p.mis}}</span> {{p.offA}}<b style="font-weight: 600; color: #3A3A3C">{{p.offB}}</b>{{p.offC}}</span>
+                </span>
               </span>
-              <span class="wf-stag" data-wf-eqw="res-tags" style="display: {{p.tagD}}; align-items: center; justify-content: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
             </li>
           </sc-for>
         </ul>
@@ -347,8 +350,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 <span aria-hidden="true" style="grid-row: 1; grid-column: 4; display: {{r.chevD}}; justify-content: flex-end; align-items: center; align-self: start; height: 24px; color: #8E8E93"><!-- (Oct 11, 00:59) the tag and the chevron centred on the title's first line --><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
                 <span style="grid-column: 2 / -1; display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">
                   <span>{{r.sub}}</span>
-                  <span style="display: {{r.misD}}"><span style="color: {{r.tagFg}}">{{r.mis}}</span> {{r.offA}}<b style="font-weight: 700">{{r.offB}}</b>{{r.offC}}</span>
-                  <span style="display: {{r.offD}}">{{r.offA}}<b style="font-weight: 700">{{r.offB}}</b>{{r.offC}}</span>
+                  <span style="display: {{r.misD}}"><span style="color: {{r.tagFg}}">{{r.mis}}</span> {{r.offA}}<b style="font-weight: 600; color: #3A3A3C">{{r.offB}}</b>{{r.offC}}</span>
+                  <span style="display: {{r.offD}}">{{r.offA}}<b style="font-weight: 600; color: #3A3A3C">{{r.offB}}</b>{{r.offC}}</span>
                 </span>
               </button>
             </li>
@@ -398,16 +401,18 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     <ul style="display: flex; flex-direction: column; gap: 16px; min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto">
       <sc-for list="{{sq.people}}" as="p" hint-placeholder-count="5">
-        <li style="display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; flex-shrink: 0">
-          <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: #E5E5EA; font-size: 14px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
-          <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-            <span style="font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
-            <span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{p.role}}</span>
-          </span>
-          <span class="wf-stag" data-wf-eqw="sheet-tags" style="display: {{p.tagD}}; align-items: center; justify-content: center; flex-shrink: 0; margin-left: auto; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span>
-          <!-- The crew chief's card carries the chat (the screen's primary action): a round primary button with the chat icon -->
-          <button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{p.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-left: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -8px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 2px solid #FFFFFF; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 20px; text-align: center">{{sq.bN}}</span></button>
-        </li>
+        <li style="border-radius: 16px; background: #FFFFFF; overflow: hidden; flex-shrink: 0">
+              <span style="display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 4px 16px; align-items: start; min-height: 76px; padding: 16px; box-sizing: border-box">
+                <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #E5E5EA; font-size: 13px; font-weight: 600; color: #3A3A3C; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+                <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
+                <span style="justify-self: end; align-self: start; display: flex; align-items: center; gap: 16px; margin-top: -2px"><span class="wf-stag" data-wf-eqw="sheet-tags" style="display: {{p.tagD}}; align-items: center; justify-content: center; min-height: 28px; padding: 4px 12px; box-sizing: border-box; border-radius: 999px; background: {{p.tagBg}}; color: {{p.tagFg}}; font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap">{{p.tag}}</span><button type="button" class="mbtn" onClick="{{sq.chat}}" aria-label="{{sq.chatLbl}}" style="position: relative; display: {{p.chatD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-left: 0; padding: 0; border: 0; border-radius: 50%; background: var(--wf-y, #E5FF00); color: #1C1C1E; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v10H9l-5 4Z"></path></svg><span aria-hidden="true" style="display: {{sq.bD}}; position: absolute; top: -8px; right: -6px; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 8px; border: 2px solid #FFFFFF; border-radius: 999px; background: #1C1C1E; color: #FFFFFF; font-size: 14px; font-weight: 400; line-height: 20px; text-align: center">{{sq.bN}}</span></button></span>
+                
+                <span style="grid-column: 2 / -1; display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73">
+                  <span>{{p.role}}</span>
+                  <span style="display: {{p.misD}}"><span style="color: {{p.tagFg}}">{{p.mis}}</span> {{p.offA}}<b style="font-weight: 600; color: #3A3A3C">{{p.offB}}</b>{{p.offC}}</span>
+                </span>
+              </span>
+            </li>
       </sc-for>
     </ul>
     
@@ -932,7 +937,7 @@ class Component extends DCLogic {
     const veh = V.filter(Boolean).map((v, i) => { const cr = crews.find((c) => c.veh === v[0]); const st = cr && cr.st === 'out' ? 'out' : cr && i <= 1 ? 'ok' : (i === 5 + bit(7) && bit(2)) ? 'repair' : (i === 3 + bit(9)) ? 'maint' : 'ok';   /* (Oct 8, 17:40) the first crew's vehicle stays on the road for the story */ return { name: v[0], ic: v[1], sub: L(v[2], v[3]), st, days: st === 'maint' || st === 'repair' ? 2 + ((H0 >>> (i + 3)) & 3) : 0 }; });   /* how long it is off the road (simulated, steady per station) */
     /* (Oct 9, 06:52) a station with its own fleet (Station 11): the same units and people as its dispatch, a unit out on a fire is Out */
     { const FL = window.__wfFleet ? window.__wfFleet(S.id) : null; if (FL) { const busy = {}; try { (window.__wfChat ? window.__wfChat.list() : []).forEach((o) => { if (!o || o.closed || o.dismissed || o.kind === 'dm') return; (o.forces || []).forEach((f) => { if (f.st !== 'standby' && f.st !== 'released') (f.veh || []).forEach((v) => { const C0 = window.__wfChat, h0 = (o.hist || []).find((h) => h.s >= 2) || (o.hist || [])[0], vn = C0 && C0.vnow ? C0.vnow(o) : Date.now();   /* (Oct 10, 22:00) which fire, and since when: from the dispatch (en route) on the fire's own clock */
-        busy[v] = { place: window.__wfIncName ? window.__wfIncName(o.place, true) : o.place, ms: h0 && h0.vt ? Math.max(0, vn - h0.vt) : 0 }; }); }); }); } catch (e) {}
+        busy[v] = { place: window.__wfChat && window.__wfChat.nameOf ? window.__wfChat.nameOf(o) : o.place, ms: h0 && h0.vt ? Math.max(0, vn - h0.vt) : 0 }; }); }); }); } catch (e) {}
       veh.length = 0; FL.forEach((u) => veh.push({ name: u.name, ic: u.ic, sub: L(u.en, u.pt), st: busy[u.name] ? 'out' : u.st || 'ok', days: u.days || 0, mis: busy[u.name] || null }));
       crews.length = 0; FL.filter((u) => u.crew.length).forEach((u) => crews.push({ name: u.name + L(' crew', ''), veh: u.name, st: busy[u.name] ? 'out' : u.st === 'maint' ? 'off' : 'ok', chief: u.lt || u.crew[0], ppl: u.crew.slice(), mis: busy[u.name] || null })); } }
     if (MINE && MINE.unit) { const ix = crews.findIndex((q) => q.veh === MINE.unit); if (ix >= 0) MC = ix; }   /* (Oct 11, 17:25) the view's own unit (Engine 11, Brush 11), wherever it sits in the fleet */
@@ -959,7 +964,7 @@ class Component extends DCLogic {
     if (lead && crews[MC]) { const c0 = crews[MC], v0 = veh.find((v) => v.name === c0.veh);
       rs.tabsD = 'none'; rs.sumMt = '-4px'; /* title + description: 4px apart */ rs.empty = false; rs.listD = 'flex'; { const nA = c0.ppl.filter((n, i) => pSt(n, i) === 'ok').length; rs.sum = c0.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + nA + ' ' + (c0.st === 'out' ? L('on a mission', 'em missão') : L('available', nA === 1 ? 'disponível' : 'disponíveis')) + '. ' + c0.veh + '.';   /* (Oct 8, 17:55) the crew out: the ones on duty are on the mission */ }   /* the crew sheet's own words */
       /* (Oct 8, 14:00) the people show on the screen itself (the crew row that opened them is gone); the vehicle follows */
-      rs.rows = v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st, v0.days), ...mob(), aria: v0.name + ', ' + v0.sub }] : []; rs.listD = rs.rows.length ? 'flex' : 'none'; }
+      rs.rows = v0 ? [{ name: v0.name, ic: IC[v0.ic], sub: v0.sub, ...tg(v0.st, v0.days, v0.mis), ...mob(), aria: v0.name + ', ' + v0.sub }] : []; rs.listD = rs.rows.length ? 'flex' : 'none'; }
 
     // Chats: the command team as a group, or a crew's chief; both offer the first crew they have free
     const offerCrew = crews.find((c) => c.st === 'ok') || crews[0];
@@ -972,12 +977,12 @@ class Component extends DCLogic {
     const sqK = s0.sq || '', sqC = /^c\d+$/.test(sqK) ? crews[Number(sqK.slice(1))] : null, sqOn = sqK === 'cmd' || !!sqC;
     const sq = { y: sqOn ? '0%' : 'calc(100% + 120px)', op: sqOn ? 1 : 0, pe: sqOn ? 'auto' : 'none', hidden: sqOn ? 'false' : 'true', close: () => this.setState({ sq: '' }),
       title: sqC ? sqC.name : tx.cmdTeam, sub: sqC ? sqC.ppl.length + ' ' + L('firefighters', 'bombeiros') + '. ' + sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length + ' ' + L('available', sqC.ppl.filter((n, i) => pSt(n, i) === 'ok').length === 1 ? 'disponível' : 'disponíveis') + '. ' + sqC.veh + '.' : org,
-      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, ...tg(pSt(n, i) === 'ok' && sqC.st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700, tag: '', tagD: 'none' }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
+      people: (sqC ? sqC.ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, ...((k) => tg(k, 0, k === 'out' ? sqC.mis : null))(pSt(n, i) === 'ok' && sqC.st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' })) : cmdP.map((p) => ({ name: p.name, role: L(p.roleEn, p.rolePt), w: 700, tag: '', tagD: 'none' }))).map((p, i) => ({ ...p, code: ini(p.name), photo: photo(p.name), chatD: sqC && i === 0 && !(lead && sqC === crews[0]) ? 'flex' : 'none' }))   /* the team lead does not chat with himself */, hdChatD: sqC ? 'none' : 'flex',
       chatLbl: sqC ? L('Chat with ', 'Conversar com ') + sqC.chief.split(' ')[0] : tx.groupChat, ...bdg(unr(sqC ? 'crew-' + S.id + '-' + sqC.name : 'cmd-' + S.id)),
       chat: sqC ? () => goChat({ id: 'crew-' + S.id + '-' + sqC.name, title: sqC.chief, people: [{ name: sqC.chief, roleEn: 'Crew chief · ' + sqC.name, rolePt: 'Chefe de equipa · ' + sqC.name }], offer: offer(sqC), org: sqC.name + ' · ' + org }) : cmdChat };
 
     return { hx: window.__wfHdrAct ? window.__wfHdrAct() : { code: '', photoBg: 'none', ntN: '', ntD: 'none', ntAria: 'Notifications', openNt: null, openPf: null, ch: { badgeD: 'none', n: '', aria: 'Assignments', open: null } }, 
-      crewP: lead && crews[MC] ? crews[MC].ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...tg(pSt(n, i) === 'ok' && crews[MC].st === 'out' ? 'out' : pSt(n, i)), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[MC] ? 'flex' : 'none',
+      crewP: lead && crews[MC] ? crews[MC].ppl.map((n, i) => ({ name: n, role: (() => { const CR = window.__wfChat && window.__wfChat.rankOf ? window.__wfChat.rankOf(null, n) : null; return CR ? L(CR.en, CR.pt) : i ? L('Firefighter', 'Bombeiro') : L('Crew chief', 'Chefe de equipa'); })(), w: i ? 400 : 700, code: ini(n), photo: photo(n), ...(() => { const k = pSt(n, i) === 'ok' && crews[MC].st === 'out' ? 'out' : pSt(n, i); return tg(k, 0, k === 'out' ? crews[MC].mis : null); })(), tagD: 'inline-flex' }))   /* (Oct 8, 17:55) on duty in a crew that is out: on a mission */ : [], crewPD: lead && crews[MC] ? 'flex' : 'none',
       bat: this.wfBat(S, MINE, L), nb: this.wfNb(S, MINE, L), resD: home && MINE.rank === 'bc' && !(MINE.station && MINE.station.cc === 'pt') ? 'none' : 'flex', none: false, some: true, hasMap: !home, back, tx, home, resT: lead ? L('My crew', 'A minha equipa') : tx.res, ttlCol: home ? '1 / 3' : '1 / -1', ttlRow: home ? '1' : '2', ttlMt: home ? '8px' : '16px', backD: home ? 'none' : 'flex', chD: home ? 'none' : 'flex', callD: home ? 'none' : 'flex', awayD: home ? 'none' : 'flex',
       asg: AS || { title: '', rows: [], none: false, noneTxt: '', listD: 'none' }, mapMode: home ? 'risk' : 'pin', areaOn: home ? 'true' : 'false',
       help, risk: (() => { const RK = [[L('Low risk', 'Risco reduzido'), window.__wfStTag.ok.bg, window.__wfStTag.ok.fg], [L('Moderate risk', 'Risco moderado'), 'rgba(204,153,0,0.16)', '#745200'], [L('High risk', 'Risco elevado'), 'rgba(184,74,0,0.14)', '#963B00'], [L('Very high risk', 'Risco muito elevado'), '#FBE1DC', '#B3261E'], [L('Maximum risk', 'Risco máximo'), '#B3261E', '#FFFFFF']][danger - 1] || [];

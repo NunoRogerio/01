@@ -20,7 +20,7 @@
 <script src="station.js?v=1791782784"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791796375"></script>
+<script src="chat.js?v=1791799406"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791674153"></script>
@@ -306,15 +306,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <span style="font-size: 17px; line-height: 22px; color: #000000">{{tm.sub}}</span>
         </div>
       </header>
-      <!-- One card per member, 8px apart (related cards in one group) -->
+      <!-- One card per member, 16px apart: the same card as a unit (the photo in the circle) -->
       <div role="list" class="chscroll" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; padding: 0 16px">
         <sc-for list="{{team}}" as="p" hint-placeholder-count="4">
-          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
-            <span aria-hidden="true" style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 14px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
-            <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-              <span style="font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
-              <span style="font-size: 16px; line-height: 20px; color: {{p.roleC}}">{{p.role}}</span>
-            </span>
+          <button type="button" role="listitem" class="chrow" onClick="{{p.pickT}}" aria-label="{{p.aria}}" style="display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: start; gap: 4px 16px; flex-shrink: 0; min-height: 76px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #FFFFFF; color: #000000; font: inherit; text-align: left; cursor: pointer">
+            <span aria-hidden="true" style="grid-row: 1 / span 2; position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: {{p.bg}}; color: #1C1C1E; font-size: 14px; font-weight: 600; overflow: hidden">{{p.code}}<span style="position: absolute; inset: 0; background-image: {{p.photo}}; background-size: cover; background-position: center"></span></span>
+            <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{p.name}}</span>
+            <span style="grid-column: 2; min-width: 0; font-size: 15px; line-height: 20px; color: {{p.roleC}}">{{p.role}}</span>
           </button>
         </sc-for>
       </div>

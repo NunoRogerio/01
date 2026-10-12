@@ -1150,7 +1150,7 @@
     if (!FL) { var SF = staffOf(st) || {}, num = (String(st.name).match(/(\d{1,3})\b/) || [])[1] || '11';
       FL = [{ id: 'engine', name: 'Engine ' + num, lt: SF.lead || '', crew: SF.onDuty || [] }, { id: 'brush', name: (window.__wfFleet && (window.__wfFleet(id) || []).find(function (u) { return u.lt === SF.lead2; }) || {}).name || 'Brush ' + num, lt: SF.lead2 || '', crew: SF.crew2 || [] }]; }
     var busy = {}; Object.keys(load().chats).forEach(function (k) { var o = load().chats[k]; if (!o || o === c || o.key === c.key || o.closed || o.dismissed || o.kind === 'dm') return;
-      (o.forces || []).forEach(function (f) { if (f.st === 'standby' || f.st === 'released') return; (f.veh || []).forEach(function (v) { busy[v] = o.place; }); }); });
+      (o.forces || []).forEach(function (f) { if (f.st === 'standby' || f.st === 'released') return; (f.veh || []).forEach(function (v) { busy[v] = nameOf(o); }); }); });
     return FL.map(function (u) { return { key: u.id, ic: u.ic || (/^brush|^engine/.test(u.id) ? 'eng' : ''), veh: u.name, lt: u.lt || '', crew: (u.crew || []).slice(), en: u.en || '', pt: u.pt || '', rank: u.rank || null, st0: u.st || '', days: u.days || 0, busy: busy[u.name] || '', st: st, i: i }; }); }
   function dispatchOwn(key, pick, redir) { redir = redir || {}; var c = load().chats[key]; if (!c || c.dismissed || c.closed || c.stage > 1 || c.flags.dispatched) return;
     var K = ownCrews(c).filter(function (k) { return pick[k.key] && (!k.busy || redir[k.key]) && k.st0 !== 'maint' && k.crew.length; }); if (!K.length) return; var st = K[0].st;
