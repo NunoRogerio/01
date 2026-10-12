@@ -24,13 +24,13 @@
   var STAGES = [
     { en: 'Candidate', pt: 'Candidato', c: '#3A3A3C', bg: '#FFE680', icon: 'cand' },   /* (Oct 11, 11:37) the candidate stage, as everywhere: Candidate, on the middle likelihood yellow (the likelihood's own yellow where it is known: candStage) */   // the dark outline circle as on the map, on the spectrum's lightest lime (lighter than First alert, which is a true yellow)
     // The stages run along one spectrum: yellow (first alert), orange, red-orange, blue, light green, dark green, grey (closed)
-    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#1C1C1E', bg: '#F0B400', ink: '#8A6400', icon: 'alert' },   /* (Oct 11, 11:48) a stronger, clean yellow (was tan #946C00); dark text, as on every yellow */
-    { en: 'Ongoing', pt: 'Em curso', c: '#FFFFFF', bg: '#B54A00', ink: '#B54A00', icon: 'route' },
-    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#FFFFFF', bg: '#C4261D', ink: '#C4261D', icon: 'flame' },
-    { en: 'Resolving', pt: 'Em resolução', c: '#FFFFFF', bg: '#1F64A6', ink: '#1F64A6', icon: 'shield' },
-    { en: 'Concluding', pt: 'Em conclusão', c: '#FFFFFF', bg: '#0B6672', ink: '#0B6672', icon: 'drop' },
-    { en: 'Surveillance', pt: 'Vigilância', c: '#FFFFFF', bg: '#1D6B4F', ink: '#1D6B4F', icon: 'eye' },
-    { en: 'Closed', pt: 'Encerrada', c: '#FFFFFF', bg: '#2E7D32', ink: '#2E7D32', icon: 'done' }   /* (Oct 10, 22:25) strong colours with white text (was light tints with coloured text); the same logic: yellow to red for the serious stages; blue to green as the fire is contained, to the green of resolved */
+    { en: 'First alert', pt: 'Despacho de 1.º alerta', c: '#1C1C1E', bg: '#E4AE0C', ink: '#836107', icon: 'alert' },   /* (Oct 11, 11:48) a stronger, clean yellow (was tan #946C00); dark text, as on every yellow */
+    { en: 'Ongoing', pt: 'Em curso', c: '#FFFFFF', bg: '#AC4C09', ink: '#AC4C09', icon: 'route' },
+    { en: 'Crews on scene', pt: 'Chegada ao TO', c: '#FFFFFF', bg: '#BC2D25', ink: '#BC2D25', icon: 'flame' },
+    { en: 'Resolving', pt: 'Em resolução', c: '#FFFFFF', bg: '#26649F', ink: '#26649F', icon: 'shield' },
+    { en: 'Concluding', pt: 'Em conclusão', c: '#FFFFFF', bg: '#10626D', ink: '#10626D', icon: 'drop' },
+    { en: 'Surveillance', pt: 'Vigilância', c: '#FFFFFF', bg: '#21674E', ink: '#21674E', icon: 'eye' },
+    { en: 'Closed', pt: 'Encerrada', c: '#FFFFFF', bg: '#327936', ink: '#327936', icon: 'done' }   /* (Oct 10, 22:25) strong colours with white text (was light tints with coloured text); the same logic: yellow to red for the serious stages; blue to green as the fire is contained, to the green of resolved */
   ];
   var DISMISSED = { en: 'Dismissed', pt: 'Descartado', c: '#FFFFFF', bg: '#636366', ink: '#636366', icon: 'x' };
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
