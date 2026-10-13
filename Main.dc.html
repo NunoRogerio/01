@@ -1173,7 +1173,7 @@ class Component extends DCLogic {
       const a = anchor(st, co);
       const srcs = spec.split('|').map((p) => { const [kind, ref] = p.split(':'); return { kind, ref: ref || '', label: SRCN[kind] + (ref ? ' ' + ref : '') }; });
       const nSrc = srcs.length;
-      return { live: live || null, st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' sources' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' sources agree' : '1 source', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
+      return { live: live || null, st, co, id, place, conf, srcs, nSrc, src: nSrc > 1 ? nSrc + ' evidences' : srcs[0].label, srcList: srcs.map((q) => q.label).join(' · '), agree: nSrc > 1 ? nSrc + ' evidences agree' : '1 evidence', ago, x: x ?? a[0] + (i - 1) * 520, y: y ?? a[1] + (i - 1) * 380 };
     });
     const fires = (window.__wfLiveFires || (window.__wfLiveMap ? [] : [
       ['CA', 'Los Angeles', 'F-0924-01', 'Sierra Madre Cyn', 'ST-7 crews on scene', 735, 455],

@@ -1046,9 +1046,9 @@ class Component extends DCLogic {
     const out = Object.assign(d, v || {});
     // Every legend chip toggles its layer, on every map (nothing is forced on: a chip that does nothing reads as broken)
     if (this.props.fireOnly === true || this.props.fireOnly === 'true') out.stations = false;   // a fire's detail map: only its perimeter (no stations chip there)
-    // The main map (areas and incidents) opens with the ignition candidates and the active fires showing; its Resolved fires and
+    // The overview maps (main, station homes) open with only the ignition candidates showing; Active fires, Resolved fires and
     // Fire stations chips show those layers (each with its own main-map setting, so other maps keep theirs)
-    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = k === 'fires' ? out.firesMain !== false : out[k + 'Main'] === true; });   // (Oct 4) opens with the ignition candidates and the active fires showing
+    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = out[k + 'Main'] === true; });   // (Oct 13, 09:01) opens with only the ignition candidates showing; every other chip off until tapped
     return out;
   }
   toggleLayer(k) {
@@ -1742,7 +1742,7 @@ class Component extends DCLogic {
         const nearCtrl = top + h > WN.b - 64;
         const w = Math.min(340, W - WN.l - WN.r - 32 - (nearCtrl ? 60 : 0)), lo = WN.l + 16 + w / 2, hi = W - WN.r - 16 - (nearCtrl ? 60 : 0) - w / 2;
         return { w: Math.round(w), l: +(hi < lo ? lo : Math.max(lo, Math.min(hi, o.left))).toFixed(1), ty: below ? '22px' : 'calc(-100% - 22px)' }; })(),
-      fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 sources.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
+      fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% smoke likelihood from 3 evidences.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
       fire2: withTip(at(842, 252), 'Possible holdover fire IC-0924-08', '54% likelihood. Lightning struck here at 11:40 AM.\nTap to review.'),
       zones: [],
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
@@ -1832,7 +1832,7 @@ class Component extends DCLogic {
           aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent' + (window.__wfNight && window.__wfNight(g.live) ? ', night detection' : ''),
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% likelihood · ' + g.src + '.\nTap to review.');
-      }))(IGN_ALL || [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 sources' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]).map((m, k, all) => this.wfTagPlace(m, k, all, s, W)) : []
+      }))(IGN_ALL || [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 evidences' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]).map((m, k, all) => this.wfTagPlace(m, k, all, s, W)) : []
     };
     return this.withPop(OUT);
   }
