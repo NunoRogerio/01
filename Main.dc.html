@@ -1121,7 +1121,7 @@ class Component extends DCLogic {
   wfConfirmed() { let d = null; try { const v = window.sessionStorage.getItem('wf-confirmed'); if (v) d = JSON.parse(v); } catch (e) {} if (!d) d = (window.__wfMem || {}).confirmed; return Object.assign({}, d || {}); }
   wfSaveConfirmed(d) { this.wfMarkFlip(); window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: d }); try { window.sessionStorage.setItem('wf-confirmed', JSON.stringify(d)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }
   /* (Oct 13, 10:30) candidates the captain found to be no fire (the dispatch center sent, he reported 20 s later, likelihood under 50%): id to the time of his report */
-  wfFalse(cands) { let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} const o = {}; if (!D || typeof D !== 'object') return o; (cands || []).forEach((c) => { if (D[c.id] === 'sent' && c.conf != null && c.conf < 50 && Date.now() - (D[c.id + '@'] || 0) >= 20000) o[c.id] = (D[c.id + '@'] || 0) + 20000; }); return o; }
+  wfFalse(cands) { let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} const o = {}; if (!D || typeof D !== 'object') return o; (cands || []).forEach((c) => { if ((D[c.id] === 'sent' || D[c.id] === 'check') && c.conf != null && c.conf < 50 && Date.now() - (D[c.id + '@'] || 0) >= 20000) o[c.id] = (D[c.id + '@'] || 0) + 20000; }); return o; }
   wfConfirm(id) { const d = this.wfConfirmed(); if (!d[id]) { d[id] = Date.now(); this.wfSaveConfirmed(d); } }
   wfGoneCount() { const dz = this.wfDismissed(), cf = this.wfConfirmed(); return new Set(Object.keys(dz).filter((k) => dz[k]).concat(Object.keys(cf))).size; }
   wfWorld() {
