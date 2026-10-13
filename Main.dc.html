@@ -1879,7 +1879,7 @@ class Component extends DCLogic {
     { const m = /^(\d[\d.,]*)\s+(.*)$/.exec(String(scope.parent || '')); scope.pN = m ? m[1] : ''; scope.pW = m ? m[2] : (scope.parent || ''); scope.pND = m ? 'inline' : 'none'; }
     /* (Oct 13, 13:16) a dispatch profile's header names where it works (the ECC, the CSREPC); its area moves to the line under it, before the count */
     scope.hT = scope.title; scope.pA = '';
-    { const D = window.__wfDspScope && window.__wfDspScope(); if (D) { if (D.st === 'PT') scope.hT = 'CSREPC ' + scope.title; else { scope.hT = 'Morgan Hill ECC'; scope.pA = scope.title + '. '; } } }   /* a count in the subtitle is bold (58 counties) */
+    { const D = window.__wfDspScope && window.__wfDspScope(); if (D) { if (D.st === 'PT') scope.hT = 'CSREPC ' + scope.title; else { scope.hT = 'SCU ECC'; scope.pA = scope.title + '. '; } } }   /* a count in the subtitle is bold (58 counties) */
     const scOpen = !!s.scOpen;
     const lock = this.wfLock();
     const browse = lock || (s.scBrowse === undefined ? selState : s.scBrowse);
