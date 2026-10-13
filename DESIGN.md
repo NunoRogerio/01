@@ -1908,4 +1908,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Projection switcher: a tap on Now or +N h zooms the map into the incident. Now frames the fire's polygon (~60% of the width), +N h frames that horizon's whole shape. Every tap reframes, even on the chosen horizon.
 - A candidate's line under the title: "Ignition candidate • <area>".
 - Night moon: a thinner crescent everywhere (markers, tags), balancing the asterisk.
-- Oct 13, 08:32: one moon only, the thin crescent (M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z), always filled, in map markers, stage tags, chat cards and every icon of a night candidate. Markers and stage icons are the same UI item.
+- Oct 13, 08:32: one moon only, the thin crescent (M15.5 3.7A9 9 0 1 0 15.5 20.3A8.3 8.3 0 0 1 15.5 3.7Z), always filled, in map markers, stage tags, chat cards and every icon of a night candidate. Markers and stage icons are the same UI item.
+- Oct 13, 08:33: full-screen maps place the legend column and title card below the frame's hidden top (--wf-top) plus the safe area, so the first chip (Ignition candidates) is always visible.
+- Oct 13, 08:35: dispatch profiles' notifications are the ignition candidates, one per candidate, newest detection first (satellite time), place as title, likelihood and source below; no "Assigned to me" switch.
