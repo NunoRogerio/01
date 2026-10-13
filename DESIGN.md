@@ -1950,3 +1950,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 13, 17:01: fix: inside the chat's map view the incident page reserved the hidden header's height (a blank band under the stage band that also hid content while scrolling); it now reserves nothing.
 - Oct 13, 17:04: no New assignment card (Snooze / Enroll) for the dispatch profiles: the ECC hands a confirmed fire to its incident commander and supports it; it never enrolls in a fire.
 - Oct 13, 17:06 (supersedes Oct 6, Oct 7): Enroll / Snooze and the New assignment offer card are removed for every profile: no level of the real chain of command enrolls in a fire; resources are assigned (and confirm with Responding), the administrator follows the fires of its area.
+- Oct 13, 17:08 (every map): a selected marker's white zone is 4px wider and takes the marker tooltip panel's look: white at 72%, a 1px rgba(60,60,67,0.1) edge, and the panel's 0 0 24px rgba(0,0,0,0.16) shadow, outside the zone only.
+- Oct 13, 17:09 (for now): no water points on any map (layer and legend chip hidden).
