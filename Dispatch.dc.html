@@ -466,7 +466,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="tablist" aria-label="Fire page" class="wf-seg wf-ftseg" style="display: {{ft.d}}; z-index: 0; flex-shrink: 0; margin: 0 16px 16px">
     <span class="segthumb" aria-hidden="true" style="width: calc(50% - 8px); transform: translateX({{ft.sx}})"><span class="segblob"></span></span>
     <button type="button" role="tab" class="segopt mbtn" aria-selected="{{ft.fireSel}}" onClick="{{ft.goFire}}" aria-label="{{ft.fireAria}}" style="font-size: 17px"><span style="position: relative">Situation<span aria-hidden="true" style="display: {{ft.fireDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
-    <button type="button" role="tab" class="segopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}" style="font-size: 17px"><span style="position: relative">Crews<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
+    <button type="button" role="tab" class="segopt mbtn" aria-selected="{{ft.resSel}}" onClick="{{ft.goRes}}" aria-label="{{ft.resAria}}" style="font-size: 17px"><span style="position: relative">{{ft.resLbl}}<span aria-hidden="true" style="display: {{ft.resDot}}; position: absolute; top: -1px; right: -12px; width: 8px; height: 8px; border-radius: 50%; background: #E6352B"></span></span></button>
   </div>
 
     <!-- A viewed fire: the map is the top of the page and scrolls away with it (a tap opens it full screen) -->
@@ -490,6 +490,24 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
     <!-- (Oct 13, 07:12) the verification, first under a candidate's map: what the sources say, how fast civil cameras made it
          (with and without them), and for the dispatch profiles the decision itself. The sources, one card each, follow in Evidences. -->
+    <!-- (Oct 13, 09:04) the dispatch profiles' second tab, Initial attack (in place of Crews): before sending, the units the response plan
+         proposes (the nearest available, each with its ETA), which Send initial attack orders; after, each unit's status as it rolls in -->
+    <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -3; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
+      <span style="display: block; font-size: 26px; font-weight: 600; line-height: 32px; color: #000000">{{ia.ttl}}</span>
+      <span style="display: block; margin-top: 4px; font-size: 16px; line-height: 20px; color: #6E6E73">{{ia.sub}}</span>
+      <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <sc-for list="{{ia.rows}}" as="u" hint-placeholder-count="5">
+          <li style="display: flex; align-items: center; gap: 16px; padding: 16px; border-top: {{u.bt}}">
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{u.ic}}"></path></svg></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0">
+              <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px"><span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{u.name}}</span><span style="flex-shrink: 0; min-width: 88px; box-sizing: border-box; padding: 2px 8px; border-radius: 8px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{u.tag}}</span></span>
+              <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{u.sub}}</span>
+            </span>
+          </li>
+        </sc-for>
+      </ul>
+      <span class="wf-note" style="display: block; margin-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ia.note}}</span>
+    </section>
     <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; order: -2; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
       <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; background: #FFFFFF">
         <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{vf.title}}</span>
@@ -1562,6 +1580,33 @@ class Component extends DCLogic {
     o.ft = { d: 'grid', x: res ? 'calc(100% + 4px)' : '0%', sx: res ? '100%' : '0%',   /* the bar is 80% of its tab's width, centred under it */ fireSel: res ? 'false' : 'true', resSel: res ? 'true' : 'false', goFire: go('fire'), goRes: go('res'),
       resDot: (!res && crewAlert) || this._crewIssue ? 'block' : 'none', fireDot: res && sitAlert ? 'block' : 'none',
       resAria: 'Crews' + ((!res && crewAlert) || this._crewIssue ? '. Needs attention' : ''), fireAria: 'Situation' + (res && sitAlert ? '. Needs attention' : '') };
+    /* (Oct 13, 09:04) the Initial attack tab (dispatch profiles, in place of Crews), and on any second tab the evidences stay on Situation */
+    o.ft.resLbl = 'Crews'; o.ia = { d: 'none', rows: [], ttl: '', sub: '', note: '' };
+    { const DSPt = window.__wfDspScope && window.__wfDspScope(), fr = o._hsSrc && o._hsSrc.frow, cid = fr ? (fr.cand ? fr.cand.id : (/^Confirmed from (\S+)/.exec(fr.note || '') || [])[1]) : null, PTl = window.__wfLang === 'pt';
+      if (res && o.vf) { o.vf = Object.assign({}, o.vf, { d: 'none' }); o.evD = 'none'; }
+      if (DSPt && cid) { o.ft.resLbl = PTl ? 'Ataque inicial' : 'Initial attack'; o.ft.resAria = o.ft.resLbl; o.ft.resDot = 'none';
+        if (res) { o.deployed = []; if (o.rs) o.rs = Object.assign({}, o.rs, { d: 'none' });   /* the station-side crew tools (dispatch config, AI pack) are not the dispatcher's */
+          const ptc = fr.st === 'PT', US = !ptc, NR = this.wfNearRows({ id: fr.id }, [o.fireX, o.fireY], US, fr.st, false), S3 = (NR.rows || []).slice(0, 3);
+          let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} const sentAt = VD[cid] === 'sent' ? (VD[cid + '@'] || 1) : 0, el = sentAt ? Date.now() - sentAt : -1;
+          const hs = (x) => { let h = 7; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, IC = window.__wfUnitIC || {}, CAR = 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5';
+          const eta = (r, add) => Math.max(3, ((r && r.t && r.t[1]) || 12) + (add || 0)), d0 = S3[0];
+          /* the response plan for a wildland fire: an engine from each of the three nearest stations, the battalion chief, a hand crew and the aircraft (California); the nearest teams and the initial attack helicopter (Portugal). Unit numbers simulated */
+          const U = ptc ? S3.map((r, i) => ({ ic: IC.engine, name: 'VFCI ' + String(1 + hs(r.name) % 9).padStart(2, '0'), where: r.name, eta: eta(r), arr: 20 + i * 6 })).concat([{ ic: IC.heli, name: 'Helicóptero de ataque inicial', where: 'Com equipa helitransportada', eta: 14, arr: 26 }])
+            : S3.map((r, i) => ({ ic: IC.engine, name: 'Engine ' + (1000 + hs(r.name) % 9000), where: r.name, eta: eta(r), arr: 20 + i * 6 })).concat([
+              { ic: CAR, name: 'Battalion Chief', where: d0 ? d0.name : 'Battalion', eta: eta(d0, 2), arr: 24 },
+              { ic: IC.crew, name: 'Hand crew', where: 'Conservation camp crew', eta: eta(d0, 15), arr: 40 },
+              { ic: IC.heli, name: 'Helicopter', where: 'Helitack base', eta: 15, arr: 30 },
+              { ic: IC.plane, name: 'Air attack', where: 'Air attack base', eta: 17, arr: 32 },
+              { ic: IC.tanker, name: 'Air tanker', where: 'Air attack base', eta: 20, arr: 36 }]);
+          const TG = { av: [PTl ? 'Disponível' : 'Available', 'rgba(118,118,128,0.12)', '#3A3A3C'], er: [PTl ? 'A caminho' : 'En route', '#AC4C09', '#FFFFFF'], os: [PTl ? 'No local' : 'On scene', '#BC2D25', '#FFFFFF'] };
+          let nx = Infinity; const cc = fr.cand || fr.evCand || {}, fa = cc.conf != null && cc.conf < 50, capAt = sentAt ? sentAt + 20000 : 0;
+          TG.rl = [PTl ? 'Libertado' : 'Released', '#327936', '#FFFFFF'];   /* a false alarm: the captain finds no fire and every unit is released */
+          o.ia = { d: 'flex', ttl: sentAt ? (PTl ? 'Ataque inicial' : 'Initial attack') : (PTl ? 'Ataque inicial proposto' : 'Proposed initial attack'),
+            sub: sentAt ? (PTl ? 'Enviado às ' : 'Sent at ') + new Date(sentAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. ' + U.length + (PTl ? ' meios.' : ' units.') : (PTl ? 'Os meios disponíveis mais próximos, do plano de resposta. Envie com o botão abaixo.' : 'The nearest available units, from the response plan. Send them with the button below.'),
+            note: NR.loading ? (PTl ? 'A carregar os quartéis…' : 'Loading the stations…') : (PTl ? 'Tempos estimados. Números dos meios simulados.' : 'Estimated times. Unit numbers simulated.'),
+            rows: U.map((u, i) => { const k = !sentAt ? 'av' : fa && Date.now() >= capAt ? 'rl' : el >= u.arr * 1000 ? 'os' : 'er'; if (sentAt && el < u.arr * 1000) nx = Math.min(nx, u.arr * 1000 - el);
+              return { ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + ' min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0' }; }) };
+          if (isFinite(nx)) { clearTimeout(this._iaT); this._iaT = setTimeout(() => this.forceUpdate(), Math.max(200, nx + 50)); } } } }
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
     if (o.cc && Array.isArray(o.cc.med) && o.cc.medD !== 'none') { const fx = (o.deployed || []).find((d) => d.fx); const none = { svgD: 'none', segD: 'none', dot: '', line: '', lineC: 'none', area: '', areaFill: 'none', bars: '', barC: 'none', bar2: '', bar2C: 'none', segs: [], aria: '' };
@@ -1624,7 +1669,7 @@ class Component extends DCLogic {
       const c = c0 || (m && /^Confirmed from /.test(fv.note || '') ? { id: m[1], st: (this.wfScope && this.wfScope().st) || '', co: '', place: fv.place, x: fv.x, y: fv.y, live: null, src: '' } : null); if (!c) return null;
       const t0 = c.live && c.live.t ? Date.parse(c.live.t) : (fv.det || this.wfConfirmed()[c.id] || fv.t || Date.now());
       return { id: fv.id, st: c.st, co: c.co, parent: c.co, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, ha: null, res: null, lat: c.live && c.live.lat, lon: c.live && c.live.lon, evCand: c0 || null,   /* (Oct 13, 08:57) the evidences that made it a fire stay on its page */
-        info: { src: 'Confirmed from ' + (c.src || c.id), st: 'Not contained', stEn: 'Not contained', tone: 'hot', sc: (() => { try { const D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; const e = D[c.id] === 'sent' ? Date.now() - (D[c.id + '@'] || 0) : -1; return e >= 20000 ? 6 : e >= 5000 ? 5 : undefined; } catch (e) { return undefined; } })(), /* (Oct 13, 09:00) First alert once sent, Ongoing (en route) 5 s later, Crews on scene when the captain arrives (20 s, demo pace) */ startMs: t0, night: !!(c.live && window.__wfNight && window.__wfNight(c.live)), updMs: Date.now(), place: c.place, lat: c.live && c.live.lat, lon: c.live && c.live.lon } }; })() || null) : null;
+        info: { src: 'Confirmed from ' + (c.src || c.id), st: 'Not contained', stEn: 'Not contained', tone: 'hot', sc: (() => { try { const D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; const e = D[c.id] === 'sent' ? Date.now() - (D[c.id + '@'] || 0) : -1, fa = c.conf != null && c.conf < 50; return e >= 20000 ? (fa ? 10 : 6) : e >= 5000 ? 5 : undefined;   /* (Oct 13, 09:04) a false alarm on the ground closes it */ } catch (e) { return undefined; } })(), /* (Oct 13, 09:00) First alert once sent, Ongoing (en route) 5 s later, Crews on scene when the captain arrives (20 s, demo pace) */ startMs: t0, night: !!(c.live && window.__wfNight && window.__wfNight(c.live)), updMs: Date.now(), place: c.place, lat: c.live && c.live.lat, lon: c.live && c.live.lon } }; })() || null) : null;
     const fres = frow ? (frow.res || null) : null;
     // Active fires in Portugal and California: a read-only view of who is fighting the fire (no crew or station changes).
     // Live feed fires are read-only; a fire just confirmed from a candidate is ours to dispatch to.
