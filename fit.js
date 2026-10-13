@@ -1168,7 +1168,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
     p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
     window.addEventListener('resize', function () { if (p.isConnected) clamp(); });
   }
-  window.__wfHomesAlert = function (o) {
+  window.__wfHomesAlert = function (o) { o = null;   /* (Oct 13, 06:50) the floating "structures at risk" warning with its OK is left out of the story for now */
     if (docking) return;
     if (!o) { if (el) { var e0 = el; el = null; sig0 = ''; e0.style.opacity = '0'; e0.style.transform = 'translateY(-16px)'; setTimeout(function () { e0.remove(); }, 400); } return; }
     css(); tap = o.go; ack = o.ack; var PT = window.__wfLang === 'pt';

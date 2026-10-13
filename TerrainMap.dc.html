@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791805444"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791835545"></script>
 <script src="station.js?v=1791834155"></script>
@@ -72,8 +72,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
   <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
-  <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px; transform-origin: 0 0; transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transition: {{mapTr}}">
-    <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+  <div style="position: absolute; left: 0; top: 0; width: 1000px; height: 1000px">
+    <svg width="1" height="1" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none"><!-- (Oct 13) the zoom lives inside the SVG (not a CSS scale on its box), so tiles and shapes are redrawn sharp at every scale --><g style="transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transform-origin: 0px 0px; transition: {{mapTr}}">
       <rect x="-400000" y="-200000" width="1000000" height="400000" fill="{{pal.bg}}"></rect>
       <sc-if value="{{pal.img}}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{pal.reg}}" hint-placeholder-val="{{ false }}"><image href="{{pal.reg}}" x="-22627" y="-45479" width="65660" height="57995" preserveAspectRatio="none"></image></sc-if>
@@ -98,8 +98,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <path d="{{geo.coast}}" fill="none" stroke="{{pal.coast}}" stroke-width="1.3" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roadCase}}" stroke-width="{{geo.roadCaseW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roads}}" stroke-width="{{geo.roadW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-    </svg>
-    <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none">
+    </g></svg>
+    <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none"><g style="transform: translate({{tx}}px, {{ty}}px) scale({{s}}); transform-origin: 0px 0px; transition: {{mapTr}}">
       <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
 <path d="{{batAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
             <path d="{{stAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
@@ -150,7 +150,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
         <path d="{{rl.d}}" fill="none" stroke="#FFFFFF" stroke-width="{{lw.w50}}" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.9"></path>
         <path d="{{rl.d}}" fill="none" stroke="#0057D9" stroke-width="{{lw.w25}}" stroke-dasharray="{{lw.d75}}" stroke-linecap="round" stroke-linejoin="round"><animate attributeName="stroke-dashoffset" values="{{lw.o12}}" dur="1.1s" repeatCount="indefinite"></animate></path>
       </sc-for>
-    </svg>
+    </g></svg>
   </div>
 
 
