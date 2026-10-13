@@ -1519,6 +1519,8 @@ class Component extends DCLogic {
     let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}
     const done = VD[c.id], decide = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; D[c.id + '@'] = Date.now(); try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate();
       /* (Oct 13, 08:59) Send initial attack is the dispatch center's confirmation: the candidate becomes an active fire ("<place> Fire", First alert), its evidences kept; the captain's arrival then moves it to Crews on scene */
+      /* (Oct 13, 10:30) Dismiss: the candidate leaves the lists and maps and goes to Resolved as Dismissed */
+      if (k === 'dismissed') setTimeout(() => { const d = this.wfDismissed(); if (!d[c.id]) { d[c.id] = Date.now(); this.wfSave(d); } }, 1200);
       if (k === 'sent' && !frow.wasCand) setTimeout(() => { this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 1200); };
     const vf = { d: 'flex', title: vfTitle, lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'grid' : 'none', doneD: DSP && done ? 'flex' : 'none',
       doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : Lx('Dismissed', 'Descartado'),
