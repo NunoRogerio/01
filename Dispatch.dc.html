@@ -531,7 +531,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     </section>
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
-    <div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
+    <!-- (Oct 13, 21:28) where, when and the key figures: first under the map, before the Summary --><div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; order: -5; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
       <span style="display: {{cc.bigD}}; font-size: 15px; line-height: 20px; color: #6E6E73">Containment</span>
       <span class="wf-like-xs" style="display: {{cc.bigD}}; margin-top: -2px; max-width: 100%; white-space: nowrap; --wf-fs: {{cc.fs}}px">{{cc.big}}</span>
       <!-- No % published (ANEPC gives stages): the stage is a colour-matched tag, not a big number -->
@@ -1550,7 +1550,11 @@ class Component extends DCLogic {
     /* where each camera stood: a marker and its line of sight on the candidate's map (crossing lines pinpoint the ignition) */
     const IC = { car: 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5', c360: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', phone: 'M8 3h8v18H8ZM11 18h2', tower: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' };
     const SH = { car: Lx('Car', 'Carro'), c360: Lx('Action', 'Ação'), phone: Lx('Phone', 'Telemóvel'), tower: Lx('Tower', 'Torre') };
-    const cams = isLive ? out.filter((x) => x.km && IC[x.kind]).map((x) => { const r = x.brg * Math.PI / 180; return { x: +(c.x + x.km * Math.sin(r) * 27).toFixed(1), y: +(c.y - x.km * Math.cos(r) * 25.5).toFixed(1), label: SH[x.kind], icon: IC[x.kind], los: droneStrong, tt: x.title, td: x.km + ' km. ' + (x.rows[0] || {}).t }; }) : [];
+    /* (Oct 13, 21:26) every detection in the list has its marker around the incident, with the card's own icon; those with no place of their own (satellite, drone, call, captain) sit close to the point */
+    const NEAR = { sat: [0.7, 315], drone: [0.5, 45], call: [1.6, 200], captain: [0.35, 135] };
+    out.forEach((x) => { if (!x.km && NEAR[x.kind]) { x._mk = NEAR[x.kind][0]; x._mb = NEAR[x.kind][1]; } });
+    const SH2 = { sat: Lx('Satellite', 'Satélite'), drone: 'Drone', call: Lx('Call', 'Chamada'), captain: Lx('Captain', 'Capitão') };
+    const cams = isLive ? out.filter((x) => (x.km || x._mk) && (x.ic || IC[x.kind])).map((x) => { if (!x.km) { const r = x._mb * Math.PI / 180; return { x: +(c.x + x._mk * Math.sin(r) * 27).toFixed(1), y: +(c.y - x._mk * Math.cos(r) * 25.5).toFixed(1), label: SH2[x.kind] || x.title, icon: x.ic || IC[x.kind], los: false, tt: x.title, td: (x.rows[0] || {}).t || '' }; } const r = x.brg * Math.PI / 180; return { x: +(c.x + x.km * Math.sin(r) * 27).toFixed(1), y: +(c.y - x.km * Math.cos(r) * 25.5).toFixed(1), label: SH[x.kind] || x.title, icon: x.ic || IC[x.kind], los: droneStrong, tt: x.title, td: x.km + ' km. ' + (x.rows[0] || {}).t }; }) : [];
     /* the decision, for the dispatch profiles only: Dismiss or Send initial attack; once chosen, the choice alone, full width, in the past tense */
     const DSP = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
     let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}

@@ -225,8 +225,8 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
-      <span class="tipwrap" tabindex="0" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 4px; height: 26px; padding: 0 8px 0 8px; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 14px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>{{cm.label}}
+      <span class="tipwrap" tabindex="0" aria-label="{{cm.label}}" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; box-sizing: border-box; border-radius: 999px; background: rgba(255,255,255,0.78); border: 1px solid rgba(0,121,166,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 14px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
+        <!-- (Oct 13, 21:26) icon only, larger: one marker per detection in the list, around the incident --><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
@@ -1407,6 +1407,12 @@ class Component extends DCLogic {
     const s2 = Math.min(this.zMax(), Math.max(this.zMin(), v.s * f));
     this._moved = true; this.setView(mx - (lx - W / 2) / s2, my - (ly - H / 2) / s2, s2);
   }
+  /* (Oct 13, 21:26) detection markers never cover the incident or each other: at least 40px from the pin and 36px apart (pushed out along their bearing, then turned around the pin) */
+  wfSpreadCams(cams, PX, PY, k) { const L = Array.isArray(cams) ? cams : [], sc = k > 0 ? k : 1, R = 40 / sc, D = 36 / sc, out = [];
+    L.forEach((c0) => { let dx = c0.x - PX, dy = c0.y - PY, d = Math.hypot(dx, dy); if (d < 1e-6) { dx = 0; dy = -1; d = 1; } let r = Math.max(d, R), a = Math.atan2(dy, dx);
+      for (let t = 0; t < 14; t++) { const x = PX + Math.cos(a) * r, y = PY + Math.sin(a) * r; if (out.every((o) => Math.hypot(o.x - x, o.y - y) >= D)) break; a += (t % 2 ? -1 : 1) * (t + 1) * 0.35; if (t === 13) r += D; }
+      out.push(Object.assign({}, c0, { x: +(PX + Math.cos(a) * r).toFixed(1), y: +(PY + Math.sin(a) * r).toFixed(1) })); });
+    return out; }
   renderVals() {
     const LY = this.layers();
     { const sk = (this.props.scopeSt || '') + '|' + (this.props.scopeCo || ''); if (this._sk !== undefined && this._sk !== sk) this.state = Object.assign({}, this.state || {}, { selId: '__none', fireHover: false }); this._sk = sk; }
@@ -1594,8 +1600,8 @@ class Component extends DCLogic {
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
-      camLines: isPin ? (Array.isArray(p.cams) ? p.cams : []).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
-      camMarks: isPin ? (Array.isArray(p.cams) ? p.cams : []).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Detection source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
+      camLines: isPin ? this.wfSpreadCams(p.cams, PX, PY, at(1, 0).left - at(0, 0).left).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
+      camMarks: isPin ? this.wfSpreadCams(p.cams, PX, PY, at(1, 0).left - at(0, 0).left).map((c) => withTip(at(c.x, c.y, { label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Detection source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
       hasFull: typeof p.onFull === 'function' && (window.__wfDesk || window.innerWidth <= window.innerHeight),   // phone in landscape: no maximize / minimize button; turning the phone upright is the way back
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
@@ -1835,7 +1841,7 @@ class Component extends DCLogic {
         // (Oct 3, 20:43) the candidate's likelihood tag always shows beside its pin: right, or left near the map's right edge
         if (!L0 || L0.conf == null) return { pinTagD: 'none', pinTagL: 'auto', pinTagR: 'auto', pinConf: '', pinTagFg: '', pinTagBg: '' };
         const T = window.__wfConfTag ? window.__wfConfTag(L0.conf) : { fg: '#185A93', bg: 'rgba(31,111,186,0.12)' }, fl = at(PX, PY).left, wd = 32 + String(L0.conf).length * 9 + 14, right = fl + 24 + wd < W - 8;
-        return { pinTagD: 'inline-flex', pinTagL: right ? '44px' : 'auto', pinTagR: right ? 'auto' : '44px', pinConf: L0.conf + '%', pinTagFg: T.fg, pinTagBg: T.bg }; })(),
+        return { pinTagD: 'none', pinTagL: right ? '44px' : 'auto', pinTagR: right ? 'auto' : '44px', pinConf: L0.conf + '%', pinTagFg: T.fg, pinTagBg: T.bg }; })(),
       pinMoonD: (() => { if (p.mode !== 'pin' || (Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId))) return 'none'; const L0 = (Array.isArray(p.ignitions) ? p.ignitions : []).find((g) => g && g.id === p.pinId); return L0 && window.__wfNight && window.__wfNight(L0.live) ? 'inline' : 'none'; })(),
       recenterLabel: this.cycList().length > 1 ? ((this.state || {}).selId === '__all' ? 'Center on the first ignition' : 'Center on the next ignition, then show all') : 'Recenter on the point of interest',
       ignHeat: LY.cands && (isRisk && on(p.linkCandidate)) ? IGN_H : [],
