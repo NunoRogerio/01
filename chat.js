@@ -36,7 +36,7 @@
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
     cand: 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',   /* (Oct 11, 17:20) a day candidate: the asterisk; a night candidate: the crescent moon, filled (candN) */
-    candN: 'M12 3a7.5 7.5 0 1 0 9 9 9 9 0 1 1-9-9Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
+    candN: 'M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
     flame: 'M12 2.8c1.2 3.6 5.2 5.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-3.8 2-5.2c.9 1.5 1.5 2 2.5 2.1c-.1-2.6-.4-4.6.7-7.3Z',

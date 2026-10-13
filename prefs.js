@@ -920,5 +920,5 @@ if (!window.__wfSegs) window.__wfSegs = function (t) { t = String(t || ''); var 
 })();
 
 /* (Oct 11, 16:55, app-wide) the candidates' moon is filled (solid), on tags, buttons, rounds and map markers alike */
-(function () { try { var st = document.createElement('style'); st.textContent = 'svg path[d="M12 3a7.5 7.5 0 1 0 9 9 9 9 0 1 1-9-9Z"]{fill:currentColor!important}svg circle+g path[d="M12 3a7.5 7.5 0 1 0 9 9 9 9 0 1 1-9-9Z"]{fill:#3A3A3C!important}';
+(function () { try { var st = document.createElement('style'); st.textContent = 'svg path[d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z"]{fill:currentColor!important;stroke:none!important}svg circle+g path[d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z"]{fill:#3A3A3C!important;stroke:none!important}';
   (document.head || document.documentElement).appendChild(st); } catch (e) {} })();
