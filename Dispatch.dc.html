@@ -513,9 +513,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; order: -2; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
       <!-- (Oct 13, 09:58) titled "Summary" like Detections; the verdict in bold, the facts as bullets -->
       <h3 style="margin: 0 0 8px; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">{{vf.sum}}</h3>
-      <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF">
-        <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{vf.title}}</span>
-        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+      <!-- (Oct 13, 14:28) a card like the detection cards: a header (icon, the verdict, the time of the latest detection) and an info area -->
+      <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{vf.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{vf.title}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{vf.time}}</span></span>
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 8px 16px 16px; list-style: none">
           <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><li style="display: flex; gap: 8px; font-size: 17px; line-height: 22px; color: #3C3C43"><span aria-hidden="true" style="flex-shrink: 0; width: 8px; text-align: center">•</span><span style="min-width: 0">{{ln.t}}</span></li></sc-for>
         </ul>
       </div>
@@ -781,7 +782,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <!-- (Oct 13, 14:07) structured as a chat card: a header (type icon, name, the FFW mark when it is one of the app's passive cameras, the
                  time it saw the point on the right) and an info area; the header in the card's own colour for now. FFW cards in light translucent green -->
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: {{ev.bg}}; overflow: hidden; cursor: {{ev.cur}}">
-              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: transparent; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}</span><span aria-label="Forest Fire Watch" style="display: {{ev.ffwD}}; align-items: center; gap: 4px; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
+              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: transparent; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
               <li style="display: flex; align-items: flex-start; gap: 16px; padding: 8px 16px 16px">
                 <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
                   <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
@@ -794,7 +795,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2"><span style="font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</span></sc-for>
                 </span>
               </li>
-              <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
+              <!-- (Oct 13, 14:31) the FFW mark in the footer, before the note on how its pictures are collected -->
+              <li class="wf-note" style="display: {{ev.noteD}}; align-items: flex-start; gap: 8px; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73"><span aria-label="Forest Fire Watch" style="display: {{ev.ffwD}}; align-items: center; gap: 4px; opacity: 0.5; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="min-width: 0">{{ev.note}}</span></li>
             </ul>
           </sc-for>
         </div>
@@ -1446,7 +1448,7 @@ class Component extends DCLogic {
     sat.kind = 'sat'; sat.civil = false; sat.at = 0;
     if (isLive) {
       const vid = droneStrong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1', lab = 'Live. Drone D-5';
-      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = Lx('Anonymized. Only from owners who turned it on. Simulation.', 'Anonimizado. Só de donos que o ativaram. Simulação.');
+      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = Lx('Anonymized. Only from owners who have FFW active. Simulation.', 'Anonimizado. Só de proprietários com FFW ativo. Simulação.');
       const PC = ['photo-1507680465142-ef2223e23308', 'photo-1632301104173-faab428f1a95', 'photo-1602980068989-cb21869ab2c7', 'photo-1602980085374-7e743fff3cc6', 'photo-1602980069131-51eca8b9557d', 'photo-1602980045636-77b52b335ff0'], c0 = h % 2;
       const brg = (k) => (h >>> k) % 360, km = (k, a, b) => +(a + ((h >>> k) % 100) / 100 * (b - a)).toFixed(1);
       /* car cameras: always asked (the network's backbone on the roads); smoke from before the satellite pass when there is a fire */
@@ -1495,7 +1497,9 @@ class Component extends DCLogic {
     const KN = { car: Lx('car camera', 'câmara de carro'), c360: Lx('action camera', 'câmara de ação'), phone: Lx('phone camera', 'câmara de telemóvel'), call: Lx('call', 'chamada') };
     const first = out[0], lines = [];
     if (isLive && droneStrong && first && KN[first.kind]) lines.push(Lx('First smoke from a ' + KN[first.kind] + ' at ' + hm(first.at) + '.', 'Primeiro fumo numa ' + KN[first.kind] + ' às ' + hm(first.at) + '.'));
-    if (isLive) lines.push(Lx((droneStrong ? 'Verified' : 'Checked') + ' in ' + V + ' min.' + (W0 != null && W0 > V ? ' Without FFW cameras, about ' + W0 + ' min.' : ''), (droneStrong ? 'Verificado' : 'Observado') + ' em ' + V + ' min.' + (W0 != null && W0 > V ? ' Sem câmaras FFW, cerca de ' + W0 + ' min.' : '')));
+    /* (Oct 13, 14:28) nothing is confirmed before the first unit's size-up on scene: the detections show smoke, they make it possible to dispatch
+       sooner (with and without the FFW cameras), and the confirmation comes from the crew sent */
+    if (isLive && droneStrong) lines.push(Lx('Enough to dispatch at ' + hm(V) + '. Without FFW cameras, at about ' + hm(W0 != null && W0 > V ? W0 : V) + '.', 'Suficiente para despachar às ' + hm(V) + '. Sem câmaras FFW, por volta das ' + hm(W0 != null && W0 > V ? W0 : V) + '.'));
     /* (Oct 13, 14:07) the passive cameras of Forest Fire Watch (cars, action cameras, phones) are "FFW cameras" everywhere; a 911 call is not one */
     const ffwN = out.filter((x) => FFWK[x.kind]).length;
     if (ffwN) lines.push(Lx(ffwN + ' of ' + out.length + ' detections are FFW cameras.', ffwN + ' de ' + out.length + ' deteções são câmaras FFW.'));
@@ -1504,6 +1508,7 @@ class Component extends DCLogic {
        after the send in the demo. A fire: confirmed, its size and behaviour, the captain takes command; none: a false alarm. */
     let VD0 = {}; try { VD0 = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}
     const sentAt = VD0[c.id] === 'sent' ? (VD0[c.id + '@'] || 1) : 0, onScene = sentAt && Date.now() - sentAt >= 20000;
+    if (isLive && sentAt && !onScene) lines.push(Lx('Initial attack sent. Awaiting the first unit\'s size-up on scene.', 'Ataque inicial enviado. A aguardar o ponto de situação da primeira equipa no local.'));
     if (sentAt && !onScene) { clearTimeout(this._capT); const nx = Date.now() - sentAt < 5000 ? sentAt + 5000 : sentAt + 20000; this._capT = setTimeout(() => this.forceUpdate(), Math.max(200, nx - Date.now())); }
     let capOk = false;
     if (isLive && onScene) { const tr = 9 + (h >>> 7) % 6, ca = V + tr, CN = ['Ramirez', 'Nguyen', 'Walsh', 'Ortega', 'Brooks', 'Silva'][(h >>> 4) % 6], ac = 1 + (h >>> 9) % 4;
@@ -1519,10 +1524,10 @@ class Component extends DCLogic {
     /* (Oct 13, 14:07) each evidence card as a chat card: a header (type icon, name, the time it saw the point) and an info area; the
        FFW cameras (cars, action cameras, phones: the app's passive network) in light translucent green with the app's blinking logo and "FFW" */
     out.forEach((x) => { const f = !!FFWK[x.kind]; x.ffwD = f ? 'inline-flex' : 'none'; x.bg = f ? 'rgba(52, 199, 89, 0.16)' : '#FFFFFF'; x.time = x.at != null ? hm(x.at) : '';
-      x.pctD = x.pctTxt ? 'block' : 'none'; x.pctW = Lx(' confidence', ' de confiança'); });
+      x.pctD = x.pctTxt ? 'block' : 'none'; if (x.noteD === 'block') x.noteD = 'flex';   /* the footer: the FFW mark (50%), then the note */ x.pctW = Lx(' confidence', ' de confiança'); });
     /* (Oct 13, 08:57) confirmed on the ground: from here on it is no longer a candidate but a confirmed fire ("<place> Fire"); the page turns into the fire's, its detections kept */
     /* (Oct 13, 08:59) the upgrade to an active fire happens when the dispatch center confirms (Send initial attack): see decide() */
-    const vfTitle = onScene && isLive ? (capOk ? Lx('Confirmed on the ground', 'Confirmado no terreno') : Lx('False alarm on the ground', 'Falso alarme no terreno')) : !isLive ? verdict : droneStrong ? Lx(out.length + ' detections confirm smoke', out.length + ' deteções confirmam fumo') : Lx(out.length - 1 + ' detections saw no smoke', out.length - 1 + ' deteções não viram fumo');
+    const vfTitle = onScene && isLive ? (capOk ? Lx('Confirmed on the ground', 'Confirmado no terreno') : Lx('False alarm on the ground', 'Falso alarme no terreno')) : !isLive ? verdict : droneStrong ? Lx('Smoke in ' + out.length + ' detections', 'Fumo em ' + out.length + ' deteções') : Lx(out.length - 1 + ' detections saw no smoke', out.length - 1 + ' deteções não viram fumo');
     /* where each camera stood: a marker and its line of sight on the candidate's map (crossing lines pinpoint the ignition) */
     const IC = { car: 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5', c360: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', phone: 'M8 3h8v18H8ZM11 18h2', tower: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' };
     const SH = { car: Lx('Car', 'Carro'), c360: Lx('Action', 'Ação'), phone: Lx('Phone', 'Telemóvel'), tower: Lx('Tower', 'Torre') };
@@ -1535,7 +1540,7 @@ class Component extends DCLogic {
       /* (Oct 13, 10:30) Dismiss: the candidate leaves the lists and maps and goes to Resolved as Dismissed */
       if (k === 'dismissed') setTimeout(() => { const d = this.wfDismissed(); if (!d[c.id]) { d[c.id] = Date.now(); this.wfSave(d); } }, 1200);
       if (k === 'sent' && !frow.wasCand) setTimeout(() => { this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 1200); };
-    const vf = { d: 'flex', title: vfTitle, lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'grid' : 'none', doneD: DSP && done ? 'flex' : 'none',
+    const vf = { d: 'flex', title: vfTitle, time: out.length ? hm(Math.max(...out.map((x) => x.at || 0))) : '', ic: onScene && isLive ? (capOk ? 'M5 12.5 10 17.5 19 7' : 'M7 7l10 10M17 7 7 17') : 'M12 5c-4.5 0-8 4-9.5 7 1.5 3 5 7 9.5 7s8-4 9.5-7c-1.5-3-5-7-9.5-7ZM12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z', lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'grid' : 'none', doneD: DSP && done ? 'flex' : 'none',
       doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : Lx('Dismissed', 'Descartado'),
       dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Send initial attack', 'Enviar ataque inicial'), dismiss: decide('dismissed'), send: decide('sent'), ttl: Lx('Verification', 'Verificação'), sum: Lx('Summary', 'Resumo') };
     return { evD: 'flex', evid: out, evCount: out.length === 1 ? '1 detection' : out.length + ' detections', vf, vcams: cams, vpc: cams.length ? '0' : '16', vsz: cams.length ? '1' : '3',
