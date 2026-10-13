@@ -2249,7 +2249,7 @@
   function isHome() { return /Main\.dc\.html$|\/$/.test(location.pathname); }
   function stationProfile() { try { return !!(window.__wfMine && window.__wfMine()); } catch (e) { return false; } }
   function offerPick() {
-    if (!role || tourMute() || stationProfile()) return null;   /* (Oct 7) Enroll / Snooze is the administrator's; station profiles are dispatched */
+    if (!role || tourMute() || stationProfile() || dspMe()) return null;   /* (Oct 7) Enroll / Snooze is the administrator's; station profiles are dispatched; (Oct 13, 17:04) a dispatch center hands a fire to its incident commander, it does not enroll in it */
     var until = 0; try { until = +localStorage.getItem(SNZ) || 0; } catch (e) {} if (Date.now() < until) return null;
     var db = load(), A = mineKeys().filter(function (k) { var c = db.chats[k]; return c && !c.closed && c.kind !== 'dm'; });
     if (A.length >= MAXOWN) return null;
