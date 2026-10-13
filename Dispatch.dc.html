@@ -509,9 +509,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="wf-note" style="display: block; margin-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ia.note}}</span>
     </section>
     <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; order: -2; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
-      <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+      <!-- (Oct 13, 09:58) titled "Summary" like Evidences; the verdict in bold, the facts as bullets -->
+      <h3 style="margin: 0 0 8px; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">{{vf.sum}}</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: #FFFFFF">
         <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{vf.title}}</span>
-        <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{ln.t}}</span></sc-for>
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+          <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><li style="display: flex; gap: 8px; font-size: 17px; line-height: 22px; color: #3C3C43"><span aria-hidden="true" style="flex-shrink: 0; width: 8px; text-align: center">•</span><span style="min-width: 0">{{ln.t}}</span></li></sc-for>
+        </ul>
       </div>
     </section>
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
@@ -1518,7 +1522,7 @@ class Component extends DCLogic {
       if (k === 'sent' && !frow.wasCand) setTimeout(() => { this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 1200); };
     const vf = { d: 'flex', title: vfTitle, lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'grid' : 'none', doneD: DSP && done ? 'flex' : 'none',
       doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : Lx('Dismissed', 'Descartado'),
-      dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Send initial attack', 'Enviar ataque inicial'), dismiss: decide('dismissed'), send: decide('sent'), ttl: Lx('Verification', 'Verificação') };
+      dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Send initial attack', 'Enviar ataque inicial'), dismiss: decide('dismissed'), send: decide('sent'), ttl: Lx('Verification', 'Verificação'), sum: Lx('Summary', 'Resumo') };
     return { evD: 'flex', evid: out, evCount: out.length === 1 ? '1 evidence' : out.length + ' evidences', vf, vcams: cams, vpc: cams.length ? '0' : '16', vsz: cams.length ? '1' : '3',
       setVid: this.setVid || (this.setVid = (el) => { if (!el) return; el.muted = true; el.defaultMuted = true; el.loop = true; el.playsInline = true; try { const p = el.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }) };
   }
