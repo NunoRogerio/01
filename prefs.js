@@ -74,7 +74,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     ptce: ['SA', 'Sofia Antunes', 'Chefe de equipa', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt'],
     ptbo: ['TM', 'Tiago Martins', 'Bombeiro', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt'],
     /* (Oct 13) the dispatch profiles: who verifies ignitions and sends the initial attack */
-    ecc: ['EV', 'Elena Vasquez', 'Fire Captain, ECC', 'CAL FIRE. Emergency Command Center', 'California', '', 'en'],
+    ecc: ['EV', 'Elena Vasquez', 'Fire Captain, ECC', 'CAL FIRE Santa Clara Unit. Emergency Command Center', 'Santa Clara Unit. Morgan Hill', '', 'en'],
     ptecc: ['CR', 'Cláudia Ribeiro', 'Oficial de operações', 'ANEPC. CSREPC Médio Tejo', 'Portugal', '', 'pt']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)

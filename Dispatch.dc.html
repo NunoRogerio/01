@@ -16,10 +16,10 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1791877037"></script>
+<script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791877037"></script>
+<script src="live.js?v=1791878728"></script>
 <script src="chat.js?v=1791877037"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
@@ -1078,7 +1078,8 @@ class Component extends DCLogic {
     const O = window.__wfOnly, inO = (id) => !O || !!O[id];   // paused regions (live.js) are left out everywhere
     return (window.__wfWorld = { states: states.filter((g) => inO(g.id)), cands: C.filter((c) => inO(c.st)), fires: fires.filter((f) => inO(f.st)) });
   }
-  wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: null }; }
+  wfScope() { { const D = window.__wfDspScope && window.__wfDspScope(); if (D) return D; }   /* (Oct 13, 09:04) a dispatch center works its own area */
+    let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: null }; }
   wfRole() { let r = null; try { r = window.localStorage.getItem('wf-role'); } catch (e) {} return r || (window.__wfMem || {}).role || null; }
   wfLock() { return (window.__wfTourLock && window.__wfTourLock()) || ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[this.wfRole()] || null; }   // the tour always runs in California (Oct 3, 19:44)
   wfSetScope(v) { window.__wfMem = Object.assign(window.__wfMem || {}, { scope: v }); try { window.sessionStorage.setItem('wf-scope', JSON.stringify(v)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} }

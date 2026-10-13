@@ -468,7 +468,13 @@ window.__wfRegionUp = function (st, co) {
     for(var i=0;i<S.m.length&&hit<0;i++){var m=S.m[i],b=m[3];if(lon<b[0]||lon>b[2]||lat<b[1]||lat>b[3])continue;for(var j=0;j<m[2].length;j++){var r=m[2][j],c=false;for(var a=0,z=r.length-1;a<r.length;z=a++){var A=r[a],B=r[z];if((A[1]>lat)!==(B[1]>lat)&&lon<(B[0]-A[0])*(lat-A[1])/(B[1]-A[1])+A[0])c=!c;}if(c){hit=m[0];break;}}}
     SUBK[k]=hit;return hit;};
   function llOf(r){var la=r.lat,lo=r.lon;if(!isFinite(la)&&r.live){la=r.live.lat;lo=r.live.lon;}if(!isFinite(la)&&r.info){la=r.info.lat;lo=r.info.lon;}if(!isFinite(+la)&&isFinite(r.x)&&isFinite(r.y)){la=34.19-(r.y-662)/2829;lo=(r.x-518)/2345-118.13;}return [+la,+lo];}   /* the map's own units as a last resort */
-  window.__wfRegionCo=function(st,co){if(!co||String(co).indexOf('rg:')!==0)return null;var R=(window.__wfRegions[st]||[]).find(function(g){return g.id===String(co).slice(3);});return R?R.co:[];};
+  /* (Oct 13, 09:04) the dispatch centers' own areas: an Emergency Command Center works its CAL FIRE unit (a few counties), not the whole
+     state. Santa Clara Unit (SCU, ECC in Morgan Hill): Santa Clara, Alameda, Contra Costa, and parts of San Joaquin and Stanislaus */
+  window.__wfUnits={CA:[{id:'SCU',name:'Santa Clara Unit',co:['Santa Clara','Alameda','Contra Costa','San Joaquin','Stanislaus']}]};
+  window.__wfUnitName=function(st,co){var id=String(co||'').slice(3),U=(window.__wfUnits[st]||[]).find(function(g){return g.id===id;});return U?U.name:'Region '+id;};
+  /* the dispatch profiles are fixed to their center's area: the ECC to the Santa Clara Unit, the CSREPC to Médio Tejo (sub-region 13) */
+  window.__wfDspScope=function(){var c='';try{c=localStorage.getItem('wf-custom')||'';}catch(e){}return c==='ecc'?{st:'CA',co:'rg:SCU'}:c==='ptecc'?{st:'PT',co:'sr:13'}:null;};
+  window.__wfRegionCo=function(st,co){if(!co||String(co).indexOf('rg:')!==0)return null;var id=String(co).slice(3),R=(window.__wfRegions[st]||[]).find(function(g){return g.id===id;})||(window.__wfUnits[st]||[]).find(function(g){return g.id===id;});return R?R.co:[];};
   window.__wfInArea=function(r,st,co){if(co&&String(co).indexOf('sr:')===0){if(r.st!=='PT')return false;var L=llOf(r);return window.__wfSubAt(L[0],L[1])===+String(co).slice(3);}var RC=window.__wfRegionCo(st,co);if(RC)return r.st===st&&RC.indexOf(String(r.co||r.reg||'').replace(/\s+County$/i,''))>=0;if(st==='US')return /^[A-Z]{2}$/.test(r.st)&&r.st!=='PT';if(st==='AMZ')return r.st==='BRA'&&window.__wfAMZ.indexOf(r.co)>=0&&(!co||r.co===co);return r.st===st&&(!co||r.co===co);};
   window.__wfDur=function(ms){if(ms==null||!isFinite(ms)||ms<0)return '';var m=Math.round(ms/60000),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d'+(h?' '+h+' h':''):h?h+' h'+(mm?' '+mm+' min':''):mm+' min';   /* (Oct 11) d / h / min, as everywhere */};
   window.__wfHeld=function(info,model){

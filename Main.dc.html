@@ -18,10 +18,10 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1791877037"></script>
+<script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791877037"></script>
+<script src="live.js?v=1791878728"></script>
 <script src="chat.js?v=1791877037"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="mapsearch.js?v=5"></script>
@@ -232,7 +232,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-      <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
+      <span style="display: flex; align-items: center; gap: 8px; min-height: 34px; max-width: 100%; min-width: 0">
         <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 41px">{{scope.title}}</span>
       </span>
       <span style="display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><span><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
@@ -347,7 +347,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: {{padLn}}px; right: 0; top: 0; bottom: 48px; z-index: 31; display: flex; flex-direction: column; box-sizing: border-box; padding: 56px 0 0 {{padL}}px; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.14); clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); -webkit-clip-path: inset(0 0 {{scClip}} 0 round 0 0 28px 28px); visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), -webkit-clip-path {{scClipT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <div data-wf-keepsp="1" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px; flex-shrink: 0">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
-        <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
+        <span style="display: flex; align-items: center; gap: 8px; min-height: 34px; max-width: 100%; min-width: 0">
           <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 41px">{{scope.title}}</span>
         </span>
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
@@ -1191,7 +1191,8 @@ class Component extends DCLogic {
     const O = window.__wfOnly, inO = (id) => !O || !!O[id];   // paused regions (live.js) are left out everywhere
     return (window.__wfWorld = { states: states.filter((g) => inO(g.id)), cands: C.filter((c) => inO(c.st)), fires: fires.filter((f) => inO(f.st)) });
   }
-  wfScope() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: null }; }   /* (Oct 11, 19:20) a government profile opens on its whole region: all of California (Cal OES), all of Portugal (ANEPC) */
+  wfScope() { { const D = window.__wfDspScope && window.__wfDspScope(); if (D) return D; }   /* (Oct 13, 09:04) a dispatch center works its own area */
+    let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).scope; const lk = this.wfLock(); if (lk && (!v || v.st !== lk)) v = { st: lk, co: null }; return v && v.st ? v : { st: 'CA', co: null }; }   /* (Oct 11, 19:20) a government profile opens on its whole region: all of California (Cal OES), all of Portugal (ANEPC) */
   // Preferences panel: the signed-in person, theme and text size (applied app-wide by prefs.js) and language.
   wfPrefVals() {
     // Switching language reloads the app; the panel stays open through it (only its X closes it).
@@ -1847,7 +1848,7 @@ class Component extends DCLogic {
     const stObj = selState === 'US' ? US_ALL : (DATA.find((d) => d.id === selState) || DATA[0]);
     const RCs = window.__wfRegionCo ? window.__wfRegionCo(stObj.id, selCounty) : null;
     const SRs = selCounty && String(selCounty).indexOf('sr:') === 0 && window.__wfSub ? window.__wfSub : null, SRi = SRs ? +String(selCounty).slice(3) : -1;
-    const coObj = RCs ? { name: 'Region ' + String(selCounty).slice(3), rgN: RCs.length, ...SC.count(stObj.id, selCounty) } : SRs ? { name: (SRs.sr[SRi] || [''])[0], rgN: SRs.m.filter((m) => m[0] === SRi).length, unitW: window.__wfLang === 'pt' ? ' concelhos' : ' municipalities', ...SC.count(stObj.id, selCounty) } : selCounty ? stObj.counties.find((c) => c.name === selCounty) : null;
+    const coObj = RCs ? { name: window.__wfUnitName ? window.__wfUnitName(stObj.id, selCounty) : 'Region ' + String(selCounty).slice(3), rgN: RCs.length, ...SC.count(stObj.id, selCounty) } : SRs ? { name: (SRs.sr[SRi] || [''])[0], rgN: SRs.m.filter((m) => m[0] === SRi).length, unitW: window.__wfLang === 'pt' ? ' concelhos' : ' municipalities', ...SC.count(stObj.id, selCounty) } : selCounty ? stObj.counties.find((c) => c.name === selCounty) : null;
     const scope = coObj && coObj.rgN ? { title: coObj.name, parent: coObj.rgN + (coObj.unitW || ' counties'), fires: coObj.fires, cands: coObj.cands } : coObj
       ? { title: coObj.name, parent: stObj.name, fires: coObj.fires, cands: coObj.cands }
       : { title: stObj.name, parent: unitN(stObj), fires: stObj.fires, cands: stObj.cands };
@@ -1982,7 +1983,8 @@ class Component extends DCLogic {
       panelTitle: brObj ? brObj.name : atCountries ? 'Choose a country' : 'United States', colName: rgView ? (isPTb ? (window.__wfLang === 'pt' ? 'Sub-região' : 'Sub-region') : 'Region') : brObj ? (brObj.id === 'PT' ? 'District' : brObj.id === 'AMZ' || brObj.id === 'BRA' ? 'State' : brObj.country === 'US' ? 'County' : 'Region') : atCountries ? 'Country' : 'State',
       hScope: this.wfHandle('sc', 'up', () => this.setState({ scOpen: false })), scDy: 0, scDyT: '0s',
       hList: this.wfHandle('li', 'down', () => { this.wfListFlag(false); this.setState({ list: false }); }), liDy: 0, liDyT: '0s', liClipT: this.wfDrag('li').y ? '0s' : '.55s',
-      openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
+      openScope: () => { if (Date.now() - (this._pulled || 0) < 450) return; if (window.__wfDspScope && window.__wfDspScope()) return;   /* (Oct 13, 09:04) no area picker for a dispatch center: its area is fixed */
+        this.setState({ scOpen: true, scBrowse: undefined }); }, pScope: this.wfPull('sc', 'down', () => (window.__wfDspScope && window.__wfDspScope()) ? null : this.setState({ scOpen: true, scBrowse: undefined })), pList: this.wfPull('li', 'up', () => { this.wfListFlag(false); this.setState({ list: true }); }), closeScope: () => this.setState({ scOpen: false }),
       backD: lock ? 'none' : 'flex', lockPadL: lock ? '16px' : '0px', toStates: () => lock || this.wfSlide('back', () => this.setState({ scBrowse: brObj && brObj.country === 'US' ? null : brObj && brObj.id === 'AMZ' ? 'BRA' : '@', q: '' })), acct: ({ amz: { name: 'Rafael Nogueira · Prevfogo Amazônia', area: 'Ibama · Access: Amazônia Legal only' }, admin: { name: 'Nuno Rogerio · Emergency management director', area: 'Access: all countries and regions' }, pt: { name: 'Rita Cardoso · Comandante Nacional', area: 'ANEPC · Access: Portugal only' }, ca: { name: 'Marcus Reyes · Deputy Director', area: 'CAL FIRE · Access: California only' }, nv: { name: 'Dana Whitfield · State Forester', area: 'NDF · Access: Nevada only' } })[this.wfRole()] || { name: 'Not signed in', area: 'Design preview: all areas' },
       soD: window.__wfLoginMenu ? 'none' : 'flex',   /* (Oct 11, 19:30) nobody to sign out on the login screen */
       signOut: (e) => { if (e && e.preventDefault) e.preventDefault(); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.setState({ aiAsk: 'out' }); },
