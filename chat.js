@@ -51,7 +51,7 @@
      (light under 60%, yellow 60 to 79%, strong 80% and over: live.js __wfConfTag), dark text; on its right, when it was detected */
   /* (Oct 11, 12:52) night: a candidate detected at night wears the moon instead of the asterisk (icD); n: a boolean, a chat, an incident or a live record */
   function candStage(conf, nt) { var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
-    return Object.assign({}, STAGES[0], { en: n ? n + '% candidate' : 'Candidate', pt: n ? n + '% candidato' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
+    return Object.assign({}, STAGES[0], { en: n ? n + '% likelihood' : 'Candidate', pt: n ? n + '% de probabilidade' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
   function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf, ch) : STAGES[ch.stage] || STAGES[0]; }
   function candMeta(c) { try { var t = since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
   // ANEPC status code -> chat stage

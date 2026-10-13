@@ -19,10 +19,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791564027"></script>
 <script src="prefs.js?v=1791835545"></script>
-<script src="station.js?v=1791834155"></script>
+<script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791835889"></script>
+<script src="chat.js?v=1791871146"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791798521"></script>
@@ -1938,7 +1938,7 @@ class Component extends DCLogic {
     const ignList = CANDS.map((c, i) => {
       const col = colorOf(c.conf);
       return {
-        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Dispatch.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + (window.__wfLang === 'pt' ? '% candidato' : '% candidate'), bIc: (window.__wfChat && window.__wfChat.ICON.cand) || '', bR: (() => { const t = c.live && c.live.t ? Date.parse(c.live.t) : 0; if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(window.__wfLang === 'pt' ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), valW: 600, valC: (window.__wfConfTag ? window.__wfConfTag(c.conf).fg : '#185A93'), valBg: (window.__wfConfTag ? window.__wfConfTag(c.conf).bg : 'rgba(31,111,186,0.12)'), nameW: 600, moonD: window.__wfNight && window.__wfNight(c.live) ? 'inline-block' : 'none',
+        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Dispatch.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + (window.__wfLang === 'pt' ? '% de probabilidade' : '% likelihood'), bIc: (window.__wfChat && window.__wfChat.ICON.cand) || '', bR: (() => { const t = c.live && c.live.t ? Date.parse(c.live.t) : 0; if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(window.__wfLang === 'pt' ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), valW: 600, valC: (window.__wfConfTag ? window.__wfConfTag(c.conf).fg : '#185A93'), valBg: (window.__wfConfTag ? window.__wfConfTag(c.conf).bg : 'rgba(31,111,186,0.12)'), nameW: 600, moonD: window.__wfNight && window.__wfNight(c.live) ? 'inline-block' : 'none',
         bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),
