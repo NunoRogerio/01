@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791896044"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791923549"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
@@ -32,18 +32,21 @@
   if (f) { sessionStorage.removeItem('wf-focus'); if (window.__wfMem) window.__wfMem.focus = null; }
 } catch (e) {} })();
 /* (Oct 13, 14:14) inside the chat's map view (inner=1): the chat's own header and stage band stay on top, so this page shows no header of its own */
-(function () { try { if (/[?&]inner=1/.test(location.search)) { document.documentElement.classList.add('wf-inner'); var st = document.createElement('style'); st.textContent = '.wf-inner [data-wf-hdr]{display:none!important}'; (document.head || document.documentElement).appendChild(st); } } catch (e) {} })();
+(function () { try { if (/[?&]inner=1/.test(location.search)) { document.documentElement.classList.add('wf-inner'); var st = document.createElement('style'); st.textContent = '.wf-inner [data-wf-hdr]{display:none!important}.wf-inner [data-wf-se]::after,.wf-inner [data-wf-sb]::after,.wf-inner .wf-spe,.wf-inner .wf-spb{display:none!important}';   /* (Oct 13, 21:19) no stripe pattern at the foot: the chat's top panel carries it */ (document.head || document.documentElement).appendChild(st); } } catch (e) {} })();
 /* (Oct 13, 16:54) one host for an incident: the chat page, where the map and the team swap in place under the same band. Opened on its
    own (not inside the chat), this page stays hidden while it hands over to the chat on its map view (at most 2.5 s, then it shows itself) */
 (function () { try { if (/[?&]embed=1/.test(location.search) || !window.__wfChat) return; var v = JSON.parse(sessionStorage.getItem('wf-fireview') || 'null');
   if (!v || !v.id) return; document.documentElement.classList.add('wf-hold'); var st = document.createElement('style'); st.textContent = '.wf-hold body{visibility:hidden!important}'; (document.head || document.documentElement).appendChild(st);
   setTimeout(function () { document.documentElement.classList.remove('wf-hold'); }, 2500); } catch (e) {} })();
 (function () { try {
-  if (/[?&]embed=1/.test(location.search) || window !== window.top || !window.__wfChat || !window.__wfChat.find) return;
+  /* (Oct 13, 21:24) also inside the rising panel (fit.js push-up frame), so the panel rises with the chat already drawn */
+  var PU = false; try { PU = window !== window.top && !!(window.frameElement && window.frameElement.parentElement && window.frameElement.parentElement.hasAttribute('data-wf-pushup')); } catch (e) {}
+  if (/[?&]embed=1/.test(location.search) || (window !== window.top && !PU) || !window.__wfChat || !window.__wfChat.find) return;
   var v = JSON.parse(sessionStorage.getItem('wf-fireview') || 'null'); if (!v || !v.id) return;
   var c = window.__wfChat.find({ kind: 'fire', id: String(v.id), place: v.place }); if (!c || c.kind === 'dm') return;
   v.t = Date.now(); sessionStorage.setItem('wf-fireview', JSON.stringify(v));
   sessionStorage.setItem('wf-chat-open', c.key); sessionStorage.setItem('wf-chat-ib', 'Dispatch.dc.html');
+  if (PU) try { window.parent.__wfPuHost = { open: c.key, ib: 'Dispatch.dc.html', fv: JSON.stringify(v) }; } catch (e) {}   /* the real page opens the chat directly */
   location.replace('Chat.dc.html');
 } catch (e) {} })();
 </script>
@@ -787,7 +790,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             <!-- (Oct 13, 14:07) structured as a chat card: a header (type icon, name, the FFW mark when it is one of the app's passive cameras, the
                  time it saw the point on the right) and an info area; the header in the card's own colour for now. FFW cards in light translucent green -->
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: {{ev.bg}}; overflow: hidden; cursor: {{ev.cur}}">
-              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: transparent; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}</span><span aria-label="Forest Fire Watch" style="display: {{ev.ffwD}}; align-items: center; gap: 4px; flex-shrink: 0; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; background: rgba(52, 199, 89, 0.2); color: #1E5E2E; font-size: 15px; font-weight: 600; line-height: 20px"><svg width="14" height="16" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="currentColor"></path></svg>FFW</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
+              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: transparent; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}</span><span aria-label="Forest Fire Watch" style="display: {{ev.ffwD}}; align-items: center; gap: 4px; flex-shrink: 0; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; background: rgba(115, 115, 118, 0.16); color: #3A3A3C; font-size: 15px; font-weight: 600; line-height: 20px"><svg width="14" height="16" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="currentColor"></path></svg>FFW</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
               <li style="display: flex; align-items: flex-start; gap: 16px; padding: 8px 16px 16px">
                 <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
                   <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>

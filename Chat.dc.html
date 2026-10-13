@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791896044"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791923549"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
@@ -99,6 +99,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
   <!-- ===== One chat ===== -->
   <sc-if value="{{isChat}}" hint-placeholder-val="{{ false }}">
     <div data-wf-chathd="1" style="position: relative; display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; background: #F2F2F7">
+      <!-- (Oct 13, 21:19) the fixed top panel (header + stage band) carries the stripe pattern, as the incident headers; the embedded incident page shows none at its foot --><span aria-hidden="true" class="wf-stripes" data-wf-sp="1" style="--wf-y: rgba(0, 0, 0, 0.035); background: repeating-linear-gradient(-60deg, var(--wf-y) 0 8.49px, transparent 8.49px 16.97px); position: absolute; left: 0; right: 0; top: -56px; bottom: 0; z-index: -1; pointer-events: none"></span>
       <header style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 16px; row-gap: 8px; min-width: 0; padding: 4px 16px 16px 16px">
         <!-- (Oct 9, 12:15) to keep the chat tall: back on the left, the team on the right, the incident's name centred between them (16px clear of each), up to two lines, then cut -->
         <!-- (Oct 9, 12:11) back to the large-title formula on every incident: the round back (top left) and the header buttons on the top row, the title under them, aligned with the back; no chevron -->
