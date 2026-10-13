@@ -769,7 +769,7 @@
     return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
   /* (Oct 12, 12:05) who answers a card: a size-up is the first engine's Captain's call; every other request the commander's (never a crew profile) */
   function sizeUp(m) { return !!(m && m.reqDecl && (m.ask === 'ff' || /^Size-up/.test(((m.tag || {}).en) || ''))); }
-  function canAct(c, m) { if (!m || m.done || !c || c.closed || c.dismissed) return false; var M = window.__wfMine ? window.__wfMine() : null, gov = isGov();
+  function canAct(c, m) { if (!m || m.done || !c || c.closed || c.dismissed) return false; if (dspMe()) return false;   /* (Oct 13, 21:05) the ECC dispatches; the fire's decisions are the commander's */ var M = window.__wfMine ? window.__wfMine() : null, gov = isGov();
     if (gov) return !!m.govOnly; if (m.govOnly) return false;
     if (sizeUp(m)) return !!(M && M.key === 'ff' && mission(c));
     if (m.ask) return !!(M && M.key === m.ask && mission(c));
@@ -983,7 +983,7 @@
     'Fresno': 'V', 'Kern': 'V', 'Kings': 'V', 'Madera': 'V', 'Mariposa': 'V', 'Merced': 'V', 'Tulare': 'V', 'Butte': 'III', 'Sutter': 'III', 'Yuba': 'III', 'Shasta': 'III', 'Tehama': 'III', 'Glenn': 'III', 'Colusa': 'III', 'Plumas': 'III', 'Lassen': 'III', 'Modoc': 'III', 'Siskiyou': 'III', 'Trinity': 'III',
     'Humboldt': 'II', 'Mendocino': 'II', 'Sonoma': 'II', 'Napa': 'II', 'Lake': 'II', 'Marin': 'II', 'Alameda': 'II', 'Contra Costa': 'II', 'Santa Clara': 'II', 'San Mateo': 'II', 'Monterey': 'II', 'Del Norte': 'II', 'Santa Cruz': 'II', 'San Benito': 'II', 'Solano': 'II', 'San Francisco': 'II',
     'Sacramento': 'IV', 'Placer': 'IV', 'El Dorado': 'IV', 'Nevada': 'IV', 'Yolo': 'IV', 'San Joaquin': 'IV', 'Stanislaus': 'IV', 'Tuolumne': 'IV', 'Calaveras': 'IV', 'Amador': 'IV', 'Alpine': 'IV', 'Sierra': 'IV' };
-  function govTick(c, now) { if (!isGov() || c.kind === 'dm' || c.closed || c.dismissed || c.police) return false; var ch = false, us = isUS(c);
+  function govTick(c, now) { var ecc = dspMe(); if (!(isGov() || ecc) || c.kind === 'dm' || c.closed || c.dismissed || c.police) return false; var ch = false, us = isUS(c);
     /* the commander answers what waits for an answer (never the government's own cards) */
     var pend = (c.msgs || []).filter(function (m) { return m.kind === 'card' && (m.actions || []).length && !m.done && !m.govOnly && !m.summary; }).pop();
     if (pend) { if (!pend.govSeen) { pend.govSeen = now; ch = true; } else if (now - pend.govSeen > 20000 && !c._govBusy) { var A = pend.actions, pick = A.find(function (a) { return a.primary && AUTO_NO.indexOf(a.key) < 0; }) || A.find(function (a) { return AUTO_NO.indexOf(a.key) < 0; }) || A[0];
@@ -991,7 +991,7 @@
     else { var X = actions(c).filter(function (a) { return a.primary && (a.key === 'next' || a.key === 'closeCheck' || a.key === 'confirm'); })[0];
       if (X) { if (!c.flags.govChip || c.flags.govChip.k !== X.key + c.stage) { c.flags.govChip = { k: X.key + c.stage, at: now }; ch = true; } else if (now - c.flags.govChip.at > 20000 && !c._govBusy) { c._govBusy = 1; govQ.push([c.key, X.key, null]); setTimeout(function () { c._govBusy = 0; }, 3000); } } }
     /* the request that climbs the chain, once a fire is on the line and growing */
-    if (c.stage >= 3 && c.stage <= 4 && !c.flags.ma && now - (c.stageAt || now) > 15000) { c.flags.ma = 1; ch = true;
+    if (!ecc && c.stage >= 3 && c.stage <= 4 && !c.flags.ma && now - (c.stageAt || now) > 15000) { c.flags.ma = 1; ch = true;
       var co = String(c.reg || c.co || '').replace(/\s+County$/i, ''), rg = OAREG[co], ic = (c.people[icOf(c)] || {}).name || '';
       if (us) card(c, { govOnly: true, ma: true, tag: { en: 'Mutual aid request · ' + (co ? co + ' Operational Area' : 'Operational Area'), pt: 'Pedido de ajuda mútua · ' + (co ? 'Área Operacional de ' + co : 'Área Operacional') }, tagC: '#0A66CC',
           title: { en: '2 strike teams, Type 3 engines', pt: '2 strike teams de autobombas tipo 3' }, body: { en: (rg ? 'Through Cal OES Region ' + rg + '. ' : '') + 'Ordered by ' + (ic || 'the incident commander') + ' for the ' + fireNm(c) + ': the local resources are committed and the fire is still growing.', pt: (rg ? 'Pela Região ' + rg + ' do Cal OES. ' : '') + 'Pedido por ' + (ic || 'o comandante do incidente') + ' para ' + fireNm(c) + ': os meios locais estão empenhados e o incêndio continua a crescer.' },
@@ -1881,7 +1881,9 @@
       if (govTick(c, now)) changed = true;
     });
     if (changed) { save(); emit(); }
-    var GA = govQ.splice(0); GA.forEach(function (g) { act(g[0], g[1], g[2]); });   /* the incident commander's own decisions, taken while a government body watches */
+    var GA = govQ.splice(0); GA.forEach(function (g) { var cc = load().chats[g[0]], n0 = cc ? (cc.msgs || []).length : 0; act(g[0], g[1], g[2]);
+      /* (Oct 13, 21:05) watched by the ECC: the commander's decisions are said by the commander, not by "You" */
+      if (cc && dspMe()) { var ic = icOf(cc), ch2 = false; (cc.msgs || []).slice(n0).forEach(function (m) { if (m.from === 'me') { m.from = ic; ch2 = true; } }); if (ch2) { save(); emit(); } } });   /* the incident commander's own decisions, taken while a government body watches */
   }
   setInterval(tick, 700);
 
