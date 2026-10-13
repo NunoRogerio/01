@@ -245,6 +245,9 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <span aria-hidden="true" data-wf-burger-spot="1" class="opt" style="visibility: {{pm.spotVis}}; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 8px 0 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"></path></svg></span>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-label="Open the area menu" data-pull-go="1" style="position: absolute; left: 50%; bottom: 0; width: 120px; height: 29px; margin-left: -60px; display: flex; align-items: flex-end; justify-content: center; box-sizing: border-box; padding: 0 0 8px; border: 0; border-radius: 12px; background: transparent; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></button>
   </header>
+  <!-- (Oct 13, 13:06) the dispatch profiles are greeted by rank and name under the area, with the station home's salutations
+       (one at random, by the time of day); 16px under "5 counties", rank and surname in semibold; taps pass through to the grabber -->
+  <p aria-live="off" style="position: relative; display: {{gr.d}}; margin: -16px 0 0; padding: 0 16px 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty; pointer-events: none">{{gr.a}}<b style="font-weight: 600">{{gr.who}}</b>{{gr.b}}</p>
   <!-- (Oct 11, 20:50) a government body's own line under the area: the requests that climbed the chain and wait for it (red), the strike
        teams or reinforcement groups it sent, the units out on the area's fires; a tap opens the incident chats -->
   <div data-wf-govtags="1" style="position: relative; display: {{gv.d}}; flex-wrap: wrap; gap: 8px; margin-top: -8px; padding: 0 16px 16px">
@@ -1990,6 +1993,15 @@ class Component extends DCLogic {
     }));
     return {
       ...(() => { const ntV = this.wfNotes(CANDS, FIRES, scope, listFocus); return { nt: ntV, cb: this.wfChats(ntV.title) }; })(),
+      gr: (() => { const off = { d: 'none', a: '', who: '', b: '' }; if (!(window.__wfDspScope && window.__wfDspScope())) return off;
+        /* (Oct 13, 13:06) the dispatch officer signed in: the ECC's Fire Captain, or the CSREPC's operations officer */
+        let k = ''; try { k = localStorage.getItem('wf-custom') || ''; } catch (e) {}
+        const PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en);
+        const who = k === 'ptecc' ? L('Operations officer Ribeiro', 'Oficial de operações Ribeiro') : L('Captain Vasquez', 'Capitã Vasquez');
+        const h = new Date().getHours(), tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;
+        const G = [[L('Hello ', 'Olá '), '.'], tod ? [tod + ', ', '.'] : [L('Working late, ', 'A trabalhar até tarde, '), '?'], [L('How are things, ', 'Como vão as coisas, '), '?'], [L('Hope all is well, ', 'Espero que esteja tudo bem, '), '.'], [L('Howdy, ', 'Viva, '), '.']];
+        if (this._grI == null) this._grI = Math.floor(Math.random() * 60);
+        const g = G[this._grI % G.length]; return { d: 'block', a: g[0], who, b: g[1] }; })(),
       gv: (() => { const C = window.__wfChat, off = { d: 'none', tags: [], open: null }; if (!C || !C.isGov || !C.isGov() || !C.govSummary) return off;
         const SC = this.wfScope(), G = C.govSummary((c) => (C.inScope ? C.inScope(c, SC) : true)), PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en), us = SC.st !== 'PT', T = [];
         const n = G.pend.length; if (n) T.push({ txt: n + ' ' + (us ? L(n === 1 ? 'mutual aid request' : 'mutual aid requests', n === 1 ? 'pedido de ajuda mútua' : 'pedidos de ajuda mútua') : L(n === 1 ? 'reinforcement request' : 'reinforcement requests', n === 1 ? 'pedido de reforço' : 'pedidos de reforço')), bg: 'rgba(179,0,27,0.12)', fg: '#B3001B' });
