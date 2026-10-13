@@ -2249,6 +2249,7 @@
   function isHome() { return /Main\.dc\.html$|\/$/.test(location.pathname); }
   function stationProfile() { try { return !!(window.__wfMine && window.__wfMine()); } catch (e) { return false; } }
   function offerPick() {
+    return null;   /* (Oct 13, 17:06) Enroll / Snooze removed for good: no level of the real chain of command enrolls in a fire (it is assigned, or follows it from its area) */
     if (!role || tourMute() || stationProfile() || dspMe()) return null;   /* (Oct 7) Enroll / Snooze is the administrator's; station profiles are dispatched; (Oct 13, 17:04) a dispatch center hands a fire to its incident commander, it does not enroll in it */
     var until = 0; try { until = +localStorage.getItem(SNZ) || 0; } catch (e) {} if (Date.now() < until) return null;
     var db = load(), A = mineKeys().filter(function (k) { var c = db.chats[k]; return c && !c.closed && c.kind !== 'dm'; });
@@ -2278,6 +2279,7 @@
       keep.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>' + (how === 'enroll' ? (PT ? 'Assumido' : 'Enrolled') : (PT ? 'Adiado 15 min' : 'Snoozed 15 min')); }
     setTimeout(function () { ofBusy = false; offerHide(true); }, 1400); }
   function offerRender() {
+    offerSet(null); offerHide(false); return;   /* (Oct 13, 17:06) no offer card any more (one kept from before is cleared) */
     var k = offerKey();
     if (!k && isHome() && document.visibilityState !== 'hidden') { k = offerPick(); if (k) offerSet(k); }
     var c = k ? load().chats[k] : null;
