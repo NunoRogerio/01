@@ -31,6 +31,8 @@
   if (f) { sessionStorage.setItem('wf-fireview', JSON.stringify({ id: f, cand: 1, t: Date.now() })); }
   if (f) { sessionStorage.removeItem('wf-focus'); if (window.__wfMem) window.__wfMem.focus = null; }
 } catch (e) {} })();
+/* (Oct 13, 14:14) inside the chat's map view (inner=1): the chat's own header and stage band stay on top, so this page shows no header of its own */
+(function () { try { if (/[?&]inner=1/.test(location.search)) { document.documentElement.classList.add('wf-inner'); var st = document.createElement('style'); st.textContent = '.wf-inner [data-wf-hdr]{display:none!important}'; (document.head || document.documentElement).appendChild(st); } } catch (e) {} })();
 (function () { try {
   if (/[?&]embed=1/.test(location.search) || window !== window.top || !window.__wfChat || !window.__wfChat.find) return;
   var v = JSON.parse(sessionStorage.getItem('wf-fireview') || 'null'); if (!v || !v.id) return;
@@ -2383,7 +2385,7 @@ class Component extends DCLogic {
          blade it closes the blade back to the chat */
       tagGo: (() => { const inB = window !== window.top, back = inB && (() => { try { return window.parent.__wfIbClose || null; } catch (e) { return null; } })(), ok = !!(back || this._tagChat), PT = window.__wfLang === 'pt';
         return { d: ok ? 'inline-flex' : 'none', t: PT ? 'Equipa' : 'Team', role: ok ? 'link' : 'status', cur: ok ? 'pointer' : 'default', aria: ok ? (PT ? 'Abrir a conversa da equipa' : 'Open the team chat') : '',
-          go: ok ? () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (back) { back(); return; } const A = document.querySelector('[data-wf-hdr] a[href="Chat.dc.html"]') || document.querySelector('a.opt[href="Chat.dc.html"]'); if (A) A.click(); else if (this._tagChat) { this._tagChat(); location.href = 'Chat.dc.html'; } }   /* the header's chat button: the same way in, the same transition */ : null }; })(),
+          go: ok ? () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (back) { back(); return; } try { sessionStorage.setItem('wf-chat-ib', 'Dispatch.dc.html'); sessionStorage.setItem('wf-chat-swap', '1'); } catch (e) {} const A = document.querySelector('[data-wf-hdr] a[href="Chat.dc.html"]') || document.querySelector('a.opt[href="Chat.dc.html"]'); if (A) A.click(); else if (this._tagChat) { this._tagChat(); location.href = 'Chat.dc.html'; } }   /* the header's chat button: the same way in, the same transition */ : null }; })(),
       crewNote: chosenList.some((d) => d.real) ? 'Crews available are example figures · stations do not publish them' : '',   // real stations: said once, above the list
       stNone: !!(stDraft && !stDraft.length), stApplyOp: stDraft && !stDraft.length ? 0.4 : 1,   // Apply waits for at least one station
       stApply: () => (stDraft && !stDraft.length) ? null : this.setState({ stations: (stDraft && stDraft.length) ? stDraft : chosenList.map((q) => q.id), station: null, open: false, stDraft: null, stPick: true }),
