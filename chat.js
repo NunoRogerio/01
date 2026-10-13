@@ -53,7 +53,9 @@
   function candStage(conf, nt) { var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
     return Object.assign({}, STAGES[0], { en: n ? n + '% likelihood' : 'Candidate', pt: n ? n + '% de probabilidade' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
   function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf, ch) : STAGES[ch.stage] || STAGES[0]; }
-  function candMeta(c) { try { var t = since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
+  /* (Oct 13, 14:10) a candidate's band shows when it was detected (as on its page), never when its chat opened */
+  function detAt(c) { if (c.det) return c.det; try { var id = String(c.incId || c.id || ''), R = (window.__wfLiveCandsAll || []).concat(window.__wfLiveCands || []), r = R.find(function (q) { return q && String(q[2]) === id; }); if (r && r[9] && r[9].t) return Date.parse(r[9].t) || null; } catch (e) {} return null; }
+  function candMeta(c) { try { var t = detAt(c) || since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
   // ANEPC status code -> chat stage
   function stageFromCode(sc) { sc = Number(sc) || 0; return sc >= 10 ? 7 : sc === 9 ? 6 : sc === 8 ? 5 : sc === 7 ? 4 : sc === 6 ? 3 : sc === 5 ? 2 : sc >= 3 ? 1 : 2; }
 
