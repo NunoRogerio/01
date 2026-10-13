@@ -416,7 +416,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- Header: the crest (or the air support badge) sits on the top of the name; the units below line up with it: icons in the crest's column, names under the station's text -->
           <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 48px; align-items: start; gap: 16px; padding: 16px; box-sizing: border-box; background-color: {{o.hdBg}}"><img src="{{o.crest}}" data-crest="{{o.name}}" alt="" style="display: {{o.crestD}}; width: 32px; height: 32px; object-fit: contain">
           <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-            <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{o.name}}</span>
+            <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{o.name}}</span>
             <span style="font-size: 17px; line-height: 22px; color: {{o.stC}}">{{o.state}}</span>
           </span>
           <span aria-hidden="true" style="position: relative; align-self: center; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px">
@@ -662,7 +662,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <span aria-hidden="true" style="display: {{gp.dotD}}; position: absolute; top: 4px; right: 4px; z-index: 2; width: 12px; height: 12px; border-radius: 50%; background: #E6352B; pointer-events: none"></span>
               <li><!-- (Oct 10, 21:57) the station always shows its units: no fold, no chevron --><div aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 16px; box-sizing: border-box; color: #000000; text-align: left">
                 <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
-                <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
+                <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 </div></li>
               <li style="display: grid; grid-template-rows: 1fr"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.22)">   <!-- a full-width line between the station and its units (Oct 5, same team card as the resolution summary) -->
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">

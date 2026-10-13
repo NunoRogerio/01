@@ -1912,3 +1912,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 13, 08:33: full-screen maps place the legend column and title card below the frame's hidden top (--wf-top) plus the safe area, so the first chip (Ignition candidates) is always visible.
 - Oct 13, 08:35: dispatch profiles' notifications are the ignition candidates, one per candidate, newest detection first (satellite time), place as title, likelihood and source below; no "Assigned to me" switch.
 - Oct 13, 08:37: a selected map marker's ring follows its own shape (round for circles), 4px out; no squarish dilate.
+- Oct 13, 08:42: titles and names never cut with an ellipsis: they wrap to two lines (clamp 2), hyphenated in the page's language (en/pt) when a single word doesn't fit — map title cards, pin cards, list names, chat and station titles. Tags keep their own fit rule.

@@ -233,7 +233,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
-        <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 41px">{{scope.title}}</span>
+        <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 41px">{{scope.title}}</span>
       </span>
       <span style="display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><span><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
         <!-- (Oct 4) no list icon: the area line opens the area picker list -->
@@ -324,7 +324,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
       <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex-grow: 1; min-width: 0; margin-left: -8px; padding: 32px 8px 4px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         
         <span style="display: flex; align-items: center; gap: 8px; height: 22px; max-width: 100%; min-width: 0">
-          <span style="font-size: 17px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 22px; color: {{barC}}">{{barTitle}}</span>
+          <span style="font-size: 17px; font-weight: 600; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 22px; color: {{barC}}">{{barTitle}}</span>
           <!-- (Oct 4) no list icon after the count: the blade itself opens the list -->
         </span>
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap">{{barSub}}</span>
@@ -348,7 +348,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <div data-wf-keepsp="1" style="display: flex; align-items: flex-start; gap: 8px; padding: 4px 16px 16px 16px; flex-shrink: 0">
       <button type="button" class="opt" data-swipe-go="1" onClick="{{closeScope}}" aria-label="Close area picker" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <span style="display: flex; align-items: center; gap: 8px; height: 34px; max-width: 100%; min-width: 0">
-          <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 41px">{{scope.title}}</span>
+          <span class="wf-title-m" style="font-size: 34px; font-weight: 700; letter-spacing: 0.01em; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 41px">{{scope.title}}</span>
         </span>
         <span style="font-size: 17px; font-weight: 400; line-height: 22px; color: #000000; white-space: nowrap"><b style="display: {{scope.pND}}; font-weight: 700">{{scope.pN}} </b>{{scope.pW}}</span>
       </button>
@@ -448,7 +448,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
       <span role="status" style="display: {{ps.msgD}}; flex-shrink: 0; padding: 0 16px 16px; font-size: 15px; line-height: 20px; color: #6E6E73">{{ps.msg}}</span>
       <sc-for list="{{ps.res}}" as="r" hint-placeholder-count="3">
         <button type="button" class="sqrow" data-sel="false" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; flex-shrink: 0; min-height: 60px; padding: 16px; margin-bottom: 4px; box-sizing: border-box; border: 0; background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
-          <span style="max-width: 100%; font-size: 17px; line-height: 22px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+          <span style="max-width: 100%; font-size: 17px; line-height: 22px; font-weight: 600; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{r.name}}</span>
           <span style="max-width: 100%; font-size: 15px; line-height: 20px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.sub}}</span>
         </button>
       </sc-for>
@@ -531,7 +531,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
            the stage and the last message on up to two lines, then the unread line -->
       <sc-for list="{{cb.rows}}" as="r" hint-placeholder-count="3">
         <a href="Chat.dc.html" class="chrow" onClick="{{r.go}}" aria-label="{{r.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; flex-shrink: 0; padding: 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF; color: #000000; text-decoration: none">
-          <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.place}}</span>
+          <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{r.place}}</span>
           <span style="grid-column: 1 / -1; order: 9; display: {{r.tagD}}; align-items: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{r.tagBg}}; color: {{r.tagFg}}; font-size: 17px; line-height: 22px"><span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{r.tagIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.tagTxt}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{r.tagR}}</span></span><!-- (Oct 11, 11:37) the incident's stage band, as on the station's cards: full width at the foot of the row, area and time (or the candidate's detection time) on the right -->
           <!-- (Oct 3, 21:19) the stage as the shared stage tag (as in the incident list), on the first row; the last message under it (full width), then the unread line with the time and unread count on its right -->
           <span style="grid-column: 1 / span 2; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden">{{r.pre}}{{r.last}}</span>

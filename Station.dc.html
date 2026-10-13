@@ -423,7 +423,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{sq.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 0 0 0 8px; margin-bottom: 40px">
       <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-        <h2 id="sqTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{sq.title}}</h2>
+        <h2 id="sqTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{sq.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">{{sq.sub}}</span>
       </div>
       <!-- No X: the grabber closes the dialog. The command team's group chat (the primary action) sits here as a round primary button -->
