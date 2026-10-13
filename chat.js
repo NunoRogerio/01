@@ -678,8 +678,18 @@
       var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Detections', pt: ECC + ' · Deteções' };
       /* (Oct 12, 20:45) a crew's new assignment waits for the Captain: the detections, then the dispatch order to answer; the story starts once he responds */
       if (c.asgMine) { holdFor(c, ev0); return; }
+      /* (Oct 13, 16:54) the dispatch center's own view: nothing is sent until its dispatcher decides (Send initial attack, Smoke check or
+         Dismiss on the incident's page); until then the chat holds the detections only, and the story starts with that decision */
+      if (dspMe() && !dspDone(c)) { ev0.kind = 'card'; ev0.id = newId(); ev0.t = ev0.vt = Date.now() - 60000; ev0.st0 = c.stage; c.msgs.push(ev0); c.msgs.push({ kind: 'sys', id: newId(), t: Date.now(), vt: Date.now(), st0: c.stage, en: 'Send the initial attack or a smoke check to call the team', pt: 'Envie o ataque inicial ou um reconhecimento para chamar a equipa' }); c.hold = true; c.dspHold = true; c.holdAt = Date.now(); c.updated = Date.now(); return; }
       card(c, ev0, 300, 0); candRest(c, false); return; }
     fireStart(c); }
+  function dspMe() { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } }
+  function dspDone(c) { try { var D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; return D[c.incId] === 'sent' || D[c.incId] === 'check'; } catch (e) { return false; } }
+  /* the dispatcher's decision releases the held story: the initial attack (or the one engine of a smoke check) is sent from now */
+  function dspGo(id, kind) { var db = load(), c = null; Object.keys(db.chats).forEach(function (k) { var x = db.chats[k]; if (x && String(x.incId) === String(id)) c = x; }); if (!c || !c.dspHold) return false;
+    c.hold = false; c.dspHold = false; c.chk = kind === 'check'; var dz = Date.now() - (c.holdAt || Date.now()); (c.queue || []).forEach(function (q) { q.due += dz; });
+    if (kind === 'dismissed') { c.dismissed = true; c.updated = Date.now(); save(); return true; }
+    candRest(c, true); c.updated = Date.now(); save(); try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} return true; }
   function holdFor(c, ev) { var now = Date.now(), M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
     ev.kind = 'card'; ev.id = newId(); ev.t = ev.vt = now - 60000; ev.st0 = c.stage; c.msgs.push(ev);
     c.msgs.push({ kind: 'card', id: newId(), t: now, vt: now, st0: c.stage, asgOrder: true, ask: 'ff', req: 'order', tag: { en: dcOf(c) + ' · Dispatch order', pt: dcOf(c) + ' · Ordem de despacho' }, tagC: '#0A66CC', title: { en: 'Respond', pt: 'Responder' },
@@ -695,8 +705,8 @@
     {
       initialAttack(c);
       var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
-      card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
-        body: { en: (units.join(', ') || sent.join(' and ')) + ' responding. Drone D-5 over the point.', pt: (units.join(', ') || sent.join(' e ')) + ' em marcha. Drone D-5 sobre o ponto.' } }, 700, 0);
+      card(c, { tag: { en: ECC + ' · Dispatch', pt: ECC + ' · Despacho' }, tagC: '#0A66CC', title: c.chk ? { en: 'Smoke check dispatched', pt: 'Reconhecimento enviado' } : { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
+        body: c.chk ? { en: ((units[0]) || sent[0] || 'One engine') + ' responding to check the smoke.', pt: ((units[0]) || sent[0] || 'Um veículo') + ' a caminho para verificar o fumo.' } : { en: (units.join(', ') || sent.join(' and ')) + ' responding. Drone D-5 over the point.', pt: (units.join(', ') || sent.join(' e ')) + ' em marcha. Drone D-5 sobre o ponto.' } }, 700, 0);
       var fi = firstDue(c), F0 = firstF(c) || {}, v0 = (F0.veh || [])[0] || (us ? 'Engine' : 'VFCI'), eta = c.eta = vary(c, 8, 15, 'eta');
       if (!meFirst(c)) say(c, fi, v0 + ' responding, about ' + eta + ' min out. ' + (E.strong ? 'On the drone feed: a hot spot about 30 m across and a thin column of smoke.' : 'On the drone feed: a warm patch, no smoke yet.'),
         v0 + ' em marcha, a cerca de ' + eta + ' min. ' + (E.strong ? 'Na imagem do drone: um ponto quente com cerca de 30 m e uma coluna de fumo fina.' : 'Na imagem do drone: uma zona quente, ainda sem fumo.'), 4500, 2);
@@ -2151,6 +2161,7 @@
     ensure: function (inc) { return create(inc); },   /* the chat exists (so the orders go to it) without opening it */
     ensure: function (inc) { return create(inc); },   /* (Oct 8, 17:55) the record without opening its chat (the simulated fire) */
     aided: aided, ours: ours, nameOf: nameOf,
+    dspGo: dspGo,
     open: function (inc) { var c = create(inc); try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} return c; },
     openList: function () { try { sessionStorage.setItem('wf-chat-open', ''); } catch (e) {} },
     current: function () { try { return sessionStorage.getItem('wf-chat-open') || ''; } catch (e) { return ''; } },
