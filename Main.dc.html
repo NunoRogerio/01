@@ -21,7 +21,7 @@
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791878728"></script>
+<script src="live.js?v=1791894591"></script>
 <script src="chat.js?v=1791877037"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="mapsearch.js?v=5"></script>
@@ -217,7 +217,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
 
   <div style="position: absolute; left: 0; top: 0; width: {{svw}}px; height: {{vh}}px; z-index: 1">
   <sc-if value="{{showMap}}" hint-placeholder-val="{{ true }}">
-  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" on-stats="{{openStats}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" mode="risk" map-title="{{mapTtl}}" map-sub="{{mapSub}}" clip-left="{{clipL}}" clip-right="{{clipR}}" hide-tips="{{homeTick}}" w="{{mapW}}" h="{{mapH}}" clip-top="{{clipT}}" clip-bleed="{{clipBleed}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" lightning="{{no}}" moisture="{{no}}" wind="{{no}}" zoom="{{zoom}}" focus-x="{{fx}}" focus-y="{{fy}}" link-candidate="{{yes}}" ignitions="{{ign}}" fires="{{fireMarks}}" scope-st="{{mapSt}}" scope-co="{{mapCo}}" tip-safe-top="{{tipSafe}}" pad-bottom="{{padB}}" radius="{{radius}}" attr-bottom="{{attrBottom}}" on-full="{{toggleFull}}" on-region="{{mapPick}}" on-search="{{psFloat}}" on-stats="{{openStats}}" on-refresh="{{refreshData}}" lock-st="{{lockSt}}" is-full="{{full}}" hint-size="390px,844px"></dc-import>
   </sc-if>
   </div>
 
@@ -1996,6 +1996,7 @@ class Component extends DCLogic {
     }));
     return {
       ...(() => { const ntV = this.wfNotes(CANDS, FIRES, scope, listFocus); return { nt: ntV, cb: this.wfChats(ntV.title) }; })(),
+      refreshData: this._refreshData || (this._refreshData = () => (window.__wfRefresh ? window.__wfRefresh() : Promise.resolve())),   /* (Oct 13, 13:26) the map's refresh button */
       gr: (() => { const off = { d: 'none', a: '', who: '', b: '' }; if (!(window.__wfDspScope && window.__wfDspScope())) return off;
         /* (Oct 13, 13:06) the dispatch officer signed in: the ECC's Fire Captain, or the CSREPC's operations officer */
         let k = ''; try { k = localStorage.getItem('wf-custom') || ''; } catch (e) {}

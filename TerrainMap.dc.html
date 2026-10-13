@@ -19,7 +19,7 @@
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791878728"></script>
+<script src="live.js?v=1791894591"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -463,7 +463,16 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </div>
 
-  <span class="wf-note wf-note-t" style="position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
+  <!-- (Oct 13, 13:26) Refresh, bottom left, level with the right-hand controls: the same dark round button; beside it, in normal text,
+       when the data last came in ("Updated 3 min ago"), the map credit under it so neither covers the other. The app also refreshes by itself every 5 minutes -->
+  <div onPointerDown="{{stop}}" data-wf-keepsp="1" style="position: absolute; z-index: 51; left: {{ctrlL}}px; bottom: {{ctrlB}}px; display: {{rf.d}}; align-items: center; gap: 8px; transition: bottom .5s cubic-bezier(.2,.8,.2,1)">
+    <button type="button" class="mbtn" aria-label="{{rf.aria}}" aria-busy="{{rf.busyStr}}" onClick="{{rf.go}}" style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; box-sizing: border-box; color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{rf.rot}}deg); transition: transform 1.2s cubic-bezier(.37,0,.63,1)"><path d="M20 12a8 8 0 1 1-2.34-5.66"></path><path d="M20 4v4.5h-4.5"></path></svg></button>
+    <span style="display: flex; flex-direction: column; gap: 0; min-width: 0; pointer-events: none; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF">
+      <span role="status" style="font-size: 15px; line-height: 20px; color: #000000; white-space: nowrap">{{rf.txt}}</span>
+      <span class="wf-note wf-note-t" style="font-size: 13px; line-height: 18px; white-space: nowrap">{{rf.credit}}</span>
+    </span>
+  </div>
+  <span class="wf-note wf-note-t" style="display: {{rf.creditD}}; position: absolute; left: {{attrL}}px; bottom: {{attrB}}px; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF; pointer-events: none">{{ms.name}} · {{pct}}</span>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["risk","spread"],"default":"risk"},"w":{"editor":"int","default":366},"inset":{"editor":"int","default":0},"h":{"editor":"int","default":380},"lightning":{"editor":"boolean","default":true},"moisture":{"editor":"boolean","default":true},"wind":{"editor":"boolean","default":true},"horizon":{"editor":"int","default":2,"min":1,"max":3},"zoom":{"editor":"float","default":0.7},"focusX":{"editor":"int","default":600},"focusY":{"editor":"int","default":330},"linkCandidate":{"editor":"boolean","default":true},"radius":{"editor":"int","default":20},"station":{"editor":"text","default":"st5"},"stationLabel":{"editor":"text","default":""},"attrBottom":{"editor":"int","default":10},"pinX":{"editor":"int","default":610},"pinY":{"editor":"int","default":290},"pinLabel":{"editor":"text","default":"Estimated ignition point"},"pinCoords":{"editor":"text","default":"34.2204° N · 118.1286° W · ±80 ft"},"cams":{"editor":null},"ignitions":{"editor":null},"fireX":{"editor":"int","default":0},"fireY":{"editor":"int","default":0},"fireId":{"editor":"text","default":""},"scopeSt":{"editor":"text","default":""},"scopeCo":{"editor":"text","default":""},"pinId":{"editor":"text","default":""},"onCycle":{"editor":null},"fires":{"editor":null},"units":{"editor":null},"tipSafeTop":{"editor":"int","default":0},"padBottom":{"editor":"int","default":0},"onFull":{"editor":null},"isFull":{"editor":"boolean","default":false},"controls":{"editor":"enum","options":["side","top"],"default":"side"},"clipTop":{"editor":"int","default":0},"clipBottom":{"editor":"int","default":0},"ctrlTop":{"editor":"int","default":0},"clipLeft":{"editor":"int","default":0},"clipRight":{"editor":"int","default":0},"onBgTap":{"editor":null},"$preview":{"width":366,"height":380}}'>
@@ -624,7 +633,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { setTimeout(() => this.wfLblClear(), 600); this._lblI = setInterval(() => this.wfLblClear(), 1200); this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { this._rfT = setInterval(() => { if (typeof this.props.onRefresh === 'function') this.forceUpdate(); }, 20000); this._rfL = () => this.forceUpdate(); try { window.addEventListener('wf-updated', this._rfL); } catch (e) {} setTimeout(() => this.wfLblClear(), 600); this._lblI = setInterval(() => this.wfLblClear(), 1200); this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
@@ -658,7 +667,7 @@ class Component extends DCLogic {
   componentWillUnmount() { clearInterval(this._hswT); clearInterval(this._lblI); clearTimeout(this._lblT); try { window.removeEventListener('wf-rail', this._wfRail); window.removeEventListener('pageshow', this._wfShow); } catch (e) {}  if (this._popOut) document.removeEventListener('pointerdown', this._popOut, true); if (this._orient) { window.removeEventListener('resize', this._orient); window.removeEventListener('orientationchange', this._orient); } if (this.stopGlide) this.stopGlide();
     if (this._uT) clearInterval(this._uT);
     if (this.el) this.el.removeEventListener('wheel', this.onWheel);
-    if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync);
+    if (this._onPopSync) window.removeEventListener('wf-sync', this._onPopSync); clearInterval(this._rfT); if (this._rfL) window.removeEventListener('wf-updated', this._rfL);
     if (this._onTiles) { window.removeEventListener('wf-maptiles', this._onTiles); window.removeEventListener('storage', this._onTiles); }
   }
   geo() {
@@ -1694,6 +1703,13 @@ class Component extends DCLogic {
         return { recD: 'flex', recDis: moved ? 'false' : 'true', recOp: moved ? 1 : 0.4, recPE: 'auto', ctrlDir: 'column', goHomeFn: this._gh || (this._gh = (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (!this._moved) return; this.goHome(); }) };   /* always takes its own taps (never falls through to the map or a chip under it); does nothing while centred */ })(),
       fsRot: (p.isFull === true || p.isFull === 'true') ? '180deg' : '0deg', fsMaxD: (p.isFull === true || p.isFull === 'true') ? 'none' : 'inline', fsMinD: (p.isFull === true || p.isFull === 'true') ? 'inline' : 'none',
       fsXD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'inline' : 'none', fsCornD: (p.isFull === true || p.isFull === 'true') && String(p.closeX) === 'true' ? 'none' : 'inline',
+      rf: (() => { const on = typeof p.onRefresh === 'function', PT = window.__wfLang === 'pt', busy = !!this._rfBusy, t = window.__wfUpdatedAt || 0, m = t ? Math.floor((Date.now() - t) / 60000) : -1;
+        const txt = busy ? (PT ? 'A atualizar…' : 'Updating…') : m < 0 ? '' : m < 1 ? (PT ? 'Atualizado agora' : 'Updated just now') : (PT ? 'Atualizado há ' + m + ' min' : 'Updated ' + m + ' min ago');
+        const cr = String((window.__wfTiles && window.__wfTiles.credit && window.__wfTiles.credit()) || 'Map © OpenStreetMap').replace(/^Map\s*/, '');   /* the licences' credit, required on the map; "Map" and the zoom left out to keep it short */
+        return { credit: cr, d: on ? 'flex' : 'none', creditD: on ? 'none' : 'inline', txt, busyStr: busy ? 'true' : 'false', rot: this._rfRot || 0, aria: PT ? 'Atualizar os dados' : 'Refresh the data',
+          go: this._rfGo || (this._rfGo = (e) => { if (e && e.stopPropagation) e.stopPropagation(); if (this._rfBusy) return; this._rfBusy = true; this._rfRot = (this._rfRot || 0) + 360; this.forceUpdate();
+            const T0 = Date.now(), done = () => setTimeout(() => { this._rfBusy = false; this.forceUpdate(); }, Math.max(0, 1200 - (Date.now() - T0)));   /* the turn completes before the label changes back */
+            try { Promise.resolve(p.onRefresh()).then(done, done); } catch (x) { done(); } }) }; })(),
       fullLabel: (p.isFull === true || p.isFull === 'true') ? (String(p.closeX) === 'true' ? 'Close map' : 'Exit full screen') : 'Full screen',
       fullIcon: (p.isFull === true || p.isFull === 'true') ? 'M4 14h6v6M20 10h-6V4M10 14l-7 7M14 10l7-7' : 'M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7',
       // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).

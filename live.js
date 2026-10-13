@@ -501,54 +501,66 @@ window.__wfRegionUp = function (st, co) {
 
   var c=readCache(),now=Date.now();
   if(c.rows){if(window.__wfFireName)c.rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3],r[10],r[2]);});window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
-  var fresh=function(k){return c[k]&&now-c[k]<TTL;};
-  var tick=Math.floor(now/60000);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
+  /* (Oct 13, 13:26) the data loads again on demand (the map's refresh button) and by itself every 5 minutes; __wfUpdatedAt is
+     when it last came in (the cached sources' own time on open), for "Updated N min ago" */
+  window.__wfUpdatedAt=Math.max(c.tSat||0,c.tUS||0,c.tPT||0,c.tBR||0,c.tCF||0,c.tCAN||0)||0;
+  var fresh,tick,netBusy=null;
+  function net(force){
+    if(netBusy)return netBusy;
+    c=readCache();now=Date.now();fresh=function(k){return !force&&c[k]&&now-c[k]<TTL;};tick=force?now:Math.floor(now/60000);var P=[];
 
-  // Satellite hotspots + regions (same site, written by the FIRMS GitHub Action). Missing files: keep sample candidates.
-  // Satellite candidates: the saved copy (IndexedDB) first, then the network when it is stale or missing.
-  window.__wfSatDone=false;
-  var satNet=function(){return Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
-               fetch('data/hotspots.json?t='+tick).then(jsonOk).catch(function(){return null;})]).then(function(r){
-    if(r[0]){var g=buildGeo(r[0]);if(g.length)window.__wfGeoStates=g;}
-    if(r[1]&&r[0]){window.__wfLiveCandsAll=buildCands(r[1]);dsApply(false);}
-    if(r[0]&&r[1])save('tSat');
-  }).then(function(){window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}});};
-  idbGet(KEY).then(function(v){
-    var have=v&&v.cands&&v.t===c.tSat;
-    if(have&&!window.__wfLiveCandsAll){window.__wfLiveCandsAll=v.cands.map(function(r){if(/^Near /.test(r[3]))r[3]=r[3].slice(5);return r;});dsApply(false);   // copies saved before places dropped 'Near'
-    if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
-      window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
-    if(!have||!fresh('tSat'))satNet();
-  });
+    // Satellite hotspots + regions (same site, written by the FIRMS GitHub Action). Missing files: keep sample candidates.
+    // Satellite candidates: the saved copy (IndexedDB) first, then the network when it is stale or missing.
+    if(!force)window.__wfSatDone=false;
+    var satNet=function(){return Promise.all([fetch('data/regions.json?t='+Math.floor(tick/1440)).then(jsonOk).catch(function(){return null;}),
+                 fetch('data/hotspots.json?t='+tick).then(jsonOk).catch(function(){return null;})]).then(function(r){
+      if(r[0]){var g=buildGeo(r[0]);if(g.length)window.__wfGeoStates=g;}
+      if(r[1]&&r[0]){window.__wfLiveCandsAll=buildCands(r[1]);dsApply(false);}
+      if(r[0]&&r[1])save('tSat');
+    }).then(function(){window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}});};
+    P.push(idbGet(KEY).then(function(v){
+      var have=v&&v.cands&&v.t===c.tSat;
+      if(have&&!window.__wfLiveCandsAll){window.__wfLiveCandsAll=v.cands.map(function(r){if(/^Near /.test(r[3]))r[3]=r[3].slice(5);return r;});dsApply(false);   // copies saved before places dropped 'Near'
+      if(v.boxes)window.__wfGeoBoxes=v.boxes;window.__wfWorld=null;window.__wfGeo=null;
+        window.__wfSatDone=true;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}
+      if(!have||!fresh('tSat'))return satNet();
+    }));
 
-  // US: NIFC. Failure keeps the previous US fires.
-  if(!fresh('tUS')){
-    var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,POOCity,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
-    // ask for the personnel count too; if the service doesn't know that field, ask again without it
-    var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel,FireBehaviorGeneral,FireCause,ContainmentDateTime,ControlDateTime,FireOutDateTime,ModifiedOnDateTime_dt');
-    fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart('US',rows);})
-      .catch(function(e){console.warn('[live fires] US feed failed',e);});
+    // US: NIFC. Failure keeps the previous US fires.
+    if(!fresh('tUS')){
+      var q='where='+encodeURIComponent("IncidentTypeCategory='WF'")+'&outFields=IncidentName,POOState,POOCounty,POOCity,IncidentSize,PercentContained,FireDiscoveryDateTime,UniqueFireIdentifier&returnGeometry=true&outSR=4326&resultRecordCount=2000&f=geojson';
+      // ask for the personnel count too; if the service doesn't know that field, ask again without it
+      var q2=q.replace('UniqueFireIdentifier','UniqueFireIdentifier,TotalIncidentPersonnel,FireBehaviorGeneral,FireCause,ContainmentDateTime,ControlDateTime,FireOutDateTime,ModifiedOnDateTime_dt');
+      P.push(fetch(US_URL+'?'+q2).then(jsonOk).then(function(js){return js&&js.error?fetch(US_URL+'?'+q).then(jsonOk):js;}).then(buildUS).then(function(rows){publishPart('US',rows);})
+        .catch(function(e){console.warn('[live fires] US feed failed',e);}));
+    }
+    // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
+    // Failure keeps the previous Portugal fires.
+    if(!fresh('tPT')){
+      P.push(fetch('data/pt-fires.json?t='+tick).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
+        .catch(function(){return fetch(PT_URL).then(jsonOk);})
+        .then(buildPT).then(function(rows){publishPart('PT',rows);})
+        .catch(function(e){console.warn('[live fires] Portugal feed failed',e);}));
+    }
+    idbGet(KEY+'|br').then(function(g){if(g&&!window.__wfBRGeo){window.__wfBRGeo=g;}});
+    if(!fresh('tBR')&&(!ONLY||ONLY.BRA||ONLY.AMZ)){
+      P.push(fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
+        .catch(function(e){console.warn('[live fires] Brazil feed failed',e);}));
+    }
+    if(!fresh('tCF')&&(!ONLY||ONLY.CA)){
+      P.push(fetch('data/calfire.json?t='+tick).then(jsonOk).then(buildCF).then(function(rows){publishPart('CF',rows);})
+        .catch(function(e){console.warn('[live fires] CAL FIRE feed failed',e);}));
+    }
+    if(!fresh('tCAN')&&(!ONLY||ONLY.CAN||ONLY.BC)){
+      P.push(fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})
+        .catch(function(e){console.warn('[live fires] British Columbia feed failed',e);}));
+    }
+    if(!P.length){if(!window.__wfUpdatedAt)window.__wfUpdatedAt=Date.now();return Promise.resolve();}
+    netBusy=Promise.all(P.map(function(x){return Promise.resolve(x).catch(function(){});})).then(function(){netBusy=null;window.__wfUpdatedAt=Date.now();try{window.dispatchEvent(new Event('wf-sync'));window.dispatchEvent(new Event('wf-updated'));}catch(e){}});
+    return netBusy;
   }
-  // Portugal: the site's own snapshot (refreshed by a GitHub Action every ~10 min), falling back to the live feed.
-  // Failure keeps the previous Portugal fires.
-  if(!fresh('tPT')){
-    fetch('data/pt-fires.json?t='+tick).then(jsonOk).then(function(js){if(!js||!(js.data||[]).length)throw new Error('empty');return js;})
-      .catch(function(){return fetch(PT_URL).then(jsonOk);})
-      .then(buildPT).then(function(rows){publishPart('PT',rows);})
-      .catch(function(e){console.warn('[live fires] Portugal feed failed',e);});
-  }
-  idbGet(KEY+'|br').then(function(g){if(g&&!window.__wfBRGeo){window.__wfBRGeo=g;}});
-  if(!fresh('tBR')&&(!ONLY||ONLY.BRA||ONLY.AMZ)){
-    fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
-      .catch(function(e){console.warn('[live fires] Brazil feed failed',e);});
-  }
-  if(!fresh('tCF')&&(!ONLY||ONLY.CA)){
-    fetch('data/calfire.json?t='+tick).then(jsonOk).then(buildCF).then(function(rows){publishPart('CF',rows);})
-      .catch(function(e){console.warn('[live fires] CAL FIRE feed failed',e);});
-  }
-  if(!fresh('tCAN')&&(!ONLY||ONLY.CAN||ONLY.BC)){
-    fetch('data/bc-fires.json?t='+tick).then(jsonOk).then(buildBC).then(function(rows){publishPart('CAN',rows);})
-      .catch(function(e){console.warn('[live fires] British Columbia feed failed',e);});
-  }
+  net(false);
+  window.__wfRefresh=function(){return net(true);};
+  setInterval(function(){if(document.visibilityState!=='hidden'&&Date.now()-(window.__wfUpdatedAt||0)>=TTL-5000)net(true);},30000);
 })();
