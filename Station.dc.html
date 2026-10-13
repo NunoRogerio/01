@@ -748,7 +748,7 @@ class Component extends DCLogic {
     const rMore = resolvedTab && closedNew.length + doneNew.length > rLim;
     const nTodo = rows.length, nDone = closedRows.length;
     const fyiAll = lead ? (this._fyi || []) : [];
-    return { fyiOn: fyiAll.length > 0, fyiT: L('Ongoing incidents', 'Incidentes em curso'), fyiSub: '',
+    return { fyiOn: false,   /* (Oct 13, 04:50) the Ongoing incidents group is gone from the crew's home (the map shows them) */ fyiT: L('Ongoing incidents', 'Incidentes em curso'), fyiSub: '',
       fyiRows: fyiAll.map((x) => { const isC = x.mkStroke === '#3A3A3C', G = isC && window.__wfIgn ? window.__wfIgn(x._conf || 0, x._nt) : null, FL = (C && C.ICON && C.ICON.flame) || '';
         const ic = G ? { icBg: G.fill, icSh: 'inset 0 0 0 1px rgba(58, 58, 60, 0.25)', icD: G.dash, icFg: '#3A3A3C', icSw: '2', dotD: 'inline' } : x.tagIc && x.tagIcD !== 'none' ? { icBg: x.tagBg, icSh: 'none', icD: x.tagIc, icFg: x.tagFg, icSw: '2', dotD: 'none' } : { icBg: x.mkFill || '#E8590C', icSh: 'none', icD: FL, icFg: '#FFFFFF', icSw: '2', dotD: 'none' };
         tidy(x); return Object.assign({}, x, ic, { slotH: x._mis ? '184px' : '0', cardSh: x._mis ? '0 1px 3px rgba(0, 0, 0, 0.09), 0 6px 16px rgba(0, 0, 0, 0.09)' : 'none', slotP: x._mis ? '8px' : '0', slotBg: x._mis ? 'rgba(118, 118, 128, 0.12)' : 'transparent', slotSh: x._mis ? 'inset 0 1px 4px rgba(0, 0, 0, 0.11), inset 0 0 0 0.5px rgba(0, 0, 0, 0.05)' : 'none', s1: window.__wfSegs(x.sub), s2: window.__wfSegs(x.sub2), tagR: x.tagR || '' }); }),

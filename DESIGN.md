@@ -1889,3 +1889,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 12, 21:20 (every map): a marker with its tooltip open gets a white 4px padding around its own shape (circle, pill, house) and the tooltip panel's drop shadow (0 0 24px at 16%), one shared SVG filter (#wfSelRing); the old dark selection outline is gone.
 - Oct 12, 21:20: map tooltip panels hug their contents (at least 160px, at most the old width): the status button sits 4px from the panel's edges, its label 8px inside it; the structures-at-risk tag above takes the panel's measured width.
 - Oct 13, 04:50: map tooltip panels: the status button sits 8px from the panel's edges all around (was 4px).
+- Oct 13, 04:50: the crew's home no longer lists Ongoing incidents (the cards under the crew); the map still shows them.
