@@ -1892,3 +1892,13 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 13, 04:50: the crew's home no longer lists Ongoing incidents (the cards under the crew); the map still shows them.
 
 - Oct 13: Active duty slot hugs its card — 8px padding top, bottom and sides; no fixed slot height when filled.
+
+## Oct 13, 07:12: the app is for whoever verifies ignitions
+- The protagonist is the dispatch center: CAL FIRE's Emergency Command Center (Fire Captain, ECC) and Portugal's CSREPC operations room (Oficial de operações). Their profiles are first on the login list ("Dispatch"); they open on the region's map of candidates.
+- The thesis: civil passive cameras (car cameras, 360 cameras on hikers and riders, phones) widen coverage and verify an ignition faster and more surely than the fixed network alone.
+- A candidate's page leads with the verification, under its map: a white card with the verdict ("5 sources confirm smoke" or "4 sources saw no smoke"), the first smoke (a car camera can hold it from before the satellite pass), verified in 5 to 12 min and, without civil cameras, about how long, and how many sources are civil cameras.
+- Dispatch profiles decide there: Dismiss (secondary) and Send initial attack (primary), stacked full width when they don't fit; once chosen, only the choice, full width, past tense, with a check.
+- Evidences follow straight away, one card per source in the order they saw the point: its title with what it adds to the likelihood on the right ("+19%"), then when it saw it relative to the satellite pass.
+- The candidate's map frames every camera that looked (Car, 360, Phone, Tower pills) with its line of sight to the point; crossing lines pinpoint the ignition.
+- Candidate tags read "N% likelihood" ("N% de probabilidade") everywhere.
+- Civil sources are simulated and say so; the satellite detection is real.

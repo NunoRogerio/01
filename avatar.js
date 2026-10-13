@@ -87,7 +87,8 @@
     'Brian Hayes': ['m', S.f1, H.lbr, 'short', 'stubble'], 'Amy Torres': ['f', S.m2, H.dbr, 'long'], 'Carlos Reyes': ['m', S.m3, H.blk, 'short', 'full'], 'Kate Sullivan': ['f', S.f1, H.red, 'bun'],
     // Demo profiles
     'James Whitmore': ['m', S.f1, H.br, 'short', '', '#2B2B2B'], 'Rita Cardoso': ['f', S.f3, H.dbr, 'bun'],
-    'Marcus Reyes': ['m', S.m2, H.blk, 'short', 'stubble'], 'Dana Whitfield': ['f', S.f1, H.lbr, 'bun'], 'Rafael Nogueira': ['m', S.m2, H.blk, 'short', 'full']
+    'Marcus Reyes': ['m', S.m2, H.blk, 'short', 'stubble'], 'Dana Whitfield': ['f', S.f1, H.lbr, 'bun'], 'Rafael Nogueira': ['m', S.m2, H.blk, 'short', 'full'],
+    'Elena Vasquez': ['f', S.m2, H.dbr, 'bun'], 'Cláudia Ribeiro': ['f', S.f3, H.dbr, 'long']
   };
   // One colour per station, shared by every screen: the station's header tint and its people's portrait outline.
   // (Blue stays for air support; the fire owner keeps the hi-vis yellow.)

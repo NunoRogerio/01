@@ -15,8 +15,8 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
-<script src="avatar.js?v=1791564027"></script>
-<script src="prefs.js?v=1791835545"></script>
+<script src="avatar.js?v=1791872737"></script>
+<script src="prefs.js?v=1791872737"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="live.js?v=1791754661"></script>
@@ -221,7 +221,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
   <!-- (Oct 11, 16:55) a candidate full screen: its pin map, as the candidate page had it -->
   <sc-if value="{{bandCandOn}}" hint-placeholder-val="{{ false }}">
-  <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cpin.h}}" mode="pin" pin-close="16" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{cpin.none}}" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attrBottom}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cpin.h}}" mode="pin" pin-close="{{vpc}}" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{vcams}}" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attrBottom}}" hint-size="390px,844px"></dc-import>
   </sc-if>
   </div>
   <!-- Full-screen map: the same stage tag and stack as on the page, laid over the map header's band (its own tag hidden there); tap to unfold, tap outside to fold -->
@@ -478,7 +478,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-if>
       <!-- (Oct 11, 16:55) a candidate: the candidate's pin map, as its page had it (the projection grows from the marker) -->
       <sc-if value="{{bandCandOn}}" hint-placeholder-val="{{ false }}">
-      <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-full="{{toggleFull}}" pin-grow="{{cpin.h}}" mode="pin" pin-close="16" start-zoom="3" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{MAPH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-lift="{{cpin.lift}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" cams="{{cpin.none}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{bandAttrB}}" hint-size="390px,310px"></dc-import>
+      <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-full="{{toggleFull}}" pin-grow="{{cpin.h}}" mode="pin" pin-close="{{vpc}}" start-zoom="{{vsz}}" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{MAPH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-lift="{{cpin.lift}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" cams="{{vcams}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{bandAttrB}}" hint-size="390px,310px"></dc-import>
       </sc-if>
       <!-- (Oct 4) The projection, laid over the map's foot: dark map-control style, 16px from the map's edges -->
       <div role="tablist" aria-label="Projection" class="wf-seg" onClick="{{fp.stop}}" onPointerDown="{{fp.stop}}" onPointerMove="{{fp.stop}}" onPointerUp="{{fp.stop}}" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{fp.d}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
@@ -488,6 +488,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-for>
       </div></div>
     <div style="display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: #F2F2F7">
+    <!-- (Oct 13, 07:12) the verification, first under a candidate's map: what the sources say, how fast civil cameras made it
+         (with and without them), and for the dispatch profiles the decision itself. The sources, one card each, follow in Evidences. -->
+    <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; order: -2; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
+      <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 16px; background: #FFFFFF">
+        <span style="font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{vf.title}}</span>
+        <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{ln.t}}</span></sc-for>
+      </div>
+      <div style="display: {{vf.decD}}; flex-wrap: wrap; gap: 16px; margin-top: 24px">
+        <button type="button" class="btn wf-sec" onClick="{{vf.dismiss}}" style="flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 24px; font-size: 17px; font-weight: 600">{{vf.dismissLbl}}</button>
+        <button type="button" class="btn primary" onClick="{{vf.send}}" style="flex: 1 1 0; min-width: max-content; height: 48px; padding: 0 24px; font-size: 17px; font-weight: 600">{{vf.sendLbl}}</button>
+      </div>
+      <div class="btn primary" role="status" style="display: {{vf.doneD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; margin-top: 24px; font-size: 17px; font-weight: 600; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{vf.doneTxt}}</div>
+    </section>
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
     <div role="group" data-sb-kpi="1" aria-label="{{cc.aria}}" style="display: {{cc.d}}; flex-direction: column; align-items: center; flex-shrink: 0; padding: 4px 16px 0; text-align: center">
@@ -740,13 +753,13 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-for>
     </ul>
     <!-- (Oct 11, 16:58) a candidate has one more section than a fire: its Evidences (as its page had them) -->
-      <section aria-label="Evidences" style="display: {{evD}}; margin-top: 56px; flex-direction: column; flex-shrink: 0">
+      <section aria-label="Evidences" style="display: {{evD}}; order: -1; margin: 0 0 56px; flex-direction: column; flex-shrink: 0">   <!-- (Oct 13) right under the verification: the sources the decision rests on -->
         <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">Evidences</h3><span class="wf-note">{{evCount}}</span></span>
         <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; cursor: {{ev.cur}}">
-              <li style="padding: 12px {{ev.padR}} 12px 16px; min-height: {{ev.minH}}; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{ev.title}}</li>
+              <li style="display: flex; justify-content: space-between; gap: 8px; padding: 12px {{ev.padR}} 12px 16px; min-height: {{ev.minH}}; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><span>{{ev.title}}</span><span style="flex-shrink: 0; font-weight: 400; color: #3C3C43">{{ev.pctTxt}}</span></li>
               <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2">
                 <li style="padding: 16px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
               </sc-for>
@@ -1362,7 +1375,7 @@ class Component extends DCLogic {
      is real (NASA GIBS image of that day, the detection's facts); the drone scan, cameras and 911 call are simulated and say so. */
   wfEv(o) { const t = Date.now(); if (this._evT && t - this._evT < 400) return; this._evT = t; const F = window.__wfCamFeed; if (F && F.open) F.open(Object.assign({ title: o.label }, o)); }
   wfEvid(frow) {
-    const c = frow && frow.cand; if (!c) return { evD: 'none', evid: [], evCount: '' };
+    const c = frow && frow.cand; if (!c) return { evD: 'none', evid: [], evCount: '', vf: { d: 'none', title: '', lines: [], decD: 'none', doneD: 'none' }, vcams: [], vpc: '16', vsz: '3' };
     const L = c.live || {}, tMs = L.t ? Date.parse(L.t) : null, d = tMs ? new Date(tMs) : null;
     const time = d ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) : '', day = d ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
     const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
@@ -1383,22 +1396,70 @@ class Component extends DCLogic {
         open: (e) => this.wfEv({ image: { src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, ring: true, alt: 'Satellite image of the area' }, label: 'Satellite image', who: 'True colour, ' + dt + '. NASA GIBS.', anchor: e && e.currentTarget }) }) : TH),
       title: isLive ? 'Satellite: ' + verdict.toLowerCase() : verdict, rows: reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
     const out = [sat];
+    /* (Oct 13, 07:12) the verification bench: every source carries its kind, whether it is a civil passive camera (cars, 360
+       cameras, phones), when it saw the point (minutes from the satellite pass), where it stood (km, bearing) and what it adds to
+       the likelihood. Civil cameras record all the time, so a car can hold smoke from before the satellite pass; with them the
+       candidate is verified in 5 to 12 min, without them only once the forest camera and the drone have looked. Simulated. */
+    const PT = window.__wfLang === 'pt', Lx = (en, pt) => (PT ? pt : en);
+    const V = 5 + h % 8, sx = { sat: 0 };
+    sat.kind = 'sat'; sat.civil = false; sat.at = 0;
     if (isLive) {
       const vid = droneStrong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1', lab = 'Live. Drone D-5';
-      out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Simulation.', anchor: e && e.currentTarget }) }), title: 'Drone scan',
-        rows: [row('Sent automatically from the nearest station'), droneStrong ? row('Smoke and a hot spot on the thermal feed') : row('A warm patch on the thermal feed. No smoke', false)], noteD: 'block', note: sim });
-      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = 'Anonymized. Only from owners who turned it on. Simulation.';
-      if ((h >>> 5) % 3 < 2) { const cam = UX('photo-1602980085421-578025fd903d');
-        out.push({ ...th({ thImg: true, src: cam, thAria: 'Forest camera image. Open', open: (e) => this.wfEv({ image: { src: cam, alt: 'Forest camera image' }, label: 'Forest camera', who: 'Lookout camera. Simulation.', anchor: e && e.currentTarget }) }), title: 'Forest camera',
-          rows: [row('Lookout camera ' + (4 + h % 9) + ' km away, turned to the point'), droneStrong ? row('Smoke rising above the trees') : row('No smoke seen', false)], noteD: 'block', note: sim }); }
-      if (droneStrong && (h >>> 7) % 5 < 3) { const n = 3 + h % 12, k = Math.max(2, Math.ceil(n * 0.6)), P = ['photo-1507680465142-ef2223e23308', 'photo-1632301104173-faab428f1a95', 'photo-1602980068989-cb21869ab2c7', 'photo-1602980085374-7e743fff3cc6', 'photo-1602980069131-51eca8b9557d', 'photo-1602980045636-77b52b335ff0'];
-        out.push({ ...TH, title: 'Car cameras', rows: [row(n + ' pictures from ' + k + ' cars passing nearby'), row('A smoke plume seen from the road')], slides: JSON.stringify(P.slice(h % 2, h % 2 + Math.min(5, n)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
-      if (droneStrong && (h >>> 9) % 5 < 3) { const n = 2 + h % 9, v = (h >>> 2) % 3, P = ['photo-1634224548788-58de1fb48e2b', 'photo-1503653525408-82f00ad1a5d4', 'photo-1572635148958-4cc9a48e5fcd', 'photo-1602980045360-d94be60e4775', 'photo-1603661885651-c909f20987a5'];
-        out.push({ ...TH, title: 'Phone cameras', rows: [row(n + ' photos' + (v ? ' and ' + v + (v === 1 ? ' video' : ' videos') : '') + ' with smoke, taken nearby')], slides: JSON.stringify(P.slice(0, Math.min(5, n + v)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
-      if ((h >>> 3) % 5 < 2) out.push({ ...TH, title: '911 call', rows: [row('Caller reports smoke near ' + (c.place || 'the area') + ' at ' + at(9 + h % 23))], noteD: 'block', note: sim });
+      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = Lx('Anonymized. Only from owners who turned it on. Simulation.', 'Anonimizado. Só de donos que o ativaram. Simulação.');
+      const PC = ['photo-1507680465142-ef2223e23308', 'photo-1632301104173-faab428f1a95', 'photo-1602980068989-cb21869ab2c7', 'photo-1602980085374-7e743fff3cc6', 'photo-1602980069131-51eca8b9557d', 'photo-1602980045636-77b52b335ff0'], c0 = h % 2;
+      const brg = (k) => (h >>> k) % 360, km = (k, a, b) => +(a + ((h >>> k) % 100) / 100 * (b - a)).toFixed(1);
+      /* car cameras: always asked (the network's backbone on the roads); smoke from before the satellite pass when there is a fire */
+      { const n = 3 + h % 12, k = Math.max(2, Math.ceil(n * 0.6)), at = droneStrong ? -(3 + (h >>> 4) % 6) : 1 + (h >>> 4) % V;
+        out.push({ ...TH, kind: 'car', civil: true, at, km: km(3, 1.2, 3.8), brg: brg(5), title: Lx('Car cameras', 'Câmaras de carro'),
+          rows: droneStrong ? [row(Lx(n + ' pictures from ' + k + ' cars passing nearby', n + ' imagens de ' + k + ' carros a passar perto')), row(Lx('A smoke plume seen from the road', 'Coluna de fumo vista da estrada'))] : [row(Lx(k + ' cars passed within 3 km', k + ' carros passaram a menos de 3 km')), row(Lx('No smoke seen', 'Sem fumo visível'), false)],
+          slides: JSON.stringify(PC.slice(c0, c0 + Math.min(5, n)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
+      /* 360 cameras (action cameras on hikers, cyclists and trail riders): one of the two personal sources is always there */
+      const has360 = (h >>> 11) % 3 < 2, hasPh = !has360 || (h >>> 9) % 5 < 3;
+      if (has360) { const n = 1 + (h >>> 13) % 3, at = droneStrong ? 2 + (h >>> 8) % Math.max(1, V - 2) : 2 + (h >>> 8) % V, img = UX(PC[c0 ? 0 : 5]);
+        out.push({ ...th({ thImg: true, src: img, thAria: Lx('360 camera image. Open', 'Imagem de câmara 360. Abrir'), open: (e) => this.wfEv({ image: { src: img, alt: '360 camera image' }, label: Lx('360 camera', 'Câmara 360'), who: anon, anchor: e && e.currentTarget }) }),
+          kind: 'c360', civil: true, at, km: km(7, 0.8, 2.6), brg: (brg(5) + 110 + (h >>> 14) % 60) % 360, title: Lx('360 cameras', 'Câmaras 360'),
+          rows: [row(Lx(n === 1 ? 'A hiker\'s 360 camera on a trail nearby' : n + ' 360 cameras on trails nearby', n === 1 ? 'Câmara 360 de um caminhante num trilho próximo' : n + ' câmaras 360 em trilhos próximos')), droneStrong ? row(Lx('Smoke and flames through the trees', 'Fumo e chamas entre as árvores')) : row(Lx('No smoke seen', 'Sem fumo visível'), false)], noteD: 'block', note: anon }); }
+      if (hasPh && droneStrong) { const n = 2 + h % 9, v = (h >>> 2) % 3, P = ['photo-1634224548788-58de1fb48e2b', 'photo-1503653525408-82f00ad1a5d4', 'photo-1572635148958-4cc9a48e5fcd', 'photo-1602980045360-d94be60e4775', 'photo-1603661885651-c909f20987a5'];
+        out.push({ ...TH, kind: 'phone', civil: true, at: 1 + (h >>> 6) % Math.max(1, V - 1), km: km(9, 1.0, 3.2), brg: (brg(5) + 220 + (h >>> 15) % 70) % 360, title: Lx('Phone cameras', 'Câmaras de telemóvel'),
+          rows: [row(Lx(n + ' photos' + (v ? ' and ' + v + (v === 1 ? ' video' : ' videos') : '') + ' with smoke, taken nearby', n + ' fotografias' + (v ? ' e ' + v + (v === 1 ? ' vídeo' : ' vídeos') : '') + ' com fumo, tiradas perto'))], slides: JSON.stringify(P.slice(0, Math.min(5, n + v)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
+      /* the existing network: the forest camera turns to the point once alerted, the drone flies from the nearest station */
+      if ((h >>> 5) % 3 < 2) { const cam = UX('photo-1602980085421-578025fd903d'), kk = 4 + h % 9;
+        out.push({ ...th({ thImg: true, src: cam, thAria: Lx('Forest camera image. Open', 'Imagem da câmara florestal. Abrir'), open: (e) => this.wfEv({ image: { src: cam, alt: 'Forest camera image' }, label: Lx('Forest camera', 'Câmara florestal'), who: 'Lookout camera. Simulation.', anchor: e && e.currentTarget }) }),
+          kind: 'tower', civil: false, at: V + 4 + (h >>> 10) % 6, km: kk, brg: (brg(5) + 160) % 360, title: Lx('Forest camera', 'Câmara florestal'),
+          rows: [row(Lx('Lookout camera ' + kk + ' km away, turned to the point', 'Câmara de vigia a ' + kk + ' km, virada para o ponto')), droneStrong ? row(Lx('Smoke rising above the trees', 'Fumo a subir acima das árvores')) : row(Lx('No smoke seen', 'Sem fumo visível'), false)], noteD: 'block', note: sim }); }
+      out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Simulation.', anchor: e && e.currentTarget }) }), kind: 'drone', civil: false, at: V + 6 + (h >>> 12) % 6, title: Lx('Drone scan', 'Varrimento por drone'),
+        rows: [row(Lx('Sent automatically from the nearest station', 'Enviado automaticamente do quartel mais próximo')), droneStrong ? row(Lx('Smoke and a hot spot on the thermal feed', 'Fumo e um ponto quente na imagem térmica')) : row(Lx('A warm patch on the thermal feed. No smoke', 'Uma zona morna na imagem térmica. Sem fumo'), false)], noteD: 'block', note: sim });
+      if ((h >>> 3) % 5 < 2) out.push({ ...TH, kind: 'call', civil: true, at: 9 + h % 23, title: Lx('911 call', 'Chamada 112'), rows: [row(Lx('Caller reports smoke near ' + (c.place || 'the area') + ' at ' + at(9 + h % 23), 'Chamada a reportar fumo perto de ' + (c.place || 'a zona') + ' às ' + at(9 + h % 23)))], noteD: 'block', note: sim });
     }
+    /* in the order they saw the point; what each adds to the likelihood (it adds up to the candidate's %) */
+    out.sort((p, q) => (p.at || 0) - (q.at || 0));
+    const W = { sat: 4, car: 3, c360: 2, phone: 2, tower: 2, drone: 3, call: 1 }, conf = Number(c.conf) || 0, tot = out.reduce((a, x) => a + (W[x.kind] || 1), 0);
+    let acc = 0; out.forEach((x, i) => { x.pct = i === out.length - 1 ? conf - acc : Math.round(conf * (W[x.kind] || 1) / tot); acc += x.pct; });
+    const hm = (m) => at(m), rel = (m) => m < 0 ? Lx(-m + ' min before the satellite', -m + ' min antes do satélite') : m === 0 ? Lx('satellite pass', 'passagem do satélite') : Lx(m + ' min after the satellite', m + ' min depois do satélite');
+    out.forEach((x) => { x.pctTxt = droneStrong && isLive && x.pct > 0 ? '+' + x.pct + '%' : ''; });
+    out.forEach((x) => { if (x.at == null || x.kind === 'sat') return; x.rows = [row(droneStrong || x.kind === 'sat' ? Lx('Seen at ', 'Visto às ') + hm(x.at) + '. ' + rel(x.at) + '.' : Lx('Looked at ', 'Observado às ') + hm(x.at) + '. ' + rel(x.at) + '.')].concat(x.rows); });
     out.forEach((x) => { x.hasSl = !!x.slides; });
-    return { evD: 'flex', evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources',
+
+    /* the verdict for whoever verifies: how many sources, the first smoke, how fast with and without the civil cameras */
+    const civ = out.filter((x) => x.civil), net = out.filter((x) => !x.civil && x.at != null), W0 = net.length ? Math.max(...net.map((x) => x.at)) : null;
+    const KN = { car: Lx('car camera', 'câmara de carro'), c360: Lx('360 camera', 'câmara 360'), phone: Lx('phone camera', 'câmara de telemóvel'), call: Lx('call', 'chamada') };
+    const first = out[0], lines = [];
+    if (isLive && droneStrong && first && first.at < 0) lines.push(Lx('First smoke from a ' + KN[first.kind] + ', ' + (-first.at) + ' min before the satellite.', 'Primeiro fumo numa ' + KN[first.kind] + ', ' + (-first.at) + ' min antes do satélite.'));
+    if (isLive) lines.push(Lx((droneStrong ? 'Verified' : 'Checked') + ' in ' + V + ' min.' + (W0 != null && W0 > V ? ' Without civil cameras, about ' + W0 + ' min.' : ''), (droneStrong ? 'Verificado' : 'Observado') + ' em ' + V + ' min.' + (W0 != null && W0 > V ? ' Sem câmaras civis, cerca de ' + W0 + ' min.' : '')));
+    if (civ.length) lines.push(Lx(civ.length + ' of ' + out.length + ' sources are civil cameras.', civ.length + ' de ' + out.length + ' fontes são câmaras civis.'));
+    const vfTitle = !isLive ? verdict : droneStrong ? Lx(out.length + ' sources confirm smoke', out.length + ' fontes confirmam fumo') : Lx(out.length - 1 + ' sources saw no smoke', out.length - 1 + ' fontes não viram fumo');
+    /* where each camera stood: a marker and its line of sight on the candidate's map (crossing lines pinpoint the ignition) */
+    const IC = { car: 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5', c360: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', phone: 'M8 3h8v18H8ZM11 18h2', tower: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' };
+    const SH = { car: Lx('Car', 'Carro'), c360: '360', phone: Lx('Phone', 'Telemóvel'), tower: Lx('Tower', 'Torre') };
+    const cams = isLive ? out.filter((x) => x.km && IC[x.kind]).map((x) => { const r = x.brg * Math.PI / 180; return { x: +(c.x + x.km * Math.sin(r) * 27).toFixed(1), y: +(c.y - x.km * Math.cos(r) * 25.5).toFixed(1), label: SH[x.kind], icon: IC[x.kind], los: droneStrong, tt: x.title, td: x.km + ' km. ' + (x.rows[0] || {}).t }; }) : [];
+    /* the decision, for the dispatch profiles only: Dismiss or Send initial attack; once chosen, the choice alone, full width, in the past tense */
+    const DSP = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
+    let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}
+    const done = VD[c.id], decide = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate(); };
+    const vf = { d: 'flex', title: vfTitle, lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'grid' : 'none', doneD: DSP && done ? 'flex' : 'none',
+      doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : Lx('Dismissed', 'Descartado'),
+      dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Send initial attack', 'Enviar ataque inicial'), dismiss: decide('dismissed'), send: decide('sent'), ttl: Lx('Verification', 'Verificação') };
+    return { evD: 'flex', evid: out, evCount: out.length === 1 ? '1 source' : out.length + ' sources', vf, vcams: cams, vpc: cams.length ? '0' : '16', vsz: cams.length ? '1' : '3',
       setVid: this.setVid || (this.setVid = (el) => { if (!el) return; el.muted = true; el.defaultMuted = true; el.loop = true; el.playsInline = true; try { const p = el.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }) };
   }
   renderVals() {

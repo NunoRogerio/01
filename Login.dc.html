@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
-<script src="avatar.js?v=1791564027"></script>
+<script src="avatar.js?v=1791872737"></script>
 <script src="i18n.js?v=1791736227"></script>
 <script src="menu.js?v=1791782987"></script>
 
@@ -474,6 +474,12 @@ class Component extends DCLogic {
     // no base firefighter. (Oct 6) profiles by role, top of the hierarchy first: administrator, team coordinator, firefighter (they replace the
     // regional commanders). What each role can do is still to be explored; for now every profile has all features.
     const P = [
+      /* (Oct 13, 07:12) the app's protagonist, first: whoever verifies an ignition at the dispatch center and sends the initial attack
+         (CAL FIRE's Emergency Command Center; in Portugal the CSREPC's operations room) */
+      ['ecc', 'EV', 'elena.vasquez', 'Elena Vasquez', 'Fire Captain, ECC', 'CAL FIRE. Emergency Command Center', 'California',
+        "Runs the watch at the Emergency Command Center. Verifies smoke reports and camera alerts, sends the initial attack set by the response plan, and dismisses false alarms.", '', 'ca'],
+      ['ptecc', 'CR', 'claudia.ribeiro', 'Cláudia Ribeiro', 'Oficial de operações', 'ANEPC. CSREPC Médio Tejo', 'Portugal',
+        "Runs the CSREPC's operations room. Verifies alerts from lookout posts, cameras and 112 calls, sends the initial attack and dismisses false alarms.", '', 'pt'],
       /* (Oct 9) order: captain, lieutenant, then the government representative */
       ['coord', 'FO', 'frank.ortiz', 'Frank Ortiz', 'Battalion Chief', 'CAL FIRE/Riverside County Fire', 'Battalion 15. Temecula',
         "Commands the battalion's stations and their area. Takes command of a fire when it grows past the first engine, places the crews and asks dispatch for more, and works with the sheriff on evacuations.", '', 'ca'],
@@ -494,13 +500,13 @@ class Component extends DCLogic {
       ['pt', 'RC', 'rita.cardoso', 'Rita Cardoso', 'Comandante Nacional de Emergência e Proteção Civil', 'ANEPC. Comando Nacional', 'Portugal',
         'Commands national emergency operations. Sets the alert level, moves reinforcement groups and aerial means between sub-regions, and takes command of a fire when it goes to national level.', 'https://images.unsplash.com/photo-1771254507173-e40b54571924?w=240&h=240&fit=crop&crop=faces&auto=format&q=70']
     ];
-    const RANK = { admin: [L0('Government body', 'Entidade governamental'), 3]   /* (Oct 8) the level above the station captains: a government overview of every country */, coord: [L0('Battalion Chief', 'Chefe de batalhão'), 2], ff: [L0('Captain', 'Capitão'), 1], fft: [L0('Firefighter', 'Bombeiro'), 0], ptco: ['Comandante', 2], ptce: ['Chefe de equipa', 1], ptbo: ['Bombeiro', 0], ca: [L0('State', 'Estado'), 3], pt: [L0('National command', 'Comando nacional'), 3] };
+    const RANK = { admin: [L0('Government body', 'Entidade governamental'), 3]   /* (Oct 8) the level above the station captains: a government overview of every country */, coord: [L0('Battalion Chief', 'Chefe de batalhão'), 2], ff: [L0('Captain', 'Capitão'), 1], fft: [L0('Firefighter', 'Bombeiro'), 0], ptco: ['Comandante', 2], ptce: ['Chefe de equipa', 1], ptbo: ['Bombeiro', 0], ecc: [L0('Dispatch', 'Despacho'), 1], ptecc: [L0('Dispatch', 'Despacho'), 1], ca: [L0('State', 'Estado'), 3], pt: [L0('National command', 'Comando nacional'), 3] };
     const CU = this.customs(), AREAS = { pt: ['Portugal', '20 districts', 'Portugal only', 'Portugal region only', 'PT'], ca: ['California', '58 counties', 'California only', 'California region only', 'US'], nv: ['Nevada', '17 counties', 'Nevada only', 'Nevada region only', 'US'], amz: ['Amazônia Legal', '9 states', 'Amazônia Legal only', 'Amazônia Legal region only', 'BR'], admin: ['All regions', 'All countries and regions', 'all countries and regions', 'All regions', ''] };
     { const E = this.edits(); P.forEach((p) => { const e = E[p[0]]; if (!e) return; p[1] = e.code || p[1]; p[3] = e.name || p[3]; p[4] = e.title; p[5] = e.org; p[7] = e.sum; if (e.photo) p[10] = e.photo; }); }
     { const G = this.gone(); for (let i = P.length - 1; i >= 0; i--) if (G.indexOf(P[i][0]) >= 0) P.splice(i, 1); }
     CU.forEach((c) => P.push([c.id, c.code, c.user, c.name, c.title || '', c.org || '', AREAS[c.base] ? AREAS[c.base][1] : 'All countries and regions', c.sum || '', c.photo || '', c.base]));   // after the demo profiles
     // Each demo profile in their own service's uniform (illustrated portraits, avatar.js)
-    const KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0], eng: ['calfire', 0], fft: ['calfire', 0], ptco: ['pt', 1], ptce: ['pt', 0], ptbo: ['pt', 0] };
+    const KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0], eng: ['calfire', 0], fft: ['calfire', 0], ptco: ['pt', 1], ptce: ['pt', 0], ptbo: ['pt', 0], ecc: ['calfire', 0], ptecc: ['anepc', 0] };
     const uni = (id, name) => (KITS[id] && window.__wfAvatar ? window.__wfAvatar(name, KITS[id][0], !!KITS[id][1]) : '');
     // Nature photos in this visit's random order (fit.js); bright ones are dimmed so white text stays readable
     const PH = (window.__wfPhotos || [{ f: 'forest-1.webp', by: 'Mari Potter', b: 1 }]).map((p) => [p.f, p.by, p.b]);
@@ -533,7 +539,7 @@ class Component extends DCLogic {
       profiles: P.filter((p) => { const c0 = (this.state || {}).cty || 'ca', k = p[0], b = p[9]; const cc = /^(coord|ff|eng|fft|ca)$/.test(k) ? 'ca' : k === 'pt' ? 'pt' : b === 'pt' ? 'pt' : b === 'ca' ? 'ca' : ''; return cc === c0; })   /* (Oct 11, 17:45) only the chosen country's profiles */
         .map(([id, code, user, name, role, org, area, sum, photo0, base, own], i) => { const photo = own || uni(id, name) || photo0; const cc = ({ pt: 'PT', ca: 'US', nv: 'US', amz: 'BR', design: 'PT', admin: 'PT' })[base || id]; return ({
         rk: (RANK[id] || [L0('Profile', 'Perfil'), 0])[0], rkIc: ['', 'M7 14l5-3 5 3', 'M7 11l5-3 5 3M7 17l5-3 5 3', 'M7 7l5-3 5 3M7 13l5-3 5 3M7 19l5-3 5 3'][(RANK[id] || [0, 0])[1]], rkIcD: RANK[id] ? 'block' : 'none', roleD: RANK[id] && role.toLowerCase().indexOf(RANK[id][0].toLowerCase()) >= 0 ? 'none' : 'block',
-        code, user, name, role, org, area, sees: 'Sees ' + (/^(Station|Battalion|VFCI|[A-Z][a-z]+ [A-Z])/.test(area) || /^\p{Lu}\p{Ll}+$/u.test(area) ? area : area.charAt(0).toLowerCase() + area.slice(1)),   /* (Oct 11, 17:45) proper names keep their capital (Battalion 15, California, Portugal) */ feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
+        code, user, name, role, org, area, sees: 'Sees ' + (/^(Station|Battalion|VFCI|Emergency|Sala|[A-Z][a-z]+ [A-Z])/.test(area) || /^\p{Lu}\p{Ll}+$/u.test(area) ? area : area.charAt(0).toLowerCase() + area.slice(1)),   /* (Oct 11, 17:45) proper names keep their capital (Battalion 15, California, Portugal) */ feats: ({})[id] || 'All features enabled', sum, photoBg: photo ? 'url("' + photo + '")' : 'none',
         sep: i ? '0' : '0',
         badgeBg: /^(admin|ca|pt)$/.test(id) ? '#000000' : '#E5E5EA', badgeFg: /^(admin|ca|pt)$/.test(id) ? '#FFFFFF' : '#000000',
         tick: selId === id ? 1 : 0, selD: selId === id ? 'block' : 'none', orgCc: (org || '') + (cc && !base ? ' · ' + cc : ''), selStr: selId === id ? 'true' : 'false', ring: selId === id ? '#0062CC' : 'transparent',

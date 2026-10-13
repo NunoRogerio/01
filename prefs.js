@@ -72,7 +72,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     /* (Oct 11, 18:20) their Portuguese counterparts (wf-role pt) */
     ptco: ['RG', 'Rui Gaspar', 'Comandante', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt'],
     ptce: ['SA', 'Sofia Antunes', 'Chefe de equipa', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt'],
-    ptbo: ['TM', 'Tiago Martins', 'Bombeiro', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt']
+    ptbo: ['TM', 'Tiago Martins', 'Bombeiro', 'Bombeiros Voluntários de Mação', 'Mação', '', 'pt'],
+    /* (Oct 13) the dispatch profiles: who verifies ignitions and sends the initial attack */
+    ecc: ['EV', 'Elena Vasquez', 'Fire Captain, ECC', 'CAL FIRE. Emergency Command Center', 'California', '', 'en'],
+    ptecc: ['CR', 'Cláudia Ribeiro', 'Oficial de operações', 'ANEPC. CSREPC Médio Tejo', 'Portugal', '', 'pt']
   };
   // (Oct 4) each demo profile's description, as on its login profile card (Login.dc.html)
   var SUMS = {
@@ -87,7 +90,9 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     fft: "Works the line on Engine 3167, a CAL FIRE Type 3 wildland engine. Goes where dispatch sends the engine, follows the captain's orders and reports from the line in the incident chat.",
     ptco: "Commands the fire brigade and its area. Takes over as COS when a fire grows past the first crew, places the teams and asks the CSREPC for reinforcements, and works with the GNR on evacuations.",
     ptce: "Leads VFCI 01 and its team. Often first on scene: confirms the fire, reports it to the CSREPC and is COS until the commander takes over.",
-    ptbo: "Works the line on VFCI 02, a forest fire engine. Goes where the CSREPC sends the team, follows the crew chief's orders and reports from the line in the incident chat."
+    ptbo: "Works the line on VFCI 02, a forest fire engine. Goes where the CSREPC sends the team, follows the crew chief's orders and reports from the line in the incident chat.",
+    ecc: "Runs the watch at the Emergency Command Center. Verifies smoke reports and camera alerts, sends the initial attack set by the response plan, and dismisses false alarms.",
+    ptecc: "Runs the CSREPC's operations room. Verifies alerts from lookout posts, cameras and 112 calls, sends the initial attack and dismisses false alarms."
   };
 
   // ---- Text size: every pixel font size (and line height) one notch up or down ----
@@ -404,9 +409,9 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   }
 
   // Demo profiles are shown in their own service's uniform (illustrated portraits, avatar.js)
-  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0], eng: ['calfire', 0], fft: ['calfire', 0], ptco: ['pt', 1], ptce: ['pt', 0], ptbo: ['pt', 0] };
+  var KITS = { pt: ['anepc', 1], ca: ['calfire', 1], nv: ['nv', 1], amz: ['br', 1], design: ['pt', 0], admin: ['pt', 1], coord: ['calfire', 1], ff: ['calfire', 0], eng: ['calfire', 0], fft: ['calfire', 0], ptco: ['pt', 1], ptce: ['pt', 0], ptbo: ['pt', 0], ecc: ['calfire', 0], ptecc: ['anepc', 0] };
   function uniform(r, name) { var k = KITS[r]; return k && window.__wfAvatar ? window.__wfAvatar(name, k[0], !!k[1]) : ''; }
-  var rid = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return /^(coord|ff|eng|fft|ptco|ptce|ptbo)$/.test(c) ? c : role; })();   /* a role profile shows as itself */
+  var rid = (function () { var c = ''; try { c = localStorage.getItem('wf-custom') || ''; } catch (e) {} return /^(coord|ff|eng|fft|ptco|ptce|ptbo|ecc|ptecc)$/.test(c) ? c : role; })();   /* a role profile shows as itself */
   var RANK = /^(coord|ptco)$/.test(rid) ? 'coord' : /^(ff|eng|fft|ptce|ptbo)$/.test(rid) ? 'ff' : (role === 'admin' || role === 'design') ? 'admin' : role ? 'coord' : '';   /* (Oct 6) administrator, team coordinator or firefighter */
   var who = PEOPLE[rid] || PEOPLE[role] || (role === 'design' ? PEOPLE.admin : null);   // a removed demo profile falls back to the administrator
   // A profile created on this phone (login screen, New profile) signs in with its area's role and shows as itself
