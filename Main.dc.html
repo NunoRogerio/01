@@ -2005,8 +2005,8 @@ class Component extends DCLogic {
         const who = k === 'ptecc' ? L('Operations officer Ribeiro', 'Oficial de operações Ribeiro') : L('Fire Captain Vasquez', 'Capitã Vasquez');
         const h = new Date().getHours(), tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;
         const G = [[L('Hello ', 'Olá '), '.'], tod ? [tod + ', ', '.'] : [L('Working late, ', 'A trabalhar até tarde, '), '?'], [L('How are things, ', 'Como vão as coisas, '), '?'], [L('Hope all is well, ', 'Espero que esteja tudo bem, '), '.'], [L('Howdy, ', 'Viva, '), '.']];
-        if (this._grI == null) this._grI = Math.floor(Math.random() * 60);
-        const g = G[this._grI % G.length]; return { d: 'block', a: g[0], who, b: g[1] }; })(),
+        /* (Oct 13, 16:49) the dispatch officer is welcomed: "Welcome, Fire Captain Vasquez." (both officers are women: Bem-vinda) */
+        void G; return { d: 'block', a: L('Welcome, ', 'Bem-vinda, '), who, b: '.' }; })(),
       gv: (() => { const C = window.__wfChat, off = { d: 'none', tags: [], open: null }; if (!C || !C.isGov || !C.isGov() || !C.govSummary) return off;
         const SC = this.wfScope(), G = C.govSummary((c) => (C.inScope ? C.inScope(c, SC) : true)), PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en), us = SC.st !== 'PT', T = [];
         const n = G.pend.length; if (n) T.push({ txt: n + ' ' + (us ? L(n === 1 ? 'mutual aid request' : 'mutual aid requests', n === 1 ? 'pedido de ajuda mútua' : 'pedidos de ajuda mútua') : L(n === 1 ? 'reinforcement request' : 'reinforcement requests', n === 1 ? 'pedido de reforço' : 'pedidos de reforço')), bg: 'rgba(179,0,27,0.12)', fg: '#B3001B' });

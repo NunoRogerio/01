@@ -273,7 +273,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </sc-if>
 
-  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
+  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 2"><!-- (Oct 13, 16:46) the markers above the upright map credit -->
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
       <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="filter: {{fm.selF}}; border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="{{fm.sbg}}" style="fill-opacity: 1"></circle><circle cx="14" cy="14" r="17" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle><g transform="translate(6 6) scale(0.6667)"><path d="{{fm.sic}}" fill="none" stroke="{{fm.sfg}}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></g></svg><!-- (Oct 11, 01:18) a fire: its stage icon in a 32px round of its stage colour --></button>
@@ -472,7 +472,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </span>
   </div>
   <!-- (Oct 13, 14:19) the map credit (required by the licences) runs upright along the map's left edge, centred on the visible map's height, reading bottom to top -->
-  <div aria-hidden="false" style="position: absolute; z-index: 50; left: {{crL}}px; top: {{clipV}}px; bottom: {{attrB}}px; display: flex; align-items: center; pointer-events: none">
+  <div aria-hidden="false" style="position: absolute; z-index: 1; left: {{crL}}px; top: {{clipV}}px; bottom: {{attrB}}px; display: flex; align-items: center; pointer-events: none">
     <span class="wf-note wf-note-t" style="writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF">{{crTxt}}</span>
   </div>
 </div>
