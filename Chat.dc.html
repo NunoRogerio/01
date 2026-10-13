@@ -18,10 +18,10 @@
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791736227"></script>
+<script src="i18n.js?v=1791897367"></script>
 <script src="live.js?v=1791894591"></script>
-<script src="chat.js?v=1791897062"></script>
-<script src="tour.js?v=1791777044"></script>
+<script src="chat.js?v=1791897367"></script>
+<script src="tour.js?v=1791897367"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791876476"></script>
 
@@ -209,7 +209,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                 </div>
               </sc-if>
             </div>
-            <!-- (Oct 11, 11:49) Evidences: each source on its own, separated by a full-width line: its name, its picture or feed, what it shows (the drone's live feed; the satellite's detection point on the map) -->
+            <!-- (Oct 11, 11:49) Detections: each source on its own, separated by a full-width line: its name, its picture or feed, what it shows (the drone's live feed; the satellite's detection point on the map) -->
             <sc-if value="{{m.hasEv}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none">
                 <sc-for list="{{m.evRows}}" as="e" hint-placeholder-count="2">
@@ -660,7 +660,7 @@ class Component extends DCLogic {
   // Every chat keeps the place you left it (on this phone); at the end, it follows new messages
   /* (Oct 11, 07:12, app-wide) a chat always opens on its latest message, whatever screen opened it (a fire on the station or main screen, a list, a notification) */
   restorePos(el, key) { let p = null; try { p = JSON.parse(localStorage.getItem('wf-chat-pos') || '{}')[key]; } catch (e) {}
-    /* (Oct 12, 16:00) opened from an assignment: the story from its start (the evidences); scroll or the arrow down for the newest */
+    /* (Oct 12, 16:00) opened from an assignment: the story from its start (the detections); scroll or the arrow down for the newest */
     let top = false; try { top = sessionStorage.getItem('wf-chat-top') === key; if (top) sessionStorage.removeItem('wf-chat-top'); } catch (e) {}
     if (top) { this._stick = false; this._restoring = true; const t1 = Date.now(), up = () => { if (this._sc !== el) { this._restoring = false; return; } el.scrollTop = 0; if (Date.now() - t1 < 900) requestAnimationFrame(up); else { this._restoring = false; this._stick = false; this._userT = Date.now(); if (!(this.state || {}).toEnd) this.setState({ toEnd: true }); } }; up(); return; }
     if (true || !p || p.b) { this._stick = true; this.pin(); return; }
@@ -1180,7 +1180,7 @@ class Component extends DCLogic {
             /* the satellite's detection point on the map: the OpenStreetMap tile around it (zoom 15), the candidate's round at the point */
             const sat = (() => { const la = +c.lat, lo = +c.lon; if (!isFinite(la) || !isFinite(lo) || (!la && !lo)) return null; const z = 15, n = Math.pow(2, z), xf = (lo + 180) / 360 * n, yr = la * Math.PI / 180, yf = (1 - Math.log(Math.tan(yr) + 1 / Math.cos(yr)) / Math.PI) / 2 * n, tx = Math.floor(xf), ty = Math.floor(yf);
               return { img: 'https://tile.openstreetmap.org/' + z + '/' + tx + '/' + ty + '.png', tx: (-(xf - tx) * 512).toFixed(0) + 'px', ty: (-(yf - ty) * 512).toFixed(0) + 'px' }; })(), G = window.__wfIgn ? window.__wfIgn(c.conf || 0, c) : { fill: '#FFE680', dash: '' };
-            return { hasEv: true, title: '', ttlD: 'none', kpiBasis: '100%', bodyD: 'none',   /* (Oct 12, 19:30) the header already says Evidences: no title, the likelihood centred */ evNote: L('* Simulation', '* Simulação'), evNoteD: 'block',
+            return { hasEv: true, title: '', ttlD: 'none', kpiBasis: '100%', bodyD: 'none',   /* (Oct 12, 19:30) the header already says Detections: no title, the likelihood centred */ evNote: L('* Simulation', '* Simulação'), evNoteD: 'block',
               evRows: E.rows.map((r, i) => { const drone = !!r.sim, R = Object.assign({}, NO, { aD: 'block', a: T(r.a), bD: 'block', b: T(r.b) + (r.sim ? ' *' : ''), pad: '16px', sep: i ? '1px solid rgba(60,60,67,0.18)' : '0' });
                 if (r.pic) return Object.assign(R, { picD: 'block', pic: r.pic, pa: r.pa || '358 / 202', pw: r.pw || '100%', recD: r.rec ? 'block' : 'none', rec: '● REC ' + C.hhmm(c.det || c.started || Date.now()), aria: T(r.a) });
                 if (drone) return Object.assign(R, { vidD: 'block', vid: E.video, live, aria: L('Drone feed. Open', 'Imagem do drone. Abrir'), open: feedOpen(E.video, live, E.from ? L('Sent automatically from ' + E.from, 'Enviado automaticamente de ' + E.from) : '') });

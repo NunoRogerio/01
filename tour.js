@@ -249,8 +249,8 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
 
     // (Oct 5, 10:19) the chat opens on what already happened: the evidence card with the drone feed, the team's readings
     { page: 'Chat.dc.html', mode: 'next', point: true, find: function () { var f = q('article.chmsg .wf-evfeed'); return f ? f.closest('article.chmsg') : null; },
-      t: ['The evidence, live', 'As evidências, em direto'],
-      b: ['The nearest station sent its drone when the ignition was detected. Its feed is evidence beside the satellite, and every coordinator has given a reading below.', 'O quartel mais próximo enviou o drone quando a ignição foi detetada. A imagem é uma evidência ao lado do satélite, e cada coordenador deu a sua leitura abaixo.'] },
+      t: ['The evidence, live', 'As deteções, em direto'],
+      b: ['The nearest station sent its drone when the ignition was detected. Its feed is evidence beside the satellite, and every coordinator has given a reading below.', 'O quartel mais próximo enviou o drone quando a ignição foi detetada. A imagem é uma deteção ao lado do satélite, e cada coordenador deu a sua leitura abaixo.'] },
     // the decision: Approve on the coordinator's request card (or, without one, the state card's Move to First alert)
     { page: 'Chat.dc.html', mode: 'until', until: confirmedHere, before: function () { var t = 0, f = function () { var ra = reqApproveRaw(); if (ra) { try { ra.scrollIntoView({ block: 'center' }); } catch (x) {} scrolled = false; return; } if (!q('button.chrow[data-wf-stband][aria-expanded="true"]')) stExpand(); if (++t < 6 && !stMove()) setTimeout(f, 300); }; setTimeout(f, 400); },
       find: function () { return reqApprove() || stMove() || q('button.chrow[data-wf-stband]'); },

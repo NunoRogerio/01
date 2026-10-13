@@ -649,7 +649,7 @@
     function UNS(ids, k, w, h) { var id = ids[hash(c.key + k) % ids.length]; return 'https://images.unsplash.com/photo-' + id + '?w=' + w + '&h=' + h + '&fit=crop&auto=format&q=70'; }
   }
   function evidCard(c) {
-    return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Evidences', pt: 'Evidências' }, body: null });
+    return Object.assign(stageCard(c, 0), { ev: true, title: { en: 'Detections', pt: 'Deteções' }, body: null });
   }
   // a request card from a coordinator, sent once the team has given its reading of the evidence
   function evidRequest(c) {
@@ -675,15 +675,15 @@
          declares the fire and has command until the Battalion Chief takes over. */
       c.flags.drone = true;
       var E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
-      var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Evidences', pt: ECC + ' · Evidências' };
-      /* (Oct 12, 20:45) a crew's new assignment waits for the Captain: the evidences, then the dispatch order to answer; the story starts once he responds */
+      var ev0 = evidCard(c); ev0.tag = { en: ECC + ' · Detections', pt: ECC + ' · Deteções' };
+      /* (Oct 12, 20:45) a crew's new assignment waits for the Captain: the detections, then the dispatch order to answer; the story starts once he responds */
       if (c.asgMine) { holdFor(c, ev0); return; }
       card(c, ev0, 300, 0); candRest(c, false); return; }
     fireStart(c); }
   function holdFor(c, ev) { var now = Date.now(), M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
     ev.kind = 'card'; ev.id = newId(); ev.t = ev.vt = now - 60000; ev.st0 = c.stage; c.msgs.push(ev);
     c.msgs.push({ kind: 'card', id: newId(), t: now, vt: now, st0: c.stage, asgOrder: true, ask: 'ff', req: 'order', tag: { en: dcOf(c) + ' · Dispatch order', pt: dcOf(c) + ' · Ordem de despacho' }, tagC: '#0A66CC', title: { en: 'Respond', pt: 'Responder' },
-      body: { en: u + ' assigned to this incident. Read the evidences, then respond.', pt: 'O ' + u + ' foi atribuído a este incidente. Leia as evidências e responda.' }, actions: [{ key: 'respond', en: 'Responding', pt: 'A responder', primary: true }] });
+      body: { en: u + ' assigned to this incident. Read the detections, then respond.', pt: 'O ' + u + ' foi atribuído a este incidente. Leia as deteções e responda.' }, actions: [{ key: 'respond', en: 'Responding', pt: 'A responder', primary: true }] });
     c.hold = true; c.holdAt = now; c.updated = now; }
   function release(c) { if (!c.hold) return; c.hold = false; var dz = Date.now() - (c.holdAt || Date.now()) + 3000; (c.queue || []).forEach(function (q) { q.due += dz; }); c.queue.sort(function (a, b) { return a.due - b.due; });   /* what waited during the hold comes after the start of the story */ var M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
     (c.msgs || []).forEach(function (m) { if (m.asgOrder && !m.done) m.done = 'respond'; });
@@ -753,7 +753,7 @@
   /* (Oct 12, 12:50) the dispatch center assigns our engine to this incident (a crew's next assignment) */
   function assignMine(c) { if (!c || c.kind === 'dm' || c.closed || c.dismissed) return false; if (mission(c)) return true; if (!(c.stations || []).length) { c.asgMine = true; c.updated = Date.now(); save(); emit(); return true; }   /* the team is still loading: the assignment is applied once it is in (start) */ var i = ownIdx(c, true); if (i < 0) return false;
     var f = (c.forces || []).find(function (x) { return x.si === i && !x.second; }); if (!f) { f = forceFor(c, i, 'enroute'); (c.forces = c.forces || []).push(f); } else f.st = 'enroute';
-    c.flags.dispatched = true; var v = (f.veh || [])[0] || 'Engine'; sys(c, dcOf(c) + ' assigned ' + v + ' to this incident', dcOf(c) + ' atribuiu o ' + v + ' a este incidente', 2500, 0);   /* after the evidences: the story starts with them */ ensureLts(c); c.updated = Date.now(); save(); emit(); return true; }
+    c.flags.dispatched = true; var v = (f.veh || [])[0] || 'Engine'; sys(c, dcOf(c) + ' assigned ' + v + ' to this incident', dcOf(c) + ' atribuiu o ' + v + ' a este incidente', 2500, 0);   /* after the detections: the story starts with them */ ensureLts(c); c.updated = Date.now(); save(); emit(); return true; }
   /* (Oct 12, 12:05) the incident a crew profile (Captain, Engineer, Firefighter) is assigned to: its own engine is committed there */
   function mission(c) { var M = window.__wfMine ? window.__wfMine() : null; if (!c || !M || M.level !== 'lead' || c.kind === 'dm' || c.closed || c.dismissed) return false; if (c.asgMine) return true;
     return (c.forces || []).some(function (f) { return LIVE[f.st] && ownForce(c, f) && (!M.unit || !(f.veh || []).length || f.veh.indexOf(M.unit) >= 0); }); }
@@ -2331,7 +2331,7 @@
   function depHide(anim) { var el = dpEl; dpEl = null; if (!el) return; if (!anim) { el.remove(); return; } el.style.opacity = '0'; el.style.transform = 'translateY(24px)'; setTimeout(function () { el.remove(); }, 450); }
   function depRender() {
     if (dpBusy) return;
-    var L0 = deployments().filter(function (d) { return !d.acked && !d.hold; })   /* a held assignment is answered in its chat, after the evidences: no floating card */.sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); }), d = L0[0];
+    var L0 = deployments().filter(function (d) { return !d.acked && !d.hold; })   /* a held assignment is answered in its chat, after the detections: no floating card */.sort(function (a, b) { return (b.c.updated || 0) - (a.c.updated || 0); }), d = L0[0];
     if (!d || tourMute() || /Login\.dc\.html$|reset\.html$/.test(location.pathname)) { depHide(false); return; }
     var PT = window.__wfLang === 'pt', c = d.c, S = stageOf(c) || {}, here = onPage(c);
     var veh = (d.f.veh || []).join('. '), min = (c.stations[d.f.si] || {}).min;
