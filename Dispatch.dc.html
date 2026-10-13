@@ -1449,12 +1449,12 @@ class Component extends DCLogic {
         out.push({ ...TH, kind: 'car', civil: true, at, km: km(3, 1.2, 3.8), brg: brg(5), title: Lx('Car cameras', 'Câmaras de carro'),
           rows: droneStrong ? [row(Lx(n + ' pictures from ' + k + ' cars passing nearby', n + ' imagens de ' + k + ' carros a passar perto')), row(Lx('A smoke plume seen from the road', 'Coluna de fumo vista da estrada'))] : [row(Lx(k + ' cars passed within 3 km', k + ' carros passaram a menos de 3 km')), row(Lx('No smoke seen', 'Sem fumo visível'), false)],
           slides: JSON.stringify(PC.slice(c0, c0 + Math.min(5, n)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
-      /* 360 cameras (action cameras on hikers, cyclists and trail riders): one of the two personal sources is always there */
+      /* action cameras (GoPros, 360 cameras and civil drones carried by hikers, cyclists and trail riders): one of the two personal sources is always there */
       const has360 = (h >>> 11) % 3 < 2, hasPh = !has360 || (h >>> 9) % 5 < 3;
       if (has360) { const n = 1 + (h >>> 13) % 3, at = droneStrong ? 2 + (h >>> 8) % Math.max(1, V - 2) : 2 + (h >>> 8) % V, img = UX(PC[c0 ? 0 : 5]);
-        out.push({ ...th({ thImg: true, src: img, thAria: Lx('360 camera image. Open', 'Imagem de câmara 360. Abrir'), open: (e) => this.wfEv({ image: { src: img, alt: '360 camera image' }, label: Lx('360 camera', 'Câmara 360'), who: anon, anchor: e && e.currentTarget }) }),
-          kind: 'c360', civil: true, at, km: km(7, 0.8, 2.6), brg: (brg(5) + 110 + (h >>> 14) % 60) % 360, title: Lx('360 cameras', 'Câmaras 360'),
-          rows: [row(Lx(n === 1 ? 'A hiker\'s 360 camera on a trail nearby' : n + ' 360 cameras on trails nearby', n === 1 ? 'Câmara 360 de um caminhante num trilho próximo' : n + ' câmaras 360 em trilhos próximos')), droneStrong ? row(Lx('Smoke and flames through the trees', 'Fumo e chamas entre as árvores')) : row(Lx('No smoke seen', 'Sem fumo visível'), false)], noteD: 'block', note: anon }); }
+        out.push({ ...th({ thImg: true, src: img, thAria: Lx('Action camera image. Open', 'Imagem de câmara de ação. Abrir'), open: (e) => this.wfEv({ image: { src: img, alt: 'Action camera image' }, label: Lx('Action camera', 'Câmara de ação'), who: anon, anchor: e && e.currentTarget }) }),
+          kind: 'c360', civil: true, at, km: km(7, 0.8, 2.6), brg: (brg(5) + 110 + (h >>> 14) % 60) % 360, title: Lx('Action cameras', 'Câmaras de ação'),
+          rows: [row(Lx(n === 1 ? 'A hiker\'s action camera on a trail nearby' : n + ' action cameras on trails nearby', n === 1 ? 'Câmara de ação de um caminhante num trilho próximo' : n + ' câmaras de ação em trilhos próximos')), droneStrong ? row(Lx('Smoke and flames through the trees', 'Fumo e chamas entre as árvores')) : row(Lx('No smoke seen', 'Sem fumo visível'), false)], noteD: 'block', note: anon }); }
       if (hasPh && droneStrong) { const n = 2 + h % 9, v = (h >>> 2) % 3, P = ['photo-1634224548788-58de1fb48e2b', 'photo-1503653525408-82f00ad1a5d4', 'photo-1572635148958-4cc9a48e5fcd', 'photo-1602980045360-d94be60e4775', 'photo-1603661885651-c909f20987a5'];
         out.push({ ...TH, kind: 'phone', civil: true, at: 1 + (h >>> 6) % Math.max(1, V - 1), km: km(9, 1.0, 3.2), brg: (brg(5) + 220 + (h >>> 15) % 70) % 360, title: Lx('Phone cameras', 'Câmaras de telemóvel'),
           rows: [row(Lx(n + ' photos' + (v ? ' and ' + v + (v === 1 ? ' video' : ' videos') : '') + ' with smoke, taken nearby', n + ' fotografias' + (v ? ' e ' + v + (v === 1 ? ' vídeo' : ' vídeos') : '') + ' com fumo, tiradas perto'))], slides: JSON.stringify(P.slice(0, Math.min(5, n + v)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
@@ -1487,7 +1487,7 @@ class Component extends DCLogic {
 
     /* the verdict for whoever verifies: how many sources, the first smoke, how fast with and without the civil cameras */
     const civ = out.filter((x) => x.civil), net = out.filter((x) => !x.civil && x.at != null), W0 = net.length ? Math.max(...net.map((x) => x.at)) : null;
-    const KN = { car: Lx('car camera', 'câmara de carro'), c360: Lx('360 camera', 'câmara 360'), phone: Lx('phone camera', 'câmara de telemóvel'), call: Lx('call', 'chamada') };
+    const KN = { car: Lx('car camera', 'câmara de carro'), c360: Lx('action camera', 'câmara de ação'), phone: Lx('phone camera', 'câmara de telemóvel'), call: Lx('call', 'chamada') };
     const first = out[0], lines = [];
     if (isLive && droneStrong && first && first.at < 0) lines.push(Lx('First smoke from a ' + KN[first.kind] + ', ' + (-first.at) + ' min before the satellite.', 'Primeiro fumo numa ' + KN[first.kind] + ', ' + (-first.at) + ' min antes do satélite.'));
     if (isLive) lines.push(Lx((droneStrong ? 'Verified' : 'Checked') + ' in ' + V + ' min.' + (W0 != null && W0 > V ? ' Without civil cameras, about ' + W0 + ' min.' : ''), (droneStrong ? 'Verificado' : 'Observado') + ' em ' + V + ' min.' + (W0 != null && W0 > V ? ' Sem câmaras civis, cerca de ' + W0 + ' min.' : '')));
@@ -1512,7 +1512,7 @@ class Component extends DCLogic {
     const vfTitle = onScene && isLive ? (capOk ? Lx('Confirmed on the ground', 'Confirmado no terreno') : Lx('False alarm on the ground', 'Falso alarme no terreno')) : !isLive ? verdict : droneStrong ? Lx(out.length + ' evidences confirm smoke', out.length + ' evidências confirmam fumo') : Lx(out.length - 1 + ' evidences saw no smoke', out.length - 1 + ' evidências não viram fumo');
     /* where each camera stood: a marker and its line of sight on the candidate's map (crossing lines pinpoint the ignition) */
     const IC = { car: 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5', c360: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', phone: 'M8 3h8v18H8ZM11 18h2', tower: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' };
-    const SH = { car: Lx('Car', 'Carro'), c360: '360', phone: Lx('Phone', 'Telemóvel'), tower: Lx('Tower', 'Torre') };
+    const SH = { car: Lx('Car', 'Carro'), c360: Lx('Action', 'Ação'), phone: Lx('Phone', 'Telemóvel'), tower: Lx('Tower', 'Torre') };
     const cams = isLive ? out.filter((x) => x.km && IC[x.kind]).map((x) => { const r = x.brg * Math.PI / 180; return { x: +(c.x + x.km * Math.sin(r) * 27).toFixed(1), y: +(c.y - x.km * Math.cos(r) * 25.5).toFixed(1), label: SH[x.kind], icon: IC[x.kind], los: droneStrong, tt: x.title, td: x.km + ' km. ' + (x.rows[0] || {}).t }; }) : [];
     /* the decision, for the dispatch profiles only: Dismiss or Send initial attack; once chosen, the choice alone, full width, in the past tense */
     const DSP = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
