@@ -2000,7 +2000,7 @@ class Component extends DCLogic {
         /* (Oct 13, 13:06) the dispatch officer signed in: the ECC's Fire Captain, or the CSREPC's operations officer */
         let k = ''; try { k = localStorage.getItem('wf-custom') || ''; } catch (e) {}
         const PTL = window.__wfLang === 'pt', L = (en, pt) => (PTL ? pt : en);
-        const who = k === 'ptecc' ? L('Operations officer Ribeiro', 'Oficial de operações Ribeiro') : L('Captain Vasquez', 'Capitã Vasquez');
+        const who = k === 'ptecc' ? L('Operations officer Ribeiro', 'Oficial de operações Ribeiro') : L('Fire Captain Vasquez', 'Capitã Vasquez');
         const h = new Date().getHours(), tod = h >= 5 && h < 12 ? L('Good morning', 'Bom dia') : h >= 12 && h < 18 ? L('Good afternoon', 'Boa tarde') : h >= 18 && h < 22 ? L('Good evening', 'Boa noite') : null;
         const G = [[L('Hello ', 'Olá '), '.'], tod ? [tod + ', ', '.'] : [L('Working late, ', 'A trabalhar até tarde, '), '?'], [L('How are things, ', 'Como vão as coisas, '), '?'], [L('Hope all is well, ', 'Espero que esteja tudo bem, '), '.'], [L('Howdy, ', 'Viva, '), '.']];
         if (this._grI == null) this._grI = Math.floor(Math.random() * 60);
