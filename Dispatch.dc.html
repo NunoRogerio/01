@@ -16,11 +16,11 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1791872737"></script>
+<script src="prefs.js?v=1791876476"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791871146"></script>
+<script src="live.js?v=1791876476"></script>
+<script src="chat.js?v=1791876476"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -41,7 +41,7 @@
 } catch (e) {} })();
 </script>
 <script src="tour.js?v=1791777044"></script>
-<script src="trophy.js?v=1791734035"></script>
+<script src="trophy.js?v=1791876476"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="menu.js?v=1791782987"></script>
 
@@ -526,7 +526,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <div style="display: flex; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 0 56px">
         <!-- How long it has been active is on the stage tag above (for 9 d), so the card holds only when it started, in normal text -->
         <div style="position: relative; display: {{hdTimeD2}}; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF">
-          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000">{{startTxt}}<svg width="13" height="13" viewBox="0 0 24 24" role="img" aria-label="Night ignition" style="display: {{startNightD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span></span>
+          <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000">{{startTxt}}<svg width="13" height="13" viewBox="0 0 24 24" role="img" aria-label="Night ignition" style="display: {{startNightD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span></span>
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; color: #3C3C43"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17Z M12 7.5V12l3 2"></path></svg></span>
         </div>
         <!-- Every declared fire: report the ignition to the local police, a subtle button (full width) under the start time; once reported it opens the same chat -->
@@ -758,17 +758,20 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
         <div style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
+            <!-- (Oct 13, 08:22) one row per source: its type icon by the title; under it the image small (96px) with the description beside it -->
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; cursor: {{ev.cur}}">
-              <li style="display: flex; justify-content: space-between; gap: 8px; padding: 12px {{ev.padR}} 12px 16px; min-height: {{ev.minH}}; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><span>{{ev.title}}</span><span style="flex-shrink: 0; font-weight: 400; color: #3C3C43">{{ev.pctTxt}}</span></li>
-              <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2">
-                <li style="padding: 16px 16px; border-top: 0; font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</li>
-              </sc-for>
-              <li style="display: {{ev.mD}}; padding: 0 16px 16px"><button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: block; width: 100%; height: 202px; padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #1C1C1E; cursor: pointer">
-                <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
-                <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
-                <sc-if value="{{ev.thSmoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 56 56" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmk" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter></defs><path d="M30 46c-2-8 4-12 2-20s4-12 10-16c-2 8-6 10-4 18s-2 14-8 18Z" fill="rgba(235,235,240,0.85)" filter="url(#wfSmk)"></path></svg></sc-if>
-              </button></li>   <!-- (Oct 11, 13:15) the evidence itself as an image in the card, like the photo cards -->
-              <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><li style="padding: 0 16px 16px"><wf-slides photos="{{ev.slides}}" aria-label="{{ev.title}}" style="height: 202px; border-radius: 16px; overflow: hidden"></wf-slides></li></sc-if>
+              <li style="display: flex; align-items: center; gap: 8px; padding: 16px {{ev.padR}} 8px 16px; min-height: {{ev.minH}}; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{ev.title}}</span><span style="flex-shrink: 0; font-weight: 400; color: #3C3C43">{{ev.pctTxt}}</span></li>
+              <li style="display: flex; align-items: flex-start; gap: 16px; padding: 0 16px 16px">
+                <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
+                  <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
+                  <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
+                  <sc-if value="{{ev.thSmoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 56 56" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmk" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter></defs><path d="M30 46c-2-8 4-12 2-20s4-12 10-16c-2 8-6 10-4 18s-2 14-8 18Z" fill="rgba(235,235,240,0.85)" filter="url(#wfSmk)"></path></svg></sc-if>
+                </button>
+                <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><wf-slides mini="" photos="{{ev.slides}}" aria-label="{{ev.title}}" style="flex-shrink: 0; width: 96px; height: 96px; border-radius: 12px; overflow: hidden"></wf-slides></sc-if>
+                <span style="display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-width: 0">
+                  <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2"><span style="font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</span></sc-for>
+                </span>
+              </li>
               <li class="wf-note" style="display: {{ev.noteD}}; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ev.note}}</li>
             </ul>
           </sc-for>
@@ -1112,8 +1115,17 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   /* the +6 h projected shape in map pixels (as the map draws it), so the small fire map can frame it; none once the fire is held */
-  wfGrow6(ring, P, held, seed) { if (held || !window.__wfGrowXY || !ring || ring.length < 3) return []; const c = Math.cos((ring[0][0] || 0) * Math.PI / 180) || 1;
-    const g = window.__wfGrowXY(ring.map((q) => [q[1] * c, q[0]]), 3.6, seed || 'f'); return g ? g.map((q) => P(q[1], q[0] / c)) : []; }
+  wfGrow6(ring, P, held, seed, gk) { if (held || !window.__wfGrowXY || !ring || ring.length < 3) return []; const c = Math.cos((ring[0][0] || 0) * Math.PI / 180) || 1;
+    const g = window.__wfGrowXY(ring.map((q) => [q[1] * c, q[0]]), gk || 3.6, seed || 'f'); return g ? g.map((q) => P(q[1], q[0] / c)) : []; }
+  /* (Oct 13, 08:22) a tap on Now or +N h zooms the map into the incident: Now frames the fire's polygon itself (~60% of the width),
+     +N h frames that horizon's projected shape whole (~90%), centred on the fire. Every tap reframes, even on the chosen horizon
+     (after panning, it brings the incident back): the tap count nudges the zoom by 0.0001 so the map sees a new view. */
+  wfHzView(pts, grow, s) { s = s || {}; if (!s.fhzT || !pts || pts.length < 3) return null;
+    const G = { 0: 1, 1: 1.6, 3: 2, 6: 3.6 }, k = s.fhz || 0, g = k ? (grow(G[k] || 1) || []) : [];
+    const U = pts.concat(g), xs = U.map((q) => q[0]), ys = U.map((q) => q[1]), cx = (Math.min(...xs) + Math.max(...xs)) / 2, cy = (Math.min(...ys) + Math.max(...ys)) / 2;   /* centred on the whole shape shown (the horizon's grows with the wind) */
+    let hx = 2, hy = 2; U.forEach((q) => { hx = Math.max(hx, Math.abs(q[0] - cx)); hy = Math.max(hy, Math.abs(q[1] - cy)); });
+    const W = 358, H = s.full ? 605 : 170, z0 = Math.max(0.0015, Math.min(40, W * (k ? 0.45 : 0.3) / hx, H * 0.45 / hy)), z = +(+z0.toFixed(4) + (s.fhzT % 2) * 0.0001).toFixed(4);
+    return s.full ? { zoom: z, fx: Math.round(cx), fy: +(cy - 65 / z).toFixed(2) } : { zoom: z, fx: Math.round(cx), fy: +(cy + 36 / z).toFixed(2) }; }   /* the band: centred in its clear part, above the horizon switcher */
   /* small fire map framing: the current outline as before, zoomed out just enough that the +6 h shape fits whole in the clear part of the band */
   wfBandFit(pts, g6, z0, cx0, cy0) { if ((!g6 || !g6.length) && !window.__wfFrameFire) return { z: z0, cx: cx0, cy: cy0 }; g6 = g6 || [];
     /* (Oct 4, 16:40) the fire polygon itself sits centred in the clear part of the band; the zoom is the largest at which the +6 h shape, measured from that centre, still fits */
@@ -1127,7 +1139,7 @@ class Component extends DCLogic {
     const cp = document.querySelector('[data-wf-hdrcap]'), mw = cp && cp.getBoundingClientRect().width ? Math.floor(cp.getBoundingClientRect().width / k) - 16 : 0;   /* the widest the card can be (beside the legend), minus its 16px padding and plus the tag's 8px reach into it each side */
     if (!F.ok || Math.abs(F.top - top) > 0.5 || Math.abs(F.left - left) > 0.5 || Math.abs((F.w || 0) - w) > 0.5 || (F.mw || 0) !== mw) { this._fsTag = { top, left, w, mw, ok: true }; this.setState({ fsTagV: Date.now() }); } } catch (x) {} }
   wfSetFireView(f) { const v = { id: f.id, place: f.place, note: f.note, x: f.x, y: f.y, t: Date.now() }; window.__wfMem = Object.assign(window.__wfMem || {}, { fireView: v }); try { window.sessionStorage.setItem('wf-fireview', JSON.stringify(v)); } catch (e) {} }
-  wfTakeFireView() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fireview') || 'null'); window.sessionStorage.removeItem('wf-fireview'); } catch (e) {} const m = window.__wfMem || {}; v = v || m.fireView; m.fireView = null; if (v && Date.now() - v.t < 20000) { try { window.sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v, adjust: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null, per: null, exp: null }); return true; } return false; }
+  wfTakeFireView() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fireview') || 'null'); window.sessionStorage.removeItem('wf-fireview'); } catch (e) {} const m = window.__wfMem || {}; v = v || m.fireView; m.fireView = null; if (v && Date.now() - v.t < 20000) { try { window.sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v, fhzT: 0, adjust: false, open: false, cfg: false, stPick: false, cfPick: false, stations: null, counts: null, per: null, exp: null }); return true; } return false; }
   wfRestoreFire() { if (this.state.fv) return; let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-fire-cur') || 'null'); } catch (e) {} if (v && v.id) { this.setState({ fv: v }); return; } if (window.__wfBackOrHome) { try { window.location.replace('Main.dc.html'); } catch (e) {} } }
   wfUnits() { let v = null; try { v = JSON.parse(window.sessionStorage.getItem('wf-units') || 'null'); } catch (e) {} v = v || (window.__wfMem || {}).units; return Object.assign({ temp: 'F', area: 'ac' }, v || {}); }
   wfToggleUnit(k) { const u = this.wfUnits(); if (k === 'temp') u.temp = u.temp === 'F' ? 'C' : 'F'; else u.area = u.area === 'ac' ? 'ha' : 'ac'; window.__wfMem = Object.assign(window.__wfMem || {}, { units: u }); try { window.sessionStorage.setItem('wf-units', JSON.stringify(u)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {} this.forceUpdate(); }
@@ -1392,7 +1404,7 @@ class Component extends DCLogic {
       const d1 = new Date(Date.parse(dt) - 86400000).toISOString().slice(0, 10); return { src: pickSrc(u(dt), u(d1)), src2: u(d1), rx: +((xf % 1) * 100).toFixed(1), ry: +((yf % 1) * 100).toFixed(1) }; })();
     const TH = { mD: 'none', bigSt: 'inset: 0; width: 100%; height: 100%; object-fit: cover', padR: '16px', minH: 'auto', thImg: false, thVid: false, thSmoke: false, ringD: 'none', src: '', thAria: '', open: null, slides: '' };
     const th = (q) => Object.assign({}, TH, { mD: 'block' }, q);
-    const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, ringD: 'block', bigSt: 'left: calc(50% - ' + (gibs.rx * 4.48).toFixed(1) + 'px); top: ' + (101 - gibs.ry * 4.48).toFixed(1) + 'px; width: 448px; height: 448px; max-width: none', thAria: 'Satellite image of the area. Open',
+    const sat = { ...(isLive && gibs ? th({ thImg: true, src: gibs.src, ringD: 'block', bigSt: 'left: calc(50% - ' + (gibs.rx * 2.24).toFixed(1) + 'px); top: ' + (48 - gibs.ry * 2.24).toFixed(1) + 'px; width: 224px; height: 224px; max-width: none', thAria: 'Satellite image of the area. Open',
         open: (e) => this.wfEv({ image: { src: gibs.src, src2: gibs.src2, rx: gibs.rx, ry: gibs.ry, ring: true, alt: 'Satellite image of the area' }, label: 'Satellite image', who: 'True colour, ' + dt + '. NASA GIBS.', anchor: e && e.currentTarget }) }) : TH),
       title: isLive ? 'Satellite: ' + verdict.toLowerCase() : verdict, rows: reasons.filter(([t]) => !(droneSeen && /^Not confirmed on the ground/.test(t))).map(([t, ok]) => row(t, ok)), noteD: 'none', note: '' };
     const out = [sat];
@@ -1439,6 +1451,12 @@ class Component extends DCLogic {
     out.forEach((x) => { x.pctTxt = droneStrong && isLive && x.pct > 0 ? '+' + x.pct + '%' : ''; });
     out.forEach((x) => { if (x.at == null || x.kind === 'sat') return; x.rows = [row(droneStrong || x.kind === 'sat' ? Lx('Seen at ', 'Visto às ') + hm(x.at) + '. ' + rel(x.at) + '.' : Lx('Looked at ', 'Observado às ') + hm(x.at) + '. ' + rel(x.at) + '.')].concat(x.rows); });
     out.forEach((x) => { x.hasSl = !!x.slides; });
+    /* (Oct 13, 08:22) each source's type icon, beside its title (the camera ones match their markers on the map) */
+    const EIC = { sat: 'M12 8.5 15.5 12 12 15.5 8.5 12ZM16 5 19 2 22 5 19 8ZM2 19l3-3 3 3-3 3ZM13.75 10.25 17.5 6.5M10.25 13.75 6.5 17.5M15 20a5 5 0 0 0 5-5',
+      car: 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5', c360: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', phone: 'M8 3h8v18H8ZM11 18h2',
+      tower: 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z', drone: 'M9.5 10h5v4h-5ZM9.5 10 7 7.5M14.5 10 17 7.5M9.5 14 7 16.5M14.5 14l2.5 2.5M4.5 7.5h5M14.5 7.5h5M4.5 16.5h5M14.5 16.5h5',
+      call: 'M6 4h3l1.5 4.5-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 4 6a2 2 0 0 1 2-2Z' };
+    out.forEach((x) => { x.ic = EIC[x.kind] || EIC.sat; });
 
     /* the verdict for whoever verifies: how many sources, the first smoke, how fast with and without the civil cameras */
     const civ = out.filter((x) => x.civil), net = out.filter((x) => !x.civil && x.at != null), W0 = net.length ? Math.max(...net.map((x) => x.at)) : null;
@@ -1467,6 +1485,8 @@ class Component extends DCLogic {
     const o = this._renderVals0(), st = this.state || {};
     Object.assign(o, this.wfStageHist(o));
     Object.assign(o, this.wfEvid(o._hsSrc && o._hsSrc.frow));
+    /* (Oct 13, 08:25) a candidate's line under the title: what it is, then where (Ignition candidate • Santa Clara) */
+    if (o._hsSrc && o._hsSrc.frow && o._hsSrc.frow.cand && o.hd) { const k = window.__wfLang === 'pt' ? 'Candidato a ignição' : 'Ignition candidate', w = String(o.hd.sub || '').trim(); o.hd = Object.assign({}, o.hd, { sub: w && w !== 'Confirmed by satellite' ? k + ' • ' + w : k }); }
     o.hm = { tagD: 'none', tag: '', txt: '', go: null, op: '1', pe: 'auto', flt: 'none' }; this._hmNow = false; setTimeout(() => { if (!!this._hmNow !== !!this._hmOn) { this._hmOn = !!this._hmNow; try { this.forceUpdate(); } catch (e) {} } }, 0);   /* (Oct 7) the stage band makes room for the badge when it shows */
     // Projection switcher on a fire's Situation (under the map): Now by default; +1 / +3 / +6 h grow the outline 1.3× / 1.5× / 2× in area
     /* only while the fire is not held: hidden from Concluding on (and on a held fire), the elements under it move up */
@@ -1478,10 +1498,10 @@ class Component extends DCLogic {
         const ring = window.__wfFireRing(o.fireX, o.fireY);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
         return window.__wfHomesCheck(id, null, ring); })() : null;
       o.fp = { d: on && !o.full ? 'grid' : 'none', fullD: on && o.full ? 'grid' : 'none', grow: on ? G[h] : 0, x: (HZ.indexOf(h) * 100) + '%', stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
-        tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Structures threatened' : ''), pick: () => { if (((this.state || {}).fhz || 0) === k) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k }); } })) };
+        tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Structures threatened' : ''), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k, fhzT: ((this.state || {}).fhzT || 0) + 1 }); } })) };
       /* (Oct 6) houses in reach: a red dot on each horizon whose projected shape reaches them, and the pulsing red warning that opens the earliest */
       const HT = on && HM && window.__wfHomesText ? window.__wfHomesText(HM, window.__wfLang === 'pt') : null;
-      const hmGo = () => { if (!HT) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: HT.h, ftab: 'fire', full: false }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} };
+      const hmGo = () => { if (!HT) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: HT.h, fhzT: ((this.state || {}).fhzT || 0) + 1, ftab: 'fire', full: false }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} };
       const ackd = HT && window.__wfHomesAcked && window.__wfHomesAcked(o.fireId, HM);
       this._hmNow = !!HT;
       /* (Oct 8, 23:04) the fire's chat at Resolving or later: the homes are safe (the triangle greyed out, the green all-clear once) */
@@ -2035,16 +2055,18 @@ class Component extends DCLogic {
         const pts = [].concat.apply([], Object.values(RO && M.snaps[0] ? { 0: M.snaps[0] } : M.snaps).filter((q) => q && q.ring && q.ring.length).map((q) => q.ring.map((r) => P(r[0], r[1]))));
         const RING6 = M.snaps[0] && M.snaps[0].ring ? this.wfGrow6(M.snaps[0].ring, P, HELD, fireId) : [];
         if (!pts.length) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };
+        if (RO) { const HV = this.wfHzView(pts, (gk) => this.wfGrow6(M.snaps[0].ring, P, HELD, fireId, gk), s); if (HV) return HV; }
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
         // Detail band: the fire's shape fills about 60% of the width, framed in the clear part under the legend, whatever its size (as on Timber)
         return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 148) * 0.92 / bh))); if (RO && !s.full) { const F = this.wfBandFit(pts, RING6, zB, cx, cy); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy + 12 / F.z).toFixed(2) }; } if (RO) { const FF = window.__wfFrameFire ? window.__wfFrameFire(pts, RING6, 358, 605) : null, zF = FF ? FF.z : Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
           const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
       })() : (window.__wfLiveMap && fv && BRF && ((window.__wfBRGeo || {})[fv.id] || {}).ring) ? (() => {
         const P = (la, lo) => [(lo + 118.13) * 2345 + 518, (34.19 - la) * 2829 + 662], pts = window.__wfBRGeo[fv.id].ring.map((q) => P(q[0], q[1])); const RING6 = this.wfGrow6(window.__wfBRGeo[fv.id].ring, P, HELD, fireId);
+        if (RO) { const HV = this.wfHzView(pts, (gk) => this.wfGrow6(window.__wfBRGeo[fv.id].ring, P, HELD, fireId, gk), s); if (HV) return HV; }
         const xs = pts.map((q) => q[0]), ys = pts.map((q) => q[1]), bw = Math.max(4, Math.max(...xs) - Math.min(...xs)), bh = Math.max(4, Math.max(...ys) - Math.min(...ys));
         return (() => { const cx = (Math.max(...xs) + Math.min(...xs)) / 2, cy = (Math.max(...ys) + Math.min(...ys)) / 2; const zB = Math.max(0.0015, Math.min(20, Math.min(358 * 0.62 / bw, (MAPH - 148) * 0.92 / bh))); if (RO && !s.full) { const F = this.wfBandFit(pts, RING6, zB, cx, cy); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy + 12 / F.z).toFixed(2) }; } if (RO) { const FF = window.__wfFrameFire ? window.__wfFrameFire(pts, RING6, 358, 605) : null, zF = FF ? FF.z : Math.max(zB, Math.min(20, Math.min(390 * 0.62 / bw, 605 * 0.72 / bh))); return { zoom: +zF.toFixed(4), fx: Math.round(cx), fy: +(cy - 65 / zF).toFixed(2) }; }   /* full screen: zoomed into the current perimeter (62% of the width or 72% of the clear height under the title and legend), centred in that clear part, never further out than the band */
           const z = Math.max(0.0015, Math.min(3, Math.min(330 / bw, 230 / bh) * 0.85)); return { zoom: +z.toFixed(4), fx: Math.round(cx), fy: Math.round(cy) }; })();
-      })() : (window.__wfLiveMap && fv && RO) ? (() => { if (s.full) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };   /* no outline published: the map's illustrative one; the small map frames its +6 h shape too */
+      })() : (window.__wfLiveMap && fv && RO) ? (() => { { const r0 = window.__wfFireRing(FIRE[0], FIRE[1]), HV = this.wfHzView(r0, (gk) => (HELD || !window.__wfGrowXY ? [] : window.__wfGrowXY(r0, gk, fireId) || []), s); if (HV) return HV; } if (s.full) return { zoom: 3, fx: FIRE[0], fy: FIRE[1] };   /* no outline published: the map's illustrative one; the small map frames its +6 h shape too */
         const ring = window.__wfFireRing(FIRE[0], FIRE[1]);   /* (Oct 7) the fire's irregular polygon, as the map draws it */
         const g = HELD || !window.__wfGrowXY ? null : window.__wfGrowXY(ring, 3.6, fireId); const F = this.wfBandFit(ring, g || [], 3, FIRE[0], FIRE[1]); return { zoom: +F.z.toFixed(4), fx: Math.round(F.cx), fy: +(F.cy + (g ? 12 / F.z : 0)).toFixed(2) }; })() : sent ? (() => { const dx = Math.abs(stX - FIRE[0]), dy = Math.abs(stY - FIRE[1]); const z = Math.max(0.36, Math.min(1.0, 1.3 * Math.min(390 / (2 * dx + 200), 296 / (2 * dy + 150)))); return { zoom: +z.toFixed(3), fx: FIRE[0], fy: FIRE[1] }; })() : { zoom: 0.7, fx: FIRE[0], fy: FIRE[1] },
       mapUnits: RO ? [] : mapUnits, deployed, deployCount: deployed.reduce((a, d) => a + ((d.label === 'Personnel' || d.label === 'Crews' || !(Number(d.n) >= 0)) ? 0 : Number(d.n)), 0),

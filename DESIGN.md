@@ -1902,3 +1902,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The candidate's map frames every camera that looked (Car, 360, Phone, Tower pills) with its line of sight to the point; crossing lines pinpoint the ignition.
 - Candidate tags read "N% likelihood" ("N% de probabilidade") everywhere.
 - Civil sources are simulated and say so; the satellite detection is real.
+
+## Oct 13, 08:22
+- Evidence cards: one row per source. Type icon (24px) left of the title, the likelihood share on the right; under it the image or slideshow small (96px square, 12px corners) with the description beside it; the annotation full width below.
+- Projection switcher: a tap on Now or +N h zooms the map into the incident. Now frames the fire's polygon (~60% of the width), +N h frames that horizon's whole shape. Every tap reframes, even on the chosen horizon.
+- A candidate's line under the title: "Ignition candidate • <area>".
+- Night moon: a thinner crescent everywhere (markers, tags), balancing the asterisk.

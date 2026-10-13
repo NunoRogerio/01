@@ -152,7 +152,7 @@
   Object.defineProperty(Slides, 'observedAttributes', { get: function () { return ['photos']; } });
   Slides.prototype.connectedCallback = function () {
     if (!this._root) { this._root = this.attachShadow({ mode: 'open' });
-      this._root.innerHTML = '<style>' + SLCSS + ':host{display:block;position:relative}.box{position:absolute;inset:0;isolation:isolate;overflow:hidden;border-radius:inherit;touch-action:pan-y;background:#1E2B22}.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}</style><div class="box"><div class="sl"><div class="tk"></div></div><span class="sh" aria-hidden="true"></span><div class="dots" aria-hidden="true"></div></div>'; }
+      this._root.innerHTML = '<style>' + SLCSS + ':host{display:block;position:relative}:host([mini]) .dots{top:6px;gap:4px}:host([mini]) .dots i{width:5px;height:5px}:host([mini]) .dots i.on{width:12px}.box{position:absolute;inset:0;isolation:isolate;overflow:hidden;border-radius:inherit;touch-action:pan-y;background:#1E2B22}.sh{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}</style><div class="box"><div class="sl"><div class="tk"></div></div><span class="sh" aria-hidden="true"></span><div class="dots" aria-hidden="true"></div></div>'; }
     this._k = ''; this.fill(); };
   Slides.prototype.disconnectedCallback = function () { clearInterval(this._iv); this._iv = 0; this._k = ''; };
   Slides.prototype.attributeChangedCallback = function () { if (this._root) this.fill(); };

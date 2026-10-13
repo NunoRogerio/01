@@ -18,11 +18,11 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791870912"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1791872737"></script>
+<script src="prefs.js?v=1791876476"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791736227"></script>
-<script src="live.js?v=1791754661"></script>
-<script src="chat.js?v=1791871146"></script>
+<script src="live.js?v=1791876476"></script>
+<script src="chat.js?v=1791876476"></script>
 <script src="tour.js?v=1791777044"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791798521"></script>
@@ -298,7 +298,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
         <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
           <a href="{{it.href}}" class="sqrow" data-sel="false" onPointerDown="{{it.pick}}" onClick="{{it.pick}}" aria-label="{{it.aria}}" style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: center; gap: 4px 8px; flex-shrink: 0; min-height: 60px; padding: 16px; margin: 0 16px 8px; border-radius: 16px; background: #FFFFFF; box-sizing: border-box; color: #000000; text-decoration: none">
-            <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 600; overflow-wrap: anywhere">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
+            <span style="min-width: 0; line-height: 22px; font-size: 17px; font-weight: 600; overflow-wrap: anywhere">{{it.place}}<svg width="15" height="15" viewBox="0 0 24 24" role="img" aria-label="Night detection" style="display: {{it.moonD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span>
             <span style="grid-column: 1 / -1; order: 9; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 8px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{it.valBg}}; color: {{it.valC}}; font-size: 17px; line-height: 22px"><span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink: 0"><path d="{{it.bIc}}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.val}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; line-height: 20px; font-variant-numeric: tabular-nums">{{it.bR}}</span></span><!-- (Oct 11, 11:37) the stage band, as on the station's cards -->
             <span style="grid-column: 1 / span 2; min-width: 0; line-height: 20px; font-size: 15px; color: #6E6E73; overflow-wrap: anywhere">{{it.s1.a0}}<b style="font-weight: 700">{{it.s1.b0}}</b>{{it.s1.a1}}<b style="font-weight: 700">{{it.s1.b1}}</b>{{it.s1.a2}}<b style="font-weight: 700">{{it.s1.b2}}</b>{{it.s1.a3}}</span>
           </a>
@@ -760,7 +760,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_cand}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><g transform="translate(5.5 5.5) scale(.54)"><path d="M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5" fill="none" stroke="#3A3A3C" stroke-width="2.6" stroke-linecap="round"/></g></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="#E8590C"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{s.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
@@ -783,7 +783,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
                       <span style="display: flex; align-items: center; gap: 12px; margin-top: 8px">
                         <span style="display: flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px">
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_cand}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><g transform="translate(5.5 5.5) scale(.54)"><path d="M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5" fill="none" stroke="#3A3A3C" stroke-width="2.6" stroke-linecap="round"/></g></svg>
-                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.6 8.6 0 0 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
+                          <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_night}}"><circle cx="12" cy="12" r="10" fill="#FFE680"/><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.4 8.4 0 1 1 15.5 3.7Z" fill="#1C1C1E" transform="translate(12 12) scale(.5) rotate(-25) translate(-12 -12) translate(1.5 0)"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_fire}}"><circle cx="12" cy="12" r="8.8" fill="{{e.fc}}"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_station}}"><path d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,.6)" stroke="#3A3A3C" stroke-width="1.5" stroke-linejoin="round"/></svg>
                           <svg viewBox="0 0 24 24" width="28" height="28" style="display: {{e.d_poly}}"><path d="M4 9 11 4 20 8 18 18 7 20Z" fill="rgba(142,142,147,.35)" stroke="#E8590C" stroke-width="1.5" stroke-linejoin="round"/></svg>
