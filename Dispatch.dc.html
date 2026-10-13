@@ -980,7 +980,8 @@ class Component extends DCLogic {
       close: () => this.setState({ pick: null }) };
   }
   wfNudge() { try { if (sessionStorage.getItem('wf-nudge-chat') && !sessionStorage.getItem('wf-tour') && window.__wfNudge) setTimeout(() => window.__wfNudge.on('[data-wf-hdr] a[href="Chat.dc.html"]', 'wf-nudge-chat'), 700); } catch (e) {} }
-  wfHdrMeasure() { try { const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); }
+  wfHdrMeasure() { try { if (document.documentElement.classList.contains('wf-inner')) { if (this._hdrB !== 1) { this._hdrB = 1; this.forceUpdate(); } return; }   /* (Oct 13, 17:01) inside the chat's map view the page has no header: nothing above its content */
+    const h = document.querySelector('[data-wf-hdr]'); if (!h) return; const y = h.offsetTop + h.offsetHeight; if (y > 0 && Math.abs(y - (this._hdrB || 0)) > 1) { this._hdrB = y; this.forceUpdate(); }
     /* (Oct 11, 08:56) the map band sits under the Situation | Crews switcher inside the page: its offset there moves the map's window */
     const b = document.querySelector('[data-wf-band]'), pg = document.querySelector('[data-wf-page]'); if (b && pg && b.offsetHeight) { const o = b.offsetTop - pg.offsetTop; if (o >= 0 && Math.abs(o - (this._bandOff || 0)) > 1) { this._bandOff = o; this.forceUpdate(); } } } catch (x) {} }
   wfHandOver() { try { if (this._handed || /[?&]embed=1/.test(location.search)) return; if (!this._tagChat || !this._tagReady) return;
