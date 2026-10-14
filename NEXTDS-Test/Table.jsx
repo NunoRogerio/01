@@ -254,7 +254,7 @@ const CSS = `
 /* rows */
 .hvt-row{display:flex;align-items:center;gap:var(--hvt-colgap);min-height:var(--hvt-row-h);padding:0 var(--hvt-rowpad);
   background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
-.hvt-row--head{height:var(--hvt-head-h);min-height:var(--hvt-head-h);overflow:hidden}
+.hvt-row--head{height:var(--hvt-head-h);min-height:var(--hvt-head-h);overflow:clip visible} /* clips sideways only, so the grown resize marker is not cut */
 .hvt-row--body{background:transparent;border-radius:0}
 /* the row has no padding of its own: the first column starts 16px from the row edge and the last one ends 16px from it */
 .hvt-root.has-lead .hvt-row > :first-child{margin-left:calc(var(--hvt-cellpad) / 2)} /* the check box and the arrow have their own hover shape: 8px from the edge */
@@ -542,8 +542,8 @@ const CSS = `
 .hvt-resize::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;margin-left:-.5px;opacity:0;
   background:var(--border-default);transition:opacity .15s ease,transform .2s cubic-bezier(.4,0,.2,1),background-color .2s ease}
 .hvt-row--head:hover .hvt-resize::before{opacity:1}
-.hvt-resize:hover::before,.hvt-resize:focus-visible::before{opacity:1;width:2px;margin-left:-1px;background:var(--cat1-100);transform:scaleY(1.4)} /* on hover the marker takes the drag line colour and grows 20% above and below */
-.hvt-resize.is-active::before{opacity:1;transform:scaleY(1.4);width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100)}
+.hvt-resize:hover::before,.hvt-resize:focus-visible::before{opacity:1;width:4px;margin-left:-2px;border-radius:999px;background:var(--cat1-100);transform:scaleY(1.6)} /* on hover the marker takes the drag line colour, is 4px wide and grows 30% above and below */
+.hvt-resize.is-active::before{opacity:1;transform:scaleY(1.6);width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100)}
 @media (prefers-reduced-motion:reduce){.hvt-resize::before{transition:none}}
 .hvt-root.is-resizing,.hvt-root.is-resizing *{cursor:col-resize !important;user-select:none;-webkit-user-select:none}
 .hvt-guide{position:absolute;top:0;bottom:0;width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;
