@@ -236,11 +236,11 @@ const CSS = `
 .hvt-filterbar{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:0 8px 8px;
   background:var(--container-filter);border-radius:var(--component-containerradius)}
 .hvt-chips{flex:1;min-width:0;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 0}
-.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:2px;overflow:hidden;
+.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:3px;overflow:hidden;
   background:transparent;transition:background-color .15s ease;
-  border:2px solid var(--border-hover-selected);border-radius:var(--component-inputradius);
+  border:1px solid var(--outline);border-radius:var(--component-inputradius);
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
-.hvt-chip:hover{background:var(--container-secondary-background)} /* an added filter has no fill, like the closed Filters button; on hover it turns white */
+.hvt-chip:hover{background:var(--container-secondary-background);border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected)} /* 1px border at rest, 2px on hover (nothing moves) */ /* an added filter has no fill, like the closed Filters button; on hover it turns white */
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
@@ -4166,7 +4166,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:47"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:48"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
