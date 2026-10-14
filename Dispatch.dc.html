@@ -14,11 +14,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964274"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964493"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791964274"></script>
+<script src="i18n.js?v=1791964493"></script>
 <script src="live.js?v=1791923933"></script>
 <script src="chat.js?v=1791921997"></script>
 <script>
@@ -35,7 +35,7 @@
 (function () { try { if (/[?&]inner=1/.test(location.search)) { document.documentElement.classList.add('wf-inner'); var st = document.createElement('style'); st.textContent = '.wf-inner [data-wf-hdr]{display:none!important}.wf-inner [data-wf-se]::after,.wf-inner [data-wf-sb]::after,.wf-inner .wf-spe,.wf-inner .wf-spb{display:none!important}';   /* (Oct 13, 21:19) no stripe pattern at the foot: the chat's top panel carries it */ (document.head || document.documentElement).appendChild(st); } } catch (e) {} })();
 /* (Oct 13, 16:54) one host for an incident: the chat page, where the map and the team swap in place under the same band. Opened on its
    own (not inside the chat), this page stays hidden while it hands over to the chat on its map view (at most 2.5 s, then it shows itself) */
-(function () { try { if (/[?&]embed=1/.test(location.search) || !window.__wfChat) return; var v = JSON.parse(sessionStorage.getItem('wf-fireview') || 'null');
+(function () { try { if (/[?&](embed|inner)=1/.test(location.search) || !window.__wfChat) return;   /* (Oct 14, 08:52) inside the chat host (inner=1) it is the map view itself: never held hidden */ var v = JSON.parse(sessionStorage.getItem('wf-fireview') || 'null');
   if (!v || !v.id) return; document.documentElement.classList.add('wf-hold'); var st = document.createElement('style'); st.textContent = '.wf-hold body{visibility:hidden!important}'; (document.head || document.documentElement).appendChild(st);
   setTimeout(function () { document.documentElement.classList.remove('wf-hold'); }, 2500); } catch (e) {} })();
 (function () { try {
