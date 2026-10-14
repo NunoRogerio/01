@@ -1615,7 +1615,7 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
     if (e.button !== undefined && e.button !== 0) return;
     e.preventDefault();
     const el = rowEls.current[k];
-    dragRef.current = { key: k, id: e.pointerId, startY: e.clientY, startTop: el.offsetTop, y: e.clientY };
+    dragRef.current = { key: k, id: e.pointerId, startY: e.clientY, startTop: el.offsetTop, y: e.clientY, wasPin: pins.includes(k) };
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
     setDragKey(k);
   };
@@ -1625,12 +1625,24 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
     d.y = e.clientY;
     const { list: l, pins: p } = latest.current;
     const el = rowEls.current[d.key];
-    const isPin = p.includes(d.key);
-    const block = l.filter((k) => p.includes(k) === isPin);
-    const others = block.filter((k) => k !== d.key);
     const centre = el.offsetTop + el.offsetHeight / 2 + (e.clientY - d.startY - (el.offsetTop - d.startTop));
-    let idx = 0;
-    others.forEach((k) => { const o = rowEls.current[k]; if (o && centre > o.offsetTop + o.offsetHeight / 2) idx += 1; });
+    const slot = (keys) => keys.reduce((n, k) => { const o = rowEls.current[k]; return o && centre > o.offsetTop + o.offsetHeight / 2 ? n + 1 : n; }, 0);
+    if (d.wasPin) {
+      /* a pinned column can go anywhere: it keeps its pin while it stays above every unpinned column
+         (with a single pin, that means its own place), and loses it once it goes below one */
+      const others = l.filter((k) => k !== d.key);
+      const otherPins = p.filter((k) => k !== d.key);
+      const idx = slot(others);
+      const nl = [...others.slice(0, idx), d.key, ...others.slice(idx)];
+      const np = idx <= otherPins.length ? nl.filter((k) => k === d.key || otherPins.includes(k)) : otherPins;
+      if (nl.join("|") !== l.join("|") || np.join("|") !== p.join("|")) { setList(nl); setPins(np); }
+      place(el, d, e.clientY);
+      return;
+    }
+    const isPin = false;
+    const block = l.filter((k) => !p.includes(k));
+    const others = block.filter((k) => k !== d.key);
+    const idx = slot(others);
     if (idx !== block.indexOf(d.key)) {
       const nb = [...others.slice(0, idx), d.key, ...others.slice(idx)];
       setList(isPin ? [...nb, ...l.filter((k) => !p.includes(k))] : [...l.filter((k) => p.includes(k)), ...nb]);
@@ -1656,6 +1668,11 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
     const isPin = pins.includes(k);
     const block = list.filter((x) => pins.includes(x) === isPin);
     const i = block.indexOf(k), j = i + (e.key === "ArrowUp" ? -1 : 1);
+    if (isPin && j >= block.length) { // moved below the last pinned column: it loses its pin, like when dragged
+      commit(list, pins.filter((x) => x !== k), hid);
+      requestAnimationFrame(() => { const g = rowEls.current[k] && rowEls.current[k].querySelector(".hvt-cl-grip"); if (g) g.focus(); });
+      return;
+    }
     if (j < 0 || j >= block.length) return;
     const nb = block.slice(); nb.splice(i, 1); nb.splice(j, 0, k);
     commit(isPin ? [...nb, ...list.filter((x) => !pins.includes(x))] : [...list.filter((x) => pins.includes(x)), ...nb], isPin ? nb : pins, hid);
