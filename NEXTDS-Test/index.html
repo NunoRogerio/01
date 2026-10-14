@@ -470,6 +470,8 @@ const CSS = `
 .hvt-select:focus,.hvt-text:focus,.hvt-ms-btn:focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
 .hvt-grow{flex:1}
 .hvt-allrow{flex:none}
+.hvt-ditem--check{cursor:pointer}
+.hvt-ditem--check .hvt-selbox:hover{background:transparent} /* a check box and its label are one object: one hover, on the whole row, and a click anywhere on it toggles */
 .hvt-allcount{padding-right:8px}
 .hvt-checklist{display:flex;flex-direction:column;gap:4px}
 .hvt-qf--field{width:100%}
@@ -4184,7 +4186,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:38"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
