@@ -4276,6 +4276,13 @@ export default function App() {
     return best;
   };
   const spanNow = cfg.widthMode === "grid" ? cfg.gridSpan : spanFor(FRAME_WIDTH);
+  /* on the layout grid the table starts on a column edge: centred when the free columns split evenly,
+     otherwise one more free column on the right (never half a column off) */
+  const gridCol = (cfg.gridCanvas - 2 * GRID.margin - (GRID.columns - 1) * GRID.gutter) / GRID.columns;
+  const gridStart = Math.floor((GRID.columns - spanNow) / 2);
+  const gridPlace = cfg.widthMode === "grid"
+    ? { marginLeft: `calc(50% - ${cfg.gridCanvas / 2}px + ${Math.round(GRID.margin + gridStart * (gridCol + GRID.gutter))}px)`, marginRight: "auto" }
+    : {};
   const rzDown = (e) => {
     e.preventDefault();
     const r = stageRef.current.getBoundingClientRect();
@@ -4894,7 +4901,7 @@ export default function App() {
                 {Array.from({ length: GRID.columns }, (_, i) => (<i key={i} />))}
               </div>
             )}
-          <div className="hvs-stage" ref={stageRef} style={{ width: tableWidth, maxWidth: cfg.widthMode === "grid" ? undefined : "100%" }}>
+          <div className="hvs-stage" ref={stageRef} style={{ width: tableWidth, maxWidth: cfg.widthMode === "grid" ? undefined : "100%", ...gridPlace }}>
             <div className={`hvs-slot${maxOn ? " is-max" : ""}`}>
             <DataTable
               key={`${resetKey}-${cfg.dataset}`}
