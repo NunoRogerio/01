@@ -4219,7 +4219,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:27"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4940,12 +4940,7 @@ function App() {
       <div className="hvs-grid is-solo">
 
         <main className="hvs-main">
-          <section className="hvs-sec">
-            <button type="button" className="hvs-sec-h" aria-expanded={cfgOpen} aria-controls="hvs-configuration" onClick={() => setCfgOpen((v) => !v)}>
-              <span className="hvs-sec-chev" aria-hidden="true">{Icons.ChevronDown}</span>Configuration
-            </button>
-            <div id="hvs-configuration">
-            <Reveal open={cfgOpen} instant flat>
+          <section className="hvs-sec" aria-label="Configuration">
           <div className="hvs-ctl">
             <div className="hvs-databar" role="toolbar" aria-label="Table controls">
               <CtlField label="Theme">
@@ -5035,8 +5030,6 @@ function App() {
               <button type="button" className="hvt-btn" onClick={reset}>Reset settings</button>
             </div>
           </div>
-            </Reveal>
-            </div>
           </section>
 
 
