@@ -233,9 +233,9 @@ const CSS = `
 .hvt-gutter{width:var(--hvt-tablepad);flex:none;display:flex;flex-direction:column;align-items:center}
 
 /* filter bar */
-.hvt-filterbar{display:flex;align-items:center;gap:8px;min-height:48px;padding:0 8px;
+.hvt-filterbar{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:0 8px 8px;
   background:var(--container-filter);border-radius:var(--component-containerradius)}
-.hvt-chips{flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0}
+.hvt-chips{flex:1;min-width:0;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 0}
 .hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:0;overflow:hidden;
   background:var(--container-secondary-background);
   border:2px solid var(--border-hover-selected);border-radius:var(--component-inputradius);
