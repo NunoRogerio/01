@@ -14,12 +14,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791923549"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964274"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="menu.js?v=1791782987"></script>
-<script src="i18n.js?v=1791897367"></script>
+<script src="i18n.js?v=1791964274"></script>
 <script src="live.js?v=1791923933"></script>
 <script src="chat.js?v=1791921997"></script>
 
@@ -489,7 +489,8 @@ class Component extends DCLogic {
       openFa: () => this.setState({ fa: true }), closeFa: () => this.setState({ fa: false }),
       confirmFa: () => { if (this._faDone) return; this._leaving = true; this._faDone = true; this.setState({ ret: true }); const d = this.wfDismissed(); if (!d[vId]) { d[vId] = true; this.wfSave(d); } this.wfNav('menu'); setTimeout(() => { this._faDone = false; this.setState({ fa: false }); }, 800); },
       faY: fa ? 'calc(0% + ' + this.wfDrag('fa').y + 'px)' : 'calc(100% + 120px)', faT: this.wfDrag('fa').t === '0s' ? '0s' : '.5s', hFa: this.wfHandle('fa', 'down', () => this.setState({ fa: false })), faOp: fa ? 1 : 0, faPE: fa ? 'auto' : 'none', faHidden: fa ? 'false' : 'true',
-      vId, vPlace, confirmHere: () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
+      vId, vPlace, confirmHere: (e) => { if (e && e.preventDefault) e.preventDefault(); const PTd = window.__wfLang === 'pt', go = () => { this._leaving = true; this.setState({ ret: true }); this.wfConfirm(vId); setTimeout(() => { try { if (!/Dispatch/.test(window.location.pathname)) window.location.href = 'Dispatch.dc.html'; } catch (e) {} }, 450); };   /* (Oct 14, 08:22) a foot action asks first: no declared fire from a missed tap */
+        if (!window.__wfConfirm) { go(); return; } window.__wfConfirm({ title: PTd ? 'Declarar incêndio?' : 'Declare fire?', body: PTd ? (vPlace || '') + ' passa a incêndio ativo.' : (vPlace || '') + ' becomes an active fire.', cancel: PTd ? 'Cancelar' : 'Cancel', ok: PTd ? 'Declarar' : 'Declare', onOk: go }); }, navMap: () => this.wfNav('menu'), alertCount: AL, hasAlerts: AL > 0, noAlerts: AL <= 0, alertLabel: AL > 0 ? 'Alerts, ' + AL + ' active' : 'Alerts',
       setVid: this.setVid, 
       thermalOp: isThermal ? 1 : 0,
       visualOp: isThermal ? 0 : 1,

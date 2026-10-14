@@ -16,11 +16,11 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791923549"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964274"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791897367"></script>
+<script src="i18n.js?v=1791964274"></script>
 <script src="live.js?v=1791923933"></script>
 <script src="chat.js?v=1791921997"></script>
 <script src="tour.js?v=1791897367"></script>
@@ -1880,7 +1880,7 @@ class Component extends DCLogic {
     { const m = /^(\d[\d.,]*)\s+(.*)$/.exec(String(scope.parent || '')); scope.pN = m ? m[1] : ''; scope.pW = m ? m[2] : (scope.parent || ''); scope.pND = m ? 'inline' : 'none'; }
     /* (Oct 13, 13:16) a dispatch profile's header names where it works (the ECC, the CSREPC); its area moves to the line under it, before the count */
     scope.hT = scope.title; scope.pA = '';
-    { const D = window.__wfDspScope && window.__wfDspScope(); if (D) { if (D.st === 'PT') scope.hT = 'CSREPC ' + scope.title; else { scope.hT = 'SCU ECC'; scope.pA = scope.title + '. '; if (String(D.co).indexOf('rg:') !== 0) { scope.pA = ''; scope.pN = ''; scope.pND = 'none'; scope.pW = D.co + ' County. ' + (window.__wfUnitName ? window.__wfUnitName('CA', 'rg:SCU') : 'Santa Clara Unit'); } } } }   /* (Oct 13, 21:30) one county chosen: "Alameda County. Santa Clara Unit" */   /* a count in the subtitle is bold (58 counties) */
+    { const D = window.__wfDspScope && window.__wfDspScope(); if (D) { if (D.st === 'PT') scope.hT = 'CSREPC ' + scope.title; else { scope.hT = 'SCU ECC'; const nU = (t) => String(t || '').replace(/ Unit$/, '');   /* (Oct 14, 08:49) the title already says SCU: "Unit" is redundant under it */ scope.pA = nU(scope.title) + '. '; if (String(D.co).indexOf('rg:') !== 0) { scope.pA = ''; scope.pN = ''; scope.pND = 'none'; scope.pW = D.co + ' County. ' + nU(window.__wfUnitName ? window.__wfUnitName('CA', 'rg:SCU') : 'Santa Clara Unit'); } } } }   /* (Oct 13, 21:30) one county chosen: "Alameda County. Santa Clara Unit" */   /* a count in the subtitle is bold (58 counties) */
     const scOpen = !!s.scOpen;
     const lock = this.wfLock();
     const DSPb = window.__wfDspBase && window.__wfDspBase(), DSPu = DSPb && String(DSPb.co).indexOf('rg:') === 0 && window.__wfRegionCo ? window.__wfRegionCo(DSPb.st, DSPb.co) : null;   /* (Oct 13, 21:30) the ECC's picker: its unit and the unit's counties */

@@ -14,11 +14,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791923549"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964274"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791897367"></script>
+<script src="i18n.js?v=1791964274"></script>
 <script src="live.js?v=1791923933"></script>
 <script src="chat.js?v=1791921997"></script>
 <script src="tour.js?v=1791897367"></script>
@@ -841,7 +841,7 @@ class Component extends DCLogic {
     const T = (o) => (o ? (o.en === 'Team recommends' ? L('Recommendation', 'Recomendação') : L(o.en, o.pt)) : '');   /* (Oct 9, 17:58) cards saved before keep the new name */
     const PTL = L('en', 'pt') === 'pt';
     const t = { back: L('Back', 'Voltar'), close: L('Close', 'Fechar'), chats: L('Assignments', 'Atribuições'), none: L('No assignments yet.', 'Ainda sem atribuições.'),
-      msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), call: L('Video call with the police captain', 'Videochamada com o capitão da polícia'), team: L('Team of this fire', 'Equipa deste incêndio'), close: L('Close', 'Fechar'),
+      msg: L('Write a message…', 'Escrever mensagem…'), send: L('Send', 'Enviar'), cam: L('Helmet camera', 'Câmara de capacete'), call: L('Video call with the police captain', 'Videochamada com o capitão da polícia'), team: L('Incident team', 'Equipa do incidente'), close: L('Close', 'Fechar'),
       inStage: L('In this stage', 'Nesta fase'), sinceDet: L('Since detection', 'Desde a deteção'),
       fireCard: L('Fire card', 'Cartão do incêndio'), details: L('Details', 'Detalhes'), fireCardSub: L('Progress and projection', 'Progresso e projeção'),
       you: L('You:', 'Você:'), reset: L('Reset', 'Repor'), tl: L('Time in each stage', 'Tempo em cada fase'), kf: L('Key figures', 'Indicadores'), kfHint: L('(move cards to reorder)', '(move os cartões para reordenar)'), timeline: L('Timeline of the fire', 'Cronologia do incêndio'),
