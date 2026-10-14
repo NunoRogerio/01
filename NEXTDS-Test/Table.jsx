@@ -357,6 +357,7 @@ const CSS = `
 .hvt-fg.is-dragging,.hvt-fg.is-dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
 .hvt-fg.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
 .hvt-fg > .hvt-panel-head{flex:none}
+.hvt-fg.is-detached{margin-top:-48px} /* detached, the panel stays where it was and its header rises over the Filters button */
 .hvt-mbtn.is-open.is-down::after{bottom:0}
 .hvt-mbtn.is-open.is-up::after{top:0}
 .hvt-mico,.hvt-mchev{display:block;width:32px;height:32px;flex:none}
@@ -1344,7 +1345,8 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
     const nx = d.base.x + dx, ny = d.base.y + dy;
     const cx = Math.min(Math.max(nx, offset.x + 8 - r.left), offset.x + window.innerWidth - 8 - r.right); // keep it on the screen
     const cy = Math.min(Math.max(ny, offset.y + 8 - r.top), offset.y + window.innerHeight - 56 - r.top);
-    onOffset({ x: cx, y: cy });
+    d.last = { x: cx, y: cy };
+    onOffset(d.last);
   };
   const onDragUp = (e) => {
     const d = dragRef.current;
@@ -1352,9 +1354,10 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
     dragRef.current = null;
     setDragging(false);
-    if (!d.moved || !getTrigger) return;
-    const tr = getTrigger(), pr = panelRef.current && panelRef.current.getBoundingClientRect();
-    if (tr && pr && !(pr.right < tr.left || pr.left > tr.right || pr.bottom < tr.top || pr.top > tr.bottom + 8)) { // over the button: snap home
+    if (!d.moved || !getTrigger || !getTrigger()) return;
+    const last = d.last || offset;
+    const travel = Math.hypot(e.clientX - d.sx, e.clientY - d.sy);
+    if (travel > 24 && Math.hypot(last.x, last.y) < 40) { // brought back over its button: snap home
       onOffset({ x: 0, y: 0 });
       if (onDetach) onDetach(false);
     }
@@ -2163,8 +2166,8 @@ export function DataTable({
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
     if (!d.active) return;
     trigSuppress.current = true; // the click that follows a drag does not toggle the panel
-    const pr = panelRef.current && panelRef.current.getBoundingClientRect(), tr = e.currentTarget.getBoundingClientRect();
-    if (pr && !(pr.right < tr.left || pr.left > tr.right || pr.bottom < tr.top || pr.top > tr.bottom + 8)) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); }
+    const fx = d.base.x + d.dx, fy = d.base.y + d.dy; // a long press without moving keeps it detached; dragged back home, it snaps
+    if (Math.hypot(d.dx, d.dy) > 24 && Math.hypot(fx, fy) < 40) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); }
   };
   const [selected, setSelected] = useState(() => new Set());
   const [maximized, setMaximized] = useState(false);
@@ -4143,7 +4146,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:24"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:27"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
