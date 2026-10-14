@@ -258,15 +258,16 @@ const CSS = `
 .hvt-filterbar{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:0 8px 8px;
   background:var(--container-filter);border-radius:var(--component-containerradius)}
 .hvt-chips{flex:1;min-width:0;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 0}
-.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:0;overflow:hidden;
-  background:var(--container-secondary-background);
+.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:2px;overflow:hidden;
+  background:transparent;transition:background-color .15s ease;
   border:2px solid var(--border-hover-selected);border-radius:var(--component-inputradius);
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
-.hvt-chip .hvt-icon{width:28px;height:28px}
+.hvt-chip:hover{background:var(--container-secondary-background)} /* an added filter has no fill, like the closed Filters button; on hover it turns white */
+.hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
-.hvt-chip .hvt-chipx{width:28px;height:28px;border-radius:8px}
+.hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
 .hvt-chip .hvt-chipx:hover:not(:disabled){background:var(--container-hover-background);box-shadow:none}
-.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:28px;padding:0 4px 0 8px;border:0;border-radius:8px;background:transparent;color:inherit;cursor:pointer;
+.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 4px 0 8px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
 .hvt-chiptrigger:hover{background:var(--container-hover-background)}
 .hvt-chiplabel{pointer-events:none}
@@ -1349,7 +1350,7 @@ function CheckList({ options, value, onChange, label }) {
  * Same filter model and operators as the rows; edits are applied with the Apply button.
  * ------------------------------------------------------------------ */
 function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField,
-  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot }) {
+  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot, fieldNonce }) {
   /* drag the panel by any empty spot (or by its header once detached): it leaves the Filters button and gains the header;
      dropped back over the button, it snaps into place and loses the header */
   const dragRef = useRef(null);
@@ -1395,7 +1396,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   const [draft, setDraft] = useState(() => ({ logicOperator: model.logicOperator, items: model.items.map((i) => ({ ...i })) }));
   const firstWith = columns.find((c) => model.items.some((i) => i.field === c.key));
   const [field, setField] = useState((columns.find((c) => c.key === initialField) || firstWith || columns[0] || {}).key);
-  useEffect(() => { if (initialField && columns.some((c) => c.key === initialField)) setField(initialField); }, [initialField]); // eslint-disable-line
+  useEffect(() => { if (initialField && columns.some((c) => c.key === initialField)) setField(initialField); }, [initialField, fieldNonce]); // eslint-disable-line
   const idRef = useRef(5000);
   const col = columns.find((c) => c.key === field) || columns[0];
   const type = typeOf(col);
@@ -2292,7 +2293,7 @@ function DataTable({
     updateModel({ ...model, items: [...model.items, blankItem()] });
   };
   const openPanel = (anchor, withBlank, field) => {
-    setPanel({ anchor, field }); // field: the column the group panel opens on (the chip that was clicked)
+    setPanel((pn) => ({ anchor: pn && pn.anchor === "bar" ? pn.anchor : anchor, field, n: (pn && pn.n ? pn.n : 0) + 1 })); // field: the column the group panel opens on (the chip that was clicked); n: every click counts
     if (withBlank) addBlank();
   };
 
@@ -3698,6 +3699,7 @@ function DataTable({
           advanced={fgAdvanced}
           onAdvancedChange={setFgAdvanced}
           initialField={panel.field}
+          fieldNonce={panel.n}
           optionsOf={optionsOf}
           floating={panel.anchor !== "bar" || fgDetached}
           offset={fgPos}
@@ -4186,7 +4188,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:47"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
