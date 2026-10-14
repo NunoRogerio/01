@@ -1442,7 +1442,15 @@ class Component extends DCLogic {
     const c = this.clampView(this.view().cx, this.view().cy, this.view().s);
     const s = c.s;
     const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
-    this._rv = c; this._glFlip = !this._glFlip;   // the drawn view; the flip makes every redraw rewrite the layers' transform
+    const pv0 = this._rv, flipOn = Date.now() < (this._flipUntil || 0);
+    this._rv = c; if (!flipOn) this._glFlip = !this._glFlip;   // the drawn view; the flip makes every redraw rewrite the layers' transform (kept while a recenter or zoom glides)
+    /* (Oct 14, 18:05) a recenter, a zoom button or a fly-to glides as one picture: the new view is drawn at once and every layer (tiles, shapes, all
+       the markers) starts from where the old view was and eases into place together. The markers used to slide on their own while the map jumped */
+    if (Date.now() < (this._animUntil || 0) && !(this.state || {}).dragging && pv0 && (Math.abs(pv0.cx - c.cx) > 0.01 || Math.abs(pv0.cy - c.cy) > 0.01 || Math.abs(pv0.s - c.s) > 1e-6)) {
+      this._flipUntil = Date.now() + 620; const k = pv0.s / c.s, dx = (c.cx - pv0.cx) * pv0.s, dy = (c.cy - pv0.cy) * pv0.s, T0 = 'translate(' + dx.toFixed(2) + 'px, ' + dy.toFixed(2) + 'px) scale(' + k.toFixed(5) + ')';
+      requestAnimationFrame(() => { const L = this.el ? this.el.querySelectorAll('[data-wf-gl]') : []; for (const e of L) { e.style.transition = 'none'; e.style.transform = T0; } if (L.length) void L[0].offsetWidth;
+        requestAnimationFrame(() => { for (const e of L) { e.style.transition = 'transform .55s cubic-bezier(.4,0,.2,1)'; e.style.transform = this._glFlip ? 'translate(0px, 0px)' : 'scale(1)'; }
+          setTimeout(() => { for (const e of L) e.style.transition = ''; }, 600); }); }); }
     const at = (x, y, extra) => ({ left: +(tx + x * s).toFixed(1), top: +(ty + y * s).toFixed(1), blur: extra && extra.bg && extra.bg !== 'transparent' ? 'blur(8px)' : 'none', ...extra });   // a bare icon gets no frosted halo
     const WN = this.win();
     /* (Oct 9, 15:40) a map inside a card (inset prop): chips and round buttons sit 8px from the card's edges, rows and columns aligned; full screen keeps 16 */
@@ -1742,7 +1750,7 @@ class Component extends DCLogic {
       // Full screen: the minimize button sits 24px from the bottom and 16px from the right; the map credit lines up with its middle.
       legL: ((p.mode === 'pin' || !!p.mapTitle) ? 32 : EI) + WN.l,   /* under a map title, the legend starts where the title's text does */ legR: EI + WN.r, statsD: typeof p.onStats === 'function' && !(p.isFull === true || p.isFull === 'true') ? 'flex' : 'none', statsClick: (e) => { if (typeof p.onStats === 'function') p.onStats(e); }, srchD: typeof p.onSearch === 'function' ? 'flex' : 'none', srchL: EI + WN.l, srch: (e) => { if (typeof p.onSearch === 'function') p.onSearch(e); },
       ctrlB: (fullNow ? 24 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + EI) + (H - WN.b), ctrlR: EI + WN.r, ctrlL: EI + WN.l, crL: WN.l + 8, crTxt: String((window.__wfTiles && window.__wfTiles.credit && window.__wfTiles.credit()) || 'Map © OpenStreetMap').replace(/^Map\s*/, ''), attrL: EI + WN.l, attrR: EI + WN.r,   /* the map credit keeps the 16px edge rule */ clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), ldPadT: WN.t - Math.max(0, WN.t - (Number(p.clipBleed) || 0)),   /* the loader's flame and words centred in the grey that shows, not under the header */ clipB: H - WN.b, attrB: (EI !== 16 ? EI + 13 : 4) + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0),   /* in a card: the credit lines up with the middle of the round button beside it */   /* a panel covering the map's foot (main screen's bottom blade) lifts it above that panel */   // the map credit: 4px from the visible map's bottom and left edges, in the note style, everywhere
-      mapTr: anim ? 'transform' + EZ : 'none', mv: anim ? 'left' + EZ + ', top' + EZ : 'none', mvSt: anim ? 'left' + EZ + ', top' + EZ + ', background-color .3s, border-color .3s' : 'background-color .3s, border-color .3s',
+      mapTr: anim ? 'transform' + EZ : 'none', mv: 'none', mvSt: 'background-color .3s, border-color .3s',   /* (Oct 14, 18:05) markers never slide on their own: the whole picture glides (see the flip above) */
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }
         : { right: '10px', top: (Number(p.ctrlTop) || WN.c) + 'px', tf: 'translateY(-50%)', dir: 'column', sepW: 'auto', sepH: '1px', sepM: '2px 8px' },
@@ -1807,7 +1815,7 @@ class Component extends DCLogic {
             const hidden = el < 0.35 || el > P - 0.5;
             const o = at(u.x0 + (u.x1 - u.x0) * e, u.y0 + (u.y1 - u.y0) * e);
             return withTip({ ...o, icon: u.icon, c: u.c, glow: u.glow, rot: Math.round(Math.atan2(u.y1 - u.y0, u.x1 - u.x0) * 180 / Math.PI), aria: u.tt + '. ' + u.td, op: hidden ? 0 : 1,
-              tr: dragging ? 'opacity .25s ease' : (anim ? 'left' + EZ + ', top' + EZ + ', opacity .25s ease' : 'left .3s linear, top .3s linear, opacity .25s ease') }, u.tt, u.td);
+              tr: dragging || anim || Date.now() < (this._flipUntil || 0) ? 'opacity .25s ease' : 'left .3s linear, top .3s linear, opacity .25s ease' }   /* (Oct 14, 18:05) during a recenter or zoom the vehicles ride the gliding picture; their own drive stays linear */, u.tt, u.td);
           })
         };
       })(),

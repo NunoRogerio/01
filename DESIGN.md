@@ -1988,3 +1988,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Map tooltips of detections: "Civil detection" (no FFW); the label is a plain tag (hugs its text, 24px, 8px corners, aligned with the text), not a button, since the card has nothing to tap.
 - Detection markers on the map are solid (no backdrop blur), so they move exactly with the map.
 - Opening an incident from a map card: the still card is solid (no blur, no trembling), and the risen screen's picture stays until the page inside it (the incident inside its chat) has drawn: never a grey panel.
+- (Oct 14, 18:05) Recenter, the zoom buttons and every fly-to glide the whole map as one picture (tiles, shapes and all markers together, easing in and out, 0.55 s): markers never slide on their own, so they stay on their place on the map at every frame.
