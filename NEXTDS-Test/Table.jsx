@@ -3810,7 +3810,9 @@ const SCREEN_CSS = `
 .hvs-ctl .hvt-mgroup{color:var(--cl-text-3)}
 .hvs-dstatus{color:var(--cl-text-3);font-family:var(--cl-font)}
 .hvs-databar{align-items:flex-end}
-.hvs-cf{display:flex;flex-direction:column}
+.hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
+.hvs-cf:has(> .hvs-seg) > .hvs-cf-l{padding-left:16px} /* the label starts where the first option text starts */
+.hvs-databar{row-gap:16px} /* 16px between two rows of controls */
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;left:-3px;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:3px;
   background:var(--cl-track);border:1px solid var(--cl-border);box-shadow:var(--cl-shadow)}
