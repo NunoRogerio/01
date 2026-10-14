@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791994350"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791997392"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
@@ -594,7 +594,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- (Oct 13, 14:28) a card like the detection cards: a header (icon, the verdict, the time of the latest detection) and an info area -->
       <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
         <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: rgba(60, 60, 67, 0.08); font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{vf.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{vf.title}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{vf.time}}</span></span>
-        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 8px 16px 16px; list-style: none">
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 16px 16px 16px; list-style: none">
           <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><li style="display: flex; gap: 8px; font-size: 17px; line-height: 22px; color: #3C3C43"><span aria-hidden="true" style="flex-shrink: 0; width: 8px; text-align: center">•</span><span style="min-width: 0">{{ln.t}}</span></li></sc-for>
         </ul>
       </div>
@@ -610,7 +610,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                  time it saw the point on the right) and an info area; the header in the card's own colour for now. FFW cards in light translucent green -->
             <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: {{ev.bg}}; overflow: hidden; cursor: {{ev.cur}}">
               <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: {{ev.hbg}}; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}{{ev.civ}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
-              <li style="display: flex; align-items: flex-start; gap: 16px; padding: 8px 16px 16px">
+              <li style="display: flex; align-items: flex-start; gap: 16px; padding: 16px 16px 16px">   <!-- (Oct 14, 18:00) 16px under the tinted header -->
                 <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
                   <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
                   <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>

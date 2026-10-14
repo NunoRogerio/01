@@ -1989,3 +1989,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Detection markers on the map are solid (no backdrop blur), so they move exactly with the map.
 - Opening an incident from a map card: the still card is solid (no blur, no trembling), and the risen screen's picture stays until the page inside it (the incident inside its chat) has drawn: never a grey panel.
 - (Oct 14, 18:05) Recenter, the zoom buttons and every fly-to glide the whole map as one picture (tiles, shapes and all markers together, easing in and out, 0.55 s): markers never slide on their own, so they stay on their place on the map at every frame.
+- (Oct 14, 18:10) Opening from a map card: Loading… is laid over the button (its content kept underneath), so the button keeps its exact size and place; the still copy of the card carries every element's computed look, so it never changes while it waits. The rising panel no longer waits on empty helper frames (about:blank): it held the panel 6 s and then it rose blank. It now rises as soon as the incident is drawn.
+- (Oct 14, 18:00) Detection cards and the Summary card: 16px between the tinted header and the content.
