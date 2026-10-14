@@ -302,7 +302,7 @@ const CSS = `
 .hvt-cell.is-lifted.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 /* the lifted column is one container: the title and every row line inside it */
 .hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);
-  border-radius:var(--component-inputradius);box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 4px var(--cat1-100)} /* the lifted column: 4px outline */
+  border-radius:var(--component-inputradius);box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 3px var(--cat1-100)} /* the lifted column: 3px outline */
 .hvt-dragcol.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 .hvt-dropzone{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none;background:var(--container-edit);
   border:1px dashed var(--cat1-100);border-radius:4px;transition:left .2s cubic-bezier(.2,.8,.2,1)}
@@ -4197,7 +4197,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:28"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:29"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
