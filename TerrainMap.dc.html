@@ -224,12 +224,15 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
+    <!-- (Oct 14, 11:50) the detection markers ride the moving map layer, so they stay locked to their place while it pans or zooms (outside it they stood still until the next redraw) -->
+    <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
       <span class="tipwrap" tabindex="0" role="button" aria-label="{{cm.label}}" onClick="{{cm.sel}}" onPointerDown="{{stop}}" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; cursor: pointer; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; box-sizing: border-box; border-radius: 999px; background: {{cm.bg}}; border: {{cm.bd}}; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-size: 14px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
         <!-- (Oct 13, 21:26) icon only, larger: one marker per detection in the list, around the incident --><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
+    </div>
     <!-- The pin's label is the map's title, above the legend, so nothing on the map sits under it (not on a small detail map) -->
     <!-- full screen: the place card at the top right (the area card's look, as on the main map), the legend free on the left -->
     <div style="position: absolute; z-index: 50; left: {{pinTtlLeft}}; right: {{pinTtlRight}}; top: calc({{ttlTop}}px + {{safeT}}); display: {{pinTtlD}}; flex-direction: column; gap: 4px; box-sizing: border-box; height: {{pinTtlH}}; max-width: {{pinTtlMax}}; padding: {{pinTtlPad}}; border-radius: 20px; background: {{pinTtlBg}}; box-shadow: {{pinTtlSh}}; -webkit-backdrop-filter: {{pinTtlBf}}; backdrop-filter: {{pinTtlBf}}; pointer-events: none; opacity: {{ttlOp}}; transition: opacity .3s ease">

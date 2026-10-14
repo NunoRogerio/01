@@ -874,6 +874,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Panning never makes a marker blink, jump or change. Which markers show depends only on the zoom step (a grid fixed to the map, in power-of-two steps) and never on what is in view: no strides or caps based on the number in view, no reordering. Markers join and leave the list 240px beyond the screen edge, off sight, and keep a fixed order (the data's own order; active fires before resolved).
 - Likelihood tags show from a close zoom (4x the fit) and are decided by the zoom alone.
 - Station spacing on screen: 140 / 100 / 80 / 64px from the whole country in to the closest zoom, so a screen holds about 100 to 250 at most.
+- Every marker sits inside a moving map layer (`data-wf-gl`), so it travels with the map during a drag, pinch or glide instead of standing still until the next redraw (Oct 14, 11:50: the incident map's detection markers had been left outside it).
 
 ## Group subtitles in all menus (Oct 4)
 - One style for the title of a group in every menu panel (Text size, Spacing, Goal, Where we are, Shows in the app, Examples): 16px semibold, mid grey #6E6E73, sentence case, no colon, 8px above what it names. The data sources were the reference; their "Shows in the app" and "Examples" moved from #545458 to #6E6E73.
@@ -1973,3 +1974,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 14, 08:43: the chat's team sheet is titled "Incident team" ("Equipa do incidente").
 - Oct 14, 08:47 (every map): a tooltip panel keeps its side of the marker (above or below) while it still fits there; when it must change side it glides there (0.28 s) instead of jumping. On incident maps it stays clear of the projection switcher.
 - Oct 14, 08:49 (ECC profile): the subtitle under "SCU ECC" drops "Unit" ("Santa Clara. 5 counties"; "Alameda County. Santa Clara").
+- Oct 14, 11:50 (incident map): detection markers are locked to the map while it pans or zooms (they had stayed still on screen during a drag).
