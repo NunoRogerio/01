@@ -379,7 +379,7 @@ const CSS = `
 .hvt-fg.is-dragging,.hvt-fg.is-dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
 .hvt-fg.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
 .hvt-fg > .hvt-panel-head{flex:none}
-.hvt-fg.is-detached{margin-top:-48px} /* detached, the panel stays where it was and its header rises over the Filters button */
+.hvt-fg.is-detached{margin-top:-48px;z-index:45} /* detached, the panel stays where it was and its header rises over the Filters button */
 .hvt-mbtn.is-open.is-down::after{bottom:0}
 .hvt-mbtn.is-open.is-up::after{top:0}
 .hvt-mico,.hvt-mchev{display:block;width:32px;height:32px;flex:none}
@@ -1346,7 +1346,7 @@ function CheckList({ options, value, onChange, label }) {
  * Same filter model and operators as the rows; edits are applied with the Apply button.
  * ------------------------------------------------------------------ */
 function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField,
-  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger }) {
+  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false }) {
   /* drag the panel by any empty spot (or by its header once detached): it leaves the Filters button and gains the header;
      dropped back over the button, it snaps into place and loses the header */
   const dragRef = useRef(null);
@@ -1446,7 +1446,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
 
   return (
     <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
-         style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
+         style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging || following ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
          onPointerDown={onDragDown} onPointerMove={onDragMove} onPointerUp={onDragUp} onPointerCancel={onDragUp}>
       {detached && (
         <div className="hvt-panel-head">
@@ -2164,10 +2164,11 @@ function DataTable({
   /* drag or long press on the Filters button: the panel opens detached and follows the pointer */
   const trigRef = useRef(null);
   const trigSuppress = useRef(false);
+  const [trigFollow, setTrigFollow] = useState(false); // the panel is following a drag that started on the Filters button
   const onTrigDown = (e) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const d = { id: e.pointerId, sx: e.clientX, sy: e.clientY, active: false, base: panel && fgDetached ? fgPos : { x: 0, y: 0 }, dx: 0, dy: 0 };
-    const activate = () => { d.active = true; if (!panel) openPanel("bar", false); setFgDetached(true); setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy }); };
+    const activate = () => { d.active = true; setTrigFollow(true); if (!panel) openPanel("bar", false); setFgDetached(true); setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy }); };
     d.timer = setTimeout(() => { if (trigRef.current === d && !d.active) activate(); }, 500);
     d.activate = activate;
     trigRef.current = d;
@@ -2187,6 +2188,7 @@ function DataTable({
     trigRef.current = null;
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
     if (!d.active) return;
+    setTrigFollow(false);
     trigSuppress.current = true; // the click that follows a drag does not toggle the panel
     const fx = d.base.x + d.dx, fy = d.base.y + d.dy; // a long press without moving keeps it detached; dragged back home, it snaps
     if (Math.hypot(d.dx, d.dy) > 24 && Math.hypot(fx, fy) < 40) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); }
@@ -3689,6 +3691,7 @@ function DataTable({
           detached={fgDetached}
           onDetach={setFgDetached}
           activeCount={activeItems.length}
+          following={trigFollow}
           getTrigger={() => { const t = rootRef.current && rootRef.current.querySelector(".hvt-filterbar [data-filter-trigger]"); return t ? t.getBoundingClientRect() : null; }}
           style={groupStyle}
           onApply={(next) => { updateModel({ ...model, ...next }); closeFilterPanel(); }}
@@ -4168,7 +4171,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:27"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:32"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
