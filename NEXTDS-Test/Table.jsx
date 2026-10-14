@@ -491,7 +491,8 @@ const CSS = `
 .hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-self:stretch;padding-top:8px} /* the Filters button takes the height of the filter bar */
 .hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-items:flex-end}
 .hvt-filterbar .hvt-fgbtn{height:100%;align-items:flex-end;transition:height .2s cubic-bezier(.4,0,.2,1)} /* its icon, label and count stay at the bottom */
-.hvt-filterbar .hvt-fgbtn.is-open:not(.is-detached){height:32px} /* with the panel attached it is one row tall; detached or closed, it fills the bar again */
+.hvt-filterbar .hvt-fgbtn.is-open:not(.is-detached),.hvt-filterbar .hvt-fgbtn.is-folding{height:32px;transition-delay:0s}
+.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-folding){transition-delay:.06s} /* it grows only after the panel has folded away */ /* with the panel attached it is one row tall; detached or closed, it fills the bar again */
 @media (prefers-reduced-motion:reduce){.hvt-filterbar .hvt-fgbtn{transition:none}}
 .hvt-filterbar .hvt-fgbtn .hvt-mlabel{line-height:32px}
 .hvt-filterbar .hvt-fgbtn .hvt-fgcount{margin-bottom:7px;line-height:18px}
@@ -2138,6 +2139,7 @@ export function DataTable({
   useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
   /* closing a filter panel folds it back into the button that opened it */
   const closingRef = useRef(false);
+  const [folding, setFolding] = useState(false); // the panel is folding back into the Filters button: the button keeps its one-row height until it is gone
   const closeFilterPanel = () => {
     if (closingRef.current) return;
     const el = panelRef.current, root = rootRef.current;
@@ -2148,13 +2150,14 @@ export function DataTable({
     const cur = getComputedStyle(el).transform;
     const base = cur && cur !== "none" ? cur : "";
     closingRef.current = true;
+    setFolding(true);
     el.style.transformOrigin = "0 0";
     el.style.pointerEvents = "none";
     const a = el.animate([
       { transform: base || "none", opacity: 1 },
       { transform: `${base} translate(${tr.left - pr.left}px, ${tr.top - pr.top}px) scale(${tr.width / pr.width}, ${tr.height / pr.height})`, opacity: 0 },
     ], { duration: 260, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
-    const done = () => { closingRef.current = false; setPanel(null); };
+    const done = () => { closingRef.current = false; setPanel(null); setFolding(false); };
     a.onfinish = done;
     a.oncancel = done;
   };
@@ -3266,7 +3269,7 @@ export function DataTable({
     <div className="hvt-filterbar">
       {filterUi === "group" ? (
         <div className="hvt-mb hvt-mb--secondary">
-          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}${trigHot ? " is-hot" : ""}`} data-filter-trigger aria-haspopup="dialog"
+          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}${trigHot ? " is-hot" : ""}${folding && !fgDetached ? " is-folding" : ""}`} data-filter-trigger aria-haspopup="dialog"
                   aria-expanded={!!panel} aria-label="Filters" style={{ touchAction: "none" }}
                   onPointerDown={onTrigDown} onPointerMove={onTrigMove} onPointerUp={onTrigUp} onPointerCancel={onTrigUp}
                   onContextMenu={(e) => e.preventDefault()}
@@ -4175,7 +4178,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:59"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
