@@ -3932,6 +3932,10 @@ const SCREEN_CSS = `
 .hvs-fopt{height:28px;padding:0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
 .hvs-fopt:hover,.hvs-fopt:focus-visible{background:var(--cl-hover)}
 .hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
+.hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
+.hvs-fopt:disabled:hover{background:var(--cl-raised)}
+.hvs-ctl .hvs-fpart.is-a{padding-right:3px !important}
+.hvs-ctl .hvs-fpart.is-b{padding-left:3px !important;margin-left:-2px}
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
 /* fields */
 .hvs-side .hvt-select,.hvs-side .hvt-text{height:34px;border:1px solid var(--cl-border);border-radius:8px;background-color:var(--cl-surface);color:var(--cl-text);
@@ -4200,7 +4204,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4380,10 +4384,11 @@ const listModeOf = (c) => {
   return { "": "none", p: "pagination", h: "hscroll", v: "vscroll", ph: "pagination-hscroll", pv: "pagination-vscroll" }[key] || "custom";
 };
 
-/* the Filter button of the Header group: off, a click opens the choice of filter (Group by default, or MUI);
-   the choice turns it on and names it ("Filter: Group"); a click while on turns it off again */
+/* the Filter button of the Header group has two parts: "Filter:" turns the filter on or off,
+   the type ("Group" or "MUI") opens the choice of type below it (the current type is disabled);
+   picking a type while the filter is off also turns it on */
 const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
-function FilterHeaderBtn({ on, type, onPick, onOff }) {
+function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -4392,20 +4397,20 @@ function FilterHeaderBtn({ on, type, onPick, onOff }) {
     const esc = (e) => { if (e.key === "Escape") setOpen(false); };
     document.addEventListener("mousedown", out);
     document.addEventListener("keydown", esc);
-    const sel = ref.current && ref.current.querySelector('.hvs-fopt[aria-checked="true"]');
-    if (sel) sel.focus();
+    const first = ref.current && ref.current.querySelector(".hvs-fopt:not(:disabled)");
+    if (first) first.focus();
     return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
   }, [open]);
-  const pre = on ? type : "group";
   const name = (FILTER_TYPES.find((t) => t[0] === type) || FILTER_TYPES[0])[1];
   return (
     <span className="hvs-fwrap" ref={ref}>
-      <button type="button" className="hvs-segbtn" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
-              onClick={() => (on ? onOff() : setOpen((o) => !o))}>{on ? `Filter: ${name}` : "Filter"}</button>
+      <button type="button" className="hvs-segbtn hvs-fpart is-a" aria-pressed={on} onClick={() => (on ? onOff() : onOn())}>Filter:</button>
+      <button type="button" className="hvs-segbtn hvs-fpart is-b" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
+              aria-label={`Filter type: ${name}`} onClick={() => setOpen((o) => !o)}>{name}</button>
       {open && (
         <span className="hvs-fpop" role="menu" aria-label="Filter type">
           {FILTER_TYPES.map(([v, t]) => (
-            <button key={v} type="button" role="menuitemradio" aria-checked={v === pre} className="hvs-fopt"
+            <button key={v} type="button" role="menuitemradio" aria-checked={v === type} disabled={v === type} className="hvs-fopt"
                     onClick={() => { setOpen(false); onPick(v); }}>{t}</button>
           ))}
         </span>
@@ -4755,7 +4760,7 @@ function App() {
                   {[["showTitle", "Title"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
                     const on = !!cfg[key];
                     if (key === "showFilterButton") return (
-                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })}
+                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true })}
                                        onPick={(v) => set({ showFilterButton: true, filterUi: v })} />
                     );
                     const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
