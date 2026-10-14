@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791997392"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792013917"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
@@ -308,12 +308,13 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     </div>
     </sc-if>
 
+    <!-- (Oct 14, 22:40) the incident frames: width 1px with min-width 100%, so iOS never widens a frame to its content (it did, by a few pixels, and the page sat off centre) -->
     <!-- ===== (Oct 13, 14:14) the incident's map and the team chat swap in place under the header and the stage band, which never move:
          "Map" pushes the chat down and the incident's page comes down from under the band; "Team" pushes the page back up and the chat
          comes back up from below. Both surfaces move together, at full opacity, easing in and out ===== -->
     <div data-wf-mapview="1" aria-hidden="{{mv.hidden}}" style="position: absolute; left: 0; right: 0; top: {{mv.top}}px; bottom: 0; z-index: {{mv.z}}; overflow: hidden; visibility: {{mv.vis}}; pointer-events: {{mv.pe}}; transition: visibility 0s linear {{mv.visDelay}}">
       <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #F2F2F7; transform: translateY({{mv.my}}px); transition: transform {{mv.t}}">
-        <iframe title="{{c.place}}" src="{{mv.src}}" style="flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: #F2F2F7"></iframe>
+        <iframe title="{{c.place}}" src="{{mv.src}}" style="flex: 1 1 auto; min-height: 0; width: 1px; min-width: 100%; border: 0; background: #F2F2F7"></iframe>
       </div>
     </div>
     <!-- ===== Team blade: drops from the top over the chat (glass behind), the team as a list; tap a person for their profile ===== -->
@@ -448,7 +449,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div class="wf-hap-scrim wf-glass" onClick="{{ib.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 32; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{ib.scrimOp}}; pointer-events: {{ib.pe}}; transition: opacity .4s ease"></div>
     <section role="dialog" aria-modal="true" aria-label="{{c.place}}" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{ib.b}}px; z-index: 33; display: flex; flex-direction: column; padding-top: 0; border-radius: {{ib.rad}}; background: #F2F2F7; box-shadow: 0 0 40px rgba(0,0,0,0.16); overflow: hidden; transform: translateY({{ib.y}}); visibility: {{ib.vis}}; transition: transform .55s cubic-bezier(.2,.8,.2,1), bottom {{ib.bT}} cubic-bezier(.2,.8,.2,1), visibility 0s linear {{ib.visDelay}}">
       <!-- (Oct 8, 22:12) no back arrow on the blades from the chat: the grabber at the foot (tap or swipe up) or a tap outside closes them -->
-      <iframe title="{{c.place}}" src="{{ib.src}}" style="flex: 1 1 auto; min-height: 0; width: 100%; border: 0; background: #F2F2F7"></iframe>
+      <iframe title="{{c.place}}" src="{{ib.src}}" style="flex: 1 1 auto; min-height: 0; width: 1px; min-width: 100%; border: 0; background: #F2F2F7"></iframe>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{ib.h.down}}" onPointerMove="{{ib.h.move}}" onPointerUp="{{ib.h.up}}" onPointerCancel="{{ib.h.cancel}}" onKeyDown="{{ib.h.key}}" aria-label="{{t.close}}" style="display: {{ib.grabD}}; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
       <span aria-hidden="true" class="wf-stripes" style="display: {{ib.strD}}; position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
     </section>
