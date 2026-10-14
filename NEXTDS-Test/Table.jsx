@@ -474,7 +474,11 @@ const CSS = `
 .hvt-fg-cond-main{display:flex;flex-direction:column;gap:8px;min-width:0}
 .hvt-fg-foot{display:flex;align-items:center;gap:8px;padding:8px 16px;border-top:1px solid var(--border-default)}
 .hvt-fgbtn{width:auto !important;gap:0;padding:0 12px 0 0 !important}
-.hvt-fgbtn .hvt-mlabel{padding:0 8px 0 0}
+.hvt-fgnum{display:inline-grid;justify-items:end} /* the applied count turns semibold once it is not zero; it keeps the semibold width so nothing moves */
+.hvt-fgnum > i,.hvt-fgnum::after{grid-area:1 / 1;font-style:normal}
+.hvt-fgnum::after{content:attr(data-n);font-weight:600;visibility:hidden}
+.hvt-fgnum.is-on > i{font-weight:600}
+.hvt-fgbtn .hvt-mlabel{padding:0 8px 0 0;font-weight:600} /* "Filters" in semibold, the count stays regular */
 .hvt-fgcount{font-size:14px;font-weight:400;color:var(--content-primary);padding-left:8px;border-left:1px solid var(--border-default)}
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button keeps only its outline */
 
@@ -3128,7 +3132,7 @@ export function DataTable({
                   aria-expanded={!!panel} aria-label="Filters" onClick={() => (panel ? setPanel(null) : openPanel("bar", false))}>
             <span className="hvt-mico" aria-hidden="true">{Icons.Filter}</span>
             <span className="hvt-mlabel">Filters</span>
-            <span className="hvt-fgcount">{activeItems.length} / {filterCols.length}</span>
+            <span className="hvt-fgcount"><span className={`hvt-fgnum${activeItems.length ? " is-on" : ""}`} data-n={activeItems.length}><i>{activeItems.length}</i></span> / {filterCols.length}</span>
           </button>
         </div>
       ) : (
