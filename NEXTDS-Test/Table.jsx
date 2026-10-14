@@ -165,7 +165,7 @@ const CSS = `
 .hvt-qf{display:flex;align-items:center;flex:none;width:32px;height:32px;overflow:hidden;
   background:transparent;border:0 solid var(--outline);border-radius:var(--component-buttonradius);
   transition:width .18s ease,background-color .18s ease,border-radius .18s ease}
-.hvt-qf.is-open{width:270px;background:var(--container-secondary-background);
+.hvt-qf.is-open{width:189px;background:var(--container-secondary-background);
   border-width:1px;border-radius:var(--component-inputradius)}
 .hvt-qf.is-open:hover{border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
 /* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
@@ -4197,7 +4197,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:22"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:23"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
