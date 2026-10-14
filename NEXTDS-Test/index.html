@@ -374,6 +374,11 @@ const CSS = `
 .hvt-mbtn.is-open.is-down{border-radius:8px 8px 0 0}
 .hvt-mbtn.is-open.is-up{border-radius:0 0 8px 8px}
 .hvt-mbtn.is-open::after{content:"";position:absolute;left:1px;right:1px;height:1px;background:var(--border-default)}
+.hvt-mbtn.is-open.is-detached{border-radius:8px} /* the panel was dragged away: the button stays active, with all its corners round */
+.hvt-mbtn.is-open.is-detached::after{display:none}
+.hvt-fg.is-dragging,.hvt-fg.is-dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
+.hvt-fg.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.hvt-fg > .hvt-panel-head{flex:none}
 .hvt-mbtn.is-open.is-down::after{bottom:0}
 .hvt-mbtn.is-open.is-up::after{top:0}
 .hvt-mico,.hvt-mchev{display:block;width:32px;height:32px;flex:none}
@@ -1338,7 +1343,43 @@ function CheckList({ options, value, onChange, label }) {
  * (field list on the left, conditions for the chosen field on the right, Clear All / Cancel / Apply).
  * Same filter model and operators as the rows; edits are applied with the Apply button.
  * ------------------------------------------------------------------ */
-function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField }) {
+function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField,
+  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger }) {
+  /* drag the panel by any empty spot (or by its header once detached): it leaves the Filters button and gains the header;
+     dropped back over the button, it snaps into place and loses the header */
+  const dragRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+  const onDragDown = (e) => {
+    if (!onOffset || (e.pointerType === "mouse" && e.button !== 0)) return;
+    const t = e.target;
+    if (t.closest && t.closest("button:not(.hvt-pdrag), input, label, a, select, textarea, [role=option], .hvt-mb, .hvt-checklist-body, .hvt-switch")) return;
+    dragRef.current = { id: e.pointerId, sx: e.clientX, sy: e.clientY, base: offset, moved: false };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+  };
+  const onDragMove = (e) => {
+    const d = dragRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+    if (!d.moved) { if (Math.abs(dx) + Math.abs(dy) < 4) return; d.moved = true; setDragging(true); if (!detached && onDetach) onDetach(true); }
+    const r = panelRef.current.getBoundingClientRect();
+    const nx = d.base.x + dx, ny = d.base.y + dy;
+    const cx = Math.min(Math.max(nx, offset.x + 8 - r.left), offset.x + window.innerWidth - 8 - r.right); // keep it on the screen
+    const cy = Math.min(Math.max(ny, offset.y + 8 - r.top), offset.y + window.innerHeight - 56 - r.top);
+    onOffset({ x: cx, y: cy });
+  };
+  const onDragUp = (e) => {
+    const d = dragRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
+    dragRef.current = null;
+    setDragging(false);
+    if (!d.moved || !getTrigger) return;
+    const tr = getTrigger(), pr = panelRef.current && panelRef.current.getBoundingClientRect();
+    if (tr && pr && !(pr.right < tr.left || pr.left > tr.right || pr.bottom < tr.top || pr.top > tr.bottom + 8)) { // over the button: snap home
+      onOffset({ x: 0, y: 0 });
+      if (onDetach) onDetach(false);
+    }
+  };
   const [draft, setDraft] = useState(() => ({ logicOperator: model.logicOperator, items: model.items.map((i) => ({ ...i })) }));
   const firstWith = columns.find((c) => model.items.some((i) => i.field === c.key));
   const [field, setField] = useState((columns.find((c) => c.key === initialField) || firstWith || columns[0] || {}).key);
@@ -1400,7 +1441,18 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   };
 
   return (
-    <div className={`hvt-fg${floating ? " is-float" : ""}`} ref={panelRef} style={style} role="dialog" aria-label="Filter group">
+    <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
+         style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
+         onPointerDown={onDragDown} onPointerMove={onDragMove} onPointerUp={onDragUp} onPointerCancel={onDragUp}>
+      {detached && (
+        <div className="hvt-panel-head">
+          <span className="hvt-gbtn hvt-pdrag" aria-hidden="true">{Icons.Drag}</span>
+          <h4 className="hvt-panel-title">Filters</h4>
+          <span className="hvt-caption hvt-panel-count">{activeCount} active</span>
+          <span className="hvt-grow" />
+          <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}>{Icons.Close}</button>
+        </div>
+      )}
       <div className="hvt-fg-body">
         <div className="hvt-fg-fields" role="listbox" aria-label="Fields">
           {columns.map((c) => (
@@ -2080,6 +2132,9 @@ function DataTable({
   const [draftPage, setDraftPage] = useState("1");
   const [model, setModel] = useState(initialFilterModel);
   const [panel, setPanel] = useState(null); // null | { anchor: "bar" | "title" }
+  const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to
+  const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button
+  useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
   const [selected, setSelected] = useState(() => new Set());
   const [maximized, setMaximized] = useState(false);
   const [density, setDensity] = useState(densityProp);
@@ -3150,7 +3205,7 @@ function DataTable({
     <div className="hvt-filterbar">
       {filterUi === "group" ? (
         <div className="hvt-mb hvt-mb--secondary">
-          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}`} data-filter-trigger aria-haspopup="dialog"
+          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}`} data-filter-trigger aria-haspopup="dialog"
                   aria-expanded={!!panel} aria-label="Filters" onClick={() => (panel ? setPanel(null) : openPanel("bar", false))}>
             <span className="hvt-mico" aria-hidden="true">{Icons.Filter}</span>
             <span className="hvt-mlabel">Filters</span>
@@ -3569,7 +3624,13 @@ function DataTable({
           onAdvancedChange={setFgAdvanced}
           initialField={panel.field}
           optionsOf={optionsOf}
-          floating={panel.anchor !== "bar"}
+          floating={panel.anchor !== "bar" || fgDetached}
+          offset={fgPos}
+          onOffset={setFgPos}
+          detached={fgDetached}
+          onDetach={setFgDetached}
+          activeCount={activeItems.length}
+          getTrigger={() => { const t = rootRef.current && rootRef.current.querySelector(".hvt-filterbar [data-filter-trigger]"); return t ? t.getBoundingClientRect() : null; }}
           style={groupStyle}
           onApply={(next) => { updateModel({ ...model, ...next }); setPanel(null); }}
           onClose={() => setPanel(null)}
@@ -3772,6 +3833,12 @@ const SCREEN_CSS = `
 .hvs-dstatus{color:var(--cl-text-3);font-family:var(--cl-font)}
 .hvs-databar{align-items:flex-end}
 .hvs-cf{display:flex;flex-direction:column}
+.hvs-fwrap{position:relative;display:inline-flex}
+.hvs-fpop{position:absolute;z-index:60;top:100%;left:-3px;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:3px;
+  background:var(--cl-track);border:1px solid var(--cl-border);box-shadow:var(--cl-shadow)}
+.hvs-fopt{height:28px;padding:0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
+.hvs-fopt:hover,.hvs-fopt:focus-visible{background:var(--cl-hover)}
+.hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
 /* fields */
 .hvs-side .hvt-select,.hvs-side .hvt-text{height:34px;border:1px solid var(--cl-border);border-radius:8px;background-color:var(--cl-surface);color:var(--cl-text);
@@ -4040,7 +4107,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 20:57"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:13"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4193,7 +4260,7 @@ const DEFAULT_CFG = {
   showMaximize: true, showMoreOptions: true,
   showFilterBar: false, filterPanelStyle: "header",
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
-  rowView: true, rowMenu: true, editable: true, filterUi: "rows", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
+  rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
   scrollbarHorizontal: false, columnMinWidth: 160, scrollbarVertical: false, visibleRows: 4,
   dataset: INITIAL_DS, tableState: "default", columnConfig: "legacy", rowCount: 40, widthMode: "grid", gridCanvas: 1440, gridSpan: 8, showGrid: false, heightMode: "auto", heightRows: 8, added: [],
   cols: initCols(dsById(INITIAL_DS)),
@@ -4219,6 +4286,40 @@ const listModeOf = (c) => {
   const key = `${c.showPagination ? "p" : ""}${c.scrollbarHorizontal ? "h" : ""}${c.scrollbarVertical ? "v" : ""}`;
   return { "": "none", p: "pagination", h: "hscroll", v: "vscroll", ph: "pagination-hscroll", pv: "pagination-vscroll" }[key] || "custom";
 };
+
+/* the Filter button of the Header group: off, a click opens the choice of filter (Group by default, or MUI);
+   the choice turns it on and names it ("Filter: Group"); a click while on turns it off again */
+const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
+function FilterHeaderBtn({ on, type, onPick, onOff }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", out);
+    document.addEventListener("keydown", esc);
+    const sel = ref.current && ref.current.querySelector('.hvs-fopt[aria-checked="true"]');
+    if (sel) sel.focus();
+    return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  const pre = on ? type : "group";
+  const name = (FILTER_TYPES.find((t) => t[0] === type) || FILTER_TYPES[0])[1];
+  return (
+    <span className="hvs-fwrap" ref={ref}>
+      <button type="button" className="hvs-segbtn" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
+              onClick={() => (on ? onOff() : setOpen((o) => !o))}>{on ? `Filter: ${name}` : "Filter"}</button>
+      {open && (
+        <span className="hvs-fpop" role="menu" aria-label="Filter type">
+          {FILTER_TYPES.map(([v, t]) => (
+            <button key={v} type="button" role="menuitemradio" aria-checked={v === pre} className="hvs-fopt"
+                    onClick={() => { setOpen(false); onPick(v); }}>{t}</button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
 
 function Check({ label, checked, onChange, disabled }) {
   return (
@@ -4536,7 +4637,7 @@ function App() {
       <style>{SCREEN_CSS}</style>
 
       <div className="hvs-head">
-        <h1 className="hvs-h1">Design System Library (Alpha)</h1>
+        <h1 className="hvs-h1">Table Workbench</h1>
       </div>
 
       <div className="hvs-grid is-solo">
@@ -4560,6 +4661,10 @@ function App() {
                 <div className="hvs-seg" role="group" aria-label="Header (select several)">
                   {[["showTitle", "Title"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
                     const on = !!cfg[key];
+                    if (key === "showFilterButton") return (
+                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })}
+                                       onPick={(v) => set({ showFilterButton: true, filterUi: v })} />
+                    );
                     const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
                     return (
                       <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
@@ -4586,15 +4691,6 @@ function App() {
                               title={blocked ? "Not available in Compact" : hint} onClick={() => set({ [key]: !on })}>{label}</button>
                     );
                   })}
-                </div>
-              </CtlField>
-              <CtlField label="Filter type">
-                <div className="hvs-seg" role="group" aria-label="Filter type">
-                  {[["rows", "MUI"], ["group", "Group"]].map(([value, label]) => (
-                    <button key={value} type="button" className="hvs-segbtn" aria-pressed={cfg.filterUi === value}
-                            title={value === "rows" ? "MUI Data Grid filter: one row per condition" : "Filter group: fields on the left, conditions on the right"}
-                            onClick={() => set({ filterUi: value })}>{label}</button>
-                  ))}
                 </div>
               </CtlField>
               <CtlField label="Column Config">
