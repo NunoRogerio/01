@@ -177,13 +177,13 @@ const CSS = `
 .hvt-qf.is-disabled .hvt-qf-input::placeholder{color:var(--content-disabled)}
 .hvt-qf.is-disabled .hvt-qf-trigger{color:var(--content-disabled)}
 .hvt-qfwrap{position:relative;display:flex;flex:none}
-.hvt-qfpanel{position:absolute;z-index:40;top:100%;left:0;width:100%;box-sizing:border-box;padding:8px 0;background:var(--container-secondary-background);
+.hvt-qfpanel{position:absolute;z-index:40;top:100%;left:0;width:100%;box-sizing:border-box;padding:16px;display:flex;flex-direction:column;gap:4px;background:var(--container-secondary-background);
   border:1px solid var(--outline);border-top:0;border-radius:0 0 var(--component-inputradius) var(--component-inputradius);box-shadow:0 4px 8px rgba(0,0,0,.12)}
-.hvt-qfhead{display:flex;align-items:center;height:32px;padding:0 32px;font-size:14px;font-weight:600;line-height:21px}
-.hvt-qfopt{display:flex;align-items:center;height:36px;padding:0 32px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
+.hvt-qfhead{display:flex;align-items:center;height:32px;padding:0 8px;font-size:14px;font-weight:600;line-height:21px}
+.hvt-qfopt{display:flex;flex:none;align-items:center;height:32px;padding:0 8px;border-radius:4px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
 .hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
 .hvt-qfopt b{font-weight:600}
-.hvt-qfmore{display:block;width:100%;height:36px;margin-top:8px;border:0;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.hvt-qfmore{display:block;flex:none;width:100%;height:32px;margin-top:4px;border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear{flex:none;height:26px;margin:2px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear:hover{background:var(--container-hover-background)}
 .hvt-qf-div{flex:none;width:1px;height:18px;background:var(--outline)}
@@ -4182,7 +4182,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:13"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4713,7 +4713,7 @@ export default function App() {
       <style>{SCREEN_CSS}</style>
 
       <div className="hvs-head">
-        <h1 className="hvs-h1">Table Workbench</h1>
+        <h1 className="hvs-h1">Workbench: Table</h1>
       </div>
 
       <div className="hvs-grid is-solo">
