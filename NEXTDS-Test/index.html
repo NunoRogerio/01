@@ -199,9 +199,9 @@ const CSS = `
 .hvt-qf.is-disabled .hvt-qf-input::placeholder{color:var(--content-disabled)}
 .hvt-qf.is-disabled .hvt-qf-trigger{color:var(--content-disabled)}
 .hvt-qfwrap{position:relative;display:flex;flex:none}
-.hvt-qfpanel{position:absolute;z-index:40;top:100%;left:0;width:100%;box-sizing:border-box;padding:16px;display:flex;flex-direction:column;gap:4px;background:var(--container-secondary-background);
+.hvt-qfpanel{position:absolute;z-index:40;top:100%;left:0;width:100%;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:4px;background:var(--container-secondary-background);
   border:1px solid var(--outline);border-top:0;border-radius:0 0 var(--component-inputradius) var(--component-inputradius);box-shadow:0 4px 8px rgba(0,0,0,.12)}
-.hvt-qfhead{display:flex;align-items:center;height:32px;padding:0 8px;font-size:14px;font-weight:600;line-height:21px}
+.hvt-qfhead{display:flex;align-items:center;height:32px;padding:0 8px;font-size:14px;font-weight:400;line-height:21px;color:var(--content-disabled)}
 .hvt-qfopt{display:flex;flex:none;align-items:center;height:32px;padding:0 8px;border-radius:4px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
 .hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
 .hvt-qfopt b{font-weight:600}
@@ -1638,7 +1638,7 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
       </div>
       {showPanel && (
         <div className="hvt-qfpanel" id="hvt-qf-list" role="listbox" aria-label={q ? "Suggestions" : "Recent searches"} onMouseDown={keepFocus}>
-          {!q && <div className="hvt-qfhead">Recent Searches</div>}
+          {!q && <div className="hvt-qfhead">Recents</div>}
           {items.map((t, i) => (
             <div key={t} role="option" aria-selected={i === active} className={`hvt-qfopt${i === active ? " is-active" : ""}`}
                  onClick={() => pick(t)}>{q ? highlight(t) : t}</div>
@@ -3923,6 +3923,21 @@ const SCREEN_CSS = `
 .hvs-ctl .hvt-mgroup{color:var(--cl-text-3)}
 .hvs-dstatus{color:var(--cl-text-3);font-family:var(--cl-font)}
 .hvs-databar{align-items:flex-end}
+.hvs-h1{display:flex;align-items:center;gap:4px}
+.hvs-pagebtn{display:inline-flex;align-items:center;gap:2px;height:28px;padding:0 2px 0 6px;border:0;background:transparent;color:var(--cl-text);font:inherit;font-weight:600;cursor:pointer}
+.hvs-pagebtn:hover,.hvs-pagebtn[aria-expanded="true"]{background:var(--cl-hover)}
+.hvs-pagechev{display:inline-flex;width:20px;height:20px}
+.hvs-pagechev svg{display:block;width:100%;height:100%}
+.hvs-head .hvs-fpop{left:0}
+.hvs-input{box-sizing:border-box;height:28px;min-width:160px;padding:0 8px;border:1px solid var(--cl-border);background:var(--cl-surface);color:var(--cl-text);font-size:12px;line-height:18px}
+.hvs-input:hover{border-color:var(--cl-border-strong)}
+.hvs-input:focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
+.hvs-benchstage{display:flex;justify-content:center;margin-top:32px}
+.hvs-benchstage > .hvt-root{width:min(720px,100%)}
+.hvs-tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:16px;border-radius:var(--component-containerradius);background:var(--container-secondary-background)}
+.hvs-taggroups{display:flex;flex-direction:column;gap:12px}
+.hvs-searchroot{min-height:420px}
+.hvs-searchout{margin:24px 0 0}
 .hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
 .hvs-cf:has(> .hvs-seg) > .hvs-cf-l{padding-left:16px} /* the label starts where the first option text starts */
 .hvs-databar{row-gap:16px} /* 16px between two rows of controls */
@@ -4204,7 +4219,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:13"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 22:22"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4442,8 +4457,191 @@ function Seg({ label, value, options, onChange }) {
   );
 }
 
+/* ------------------------------------------------------------------ *
+ * Workbench pages besides the Table: Tags and Search.
+ * Same logic as the Table page: Configuration controls above, the component below. No Exploration.
+ * ------------------------------------------------------------------ */
+const PAGES = [["table", "Table"], ["tags", "Tags"], ["search", "Search"]];
+/* "Workbench: Table" — the component name opens the list of workbench pages (the current one is disabled) */
+function PageSwitch({ page, onPick }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", out);
+    document.addEventListener("keydown", esc);
+    const first = ref.current && ref.current.querySelector(".hvs-fopt:not(:disabled)");
+    if (first) first.focus();
+    return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  const name = (PAGES.find((x) => x[0] === page) || PAGES[0])[1];
+  return (
+    <span className="hvs-fwrap" ref={ref}>
+      <button type="button" className="hvs-pagebtn" aria-haspopup="menu" aria-expanded={open} aria-label={`Component: ${name}`} onClick={() => setOpen((o) => !o)}>
+        {name}<span className="hvs-pagechev" aria-hidden="true">{Icons.ChevronDown}</span>
+      </button>
+      {open && (
+        <span className="hvs-fpop" role="menu" aria-label="Component">
+          {PAGES.map(([v, t]) => (
+            <button key={v} type="button" role="menuitemradio" aria-checked={v === page} disabled={v === page} className="hvs-fopt"
+                    onClick={() => { setOpen(false); onPick(v); }}>{t}</button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function ThemeSeg({ theme, onTheme }) {
+  return (
+    <CtlField label="Theme">
+      <div className="hvs-seg hvs-pill" role="group" aria-label="Theme">
+        {THEMES.map(([v, t]) => (
+          <button key={v} type="button" className="hvs-segbtn hvs-pill-b" aria-pressed={theme === v} onClick={() => onTheme(v)}>{t}</button>
+        ))}
+      </div>
+    </CtlField>
+  );
+}
+
+function BenchSeg({ label, value, options, onChange }) {
+  return (
+    <CtlField label={label}>
+      <div className="hvs-seg" role="group" aria-label={label}>
+        {options.map(([v, t]) => (
+          <button key={v} type="button" className="hvs-segbtn" aria-pressed={value === v} onClick={() => onChange(v)}>{t}</button>
+        ))}
+      </div>
+    </CtlField>
+  );
+}
+
+/* ---------- Tags: the TAG component of the library (Status and Categorical) ---------- */
+const TAG_STATUS = [["positive", "Positive", "Normal"], ["warning", "Warning", "Warning"], ["negative", "Negative", "Critical"], ["info", "Info", "Info"]];
+const tagStatusIcon = (k) => (k === "negative" ? Icons.StatusCritical : k === "warning" ? Icons.StatusWarning : k === "info" ? Icons.StatusInfo : Icons.StatusGood);
+function TagView({ type, kind, cat, text }) {
+  if (type === "status") {
+    return (
+      <span className={`hvt-tag is-status is-${kind}`}>
+        <span className="hvt-tag-label"><span className="hvt-tag-body">
+          <i className="hvt-tag-ico" aria-hidden="true">{tagStatusIcon(kind)}</i><span className="hvt-tag-text">{text}</span>
+        </span></span>
+      </span>
+    );
+  }
+  return (
+    <span className="hvt-tag is-cat" style={{ "--tag-fill": `var(--cat${cat}-20)`, "--tag-stroke": `var(--cat${cat}-140)` }}>
+      <span className="hvt-tag-label"><span className="hvt-tag-body"><span className="hvt-tag-text">{text}</span></span></span>
+    </span>
+  );
+}
+function TagsBench({ theme, onTheme }) {
+  const [c, setC] = useState({ type: "status", kind: "positive", cat: 7, size: "default", show: "one", label: "" });
+  const set = (p) => setC((x) => ({ ...x, ...p }));
+  const statusText = (k) => (TAG_STATUS.find((x) => x[0] === k) || TAG_STATUS[0])[2];
+  const text = (type, kind, cat) => c.label.trim() || (type === "status" ? statusText(kind) : `Category ${cat}`);
+  return (
+    <>
+      <div className="hvs-ctl">
+        <div className="hvs-databar" role="toolbar" aria-label="Tag controls">
+          <ThemeSeg theme={theme} onTheme={onTheme} />
+          <BenchSeg label="Type" value={c.type} onChange={(v) => set({ type: v })} options={[["status", "Status"], ["cat", "Categorical"]]} />
+          {c.type === "status" ? (
+            <BenchSeg label="Status" value={c.kind} onChange={(v) => set({ kind: v })} options={TAG_STATUS.map(([v, t]) => [v, t])} />
+          ) : (
+            <CtlField label="Category">
+              <MenuButton variant="ghost" role="listbox" ariaLabel="Category" value={c.cat} label={String(c.cat)} minWidth={120}
+                          items={Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: String(i + 1) }))} onSelect={(it) => set({ cat: it.value })} />
+            </CtlField>
+          )}
+          <BenchSeg label="Density" value={c.size} onChange={(v) => set({ size: v })} options={[["default", "Default"], ["compact", "Compact"]]} />
+          <BenchSeg label="Show" value={c.show} onChange={(v) => set({ show: v })} options={[["one", "One tag"], ["all", "All tags"]]} />
+          <CtlField label="Label">
+            <input className="hvs-input" type="text" value={c.label} placeholder="Default label" aria-label="Label" onChange={(e) => set({ label: e.target.value })} />
+          </CtlField>
+        </div>
+      </div>
+      <div className="hvs-benchstage hvt-scope" data-theme={theme}>
+        <style>{CSS}</style>
+        <div className={`hvt-root${c.size === "compact" ? " is-compact" : ""}`} style={{ padding: 16 }}>
+          {c.show === "one" ? (
+            <div className="hvs-tagrow"><TagView type={c.type} kind={c.kind} cat={c.cat} text={text(c.type, c.kind, c.cat)} /></div>
+          ) : (
+            <div className="hvs-taggroups">
+              <div className="hvs-tagrow">{TAG_STATUS.map(([k]) => (<TagView key={k} type="status" kind={k} text={text("status", k)} />))}</div>
+              <div className="hvs-tagrow">{Array.from({ length: 12 }, (_, i) => (<TagView key={i} type="cat" cat={i + 1} text={text("cat", null, i + 1)} />))}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ---------- Search: the quick filter used by the table (SEARCH in the library) ---------- */
+function SearchBench({ theme, onTheme }) {
+  const [c, setC] = useState({ mode: "persistent", state: "enabled", suggest: true, recent: true, placeholder: "Search...", errorText: "Error message." });
+  const set = (p) => setC((x) => ({ ...x, ...p }));
+  const [value, setValue] = useState("");
+  const [expanded, setExpanded] = useState(true);
+  const [submitted, setSubmitted] = useState("");
+  const [recents, setRecents] = useState(SEARCH_RECENT["vsp-systems"]);
+  useEffect(() => { setExpanded(c.mode === "persistent"); }, [c.mode]);
+  const pool = useMemo(() => {
+    const d = dsById("vsp-systems"), set2 = new Set();
+    d.rows.forEach((r) => d.columns.forEach((col) => { const v = r[col.key]; if (typeof v === "string" && v.length > 1) set2.add(v); }));
+    return [...set2];
+  }, []);
+  return (
+    <>
+      <div className="hvs-ctl">
+        <div className="hvs-databar" role="toolbar" aria-label="Search controls">
+          <ThemeSeg theme={theme} onTheme={onTheme} />
+          <BenchSeg label="Behavior" value={c.mode} onChange={(v) => set({ mode: v })} options={[["persistent", "Always open"], ["expandable", "Expands"]]} />
+          <BenchSeg label="State" value={c.state} onChange={(v) => set({ state: v })} options={[["enabled", "Enabled"], ["disabled", "Disabled"], ["error", "Error"]]} />
+          <CtlField label="List">
+            <div className="hvs-seg" role="group" aria-label="List (select several)">
+              <button type="button" className="hvs-segbtn" aria-pressed={c.suggest} onClick={() => set({ suggest: !c.suggest })}>Suggestions</button>
+              <button type="button" className="hvs-segbtn" aria-pressed={c.recent} onClick={() => set({ recent: !c.recent })}>Recent searches</button>
+            </div>
+          </CtlField>
+          <CtlField label="Placeholder">
+            <input className="hvs-input" type="text" value={c.placeholder} aria-label="Placeholder" onChange={(e) => set({ placeholder: e.target.value })} />
+          </CtlField>
+          {c.state === "error" && (
+            <CtlField label="Error message">
+              <input className="hvs-input" type="text" value={c.errorText} aria-label="Error message" onChange={(e) => set({ errorText: e.target.value })} />
+            </CtlField>
+          )}
+        </div>
+      </div>
+      <div className="hvs-benchstage hvt-scope" data-theme={theme}>
+        <style>{CSS}</style>
+        <div className="hvt-root hvs-searchroot" style={{ padding: 16 }}>
+          <div className="hvt-titlebar" style={{ padding: 0 }}>
+            <h3 className="hvt-title">Storage Systems</h3>
+            <div className="hvt-actions-bar">
+              <div className="hvt-sf">
+                <QuickFilter value={value} onChange={setValue} onSubmit={(t) => setSubmitted((t === undefined ? value : t).trim())}
+                             mode={c.mode} expanded={expanded} onExpandedChange={setExpanded} placeholder={c.placeholder}
+                             suggestions={c.suggest ? pool : []} recents={c.recent ? recents : []}
+                             onRecent={(t) => setRecents((p) => [t, ...p.filter((x) => x.toLowerCase() !== t.toLowerCase())].slice(0, 5))}
+                             disabled={c.state === "disabled"} error={c.state === "error" ? c.errorText : ""} />
+              </div>
+            </div>
+          </div>
+          <p className="hvt-muted hvs-searchout" aria-live="polite">{submitted ? `Searching for "${submitted}".` : "Type to see suggestions. Enter or View All Results searches."}</p>
+        </div>
+      </div>
+    </>
+  );
+}
+
 function App() {
   const [cfg, setCfg] = useState(DEFAULT_CFG);
+  const [page, setPage] = useState("table"); // workbench page: table, tags or search
   const [open, setOpen] = useState(DEFAULT_OPEN);
   const [resetKey, setResetKey] = useState(0);
   const [startModel, setStartModel] = useState(EMPTY_MODEL);
@@ -4735,9 +4933,10 @@ function App() {
       <style>{SCREEN_CSS}</style>
 
       <div className="hvs-head">
-        <h1 className="hvs-h1">Workbench: Table</h1>
+        <h1 className="hvs-h1">Workbench: <PageSwitch page={page} onPick={setPage} /></h1>
       </div>
 
+      {page === "table" ? (<>
       <div className="hvs-grid is-solo">
 
         <main className="hvs-main">
@@ -5243,6 +5442,11 @@ function App() {
           </details>
         </div>
       </footer>
+      </>) : page === "tags" ? (
+        <TagsBench theme={cfg.theme} onTheme={(v) => set({ theme: v })} />
+      ) : (
+        <SearchBench theme={cfg.theme} onTheme={(v) => set({ theme: v })} />
+      )}
     </div>
   );
 }
