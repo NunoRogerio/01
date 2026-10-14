@@ -10,7 +10,10 @@
 (function () {
   if (window.__wfChat) return;
   var role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {}
-  var KEY = 'wf-chats3-' + (role || 'anon'), ACH = 'wf-achv';
+  var cust0 = ''; try { cust0 = localStorage.getItem('wf-custom') || ''; } catch (e) {}
+  /* (Oct 14, 17:10) the dispatch center keeps its own incident chats: shared with the other California profiles, a candidate it had not
+     decided on yet opened on a story another profile had already run (a fire in progress, or closed) */
+  var KEY = 'wf-chats3-' + (role || 'anon') + (/^(ecc|ptecc)$/.test(cust0) ? '-' + cust0 : ''), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
   // The language the role-played crews write in: the app's language (Oct 3, 18:13: more languages)
   var LNAME = function (full) { var l = window.__wfLang || 'en', M = { pt: ['European Portuguese (pt-PT)', 'Portuguese bombeiros'], es: ['Spanish (es-ES)', 'Spanish bomberos'], fr: ['French (fr-FR)', 'French sapeurs-pompiers'],
@@ -687,7 +690,14 @@
   function dspDone(c) { try { var D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; return D[c.incId] === 'sent' || D[c.incId] === 'check'; } catch (e) { return false; } }
   /* the dispatcher's decision releases the held story: the initial attack (or the one engine of a smoke check) is sent from now */
   function dspGo(id, kind) { var db = load(), c = null; Object.keys(db.chats).forEach(function (k) { var x = db.chats[k]; if (x && String(x.incId) === String(id)) c = x; }); if (!c || !c.dspHold) return false;
-    c.hold = false; c.dspHold = false; c.chk = kind === 'check'; var dz = Date.now() - (c.holdAt || Date.now()); (c.queue || []).forEach(function (q) { q.due += dz; });
+    /* (Oct 14, 17:20) the initial attack the captain of a smoke check asked for: the rest of the response plan rolls, he declares the fire */
+    if (c.chkWait) { if (kind !== 'sent') return false; c.chkWait = false; c.dspHold = false; c.chk = false; c.dsp = 'sent';
+      var nG = 0; (c.forces || []).forEach(function (f) { if (f.st === 'standby' && nG < 1 && !busyElse(c, f)) { f.st = 'enroute'; nG++; } });
+      var un = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
+      card(c, { tag: { en: dcOf(c) + ' · Dispatch', pt: dcOf(c) + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
+        body: { en: (un.join(', ') || 'The response plan') + ' responding.', pt: (un.join(', ') || 'Os meios do plano') + ' em marcha.' } }, 300, 0);
+      push(c, { kind: 'declared' }, 2600, 0); c.updated = Date.now(); save(); emit(); return true; }
+    c.hold = false; c.dspHold = false; c.chk = kind === 'check'; c.dsp = kind; c.dspAt = Date.now(); var dz = Date.now() - (c.holdAt || Date.now()); (c.queue || []).forEach(function (q) { q.due += dz; });
     if (kind === 'dismissed') { c.dismissed = true; c.updated = Date.now(); save(); return true; }
     candRest(c, true); c.updated = Date.now(); save(); try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} return true; }
   function holdFor(c, ev) { var now = Date.now(), M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
@@ -714,7 +724,7 @@
       var now0 = Date.now(), base = Math.min(now0 - 2 * MIN, (c.hist[0] && c.hist[0].vt) || now0 - 15 * MIN), span = Math.max(2 * MIN, Math.min(12 * MIN, now0 - MIN - base));
       var Q = live ? [] : c.queue.splice(0, c.queue.length), last = Q.length ? Q[Q.length - 1].due : 1, first = Q.length ? Q[0].due : 0;
       Q.forEach(function (q) { var m = q.m; delete m.adv; m.t = m.vt = Math.round(base + MIN / 2 + (q.due - first) / Math.max(1, last - first) * (span - MIN / 2)); if (m.req) m.nagAt = now0; c.msgs.push(m); });
-      { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, Math.max(1500, Math.min(15000, at - now0)), 0); }   /* (Oct 12, 19:30) the first engine is on scene within 15 s: an incident runs about a minute in the chat */
+      { var det = (c.hist[0] && c.hist[0].vt) || now0, at = det + (c.eta || 10) * MIN; push(c, { kind: 'arrive' }, c.dspAt ? Math.max(1500, c.dspAt + 20000 - now0) : Math.max(1500, Math.min(15000, at - now0)), 0); }   /* (Oct 14, 17:20) the dispatcher's incident: the first unit's size-up 20 s after the decision, the same moment its page shows the captain's report */   /* (Oct 12, 19:30) the first engine is on scene within 15 s: an incident runs about a minute in the chat */
     }
     save(); emit();
   }
@@ -737,7 +747,7 @@
   /* (Oct 11, 17:05) the dispatch center's initial attack on a candidate: the two nearest stations' engines roll at once; the others stay available */
   function initialAttack(c) { if (c.flags.dispatched || !(c.stations || []).length) return; c.flags.dispatched = true; c.flags.initial = true;
     c.forces = c.stations.map(function (q, i) { var f = (c.forces || []).find(function (x) { return x.si === i; }); return f || forceFor(c, i, 'standby'); });
-    var nGo = 0; c.forces.forEach(function (f) { var go = nGo < 2 && !busyElse(c, f); f.st = go ? 'enroute' : 'standby'; if (go) nGo++; });   /* (Oct 12, 12:05) the dispatch center sends the closest available engines: one already committed to another incident is skipped */
+    var nGo = 0, nMax = c.chk ? 1 : 2; c.forces.forEach(function (f) { var go = nGo < nMax && !busyElse(c, f);   /* (Oct 14, 17:20) a smoke check sends one engine */ f.st = go ? 'enroute' : 'standby'; if (go) nGo++; });   /* (Oct 12, 12:05) the dispatch center sends the closest available engines: one already committed to another incident is skipped */
     c.people.forEach(function (p, pi) { if (p.kind !== 'lead' || p.self || p.left) return; var f = c.forces.find(function (x) { return x.si === pi; }); if (f && f.st === 'standby') p.left = true; }); }
   /* the voice of the first engine on scene: its Captain (Station 11's engine captain when it is the first station) */
   function firstF(c) { return (c.forces || []).filter(function (f) { return LIVE[f.st]; }).sort(function (a, b) { return a.si - b.si; })[0] || null; }
@@ -779,6 +789,13 @@
     var E = evidOf(c), us = isUS(c), fi = firstDue(c), F0 = firstF(c), v0 = (F0 && (F0.veh || [])[0]) || (us ? 'Engine' : 'VFCI'), ac = 1 + hash(c.key + 'ac') % 4;
     if (F0) F0.st = 'onscene';
     var sz = { en: 'On scene. About ' + (us ? ac + (ac === 1 ? ' acre' : ' acres') : (ac * 0.4).toFixed(1) + ' ha') + ', moving upslope in light fuels, one structure nearby.', pt: 'No local. Cerca de ' + (us ? ac + ' acres' : (ac * 0.4).toFixed(1).replace('.', ',') + ' ha') + ', a subir a encosta em combustível ligeiro, uma habitação perto.' };
+    /* (Oct 14, 17:20) a smoke check sent by the dispatch center: the captain reports what he finds; with fire he asks the dispatch center for the
+       initial attack and waits for it (the decision is the dispatcher's, on the incident page); with nothing he cancels */
+    if (c.chk && dspMe()) {
+      if (E.strong) { say(c, fi, sz.en + ' Fire confirmed. Requesting the initial attack.', sz.pt + ' Incêndio confirmado. Peço o ataque inicial.', 600, 0);
+        c.chkWait = true; c.dspHold = true; return; }
+      say(c, fi, 'On scene. A warm patch of rock, no smoke and no flame. Nothing found, cancelling.', 'No local. Uma zona de rocha quente, sem fumo nem chama. Nada encontrado, cancelamos.', 600, 0);
+      push(c, { kind: 'cancelled' }, 2200, 0); return; }
     if (E.strong && meFirst(c)) {   /* you are the first engine's Captain: the call is yours */
       card(c, { req: 'decl', reqDecl: true, ask: 'ff', by: 0, tag: { en: 'Size-up · ' + v0, pt: 'Reconhecimento · ' + v0 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: sz,
         actions: [{ key: 'reqDismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 600, 0); return; }

@@ -1975,3 +1975,16 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Oct 14, 08:47 (every map): a tooltip panel keeps its side of the marker (above or below) while it still fits there; when it must change side it glides there (0.28 s) instead of jumping. On incident maps it stays clear of the projection switcher.
 - Oct 14, 08:49 (ECC profile): the subtitle under "SCU ECC" drops "Unit" ("Santa Clara. 5 counties"; "Alameda County. Santa Clara").
 - Oct 14, 11:50 (incident map): detection markers are locked to the map while it pans or zooms (they had stayed still on screen during a drag).
+
+## Oct 14 (16:50–17:45): the dispatch center's incident (ECC), lifecycle in sync
+- The dispatch profiles keep their own incident chats, and their decisions (sent, smoke check, dismissed, confirmed) are kept on the phone with the profile: a candidate on the map always opens as a candidate, never as a story another profile ran or a session forgot.
+- One clock for the incident: the first unit's size-up arrives 20 s after the dispatcher's decision, in the chat and on the incident page at the same moment.
+- Smoke check sends one engine. Its captain reports in Detections ("Captain on scene", 100%); with fire he asks for the initial attack and the foot offers Initial attack alone; with nothing he cancels and the candidate ends as a false alarm. Nothing moves on its own: the initial attack is the dispatcher's decision.
+- No Situation | Initial attack switch on the dispatcher's incident. Initial attack opens a blade from the bottom (title "Initial attack", the same words as its button): the response plan's units, each with its switch (configured in place, no Configure, no Cancel), Send initial attack at its foot; once sent, each unit's status and "✓ Initial attack sent". Closes with its X, the grabber, a swipe down or a tap outside. After sending, the units' status also shows first under the map.
+- Page order under the map (every incident): where and when (coordinates, start time), then Summary, then Detections, and only then the key figures.
+- Summary: "Enough to dispatch at 19:55, at about 20:04 without FFW cameras." (one sentence, no full stop inside).
+- Detection cards and the Summary card: their header at an 8% tint over the card's own colour (green on FFW cards, grey on the others).
+- The FFW tag sits in the detection card's bottom-right corner, 4px from its right and bottom edges, 14px text.
+- Map tooltips of detections: "Civil detection" (no FFW); the label is a plain tag (hugs its text, 24px, 8px corners, aligned with the text), not a button, since the card has nothing to tap.
+- Detection markers on the map are solid (no backdrop blur), so they move exactly with the map.
+- Opening an incident from a map card: the still card is solid (no blur, no trembling), and the risen screen's picture stays until the page inside it (the incident inside its chat) has drawn: never a grey panel.

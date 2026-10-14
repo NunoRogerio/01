@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791964493"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1791994350"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791964493"></script>
 <script src="live.js?v=1791923933"></script>
-<script src="chat.js?v=1791921997"></script>
+<script src="chat.js?v=1791994350"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -502,7 +502,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
          (with and without them), and for the dispatch profiles the decision itself. The sources, one card each, follow in Detections. -->
     <!-- (Oct 13, 09:04) the dispatch profiles' second tab, Initial attack (in place of Crews): before sending, the units the response plan
          proposes (the nearest available, each with its ETA), which Send initial attack orders; after, each unit's status as it rolls in -->
-    <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -3; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
+    <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -6; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
       <span style="display: block; font-size: 26px; font-weight: 600; line-height: 32px; color: #000000">{{ia.ttl}}</span>
       <span style="display: block; margin-top: 4px; font-size: 16px; line-height: 20px; color: #6E6E73">{{ia.sub}}</span>
       <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
@@ -517,17 +517,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-for>
       </ul>
       <span class="wf-note" style="display: block; margin-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ia.note}}</span>
-    </section>
-    <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; order: -2; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
-      <!-- (Oct 13, 09:58) titled "Summary" like Detections; the verdict in bold, the facts as bullets -->
-      <h3 style="margin: 0 0 8px; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">{{vf.sum}}</h3>
-      <!-- (Oct 13, 14:28) a card like the detection cards: a header (icon, the verdict, the time of the latest detection) and an info area -->
-      <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
-        <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{vf.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{vf.title}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{vf.time}}</span></span>
-        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 8px 16px 16px; list-style: none">
-          <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><li style="display: flex; gap: 8px; font-size: 17px; line-height: 22px; color: #3C3C43"><span aria-hidden="true" style="flex-shrink: 0; width: 8px; text-align: center">•</span><span style="min-width: 0">{{ln.t}}</span></li></sc-for>
-        </ul>
-      </div>
     </section>
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
          (the % contained, or the official stage where the source gives no %), then time active and burned area as medium KPIs -->
@@ -598,6 +587,50 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </div>
       </div>
         <!-- (Oct 9, 13:07) no "(move cards to reorder)" hint -->
+      <!-- (Oct 14, 17:25) after where and when: the Summary, then the Detections it rests on, and only then the key figures -->
+    <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; align-self: stretch; flex-direction: column; flex-shrink: 0; margin: 0 0 56px; text-align: left">
+      <!-- (Oct 13, 09:58) titled "Summary" like Detections; the verdict in bold, the facts as bullets -->
+      <h3 style="margin: 0 0 8px; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">{{vf.sum}}</h3>
+      <!-- (Oct 13, 14:28) a card like the detection cards: a header (icon, the verdict, the time of the latest detection) and an info area -->
+      <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+        <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: rgba(60, 60, 67, 0.08); font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{vf.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{vf.title}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{vf.time}}</span></span>
+        <ul style="display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 8px 16px 16px; list-style: none">
+          <sc-for list="{{vf.lines}}" as="ln" hint-placeholder-count="3"><li style="display: flex; gap: 8px; font-size: 17px; line-height: 22px; color: #3C3C43"><span aria-hidden="true" style="flex-shrink: 0; width: 8px; text-align: center">•</span><span style="min-width: 0">{{ln.t}}</span></li></sc-for>
+        </ul>
+      </div>
+    </section>
+    <!-- (Oct 11, 16:58) a candidate has one more section than a fire: its Detections (as its page had them) -->
+      <section aria-label="Detections" style="display: {{evD}}; align-self: stretch; margin: 0 0 56px; flex-direction: column; flex-shrink: 0; text-align: left">   <!-- (Oct 13) right under the verification: the sources the decision rests on -->
+        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">Detections</h3><span class="wf-note">{{evCount}}</span></span>
+        <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin: 0">
+          <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
+            <!-- (Oct 13, 08:22) one row per source: its type icon by the title; under it the image small (96px) with the description beside it -->
+            <!-- (Oct 13, 14:07) structured as a chat card: a header (type icon, name, the FFW mark when it is one of the app's passive cameras, the
+                 time it saw the point on the right) and an info area; the header in the card's own colour for now. FFW cards in light translucent green -->
+            <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: {{ev.bg}}; overflow: hidden; cursor: {{ev.cur}}">
+              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: {{ev.hbg}}; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}{{ev.civ}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
+              <li style="display: flex; align-items: flex-start; gap: 16px; padding: 8px 16px 16px">
+                <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
+                  <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
+                  <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
+                  <sc-if value="{{ev.thSmoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 56 56" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmk" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter></defs><path d="M30 46c-2-8 4-12 2-20s4-12 10-16c-2 8-6 10-4 18s-2 14-8 18Z" fill="rgba(235,235,240,0.85)" filter="url(#wfSmk)"></path></svg></sc-if>
+                </button>
+                <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><wf-slides mini="" photos="{{ev.slides}}" aria-label="{{ev.title}}" style="flex-shrink: 0; width: 96px; height: 96px; border-radius: 12px; overflow: hidden"></wf-slides></sc-if>
+                <span style="display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-width: 0">
+                  <span style="display: {{ev.pctD}}; font-size: 17px; line-height: 22px; color: #000000"><b style="font-weight: 600">{{ev.pctTxt}}</b>{{ev.pctW}}</span>
+                  <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2"><span style="font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</span></sc-for>
+                </span>
+              </li>
+              <!-- (Oct 13, 17:17) the FFW mark is now a tag after the title (the passive system that adds information); the footer keeps the note only -->
+              <li class="wf-note" style="display: {{ev.noteD}}; align-items: flex-start; gap: 8px; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73"><span aria-label="Forest Fire Watch" style="display: none; align-items: center; gap: 4px; opacity: 0.5; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="min-width: 0">{{ev.note}}</span></li>
+              <!-- (Oct 14, 08:42) the FFW tag (no icon) at the card's bottom left; the title says "(civil)": the passive civil system -->
+              <!-- (Oct 14, 16:55) in the card's bottom-right corner, 4px from its right and bottom edges; its text a little smaller (14px) -->
+              <li style="display: {{ev.ffwD}}; justify-content: flex-end; padding: 0 4px 4px; margin-top: -12px"><span aria-label="Forest Fire Watch" style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; background: rgba(115, 115, 118, 0.16); color: rgb(58, 58, 60); font-size: 14px; font-weight: 600; line-height: 18px">FFW</span></li>
+            </ul>
+          </sc-for>
+        </div>
+      </section>
       <div data-wf-kpis="1" role="list" aria-label="Key figures. Press and hold a card, then slide it to reorder" style="display: {{cc.medD}}; flex-wrap: wrap; gap: 8px; width: 100%; margin-top: {{cc.medMt}}; align-items: stretch">
         <sc-for list="{{cc.med}}" as="m" hint-placeholder-count="4">
           <div role="listitem" data-wf-kpi="{{m.key}}" data-g="kpi" onPointerDown="{{m.down}}" onPointerMove="{{m.move}}" onPointerUp="{{m.up}}" onPointerCancel="{{m.up}}" onContextMenu="{{m.noMenu}}" style="position: relative; display: flex; flex-direction: column; flex: 0 0 calc((100% - 16px) / 3); min-width: 0; touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .3s cubic-bezier(.2,.8,.2,1)">
@@ -780,37 +813,6 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         </sc-if>
       </sc-for>
     </ul>
-    <!-- (Oct 11, 16:58) a candidate has one more section than a fire: its Detections (as its page had them) -->
-      <section aria-label="Detections" style="display: {{evD}}; order: -1; margin: 0 0 56px; flex-direction: column; flex-shrink: 0">   <!-- (Oct 13) right under the verification: the sources the decision rests on -->
-        <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 16px 8px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">Detections</h3><span class="wf-note">{{evCount}}</span></span>
-        <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px 0">
-          <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
-            <!-- (Oct 13, 08:22) one row per source: its type icon by the title; under it the image small (96px) with the description beside it -->
-            <!-- (Oct 13, 14:07) structured as a chat card: a header (type icon, name, the FFW mark when it is one of the app's passive cameras, the
-                 time it saw the point on the right) and an info area; the header in the card's own colour for now. FFW cards in light translucent green -->
-            <ul onClick="{{ev.open}}" style="position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: {{ev.bg}}; overflow: hidden; cursor: {{ev.cur}}">
-              <li style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; background: transparent; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ev.ic}}"></path></svg><span style="flex: 0 1 auto; min-width: 0">{{ev.title}}{{ev.civ}}</span><span style="flex-shrink: 0; margin-left: auto; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{ev.time}}</span></li>
-              <li style="display: flex; align-items: flex-start; gap: 16px; padding: 8px 16px 16px">
-                <button type="button" class="mbtn" onClick="{{ev.open}}" aria-label="{{ev.thAria}}" style="position: relative; display: {{ev.mD}}; flex-shrink: 0; width: 96px; height: 96px; padding: 0; border: 0; border-radius: 12px; overflow: hidden; background: #1C1C1E; cursor: pointer">
-                  <sc-if value="{{ev.thImg}}" hint-placeholder-val="{{ false }}"><img src="{{ev.src}}" alt="" style="position: absolute; {{ev.bigSt}}"><span aria-hidden="true" style="display: {{ev.ringD}}; position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #FF453A; border-radius: 50%; box-sizing: border-box"></span></sc-if>
-                  <sc-if value="{{ev.thVid}}" hint-placeholder-val="{{ false }}"><video ref="{{setVid}}" src="{{ev.src}}" autoplay="" muted="" loop="" playsinline="" preload="metadata" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"></video></sc-if>
-                  <sc-if value="{{ev.thSmoke}}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" viewBox="0 0 56 56" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%"><defs><filter id="wfSmk" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"></feGaussianBlur></filter></defs><path d="M30 46c-2-8 4-12 2-20s4-12 10-16c-2 8-6 10-4 18s-2 14-8 18Z" fill="rgba(235,235,240,0.85)" filter="url(#wfSmk)"></path></svg></sc-if>
-                </button>
-                <sc-if value="{{ev.hasSl}}" hint-placeholder-val="{{ false }}"><wf-slides mini="" photos="{{ev.slides}}" aria-label="{{ev.title}}" style="flex-shrink: 0; width: 96px; height: 96px; border-radius: 12px; overflow: hidden"></wf-slides></sc-if>
-                <span style="display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-width: 0">
-                  <span style="display: {{ev.pctD}}; font-size: 17px; line-height: 22px; color: #000000"><b style="font-weight: 600">{{ev.pctTxt}}</b>{{ev.pctW}}</span>
-                  <sc-for list="{{ev.rows}}" as="r" hint-placeholder-count="2"><span style="font-size: 17px; line-height: 22px; color: {{r.color}}">{{r.t}}</span></sc-for>
-                </span>
-              </li>
-              <!-- (Oct 13, 17:17) the FFW mark is now a tag after the title (the passive system that adds information); the footer keeps the note only -->
-              <li class="wf-note" style="display: {{ev.noteD}}; align-items: flex-start; gap: 8px; padding: 0 16px 16px; font-size: 13px; line-height: 18px; color: #6E6E73"><span aria-label="Forest Fire Watch" style="display: none; align-items: center; gap: 4px; opacity: 0.5; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="min-width: 0">{{ev.note}}</span></li>
-              <!-- (Oct 14, 08:42) the FFW tag (no icon) at the card's bottom left; the title says "(civil)": the passive civil system -->
-              <li style="display: {{ev.ffwD}}; padding: 0 16px 16px; margin-top: -8px"><span aria-label="Forest Fire Watch" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; background: rgba(115, 115, 118, 0.16); color: rgb(58, 58, 60); font-size: 16px; font-weight: 600; line-height: 20px">FFW</span></li>
-            </ul>
-          </sc-for>
-        </div>
-      </section>
     </div>
     </div>
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
@@ -860,6 +862,35 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <button type="button" role="switch" class="wf-tog" aria-checked="{{r.onStr}}" aria-disabled="{{r.dis}}" aria-label="{{r.name}}" onClick="{{r.toggle}}" style="position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{r.swBg}}; opacity: {{r.swOp}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{r.swX}}); transition: transform .38s cubic-bezier(.2,.8,.2,1)"></span></button>
         </div>
       </sc-for>
+    </div>
+  </section>
+  <!-- (Oct 14, 17:25) Initial attack (dispatch profiles): a blade from the bottom, like the cards picker. The response plan's units, each with its
+       switch (configured right here: a unit switched off is not sent), Send initial attack at the foot; once sent, each unit's status and the
+       choice alone in the past tense. Closes with its X, the grabber, a swipe down or a tap outside; no Cancel -->
+  <div class="wf-glass scrim" onClick="{{iab.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 72; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{iab.op}}; pointer-events: {{iab.pe}}; transition: opacity .35s ease"></div>
+  <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-labelledby="iaTitle" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: {{iab.d}}; flex-direction: column; max-height: 86%; box-sizing: border-box; padding: 30px 16px calc(env(safe-area-inset-bottom, 0px) + 24px); border-radius: 28px 28px 0 0; background: #F2F2F7; box-shadow: 0 0 60px rgba(0,0,0,0.132); transform: translateY({{iab.y}}); transition: transform .5s cubic-bezier(.4,0,.2,1)" data-swipe="down">
+    <div role="button" tabindex="0" aria-label="{{iab.closeLbl}}" data-grab-close data-swipe-go onClick="{{iab.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 24px; padding: 0 16px">
+      <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="iaTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000">{{iab.ttl}}</h2><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{iab.sub}}</span></span>
+      <button type="button" class="mbtn" onClick="{{iab.close}}" aria-label="{{iab.closeLbl}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div style="display: flex; flex-direction: column; min-height: 0; overflow-y: auto; scrollbar-width: none">
+      <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden; flex-shrink: 0">
+        <sc-for list="{{iab.rows}}" as="u" hint-placeholder-count="5">
+          <li style="display: flex; align-items: center; gap: 16px; padding: 16px; border-top: {{u.bt}}">
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{u.ic}}"></path></svg></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0">
+              <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px"><span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{u.name}}</span><span style="display: {{u.tagD}}; flex-shrink: 0; min-width: 88px; box-sizing: border-box; padding: 2px 8px; border-radius: 8px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{u.tag}}</span><button type="button" role="switch" class="wf-tog" aria-checked="{{u.onStr}}" aria-label="{{u.name}}" onClick="{{u.toggle}}" style="display: {{u.swD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{u.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{u.swX}}); transition: transform .38s cubic-bezier(.2,.8,.2,1)"></span></button></span>
+              <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{u.sub}}</span>
+            </span>
+          </li>
+        </sc-for>
+      </ul>
+      <span class="wf-note" style="display: block; margin: 8px 16px 0; font-size: 13px; line-height: 18px; color: #6E6E73">{{iab.note}}</span>
+    </div>
+    <div style="display: flex; flex-shrink: 0; padding-top: 24px">
+      <button type="button" class="btn {{iab.sendCls}}" onClick="{{iab.send}}" aria-disabled="{{iab.sendDis}}" style="display: {{iab.sendD}}; flex: 1 1 100%; opacity: {{iab.sendOp}}; height: 48px; padding: 0 16px; font-size: 17px; font-weight: 600; white-space: nowrap">{{iab.sendLbl}}</button>
+      <div class="btn primary" role="status" style="display: {{iab.doneD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; flex: 1 1 100%; font-size: 17px; font-weight: 600; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{iab.doneTxt}}</div>
     </div>
   </section>
 </div>
@@ -1522,7 +1553,7 @@ class Component extends DCLogic {
     if (isLive && droneStrong && first && KN[first.kind]) lines.push(Lx('First smoke from a ' + KN[first.kind] + ' at ' + hm(first.at) + '.', 'Primeiro fumo numa ' + KN[first.kind] + ' às ' + hm(first.at) + '.'));
     /* (Oct 13, 14:28) nothing is confirmed before the first unit's size-up on scene: the detections show smoke, they make it possible to dispatch
        sooner (with and without the FFW cameras), and the confirmation comes from the crew sent */
-    if (isLive && droneStrong) lines.push(Lx('Enough to dispatch at ' + hm(V) + '. Without FFW cameras, at about ' + hm(W0 != null && W0 > V ? W0 : V) + '.', 'Suficiente para despachar às ' + hm(V) + '. Sem câmaras FFW, por volta das ' + hm(W0 != null && W0 > V ? W0 : V) + '.'));
+    if (isLive && droneStrong) lines.push(Lx('Enough to dispatch at ' + hm(V) + ', at about ' + hm(W0 != null && W0 > V ? W0 : V) + ' without FFW cameras.', 'Suficiente para despachar às ' + hm(V) + ', por volta das ' + hm(W0 != null && W0 > V ? W0 : V) + ' sem câmaras FFW.'));   /* (Oct 14, 16:53) one sentence, no full stop inside */
     /* (Oct 13, 14:07) the passive cameras of Forest Fire Watch (cars, action cameras, phones) are "FFW cameras" everywhere; a 911 call is not one */
     const ffwN = out.filter((x) => FFWK[x.kind]).length;
     if (ffwN) lines.push(Lx(ffwN + ' of ' + out.length + ' detections are FFW cameras.', ffwN + ' de ' + out.length + ' deteções são câmaras FFW.'));
@@ -1530,7 +1561,9 @@ class Component extends DCLogic {
        ground truth). Dispatched at the verification (V min after the satellite), on scene 9 to 14 min later; it appears 20 s
        after the send in the demo. A fire: confirmed, its size and behaviour, the captain takes command; none: a false alarm. */
     let VD0 = {}; try { VD0 = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}
-    const isChk = VD0[c.id] === 'check', sentAt = VD0[c.id] === 'sent' || isChk ? (VD0[c.id + '@'] || 1) : 0, onScene = sentAt && Date.now() - sentAt >= 20000;
+    /* (Oct 14, 17:20) a smoke check first (its time kept as id^), then perhaps the initial attack the captain asks for: the engine on scene is the check's */
+    const isChk = VD0[c.id] === 'check', wasChk = !!VD0[c.id + '^'], sentAt = VD0[c.id] === 'sent' || isChk ? (VD0[c.id + '^'] || VD0[c.id + '@'] || 1) : 0, onScene = sentAt && Date.now() - sentAt >= 20000;
+    const iaAt = VD0[c.id] === 'sent' ? (VD0[c.id + '@'] || 0) : 0;
     if (isLive && sentAt && !onScene) lines.push(isChk ? Lx('Smoke check sent: one engine. Awaiting its size-up on scene.', 'Reconhecimento enviado: um veículo. A aguardar o ponto de situação no local.') : Lx('Initial attack sent. Awaiting the first unit\'s size-up on scene.', 'Ataque inicial enviado. A aguardar o ponto de situação da primeira equipa no local.'));
     if (sentAt && !onScene) { clearTimeout(this._capT); const nx = Date.now() - sentAt < 5000 ? sentAt + 5000 : sentAt + 20000; this._capT = setTimeout(() => this.forceUpdate(), Math.max(200, nx - Date.now())); }
     let capOk = false;
@@ -1540,15 +1573,15 @@ class Component extends DCLogic {
       out.push({ ...th({ thVid: true, src: hv, thAria: Lx('Captain\'s helmet camera. Open', 'Câmara do capacete do chefe. Abrir'), open: (e) => this.wfEv({ src: hv, cross: true, label: Lx('Live. Captain ' + CN, 'Direto. Chefe ' + CN), who: Lx('Helmet camera. Simulation.', 'Câmara do capacete. Simulação.'), anchor: e && e.currentTarget }) }), kind: 'captain', civil: false, at: ca, pct: 100, pctTxt: '100%', ic: 'M3 17h18M5 17v-2a7 7 0 0 1 14 0v2M12 8V5.5M9.5 9.5 12 8l2.5 1.5', title: Lx('Captain on scene', PT ? 'Chefe no local' : 'Captain on scene'),
         rows: [row(Lx('Arrived at ' + hm(ca) + '. ' + tr + ' min after dispatch.', 'Chegou às ' + hm(ca) + '. ' + tr + ' min depois do despacho.')), row(Lx('Captain ' + CN + ' reports on conditions', 'Chefe ' + CN + ' faz o ponto de situação')),
           droneStrong ? row(Lx('Fire confirmed. About ' + ac + (ac === 1 ? ' acre' : ' acres') + ', spreading slowly uphill', 'Fogo confirmado. Cerca de ' + (ac * 0.4).toFixed(1).replace('.', ',') + ' ha, a progredir devagar encosta acima')) : row(Lx('No fire found. A permitted agricultural burn', 'Sem fogo. Uma queimada agrícola autorizada'), false),
-          row(isChk ? (droneStrong ? Lx('Requests the initial attack and takes command', 'Pede o ataque inicial e assume o comando') : Lx('Smoke check cancelled', 'Reconhecimento terminado')) : droneStrong ? Lx('Takes command of the incident', 'Assume o comando das operações') : Lx('Resources released', 'Meios libertados'))], noteD: 'block', note: sim });
-      /* a smoke check that finds fire: the incident is created and the initial attack sent, at the captain's request */
-      if (isChk && droneStrong && !frow.wasCand && !this._chkConv) { this._chkConv = true; setTimeout(() => { let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = 'sent'; try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 2500); }
+          row(isChk ? (droneStrong ? Lx('Requests the initial attack', 'Pede o ataque inicial') : Lx('Smoke check cancelled', 'Reconhecimento terminado')) : wasChk && droneStrong ? Lx('Initial attack sent at ' + new Date(iaAt || Date.now()).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. Takes command', 'Ataque inicial enviado às ' + new Date(iaAt || Date.now()).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. Assume o comando') : droneStrong ? Lx('Takes command of the incident', 'Assume o comando das operações') : Lx('Resources released', 'Meios libertados'))], noteD: 'block', note: sim });
+      /* (Oct 14, 17:20) a smoke check that finds fire: the captain asks for the initial attack and the dispatcher sends it (the foot offers it); nothing goes on its own */
       /* (Oct 13, 14:07) the reference is the first unit's arrival and its confirmation */
+      if (isChk && droneStrong) lines.push(Lx('Captain ' + CN + ' requests the initial attack.', 'O chefe ' + CN + ' pede o ataque inicial.'));
       lines.push(droneStrong ? Lx('Confirmed on scene at ' + hm(ca) + '.' + (first && first.at < ca ? ' ' + (ca - first.at) + ' min after the first smoke.' : ''), 'Confirmado no local às ' + hm(ca) + '.' + (first && first.at < ca ? ' ' + (ca - first.at) + ' min depois do primeiro fumo.' : '')) : Lx('No fire found on scene at ' + hm(ca) + '.', 'Sem fogo no local às ' + hm(ca) + '.')); }
     out.sort((p, q) => (p.at || 0) - (q.at || 0));   /* oldest first, the latest last */
     /* (Oct 13, 14:07) each evidence card as a chat card: a header (type icon, name, the time it saw the point) and an info area; the
        FFW cameras (cars, action cameras, phones: the app's passive network) in light translucent green with the app's blinking logo and "FFW" */
-    out.forEach((x) => { const f = !!FFWK[x.kind]; x.ffwD = f ? 'flex' : 'none'; x.civ = f ? Lx(' (civil)', ' (civil)') : ''; x.bg = f ? 'rgb(240, 250, 242)' : '#FFFFFF';   /* (Oct 13, 17:17) lighter, whiter green; (Oct 14, 08:43) lighter still, the civil green shared with its map marker and tooltip */ x.time = x.at != null ? hm(x.at) : '';
+    out.forEach((x) => { const f = !!FFWK[x.kind]; x.ffwD = f ? 'flex' : 'none'; x.civ = f ? Lx(' (civil)', ' (civil)') : ''; x.bg = f ? 'rgb(240, 250, 242)' : '#FFFFFF';   /* (Oct 14, 16:53) the header 8% tint over the card's own colour (green on FFW cards, grey on the others), as on the summary card */ x.hbg = f ? 'rgba(52, 168, 83, 0.08)' : 'rgba(60, 60, 67, 0.08)';   /* (Oct 13, 17:17) lighter, whiter green; (Oct 14, 08:43) lighter still, the civil green shared with its map marker and tooltip */ x.time = x.at != null ? hm(x.at) : '';
       x.pctD = x.pctTxt ? 'block' : 'none'; if (x.noteD === 'block') x.noteD = 'flex';   /* the footer: the FFW mark (50%), then the note */ x.pctW = Lx(' confidence', ' de confiança'); });
     /* (Oct 13, 08:57) confirmed on the ground: from here on it is no longer a candidate but a confirmed fire ("<place> Fire"); the page turns into the fire's, its detections kept */
     /* (Oct 13, 08:59) the upgrade to an active fire happens when the dispatch center confirms (Send initial attack): see decide() */
@@ -1561,7 +1594,7 @@ class Component extends DCLogic {
     out.forEach((x) => { if (!x.km && NEAR[x.kind]) { x._mk = NEAR[x.kind][0]; x._mb = NEAR[x.kind][1]; } });
     const SH2 = { sat: Lx('Satellite', 'Satélite'), drone: 'Drone', call: Lx('Call', 'Chamada'), captain: Lx('Captain', 'Capitão') };
     /* (Oct 14, 08:41) each marker carries its detection's summary for its tooltip panel: civil (FFW) or firefighter system, confidence, what it saw, when */
-    const camInfo = (x) => ({ civ: !!FFWK[x.kind], ttl: x.title + (FFWK[x.kind] ? Lx(' (civil)', ' (civil)') : ''), pct: x.pctTxt || '', pctW: Lx(' confidence', ' de confiança'), lines: (x.rows || []).map((r) => r.t).filter(Boolean).slice(0, 2), when: x.at != null ? hm(x.at) : '', sys: FFWK[x.kind] ? Lx('Civil detection. FFW', 'Deteção civil. FFW') : Lx('Firefighter system', 'Sistema dos bombeiros') });
+    const camInfo = (x) => ({ civ: !!FFWK[x.kind], ttl: x.title + (FFWK[x.kind] ? Lx(' (civil)', ' (civil)') : ''), pct: x.pctTxt || '', pctW: Lx(' confidence', ' de confiança'), lines: (x.rows || []).map((r) => r.t).filter(Boolean).slice(0, 2), when: x.at != null ? hm(x.at) : '', sys: FFWK[x.kind] ? Lx('Civil detection', 'Deteção civil') :   /* (Oct 14, 16:59) no FFW on tooltip labels */ Lx('Firefighter system', 'Sistema dos bombeiros') });
     const cams = isLive ? out.filter((x) => (x.km || x._mk) && (x.ic || IC[x.kind])).map((x) => Object.assign((() => { if (!x.km) { const r = x._mb * Math.PI / 180; return { x: +(c.x + x._mk * Math.sin(r) * 27).toFixed(1), y: +(c.y - x._mk * Math.cos(r) * 25.5).toFixed(1), label: SH2[x.kind] || x.title, icon: x.ic || IC[x.kind], los: false, tt: x.title, td: (x.rows[0] || {}).t || '' }; } const r = x.brg * Math.PI / 180; return { x: +(c.x + x.km * Math.sin(r) * 27).toFixed(1), y: +(c.y - x.km * Math.cos(r) * 25.5).toFixed(1), label: SH[x.kind] || x.title, icon: x.ic || IC[x.kind], los: droneStrong, tt: x.title, td: x.km + ' km. ' + (x.rows[0] || {}).t }; })(), { info: camInfo(x) })) : [];
     /* the decision, for the dispatch profiles only: Dismiss or Send initial attack; once chosen, the choice alone, full width, in the past tense */
     const DSP = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
@@ -1572,14 +1605,14 @@ class Component extends DCLogic {
         check: [Lx('Send a smoke check?', 'Enviar um reconhecimento?'), Lx('One engine goes to ' + pl + ' to look. Its size-up confirms or cancels.', 'Um veículo vai a ' + pl + ' ver. O ponto de situação confirma ou cancela.'), Lx('Send', 'Enviar')],
         dismissed: [Lx('Dismiss ' + pl + '?', 'Descartar ' + pl + '?'), Lx('It leaves the lists and maps and goes to Resolved.', 'Sai das listas e dos mapas e passa para Resolvidos.'), Lx('Dismiss', 'Descartar')] }[k];
       W.__wfConfirm({ title: T[0], body: T[1], cancel: Lx('Cancel', 'Cancelar'), ok: T[2], onOk: fn }); };
-    const done = VD[c.id], decide = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; D[c.id + '@'] = Date.now(); try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate(); try { if (window.__wfChat && window.__wfChat.dspGo) window.__wfChat.dspGo(c.id, k); } catch (e) {}   /* (Oct 13, 16:54) the team's story starts with the decision */
+    const done = VD[c.id], chkAsk = done === 'check' && isLive && onScene && droneStrong, decide = (k) => () => {   /* chkAsk: the captain of the smoke check asks for the initial attack: the foot offers it alone */ try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; D[c.id + '@'] = Date.now(); if (k === 'check') D[c.id + '^'] = Date.now(); try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate(); try { if (window.__wfChat && window.__wfChat.dspGo) window.__wfChat.dspGo(c.id, k); } catch (e) {}   /* (Oct 13, 16:54) the team's story starts with the decision */
       /* (Oct 13, 08:59) Send initial attack is the dispatch center's confirmation: the candidate becomes an active fire ("<place> Fire", First alert), its detections kept; the captain's arrival then moves it to Crews on scene */
       /* (Oct 13, 10:30) Dismiss: the candidate leaves the lists and maps and goes to Resolved as Dismissed */
       if (k === 'dismissed') setTimeout(() => { const d = this.wfDismissed(); if (!d[c.id]) { d[c.id] = Date.now(); this.wfSave(d); } }, 1200);
       if (k === 'sent' && !frow.wasCand) setTimeout(() => { this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 1200); };
-    const vf = { d: 'flex', title: vfTitle, time: out.length ? hm(Math.max(...out.map((x) => x.at || 0))) : '', ic: onScene && isLive ? (capOk ? 'M5 12.5 10 17.5 19 7' : 'M7 7l10 10M17 7 7 17') : 'M12 5c-4.5 0-8 4-9.5 7 1.5 3 5 7 9.5 7s8-4 9.5-7c-1.5-3-5-7-9.5-7ZM12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z', lines: lines.map((t) => ({ t })), decD: DSP && !done ? 'flex' : 'none', doneD: DSP && done ? 'flex' : 'none',
-      doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : done === 'check' ? Lx('Smoke check sent', 'Reconhecimento enviado') : Lx('Dismissed', 'Descartado'),
-      dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Initial attack', 'Ataque inicial'), dismiss: ask('dismissed', decide('dismissed')), send: ask('sent', decide('sent')), check: ask('check', decide('check')), checkLbl: Lx('Smoke check', 'Reconhecimento'), othD: 'block', cfgD: 'none', cfgLbl: '', cfg: null, sendDis: 'false', sendOp: '1', sendCls: 'primary', ttl: Lx('Verification', 'Verificação'), sum: Lx('Summary', 'Resumo') };
+    const vf = { d: 'flex', title: vfTitle, time: out.length ? hm(Math.max(...out.map((x) => x.at || 0))) : '', ic: onScene && isLive ? (capOk ? 'M5 12.5 10 17.5 19 7' : 'M7 7l10 10M17 7 7 17') : 'M12 5c-4.5 0-8 4-9.5 7 1.5 3 5 7 9.5 7s8-4 9.5-7c-1.5-3-5-7-9.5-7ZM12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z', lines: lines.map((t) => ({ t })), decD: DSP && (!done || chkAsk) ? 'flex' : 'none', doneD: DSP && done && !chkAsk ? 'flex' : 'none',
+      doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : done === 'check' ? (onScene && !droneStrong ? Lx('No fire found', 'Sem fogo no local') : Lx('Smoke check sent', 'Reconhecimento enviado')) : Lx('Dismissed', 'Descartado'),
+      dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Initial attack', 'Ataque inicial'), dismiss: ask('dismissed', decide('dismissed')), send: ask('sent', decide('sent')), send0: ask('sent', decide('sent')), check: ask('check', decide('check')), checkLbl: Lx('Smoke check', 'Reconhecimento'), othD: chkAsk ? 'none' : 'block', cfgD: 'none', cfgLbl: '', cfg: null, sendDis: 'false', sendOp: '1', sendCls: 'primary', ttl: Lx('Verification', 'Verificação'), sum: Lx('Summary', 'Resumo') };
     return { evD: 'flex', evid: out, evCount: out.length === 1 ? '1 detection' : out.length + ' detections', vf, vcams: cams, vpc: cams.length ? '0' : '16', vsz: cams.length ? '1' : '3',
       setVid: this.setVid || (this.setVid = (el) => { if (!el) return; el.muted = true; el.defaultMuted = true; el.loop = true; el.playsInline = true; try { const p = el.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }) };
   }
@@ -1613,7 +1646,9 @@ class Component extends DCLogic {
       setTimeout(() => { if (!window.__wfHomesAlert) return; window.__wfHomesAlert(HT && !safe && !ackd && document.visibilityState !== 'hidden' ? Object.assign({}, HT, { go: hmGo, ack: () => window.__wfHomesAck(o.fireId, HT.h) }) : null);
         if (window.__wfHomesSafe) window.__wfHomesSafe(safe && document.visibilityState !== 'hidden' ? { id: chS.key, title: window.__wfLang === 'pt' ? 'As habitações estão seguras' : 'Structures are now safe', sub: HT.sub } : null); }, 0); }
     if (o.pgMapD !== 'block') return Object.assign(o, { ft: { d: 'none', x: '0%', sx: '0%', fireSel: 'true', resSel: 'false', goFire: () => {}, goRes: () => {} } });
-    const tab0 = st.ftab || (st.reinforce ? 'res' : 'fire'), res = tab0 === 'res', go = (t) => () => { if (tab0 === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
+    /* (Oct 14, 17:25) the dispatch profiles' incident has one page, no Situation | Initial attack switch: Initial attack opens its blade */
+    const DSP1 = !!(window.__wfDspScope && window.__wfDspScope()) && (() => { const f = o._hsSrc && o._hsSrc.frow; return !!(f && (f.cand || /^Confirmed from /.test(f.note || ''))); })();
+    const tab0 = DSP1 ? 'fire' : (st.ftab || (st.reinforce ? 'res' : 'fire')), res = tab0 === 'res', go = (t) => () => { if (tab0 === t) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ftab: t }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTop = 0; } catch (e) {} setTimeout(() => this.wfHdrMeasure && this.wfHdrMeasure(), 0); };
     // Something that needs attention on the other tab: a red dot (no count) on its label
     const crewAlert = (o.deployed || []).some((d) => d.fx && d.conf && !(d.groups || []).length);
     // Situation needs attention only for something to act on that you have not seen yet: people at risk not evacuated, while you
@@ -1645,12 +1680,16 @@ class Component extends DCLogic {
     o.ft.resLbl = 'Crews'; o.ia = { d: 'none', rows: [], ttl: '', sub: '', note: '' };
     { const DSPt = window.__wfDspScope && window.__wfDspScope(), fr = o._hsSrc && o._hsSrc.frow, cid = fr ? (fr.cand ? fr.cand.id : (/^Confirmed from (\S+)/.exec(fr.note || '') || [])[1]) : null, PTl = window.__wfLang === 'pt';
       if (res && o.vf) { o.vf = Object.assign({}, o.vf, { d: 'none' }); o.evD = 'none'; }
-      /* (Oct 13, 17:15) on Situation, Send initial attack only opens the Initial attack tab; the order itself is sent from there */
-      if (DSPt && cid && o.vf && !res) o.vf = Object.assign({}, o.vf, { send: go('res') });
-      if (DSPt && cid) { o.ft.resLbl = PTl ? 'Ataque inicial' : 'Initial attack'; o.ft.resAria = o.ft.resLbl; o.ft.resDot = 'none';
-        if (res) { o.deployed = []; if (o.rs) o.rs = Object.assign({}, o.rs, { d: 'none' });   /* the station-side crew tools (dispatch config, AI pack) are not the dispatcher's */
+      /* (Oct 14, 17:25) Initial attack on the page opens the Initial attack blade (from the bottom): the response plan's units, each with its
+         switch (the configuration is inside, no Configure button), and Send initial attack at its foot. No Cancel: the blade closes with its
+         X, a swipe down or a tap outside */
+      const iaOpen = () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ iaOpen: true }); }, iaClose = () => this.setState({ iaOpen: false });
+      o.iab = { d: 'none', y: '100%', op: '0', pe: 'none', close: iaClose, sendD: 'none', doneD: 'none', send: null, sendDis: 'true', sendOp: '0.4', sendCls: 'wf-sec', sendLbl: '', doneTxt: '', ttl: '', sub: '', note: '', rows: [], closeLbl: PTl ? 'Fechar' : 'Close' };
+      if (DSPt && cid) { o.ft.d = 'none'; o.ft.resLbl = PTl ? 'Ataque inicial' : 'Initial attack'; o.ft.resAria = o.ft.resLbl; o.ft.resDot = 'none';
+        if (o.vf) o.vf = Object.assign({}, o.vf, { send: iaOpen });
+        { o.deployed = []; if (o.rs) o.rs = Object.assign({}, o.rs, { d: 'none' });   /* the station-side crew tools (dispatch config, AI pack) are not the dispatcher's */
           const ptc = fr.st === 'PT', US = !ptc, NR = this.wfNearRows({ id: fr.id }, [o.fireX, o.fireY], US, fr.st, false), S3 = (NR.rows || []).slice(0, 3);
-          let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} const sentAt = VD[cid] === 'sent' ? (VD[cid + '@'] || 1) : 0, el = sentAt ? Date.now() - sentAt : -1;
+          let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} const sentAt = VD[cid] === 'sent' ? (VD[cid + '@'] || 1) : 0, el = sentAt ? Date.now() - sentAt : -1, chkOn = !!VD[cid + '^'] && Date.now() - VD[cid + '^'] >= 20000;
           const hs = (x) => { let h = 7; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, IC = window.__wfUnitIC || {}, CAR = 'M5 16v-4l2-5h10l2 5v4ZM5 12h14M7.5 16v2.5M16.5 16v2.5';
           const eta = (r, add) => Math.max(3, ((r && r.t && r.t[1]) || 12) + (add || 0)), d0 = S3[0];
           /* the response plan for a wildland fire: an engine from each of the three nearest stations, the battalion chief, a hand crew and the aircraft (California); the nearest teams and the initial attack helicopter (Portugal). Unit numbers simulated */
@@ -1670,18 +1709,21 @@ class Component extends DCLogic {
             rows: [] };
           /* (Oct 13, 17:15) the ECC can adjust the response plan before sending (as CAD recommends and the ECC captain augments or reduces):
              Configure turns each unit's tag into a toggle; units switched off are not sent */
-          let OFF = {}; try { OFF = JSON.parse(sessionStorage.getItem('wf-ia-off') || '{}') || {}; } catch (e) {} const off = OFF[cid] || [], cfgOn = !sentAt && !!st.iaCfg;
+          let OFF = {}; try { OFF = JSON.parse(sessionStorage.getItem('wf-ia-off') || '{}') || {}; } catch (e) {} const off = OFF[cid] || [], cfgOn = !sentAt;
           const tog = (n) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} let O = {}; try { O = JSON.parse(sessionStorage.getItem('wf-ia-off') || '{}') || {}; } catch (e) {} const a = O[cid] || []; O[cid] = a.indexOf(n) < 0 ? a.concat([n]) : a.filter((x) => x !== n); try { sessionStorage.setItem('wf-ia-off', JSON.stringify(O)); } catch (e) {} this.forceUpdate(); };
           const UU = sentAt || !cfgOn ? U.filter((u) => off.indexOf(u.name) < 0) : U, nOn = U.filter((u) => off.indexOf(u.name) < 0).length;
           if (sentAt) o.ia.sub = (PTl ? 'Enviado às ' : 'Sent at ') + new Date(sentAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. ' + UU.length + (PTl ? ' meios.' : ' units.');
           else if (cfgOn) o.ia.sub = PTl ? 'Escolha os meios a enviar.' : 'Choose the units to send.';
-          o.ia.rows = UU.map((u, i) => { const k = !sentAt ? 'av' : fa && Date.now() >= capAt ? 'rl' : el >= u.arr * 1000 ? 'os' : 'er'; if (sentAt && el < u.arr * 1000) nx = Math.min(nx, u.arr * 1000 - el); const on = off.indexOf(u.name) < 0;
+          o.ia.rows = UU.map((u, i) => { const k = !sentAt ? 'av' : fa && Date.now() >= capAt ? 'rl' : el >= u.arr * 1000 || (i === 0 && chkOn) ? 'os' : 'er';   /* after a smoke check its engine is already on scene */ if (sentAt && el < u.arr * 1000) nx = Math.min(nx, u.arr * 1000 - el); const on = off.indexOf(u.name) < 0;
               return { ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + ' min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0',
                 tagD: cfgOn ? 'none' : 'block', swD: cfgOn ? 'block' : 'none', onStr: on ? 'true' : 'false', toggle: tog(u.name), swBg: on ? '#3A3A3C' : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px' }; });
-          /* the foot on this tab: Send initial attack alone (it sends), Configure under it until it is sent */
-          if (o.vf) { const snd = o.vf.send; o.vf = Object.assign({}, o.vf, { othD: 'none', cfgD: sentAt ? 'none' : 'block',   /* (Oct 13, 21:07) one row: Configure (secondary, left, its own width) | Send initial attack (primary, the rest) */ cfgLbl: cfgOn ? (PTl ? 'Concluído' : 'Done') : (PTl ? 'Configurar' : 'Configure'),
-            cfg: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ iaCfg: !cfgOn }); }, sendDis: nOn && !cfgOn ? 'false' : 'true', sendOp: nOn && !cfgOn ? '1' : '0.4', sendCls: nOn && !cfgOn ? 'primary' : 'wf-sec',   /* (Oct 13, 21:11) disabled while configuring: Done first, then send */
-            send: nOn && !cfgOn ? () => { this.setState({ iaCfg: false }); snd(); } : () => {} }); }
+          /* (Oct 14, 17:25) the blade: the units (switches before sending, their status after), Send initial attack at its foot; once sent, the
+             choice alone in the past tense. After sending, the units' status also shows on the page, first under the map */
+          { const snd = o.vf && o.vf.send0, opn = !!st.iaOpen;
+            o.iab = Object.assign(o.iab, { d: 'flex', y: opn ? '0%' : '100%', op: opn ? '1' : '0', pe: opn ? 'auto' : 'none', ttl: PTl ? 'Ataque inicial' : 'Initial attack',   /* the same words as the button that opens it */ sub: o.ia.sub, note: o.ia.note, rows: o.ia.rows,
+              sendD: sentAt ? 'none' : 'block', doneD: sentAt ? 'flex' : 'none', doneTxt: PTl ? 'Ataque inicial enviado' : 'Initial attack sent', sendLbl: PTl ? 'Enviar ataque inicial' : 'Send initial attack',
+              sendDis: nOn ? 'false' : 'true', sendOp: nOn ? '1' : '0.4', sendCls: nOn ? 'primary' : 'wf-sec', send: nOn && snd ? snd : () => {} });
+            o.ia = Object.assign({}, o.ia, { d: sentAt ? 'flex' : 'none' }); }
           if (isFinite(nx)) { clearTimeout(this._iaT); this._iaT = setTimeout(() => this.forceUpdate(), Math.max(200, nx + 50)); } } } }
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
