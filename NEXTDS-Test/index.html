@@ -511,7 +511,10 @@ const CSS = `
 .hvt-fg-foot{display:flex;align-items:center;gap:8px;padding:8px 16px;border-top:1px solid var(--border-default)}
 .hvt-fgbtn{width:auto !important;gap:0;padding:0 12px 0 0 !important}
 .hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-self:stretch;padding-top:8px} /* the Filters button takes the height of the filter bar */
-.hvt-filterbar .hvt-fgbtn{height:100%;align-items:flex-end} /* its icon, label and count stay at the bottom */
+.hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-items:flex-end}
+.hvt-filterbar .hvt-fgbtn{height:100%;align-items:flex-end;transition:height .2s cubic-bezier(.4,0,.2,1)} /* its icon, label and count stay at the bottom */
+.hvt-filterbar .hvt-fgbtn.is-open:not(.is-detached){height:32px} /* with the panel attached it is one row tall; detached or closed, it fills the bar again */
+@media (prefers-reduced-motion:reduce){.hvt-filterbar .hvt-fgbtn{transition:none}}
 .hvt-filterbar .hvt-fgbtn .hvt-mlabel{line-height:32px}
 .hvt-filterbar .hvt-fgbtn .hvt-fgcount{margin-bottom:7px;line-height:18px}
 .hvt-fgnum{display:inline-grid;justify-items:end} /* the applied count turns semibold once it is not zero; it keeps the semibold width so nothing moves */
@@ -4194,7 +4197,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:57"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:59"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
