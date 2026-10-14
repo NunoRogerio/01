@@ -540,10 +540,11 @@ const CSS = `
 .hvt-resize{display:none;position:absolute;top:8px;bottom:8px;right:-6px;width:12px;z-index:3;cursor:col-resize;touch-action:none}
 .hvt-root.can-resize .hvt-resize{display:block}
 .hvt-resize::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;margin-left:-.5px;opacity:0;
-  background:var(--border-default);transition:opacity .12s}
+  background:var(--border-default);transition:opacity .15s ease,transform .2s cubic-bezier(.4,0,.2,1),background-color .2s ease}
 .hvt-row--head:hover .hvt-resize::before{opacity:1}
-.hvt-resize:hover::before,.hvt-resize:focus-visible::before{opacity:1;width:2px;margin-left:-1px;background:var(--border-hover-selected)}
-.hvt-resize.is-active::before{opacity:1;width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100)}
+.hvt-resize:hover::before,.hvt-resize:focus-visible::before{opacity:1;width:2px;margin-left:-1px;background:var(--cat1-100);transform:scaleY(1.4)} /* on hover the marker takes the drag line colour and grows 20% above and below */
+.hvt-resize.is-active::before{opacity:1;transform:scaleY(1.4);width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100)}
+@media (prefers-reduced-motion:reduce){.hvt-resize::before{transition:none}}
 .hvt-root.is-resizing,.hvt-root.is-resizing *{cursor:col-resize !important;user-select:none;-webkit-user-select:none}
 .hvt-guide{position:absolute;top:0;bottom:0;width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;
   background:var(--cat1-100);z-index:7;pointer-events:none}
