@@ -184,7 +184,7 @@ const CSS = `
 .hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
 .hvt-qfopt b{font-weight:600}
 .hvt-qfmore{display:block;width:100%;height:36px;margin-top:8px;border:0;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.hvt-qf-clear{flex:none;height:32px;padding:0 12px;border:0;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.hvt-qf-clear{flex:none;height:26px;margin:2px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear:hover{background:var(--container-hover-background)}
 .hvt-qf-div{flex:none;width:1px;height:18px;background:var(--outline)}
 .hvt-qf-err{position:absolute;z-index:5;left:0;top:100%;display:flex;align-items:center;margin-top:4px;font-size:14px;line-height:21px;color:var(--semantic-negative);white-space:nowrap}
@@ -1277,7 +1277,15 @@ function CheckList({ options, value, onChange, label }) {
     <div className="hvt-checklist" role="group" aria-label={label}>
       {options.length > 7 && (
         <div className="hvt-qf is-open hvt-qf--field" role="search">
-          <input className="hvt-qf-input" type="text" placeholder="Search..." aria-label={`Search ${label}`} value={q} onChange={(e) => setQ(e.target.value)} />
+          <input className="hvt-qf-input" type="text" placeholder="Search..." aria-label={`Search ${label}`} value={q} onChange={(e) => setQ(e.target.value)}
+                 onKeyDown={(e) => { if (e.key === "Escape" && q) { e.stopPropagation(); setQ(""); } }} />
+          {q && (
+            <>
+              <button type="button" className="hvt-qf-clear" aria-label="Clear search" onMouseDown={(e) => e.preventDefault()}
+                      onClick={(e) => { setQ(""); const i = e.currentTarget.parentNode.querySelector("input"); if (i) i.focus(); }}>Clear</button>
+              <span className="hvt-qf-div" aria-hidden="true" />
+            </>
+          )}
           <span className="hvt-icon hvt-qf-glyph" aria-hidden="true">{Icons.Search}</span>
         </div>
       )}
