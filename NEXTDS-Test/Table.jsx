@@ -414,6 +414,7 @@ const CSS = `
   border-radius:calc(var(--component-containerradius) - 1px) calc(var(--component-containerradius) - 1px) 0 0}
 .hvt-panel.is-dragging .hvt-panel-head,.hvt-panel.is-dragging .hvt-pdrag{cursor:grabbing}
 .hvt-pdrag{cursor:grab}
+.hvt-pdrag,.hvt-pdrag:hover{background:transparent !important;box-shadow:none !important} /* the drag icon only says the panel can be moved: no hover of its own */
 .hvt-panel-title{margin:0;font-size:16px;font-weight:700;line-height:24px}
 .hvt-panel-count{white-space:nowrap}
 .hvt-panel-body{padding:8px}
@@ -2113,6 +2114,58 @@ export function DataTable({
   const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to
   const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button
   useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
+  /* closing a filter panel folds it back into the button that opened it */
+  const closingRef = useRef(false);
+  const closeFilterPanel = () => {
+    if (closingRef.current) return;
+    const el = panelRef.current, root = rootRef.current;
+    const t = root && (root.querySelector(".hvt-filterbar [data-filter-trigger]") || root.querySelector(".hvt-titlebar [data-filter-trigger]"));
+    const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || !t || reduce || !el.animate) { setPanel(null); return; }
+    const pr = el.getBoundingClientRect(), tr = t.getBoundingClientRect();
+    const cur = getComputedStyle(el).transform;
+    const base = cur && cur !== "none" ? cur : "";
+    closingRef.current = true;
+    el.style.transformOrigin = "0 0";
+    el.style.pointerEvents = "none";
+    const a = el.animate([
+      { transform: base || "none", opacity: 1 },
+      { transform: `${base} translate(${tr.left - pr.left}px, ${tr.top - pr.top}px) scale(${tr.width / pr.width}, ${tr.height / pr.height})`, opacity: 0 },
+    ], { duration: 260, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+    const done = () => { closingRef.current = false; setPanel(null); };
+    a.onfinish = done;
+    a.oncancel = done;
+  };
+  /* drag or long press on the Filters button: the panel opens detached and follows the pointer */
+  const trigRef = useRef(null);
+  const trigSuppress = useRef(false);
+  const onTrigDown = (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const d = { id: e.pointerId, sx: e.clientX, sy: e.clientY, active: false, base: panel && fgDetached ? fgPos : { x: 0, y: 0 }, dx: 0, dy: 0 };
+    const activate = () => { d.active = true; if (!panel) openPanel("bar", false); setFgDetached(true); setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy }); };
+    d.timer = setTimeout(() => { if (trigRef.current === d && !d.active) activate(); }, 500);
+    d.activate = activate;
+    trigRef.current = d;
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+  };
+  const onTrigMove = (e) => {
+    const d = trigRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    d.dx = e.clientX - d.sx; d.dy = e.clientY - d.sy;
+    if (!d.active) { if (Math.abs(d.dx) + Math.abs(d.dy) < 6) return; d.activate(); return; }
+    setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy });
+  };
+  const onTrigUp = (e) => {
+    const d = trigRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    clearTimeout(d.timer);
+    trigRef.current = null;
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
+    if (!d.active) return;
+    trigSuppress.current = true; // the click that follows a drag does not toggle the panel
+    const pr = panelRef.current && panelRef.current.getBoundingClientRect(), tr = e.currentTarget.getBoundingClientRect();
+    if (pr && !(pr.right < tr.left || pr.left > tr.right || pr.bottom < tr.top || pr.top > tr.bottom + 8)) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); }
+  };
   const [selected, setSelected] = useState(() => new Set());
   const [maximized, setMaximized] = useState(false);
   const [density, setDensity] = useState(densityProp);
@@ -2224,12 +2277,12 @@ export function DataTable({
     const close = (e) => {
       if (panelRef.current && panelRef.current.contains(e.target)) return;
       if (e.target.closest && e.target.closest("[data-filter-trigger]")) return;
-      setPanel(null);
+      closeFilterPanel();
     };
     const esc = (e) => {
       if (e.key !== "Escape") return;
       if (panelRef.current && panelRef.current.querySelector(".hvt-mpanel")) return; // an open dropdown closes first
-      setPanel(null);
+      closeFilterPanel();
     };
     document.addEventListener("mousedown", close);
     document.addEventListener("keydown", esc, true); // capture: runs before the dropdown closes itself
@@ -3184,7 +3237,10 @@ export function DataTable({
       {filterUi === "group" ? (
         <div className="hvt-mb hvt-mb--secondary">
           <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}`} data-filter-trigger aria-haspopup="dialog"
-                  aria-expanded={!!panel} aria-label="Filters" onClick={() => (panel ? setPanel(null) : openPanel("bar", false))}>
+                  aria-expanded={!!panel} aria-label="Filters" style={{ touchAction: "none" }}
+                  onPointerDown={onTrigDown} onPointerMove={onTrigMove} onPointerUp={onTrigUp} onPointerCancel={onTrigUp}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onClick={() => { if (trigSuppress.current) { trigSuppress.current = false; return; } if (panel) closeFilterPanel(); else openPanel("bar", false); }}>
             <span className="hvt-mico" aria-hidden="true">{Icons.Filter}</span>
             <span className="hvt-mlabel">Filters</span>
             <span className="hvt-fgcount"><span className={`hvt-fgnum${activeItems.length ? " is-on" : ""}`} data-n={activeItems.length}><i>{activeItems.length}</i></span> / {filterCols.length}</span>
@@ -3610,8 +3666,8 @@ export function DataTable({
           activeCount={activeItems.length}
           getTrigger={() => { const t = rootRef.current && rootRef.current.querySelector(".hvt-filterbar [data-filter-trigger]"); return t ? t.getBoundingClientRect() : null; }}
           style={groupStyle}
-          onApply={(next) => { updateModel({ ...model, ...next }); setPanel(null); }}
-          onClose={() => setPanel(null)}
+          onApply={(next) => { updateModel({ ...model, ...next }); closeFilterPanel(); }}
+          onClose={closeFilterPanel}
         />
       )}
       {panel && filterUi !== "group" && (
@@ -3630,7 +3686,7 @@ export function DataTable({
             if (maximized && rootRef.current) { const r = rootRef.current.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom }; }
             return { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
           }}
-          onClose={() => setPanel(null)}
+          onClose={closeFilterPanel}
         />
       )}
     </div>
@@ -4087,7 +4143,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:13"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:24"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
