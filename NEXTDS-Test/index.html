@@ -381,7 +381,7 @@ const CSS = `
 .hvt-fg.is-dragging,.hvt-fg.is-dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
 .hvt-fg.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
 .hvt-fg > .hvt-panel-head{flex:none}
-.hvt-fg.is-detached{margin-top:-48px;z-index:45} /* detached, the panel stays where it was and its header rises over the Filters button */
+.hvt-fg.is-detached{margin-top:-40px;z-index:45} /* detached, the panel stays where it was and its header rises over the Filters button */
 .hvt-mbtn.is-open.is-down::after{bottom:0}
 .hvt-mbtn.is-open.is-up::after{top:0}
 .hvt-mico,.hvt-mchev{display:block;width:32px;height:32px;flex:none}
@@ -439,6 +439,9 @@ const CSS = `
   border-radius:calc(var(--component-containerradius) - 1px) calc(var(--component-containerradius) - 1px) 0 0}
 .hvt-panel.is-dragging .hvt-panel-head,.hvt-panel.is-dragging .hvt-pdrag{cursor:grabbing}
 .hvt-pdrag{cursor:grab}
+.hvt-panel-head .hvt-gbtn{width:24px;height:24px} /* header of the draggable filter panels: 8px all around */
+.hvt-panel-head .hvt-pdrag{width:10px;height:24px;padding:0}
+.hvt-panel-head .hvt-pdrag svg{width:10px;height:15px}
 .hvt-pdrag,.hvt-pdrag:hover{background:transparent !important;box-shadow:none !important} /* the drag icon only says the panel can be moved: no hover of its own */
 .hvt-panel-title{margin:0;font-size:16px;font-weight:700;line-height:24px}
 .hvt-panel-count{white-space:nowrap}
@@ -1273,7 +1276,7 @@ function FilterPanel({
            onDoubleClick={(e) => { if (!(e.target.closest && e.target.closest("button"))) onOffset({ x: 0, y: 0 }); }}>
         <button type="button" className="hvt-gbtn hvt-pdrag" aria-label="Move filters panel (arrow keys, Home to reset)"
                 aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home" onKeyDown={onHandleKey}>
-          {Icons.Drag}
+          {Icons.DragTitle}
         </button>
         <h4 className="hvt-panel-title">Filters</h4>
         <span className="hvt-caption hvt-panel-count">{activeCount} active</span>
@@ -1463,7 +1466,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
          onPointerDown={onDragDown} onPointerMove={onDragMove} onPointerUp={onDragUp} onPointerCancel={onDragUp}>
       {detached && (
         <div className="hvt-panel-head">
-          <span className="hvt-gbtn hvt-pdrag" aria-hidden="true">{Icons.Drag}</span>
+          <span className="hvt-gbtn hvt-pdrag" aria-hidden="true">{Icons.DragTitle}</span>
           <h4 className="hvt-panel-title">Filters</h4>
           <span className="hvt-caption hvt-panel-count">{activeCount} active</span>
           <span className="hvt-grow" />
@@ -4191,7 +4194,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:54"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:57"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
