@@ -267,7 +267,7 @@ const CSS = `
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
 .hvt-chip .hvt-chipx:hover:not(:disabled){background:var(--container-hover-background);box-shadow:none}
-.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 4px 0 8px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
+.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 2px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
 .hvt-chiptrigger:hover{background:var(--container-hover-background)}
 .hvt-chiplabel{pointer-events:none}
@@ -3308,7 +3308,6 @@ function DataTable({
               <button type="button" className="hvt-chiptrigger" data-filter-trigger aria-label={`Edit filter ${label}`}
                       onClick={() => openPanel("bar", false, it.field)}>
                 <span className="hvt-chiplabel">{label}</span>
-                <span className="hvt-chipchev" aria-hidden="true">{Icons.ChevronDown}</span>
               </button>
             </span>
           );
@@ -4188,7 +4187,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 21:48"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-14 21:50"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
