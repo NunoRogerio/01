@@ -4523,7 +4523,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 16:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5452,12 +5452,9 @@ function App() {
                 </div>
               </CtlField>
               <CtlField label="Data">
-                <MenuButton variant="ghost" role="listbox" ariaLabel="Data source" value={cfg.dataset} minWidth={290} label={ds.label}
-                            items={[
-                              { heading: true, label: `Product specific: ${PRODUCTS.find((p) => p.id === cfg.product).label}` },
-                              ...PRODUCT_DATASETS.map((d) => ({ value: d.id, label: d.label })),
-                            ]}
-                            onSelect={(it) => switchDataset(it.value)} />
+                <CtlSelect ariaLabel="Data" value={cfg.dataset}
+                           options={PRODUCT_DATASETS.map((d) => ({ value: d.id, label: d.label }))}
+                           onPick={(v) => switchDataset(v)} />
               </CtlField>
               <CtlField label="Number of rows">
                 <CtlSelect ariaLabel="Number of rows" value={dataRows.length}
