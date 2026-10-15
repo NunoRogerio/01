@@ -590,7 +590,7 @@ const CSS = `
 .hvt-fgbtn .hvt-mlabel{padding:0;font-weight:600} /* "Filters" in semibold, the count stays regular */
 .hvt-fgcount{font-size:14px;font-weight:400;color:var(--content-primary);padding-left:8px;border-left:1px solid var(--border-default)}
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
-.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot){box-shadow:none !important} /* and no outline: Filters and the added filters show only their hover */
+.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
 
 /* selection checkbox, expand button, bulk actions bar, detail panel */
@@ -4785,7 +4785,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 03:20"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 03:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

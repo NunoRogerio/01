@@ -578,7 +578,7 @@
 .hvt-fgbtn .hvt-mlabel{padding:0;font-weight:600} /* "Filters" in semibold, the count stays regular */
 .hvt-fgcount{font-size:14px;font-weight:400;color:var(--content-primary);padding-left:8px;border-left:1px solid var(--border-default)}
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
-.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot){box-shadow:none !important} /* and no outline: Filters and the added filters show only their hover */
+.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
 
 /* selection checkbox, expand button, bulk actions bar, detail panel */
