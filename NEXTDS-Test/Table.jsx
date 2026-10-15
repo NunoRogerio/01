@@ -757,6 +757,7 @@ const CSS = `
 .hvt-root.has-hscroll .is-pinned,.hvt-root.has-hscroll .is-sticky{background:var(--hvt-row-bg)}
 .hvt-root.has-hscroll .hvt-cell.is-pin-last{box-shadow:1px 0 0 var(--border-default)}
 .hvt-root.has-hscroll .hvt-actions{position:sticky;right:var(--hvt-row-px);z-index:3;background:var(--hvt-row-bg);box-shadow:-1px 0 0 var(--border-default)}
+.hvt-root.has-hscroll .hvt-row--head > .hvt-actions--ghost{box-shadow:none} /* the title row has no label over the actions: no divider there */
 
 /* focus rings sit inside their own control, so they never cover a neighbour or get clipped by a container */
 .hvt-selbox:has(.hvt-cbi:focus-visible){outline:0}
@@ -4227,7 +4228,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:09"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:11"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
