@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.3.0.tgz
+npm install ./vendor/nextds-table-0.4.0.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -201,6 +201,31 @@ The table uses the **Hitachi Sans** font (regular, semibold, bold). The font is 
 
 The full list, with types, is in `dist/index.d.ts`.
 
+## A starting point for your app
+
+This package is the reference for how the NEXT table looks and behaves. Your team will adapt it to its own screens and data; everything needed to do that is inside.
+
+### Run it and change it
+
+```bash
+tar -xzf nextds-table-0.4.0.tgz && cd package   # or unzip nextds-table.zip
+npm install          # dev tools only: esbuild, React, TypeScript
+npm run demo         # http://localhost:5173: client mode, server mode, custom cells, Dawn / Wicked
+```
+
+The demo imports the table straight from `src/`, so a change in `src/DataTable.jsx` or `src/styles.css` shows on reload. When you are done, `npm run build` writes `dist/`.
+
+### Your data
+
+- **Rows are flat objects with a unique `id`.** Map your API records to rows in one adapter function: flatten nested fields, rename the id, turn codes into the words users see, keep numbers as numbers and show units with `format`. See `examples/adapter.ts`.
+- **Custom cells:** a column's `render(row, value)` draws anything (links, icons, bars, two fields in one cell). Search, filters and sorting keep using the value. See `examples/custom-cells.tsx`.
+- **Server data:** `dataMode="server"` + `onQueryChange`: the table asks for one page at a time with sort, filters (MUI X filter model) and search. `examples/server-rest.tsx` shows a REST call that cancels stale requests and shows errors with Retry; `toSearchParams` in `examples/adapter.ts` maps the query to URL parameters.
+- **Data size:** client mode keeps every row in the browser and handles tens of thousands of rows (in our test with 50,000 rows, search and sort answered in about 0.15 s; measure on your own target devices). Filter value lists show at most 200 values plus the checked ones, with search for the rest. When the data lives on a server, or grows past that, use server mode.
+
+### Know the code
+
+`docs/ARCHITECTURE.md` maps `src/DataTable.jsx`: its sections, the data flow, and where to make the common changes (new column types, controlled state, labels, theming).
+
 ## Source and build
 
 The package carries its source, so your team can change the table or use it as an exact reference.
@@ -214,11 +239,14 @@ The package carries its source, so your team can change the table or use it as a
 | `build.mjs` | Builds `dist/` from `src/`. |
 | `source/Table.jsx` | The Table Workbench file the package was cut from: the table plus the workbench screen. Exact reference for every behaviour. |
 | `tools/extract.mjs` | Cuts `src/DataTable.jsx` and `src/styles.css` out of a Workbench `Table.jsx`. |
+| `demo/` | A small app on `src/` (`npm run demo`). |
+| `examples/` | Adapter, server mode over REST, custom cells. |
+| `docs/ARCHITECTURE.md` | Map of the code. |
 
 To rebuild after a change in `src/`:
 
 ```bash
-npm install        # installs TypeScript, used only to compile
+npm install        # dev tools only (TypeScript compiles the build)
 npm run build      # writes dist/
 ```
 

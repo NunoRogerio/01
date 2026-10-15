@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — 2026-10-15
+
+- A starting point for adapting the table: `npm run demo` (a live demo on `src/`), `examples/` (data adapter, server mode over REST, custom cells), `docs/ARCHITECTURE.md` (map of the code).
+- Column `render(row, value)` for custom cells.
+- Long filter value lists show 200 values plus the checked ones, with search for the rest (opening a list of 50,000 values went from about 7 s to 0.1 s).
+
 ## 0.3.0 — 2026-10-15
 
 - The source is in the package: `src/` (component, styles, types, sample), `build.mjs`, the Workbench file `source/Table.jsx` and `tools/extract.mjs`. `npm run build` and `npm run extract`.

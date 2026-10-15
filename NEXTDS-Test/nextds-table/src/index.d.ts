@@ -34,6 +34,9 @@ export interface TableColumn<R extends TableRow = TableRow> {
   sortable?: boolean;
   /** false: the field is read-only in the add / edit panel. */
   editable?: boolean;
+  /** Draws the cell yourself (links, icons, bars, several fields…). Search, filters and sorting still use the row's value at `key`,
+   *  and `format` still gives the text that search matches. Takes priority over `status` and `tag`. */
+  render?: (row: R, value: any) => ReactNode;
 }
 
 /** Filter model, the same shape as the MUI X Data Grid GridFilterModel. */

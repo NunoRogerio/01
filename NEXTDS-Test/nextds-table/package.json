@@ -1,6 +1,6 @@
 {
   "name": "@nextds/table",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The NEXT Design System table for React: filters, search, sorting, column reorder, resize and pinning, selection, expandable rows, pagination, themes Dawn and Wicked.",
   "license": "UNLICENSED",
   "private": true,
@@ -31,6 +31,11 @@
     "src",
     "source",
     "tools",
+    "docs",
+    "examples",
+    "demo/index.html",
+    "demo/main.jsx",
+    "demo/serve.mjs",
     "build.mjs",
     "README.md",
     "CHANGELOG.md"
@@ -40,10 +45,14 @@
     "react-dom": ">=18"
   },
   "scripts": {
+    "demo": "node demo/serve.mjs",
     "extract": "node tools/extract.mjs",
     "build": "node build.mjs"
   },
   "devDependencies": {
+    "esbuild": "^0.24.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "typescript": "^5.4.0"
   }
 }

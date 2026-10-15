@@ -365,13 +365,14 @@ function MultiSelect({ options, value, onChange, label }) {
         {open && (
           <div className="hvt-mpanel is-down align-left" role="listbox" aria-multiselectable="true" style={{ minWidth: "100%" }}>
             <AllRow value={value} options={options} onChange={onChange} />
-            {options.map((opt) => (
+            {capList(options, value).items.map((opt) => (
               <div key={opt} role="option" aria-selected={value.includes(opt)} className="hvt-ditem hvt-ditem--check"
                    onClick={(e) => { if (e.target.closest && e.target.closest(".hvt-selbox")) return; toggle(opt); }}>
                 <Checkbox label={opt} checked={value.includes(opt)} onChange={() => toggle(opt)} />
                 <span>{opt}</span>
               </div>
             ))}
+            {capList(options, value).more > 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>{LIST_MAX} of {options.length.toLocaleString("en")} values. Use "contains" to find the others.</span>}
           </div>
         )}
       </div>
@@ -546,6 +547,14 @@ function CsvInput({ value, onChange, label }) {
 }
 
 /* a searchable checkbox list (the value list of the FILTER GROUP "Search + Filters" column) */
+/* long value lists (a column with thousands of different values) draw at most LIST_MAX rows, plus the checked ones:
+   search narrows the list to the rest. Keeps the panels fast with large data. */
+const LIST_MAX = 200;
+const capList = (list, value) => {
+  if (list.length <= LIST_MAX) return { items: list, more: 0 };
+  const head = list.slice(0, LIST_MAX), inHead = new Set(head);
+  return { items: [...head, ...list.filter((o) => value.includes(o) && !inHead.has(o))], more: list.length - LIST_MAX };
+};
 function CheckList({ options, value, onChange, label }) {
   const [q, setQ] = useState("");
   const shown = options.filter((o) => String(o).toLowerCase().includes(q.trim().toLowerCase()));
@@ -568,13 +577,14 @@ function CheckList({ options, value, onChange, label }) {
       )}
       <AllRow value={value} options={options} shown={shown} onChange={onChange} />
       <div className="hvt-checklist-body">
-        {shown.map((o) => (
+        {capList(shown, value).items.map((o) => (
           <div key={o} className="hvt-ditem hvt-ditem--check" onClick={(e) => { if (e.target.closest && e.target.closest(".hvt-selbox")) return; toggle(o); }}>
             <Checkbox label={String(o)} checked={value.includes(o)} onChange={() => toggle(o)} />
             <span>{o}</span>
           </div>
         ))}
         {shown.length === 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>No values match.</span>}
+        {capList(shown, value).more > 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>{LIST_MAX} of {shown.length.toLocaleString("en")} values. Search to find the others.</span>}
       </div>
     </div>
   );
@@ -1664,6 +1674,7 @@ export function DataTable({
   };
   const renderCell = (row, col) => {
     const v = row[col.key];
+    if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;

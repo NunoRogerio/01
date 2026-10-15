@@ -1236,13 +1236,14 @@ function MultiSelect({ options, value, onChange, label }) {
         {open && (
           <div className="hvt-mpanel is-down align-left" role="listbox" aria-multiselectable="true" style={{ minWidth: "100%" }}>
             <AllRow value={value} options={options} onChange={onChange} />
-            {options.map((opt) => (
+            {capList(options, value).items.map((opt) => (
               <div key={opt} role="option" aria-selected={value.includes(opt)} className="hvt-ditem hvt-ditem--check"
                    onClick={(e) => { if (e.target.closest && e.target.closest(".hvt-selbox")) return; toggle(opt); }}>
                 <Checkbox label={opt} checked={value.includes(opt)} onChange={() => toggle(opt)} />
                 <span>{opt}</span>
               </div>
             ))}
+            {capList(options, value).more > 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>{LIST_MAX} of {options.length.toLocaleString("en")} values. Use "contains" to find the others.</span>}
           </div>
         )}
       </div>
@@ -1417,6 +1418,14 @@ function CsvInput({ value, onChange, label }) {
 }
 
 /* a searchable checkbox list (the value list of the FILTER GROUP "Search + Filters" column) */
+/* long value lists (a column with thousands of different values) draw at most LIST_MAX rows, plus the checked ones:
+   search narrows the list to the rest. Keeps the panels fast with large data. */
+const LIST_MAX = 200;
+const capList = (list, value) => {
+  if (list.length <= LIST_MAX) return { items: list, more: 0 };
+  const head = list.slice(0, LIST_MAX), inHead = new Set(head);
+  return { items: [...head, ...list.filter((o) => value.includes(o) && !inHead.has(o))], more: list.length - LIST_MAX };
+};
 function CheckList({ options, value, onChange, label }) {
   const [q, setQ] = useState("");
   const shown = options.filter((o) => String(o).toLowerCase().includes(q.trim().toLowerCase()));
@@ -1439,13 +1448,14 @@ function CheckList({ options, value, onChange, label }) {
       )}
       <AllRow value={value} options={options} shown={shown} onChange={onChange} />
       <div className="hvt-checklist-body">
-        {shown.map((o) => (
+        {capList(shown, value).items.map((o) => (
           <div key={o} className="hvt-ditem hvt-ditem--check" onClick={(e) => { if (e.target.closest && e.target.closest(".hvt-selbox")) return; toggle(o); }}>
             <Checkbox label={String(o)} checked={value.includes(o)} onChange={() => toggle(o)} />
             <span>{o}</span>
           </div>
         ))}
         {shown.length === 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>No values match.</span>}
+        {capList(shown, value).more > 0 && <span className="hvt-muted" style={{ padding: "4px 8px" }}>{LIST_MAX} of {shown.length.toLocaleString("en")} values. Search to find the others.</span>}
       </div>
     </div>
   );
@@ -2535,6 +2545,7 @@ export function DataTable({
   };
   const renderCell = (row, col) => {
     const v = row[col.key];
+    if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;
@@ -4170,7 +4181,7 @@ const SCREEN_CSS = `
 .hvs-side .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled),.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:var(--cl-raised);color:var(--cl-text);border-color:var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-side .hvs-segbtn:disabled,.hvs-ctl .hvs-segbtn:disabled{opacity:.4;cursor:default}
 /* buttons */
-.hvs-side .hvt-btn,.hvs-ctl .hvt-btn{border-radius:8px;font-family:var(--cl-font);font-weight:500;color:var(--cl-text);background:transparent;box-shadow:none}
+.hvs-side .hvt-btn,.hvs-ctl .hvt-btn,.hvs-headacts .hvt-btn{border-radius:8px;font-family:var(--cl-font);font-weight:500;color:var(--cl-text);background:transparent;box-shadow:none}
 .hvs-side .hvt-btn:hover:not(:disabled),.hvs-ctl .hvt-btn:hover:not(:disabled){background:var(--cl-hover);box-shadow:none}
 .hvs-side .hvt-btn:disabled,.hvs-ctl .hvt-btn:disabled{color:var(--cl-text-3);opacity:.7}
 .hvs-side .hvs-mini{height:28px;padding:0 10px;font-size:13px;line-height:18px;border:1px solid var(--cl-border)}
@@ -4215,6 +4226,11 @@ const SCREEN_CSS = `
 .hvs-pkglabel[data-busy]::after{content:"Loading…";grid-area:1 / 1;color:#fff;text-align:center} /* the button keeps its size; only the label becomes Loading… */
 .hvs-pkglabel::after{grid-area:1 / 1}
 .hvs-pkgbtn:focus-visible{outline:2px solid var(--cl-focus);outline-offset:2px}
+.hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
+.hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
+.hvs-headacts .hvt-btn:hover:not(:disabled){background:var(--cl-hover)}
+.hvs-pkgtext{display:inline-flex;align-items:center;gap:8px}
+.hvs-pkgdl{width:14px;height:14px;flex:none} /* the download arrow: the button downloads the package */
 .hvs-pkg-scrim{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.32)}
 .hvs-pkg{width:min(560px,100%);display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--cl-surface);color:var(--cl-text);box-shadow:var(--cl-shadow);font-family:var(--cl-font)}
 .hvs-pkg-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
@@ -4348,7 +4364,7 @@ const SCREEN_CSS = `
 .hvs-field > label,.hvs-lbl,.hvs-side .hvs-tok-name{font-weight:400}
 .hvs-side .hvs-segbtn,.hvs-ctl .hvs-segbtn{font-weight:400}
 .hvs-side .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]{font-weight:600}
-.hvs-side .hvt-btn,.hvs-ctl .hvt-btn,.hvs-ctl .hvt-mbtn{font-weight:600}
+.hvs-side .hvt-btn,.hvs-ctl .hvt-btn,.hvs-headacts .hvt-btn,.hvs-ctl .hvt-mbtn{font-weight:600}
 
 `;
 
@@ -4569,7 +4585,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 18:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4897,8 +4913,17 @@ function packageFiles(src) {
     { name: "nextds-table/README.md", text: "# nextds-table\n\nThe NEXT Design System table as one React file. Needs React 18 and nothing else; themes Dawn and Wicked included.\n\n```jsx\n" + PKG_USAGE + "\n```\n\n`Table.jsx` also carries the Workbench test page as its default export; your app only needs `DataTable`.\n" },
   ];
 }
+/* the published page carries the exact package (the same files as nextds-table-<version>.tgz: dist, src, the Workbench file,
+   build, demo, examples and docs) as a zip in a <script id="nextds-pkg-zip"> block; without it, the plain one-file package */
+function embeddedPackage() {
+  const el = typeof document !== "undefined" && document.getElementById("nextds-pkg-zip");
+  if (!el || !el.textContent.trim()) return null;
+  const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: "application/zip" });
+}
 async function downloadPackage(src) {
-  const blob = makeZip(packageFiles(src));
+  const blob = embeddedPackage() || makeZip(packageFiles(src));
   const name = "nextds-table.zip";
   let downloads = null;
   try { downloads = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (err) { downloads = null; }
@@ -5558,6 +5583,20 @@ export default function App() {
           </button>
           Workbench: <PageSwitch page={page} onPick={setPage} />
         </h1>
+        {page === "table" && (
+          <div className="hvs-headacts">
+            <button type="button" className="hvt-btn" onClick={reset}>Reset settings</button>
+            <button type="button" className="hvs-pkgbtn" disabled={pkgOpen} aria-label="Download the React Package" onClick={async () => {
+              const src = pkgSource();
+              if (!src) { setLast("React Package: open the page to download it"); return; }
+              setPkgOpen(true);
+              try { await downloadPackage(src); setLast("React Package → nextds-table.zip"); }
+              catch (err) { setLast(err && err.code === "declined" ? "React Package: download cancelled" : "React Package: download not available here"); }
+              setPkgOpen(false);
+            }}><span className="hvs-pkglabel" data-busy={pkgOpen ? "" : undefined}><span className="hvs-pkgtext">React Package
+              <svg className="hvs-pkgdl" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></span></button>
+          </div>
+        )}
       </div>
 
       {page === "table" ? (<>
@@ -5645,15 +5684,6 @@ export default function App() {
               {cfg.tableState === "error" && !errorShown && errorLeft > 0 && (
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
-              <button type="button" className="hvt-btn" onClick={reset}>Reset settings</button>
-              <button type="button" className="hvs-pkgbtn" disabled={pkgOpen} onClick={async () => {
-                const src = pkgSource();
-                if (!src) { setLast("React Package: open the page to download it"); return; }
-                setPkgOpen(true);
-                try { await downloadPackage(src); setLast("React Package → nextds-table.zip"); }
-                catch (err) { setLast(err && err.code === "declined" ? "React Package: download cancelled" : "React Package: download not available here"); }
-                setPkgOpen(false);
-              }}><span className="hvs-pkglabel" data-busy={pkgOpen ? "" : undefined}>React Package</span></button>
             </div>
           </div>
           </section>
