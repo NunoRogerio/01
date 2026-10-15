@@ -3934,8 +3934,11 @@ const SCREEN_CSS = `
 .hvs-fopt{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px;padding:0 8px 0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
 .hvs-ftype{position:relative;display:inline-flex}
 .hvs-fopt .hvs-ftag{margin-left:8px;color:var(--cl-text-3);font-weight:400}
-.hvs-ctl .hvs-ftype > .hvs-fpop{min-width:100%;width:max-content}
-.hvs-ctl .hvs-ftype > .hvs-fpop{left:0;right:auto;top:calc(100% + 3px);margin-top:0;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
+.hvs-ctl .hvs-ftype > .hvs-fpop{min-width:calc(100% + 8px);width:max-content} /* its options line up with the white block above and are at least as wide */
+.hvs-cf > .hvs-selseg{display:flex;align-self:stretch;margin-right:0} /* a select fills the width of its field */
+.hvs-selseg > .hvs-ftype{flex:1 1 auto}
+.hvs-ctl .hvs-selseg .hvs-fpart.is-solo{flex:1 1 auto;justify-content:space-between}
+.hvs-ctl .hvs-ftype > .hvs-fpop{left:-4px;right:auto;top:calc(100% + 3px);margin-top:0;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
 .hvs-fname{display:inline-grid} /* every type label sits in the same cell: the block keeps the width of the longest, so switching never resizes it */
 .hvs-fname > span{grid-area:1 / 1;text-align:left}
 .hvs-fcheck{display:inline-flex;width:13.4px;height:13.4px;color:var(--cl-text);opacity:.8} /* the chosen option: a check in the text colour */
@@ -4221,7 +4224,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:58"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:01"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
