@@ -364,7 +364,7 @@ const CSS = `
 .hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
 .hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
 .hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}
-.hvt-root.is-compact .hvt-pager .hvt-icon svg{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon svg{flex:none;width:32px;height:32px} /* the arrows keep their Comfortable size inside the 24px buttons */
 .hvt-root.is-compact .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
 .hvt-pagenum{position:relative}
 .hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
@@ -4733,7 +4733,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:20"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:25"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

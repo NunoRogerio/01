@@ -352,7 +352,7 @@
 .hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
 .hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
 .hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}
-.hvt-root.is-compact .hvt-pager .hvt-icon svg{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon svg{flex:none;width:32px;height:32px} /* the arrows keep their Comfortable size inside the 24px buttons */
 .hvt-root.is-compact .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
 .hvt-pagenum{position:relative}
 .hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
