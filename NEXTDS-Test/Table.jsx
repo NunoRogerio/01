@@ -4627,7 +4627,7 @@ const SCREEN_CSS = `
 .hvs-pkg-msg{margin:0;min-height:18px;font-size:12px;line-height:18px;color:var(--cl-text-2)}
 .hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
 .hvs-cf > .hvs-cf-l{padding-left:0} /* control titles align left, with the edge of their control */
-.hvs-databar{row-gap:16px} /* 16px between two rows of controls */
+.hvs-databar{row-gap:16px;column-gap:16px} /* 16px between control blocks, across and down */ /* 16px between two rows of controls */
 /* the top bar: light grey, the full width of the page, with the title and the page's controls inside, and the stripes along its foot.
    The title row and the controls row share one background, so they read as one bar. */
 .hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.24)}
@@ -5008,7 +5008,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 07:20"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 07:26"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
