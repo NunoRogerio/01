@@ -4585,7 +4585,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4935,18 +4935,21 @@ function packageFiles(src) {
     { name: "nextds-table/README.md", text: "# nextds-table\n\nThe NEXT Design System table as one React file. Needs React 18 and nothing else; themes Dawn and Wicked included.\n\n```jsx\n" + PKG_USAGE + "\n```\n\n`Table.jsx` also carries the Workbench test page as its default export; your app only needs `DataTable`.\n" },
   ];
 }
-/* the published page carries the exact package (the same files as nextds-table-<version>.tgz: dist, src, the Workbench file,
-   build, demo, examples and docs) as a zip in a <script id="nextds-pkg-zip"> block; without it, the plain one-file package */
+/* every publish of this page builds the React package from the latest version of the component (npm pack of
+   @nextds/table: dist, src, the Workbench file, build, demo, examples, docs) and carries it in a <script id="nextds-pkg">
+   block, with its file name; the button downloads that file. Without the block, the plain one-file package as a zip. */
 function embeddedPackage() {
-  const el = typeof document !== "undefined" && document.getElementById("nextds-pkg-zip");
+  const el = typeof document !== "undefined" && document.getElementById("nextds-pkg");
   if (!el || !el.textContent.trim()) return null;
   const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return new Blob([bytes], { type: "application/zip" });
+  return { blob: new Blob([bytes], { type: "application/gzip" }), name: el.getAttribute("data-name") || "nextds-table.tgz" };
 }
+const pkgFileName = () => { const p = embeddedPackage(); return p ? p.name : "nextds-table.zip"; };
 async function downloadPackage(src) {
-  const blob = embeddedPackage() || makeZip(packageFiles(src));
-  const name = "nextds-table.zip";
+  const pkg = embeddedPackage();
+  const blob = pkg ? pkg.blob : makeZip(packageFiles(src));
+  const name = pkg ? pkg.name : "nextds-table.zip";
   let downloads = null;
   try { downloads = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (err) { downloads = null; }
   if (downloads) { await downloads.save({ filename: name, data: blob }); return "saved"; }
@@ -5635,7 +5638,7 @@ export default function App() {
               const src = pkgSource();
               if (!src) { setLast("React Package: open the page to download it"); return; }
               setPkgOpen(true);
-              try { await downloadPackage(src); setLast("React Package → nextds-table.zip"); }
+              try { await downloadPackage(src); setLast(`React Package → ${pkgFileName()}`); }
               catch (err) { setLast(err && err.code === "declined" ? "React Package: download cancelled" : "React Package: download not available here"); }
               setPkgOpen(false);
             }}><span className="hvs-pkglabel" data-busy={pkgOpen ? "" : undefined}><span className="hvs-pkgtext">React Package

@@ -1,6 +1,6 @@
 {
   "name": "@nextds/table",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "The NEXT Design System table for React: filters, search, sorting, column reorder, resize and pinning, selection, expandable rows, pagination, themes Dawn and Wicked.",
   "license": "UNLICENSED",
   "private": true,

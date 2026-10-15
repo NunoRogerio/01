@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2 — 2026-10-15
+
+- Single-choice menus (Table Density): when another item is pressed, the old selection closes with the same timing as the new one opens.
+
 ## 0.4.1 — 2026-10-15
 
 - Filter chips: the hovers of the X and of the label fill the chip to its edges.
