@@ -271,6 +271,8 @@ const CSS = `
 .hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
 .hvt-group .hvt-mbtn.is-open{background:var(--page-background) !important}
 .hvt-group .hvt-mbtn.is-open:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open{background:var(--container-hover-background) !important}
+/* right after the click it stays white: its hover comes back only once the pointer has left it and returned */
+.hvt-group .hvt-mbtn[data-hoveroff],.hvt-group .hvt-mbtn[data-hoveroff]:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]{background:var(--page-background) !important}
 /* hovering a row turns its background white (the page background) */
 .hvt-root .hvt-group:not(.is-selected):hover{background:var(--page-background);--hvt-row-bg:var(--page-background)}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
@@ -3401,11 +3403,13 @@ export function DataTable({
            className={`hvt-group${singleAction ? " is-clickable" : ""}${isSel ? " is-selected" : ""}${notice && notice.rowId === r.id ? " is-delete-target" : ""}${removing && removing.id === r.id ? " is-removing" : ""}${editClass ? ` ${editClass}` : ""}`}
            style={removing && removing.id === r.id ? { "--h": `${removing.h}px` } : editClass ? { "--h": `${editing.h}px` } : undefined}>
         <div className="hvt-row hvt-row--body" role="row" aria-selected={selectable ? isSel : undefined}
-             onMouseMove={singleAction ? (e) => { const z = menuZone(e); e.currentTarget.classList.toggle("in-menu-zone", !!z); } : undefined}
+             onClickCapture={(e) => { const b = e.target.closest && e.target.closest(".hvt-actions .hvt-mbtn"); if (b) b.setAttribute("data-hoveroff", ""); }}
+             onMouseOut={(e) => { const b = e.target.closest && e.target.closest(".hvt-mbtn[data-hoveroff]"); if (b && !b.contains(e.relatedTarget)) b.removeAttribute("data-hoveroff"); }}
+             onMouseMove={singleAction ? (e) => { const z = menuZone(e); e.currentTarget.classList.toggle("in-menu-zone", !!z); if (!z) { const b = e.currentTarget.querySelector(".hvt-mbtn[data-hoveroff]"); if (b && !b.matches(":hover")) b.removeAttribute("data-hoveroff"); } } : undefined}
              onMouseLeave={singleAction ? (e) => e.currentTarget.classList.remove("in-menu-zone") : undefined}
              onClick={singleAction ? (e) => {
                if (e.target.closest && e.target.closest("button, input, label, .hvt-mbtn")) return;
-               const z = menuZone(e); if (z) { z.click(); return; } // right of View: only the More options menu
+               const z = menuZone(e); if (z) { z.setAttribute("data-hoveroff", ""); z.click(); return; } // right of View: only the More options menu
                singleAction(r);
              } : undefined}>
           {expandable && (
@@ -4245,7 +4249,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:28"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
