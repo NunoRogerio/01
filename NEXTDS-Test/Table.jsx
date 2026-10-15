@@ -3880,7 +3880,7 @@ const SCREEN_CSS = `
 .hvs-side :is(button,input,select,textarea):focus-visible,.hvs-ctl :is(button,input,select,textarea):focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
 /* multibutton: a quiet track with the chosen option raised */
 .hvs-side .hvs-seg,.hvs-ctl .hvs-seg{display:flex;flex-wrap:nowrap;gap:2px;padding:3px;background:var(--cl-track);border:0;border-radius:10px}
-.hvs-ctl .hvs-seg{display:inline-flex;margin-right:8px;gap:8px} /* options 8px apart; Filter: and its type stay 4px apart (one pair) */
+.hvs-ctl .hvs-seg{display:inline-flex;margin-right:8px;gap:8px} /* options 8px apart; Filter: and its type stay 2px apart (one pair) */
 .hvs-side .hvs-segbtn,.hvs-ctl .hvs-segbtn{flex:1 1 auto;min-width:0;height:28px;padding:0 6px;border:1px solid transparent;border-radius:7px;background:transparent;
   color:var(--cl-text-2);font-family:var(--cl-font);font-size:13px;font-weight:500;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none}
 .hvs-ctl .hvs-segbtn{flex:none;height:24px;padding:0 12px;font-size:12px;line-height:18px}
@@ -3936,7 +3936,7 @@ const SCREEN_CSS = `
 .hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
 .hvs-fopt:disabled:hover{background:var(--cl-raised)}
-.hvs-fwrap:has(.hvs-fpart){gap:4px} /* "Filter:" and its type are two blocks, 4px apart */
+.hvs-fwrap:has(.hvs-fpart){gap:2px} /* "Filter:" and its type are two blocks, 2px apart */
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
 /* fields */
 .hvs-side .hvt-select,.hvs-side .hvt-text{height:34px;border:1px solid var(--cl-border);border-radius:8px;background-color:var(--cl-surface);color:var(--cl-text);
@@ -4205,7 +4205,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:22"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:23"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
