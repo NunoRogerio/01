@@ -7,7 +7,7 @@
 - Status tags: the ! and the check are a little heavier, easier to read.
 - Page number field: filled with the hover colour and no border at rest; the border shows on hover.
 - Compact density: column titles row 40px.
-- The pager is compact in every density: a 40px bar, 12px text, 24px controls, arrows at full size.
+- The pager is compact in every density: 12px text, 24px controls, arrows at full size; the bar is 48px (40px in Compact).
 
 ## 0.4.6 — 2026-10-15
 
