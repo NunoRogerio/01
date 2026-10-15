@@ -685,7 +685,7 @@ const CSS = `
 .hvt-cl-row.is-pin-last{box-shadow:0 1px 0 var(--border-default)}
 .hvt-cl-row.is-drag{z-index:3;background:var(--page-background);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:grabbing}
 .hvt-cl-grip{flex:none;display:flex;align-items:center;justify-content:center;width:24px;height:32px;padding:0;border:0;background:transparent;color:var(--content-placeholder);cursor:grab;touch-action:none}
-.hvt-cl-grip svg{display:block;width:16px;height:16px}
+.hvt-cl-grip svg{display:block;width:10px;height:15px} /* the same drag icon as the column titles */
 .hvt-cl-grip:hover,.hvt-cl-row.is-drag .hvt-cl-grip{color:var(--content-primary)}
 .hvt-cl-check{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:4px;height:32px;cursor:pointer}
 .hvt-cl-check .hvt-cbi{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
@@ -1842,7 +1842,7 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
                className={`hvt-cl-row${pinned ? " is-pinned" : ""}${pinned && i === pins.length - 1 ? " is-pin-last" : ""}${dragKey === k ? " is-drag" : ""}`}>
             <button type="button" className="hvt-cl-grip" aria-label={`Reorder ${titleOf(k)}. Alt and arrow keys move it.`}
                     onPointerDown={(e) => onGripDown(e, k)} onPointerMove={onGripMove} onPointerUp={onGripUp} onPointerCancel={onGripUp}
-                    onKeyDown={(e) => onGripKey(e, k)}>{Icons.Drag}</button>
+                    onKeyDown={(e) => onGripKey(e, k)}>{Icons.DragTitle}</button>
             <label className="hvt-cl-check">
               <input type="checkbox" className="hvt-cbi" checked={!off} onChange={() => toggleShown(k)} aria-label={`Show ${titleOf(k)}`} />
               <span className="hvt-cbicon" aria-hidden="true">{off ? Icons.Checkbox : Icons.CheckboxSelected}</span>
@@ -4293,7 +4293,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:34"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:36"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
