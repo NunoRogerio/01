@@ -1852,7 +1852,7 @@ class Component extends DCLogic {
             { const UL = !!st.iaUnl && opn && !sentAt, go = o.vf && o.vf.sendNow, me = this;
               /* the pin's travel: the track's width less 8px padding at each end and the 48px pin; the green reaches the pin's centre */
               const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; const g = T.el.querySelector('.wf-ulg'); if (g) g.style.transform = 'translateX(calc(100% + 64px - ' + T.d + 'px))'; T.el.style.setProperty('--wf-ulr', (32 + T.d) + 'px'); };
-              /* slow: the 5 s long press glides the pin and the green Send to the left end (0.45 s, ease in-out) instead of the drag's snap */
+              /* slow: the 3 s long press glides the pin and the green Send to the left end (0.45 s, ease in-out) instead of the drag's snap */
               const fin = (ok, slow) => { const T = me._ul; if (!T) return; me._ul = null; clearTimeout(me._ulLP); const th = T.el.querySelector('[data-wf-thumb]'), g = T.el.querySelector('.wf-ulg');
                 if (th) th.style.transition = ''; if (g) g.style.transition = ''; T.el.classList.remove('drag');
                 if (ok) { if (!slow) T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
@@ -1867,12 +1867,12 @@ class Component extends DCLogic {
               Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulCls: UL ? (st.iaFull ? 'unl full' : 'unl') : '', ulLbl: PTl ? 'Deslize para enviar' : 'Swipe to send',   /* the blade's title already says Initial attack: no repeat (fits in Portuguese too) */ ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
                 ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para enviar o ataque inicial' : 'Swipe left to send initial attack'),
                 ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5Z',   /* (Oct 15, 15:24) the pin wears a closed lock, open once at the left end */ ulX: UL ? 'calc(64px - var(--wf-ulw, 358px))' : '0px',
-                /* (Oct 15, 15:27) press anywhere on the locked track: a tap nudges the pin; holding still 5 s unlocks it as a swipe would; only the pin drags */
+                /* (Oct 15, 15:27) press anywhere on the locked track: a tap nudges the pin; holding still 3 s unlocks it as a swipe would; only the pin drags */
                 ulDown: (e) => { if (UL || !nOn) return; const el = e.target && e.target.closest && e.target.closest('[data-wf-unlock]'); if (!el) return; const th0 = el.querySelector('[data-wf-thumb]'), onPin = !!(e.target.closest && e.target.closest('[data-wf-thumb]'));
                   const r = el.getBoundingClientRect(), g = el.querySelector('.wf-ulg'); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {}
                   if (onPin) { if (th0) th0.style.transition = 'none'; if (g) g.style.transition = 'none'; el.classList.add('drag'); }
                   me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0, pin: onPin, mv: 0, t0: Date.now() }; if (onPin) paint(me._ul);
-                  clearTimeout(me._ulLP); me._ulLP = setTimeout(() => { const T = me._ul; if (T && T.mv < 6) fin(true, true); }, 5000); },
+                  clearTimeout(me._ulLP); me._ulLP = setTimeout(() => { const T = me._ul; if (T && T.mv < 6) fin(true, true); }, 3000);   /* (Oct 15, 15:40) 3 s (was 5) */ },
                 /* (Oct 15, 15:31) a strong snap: once the pin is within 1.5x its diameter (72px) of the left end, it jumps there and unlocks (was 70%) */
                 ulMove: (e) => { const T = me._ul; if (!T) return; T.mv = Math.max(T.mv, Math.abs(e.clientX - T.x0)); if (T.mv >= 6) clearTimeout(me._ulLP); if (!T.pin) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); if (T.max - T.d <= 48 * 1.5) { fin(true); return; } paint(T); },
                 ulUp: () => { const T = me._ul; if (!T) return; clearTimeout(me._ulLP); const tap = T.mv < 6 && Date.now() - T.t0 < 600; fin(T.pin && T.max - T.d <= 48 * 1.5); if (tap) setTimeout(() => nudge(T.el), 20); },
