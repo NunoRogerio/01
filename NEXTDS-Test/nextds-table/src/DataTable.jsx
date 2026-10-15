@@ -218,6 +218,11 @@ function MenuButton({
       maxHeight: Math.max(120, room),
     };
   };
+  useLayoutEffect(() => { // a menu as wide as its button joins it with square corners on both sides
+    const m = listRef.current;
+    if (!open || !m || !btnRef.current) return;
+    m.classList.toggle("is-flush", Math.abs(m.offsetWidth - btnRef.current.offsetWidth) < 1);
+  });
   useEffect(() => { // placed over the page, the menu follows its button when the panel or the page scrolls
     if (!open || !fixed) return undefined;
     const follow = (e) => {

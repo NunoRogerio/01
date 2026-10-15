@@ -8,7 +8,7 @@
 - Focus rings show only for keyboard focus (Tab); a click or tap shows none, in text fields too. Tooltips open on focus only for keyboard focus.
 - Filter bar: an added filter shows its label first and the X after it ("Health: 2 / 3 ×"); the Filters button has no outline on hover, only the fill; hovering a filter's X outlines the whole filter (2px) in the X's hover colour.
 - Dropdowns: the select animation has no overshoot (no bounce) in any dropdown.
-- Menus inside the filter panels open over the page, not inside the panel's scroll area: every item shows, with no scroll inside a scroll (only a window too short scrolls the menu). The menu follows its button if the page scrolls.
+- Menus inside the filter panels open over the page, not inside the panel's scroll area: every item shows, with no scroll inside a scroll (only a window too short scrolls the menu). The menu follows its button if the page scrolls. A menu as wide as its button joins it with square corners on both sides.
 - Text fields: hover changes the fill only (the 1px border stays, as in the search field); while typing the field is white, as the search field.
 - Page number field: no border when disabled (one page).
 - Header: every tool (search, filter, button, maximize, more options) 16px from the next.

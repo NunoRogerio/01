@@ -447,6 +447,8 @@
 .hvt-mpanel.is-down.align-right{border-radius:8px 0 8px 8px}
 .hvt-mpanel.is-up.align-left{border-radius:8px 8px 8px 0}
 .hvt-mpanel.is-up.align-right{border-radius:8px 8px 0 8px}
+.hvt-mpanel.is-down.is-flush{border-top-left-radius:0;border-top-right-radius:0} /* as wide as its button: square where they join */
+.hvt-mpanel.is-up.is-flush{border-bottom-left-radius:0;border-bottom-right-radius:0}
 .hvt-ditem{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;
   background:transparent;color:inherit;cursor:pointer;text-align:left;white-space:nowrap;
   font:inherit;font-size:14px;font-weight:400;line-height:21px}

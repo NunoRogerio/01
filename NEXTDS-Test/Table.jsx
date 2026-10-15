@@ -459,6 +459,8 @@ const CSS = `
 .hvt-mpanel.is-down.align-right{border-radius:8px 0 8px 8px}
 .hvt-mpanel.is-up.align-left{border-radius:8px 8px 8px 0}
 .hvt-mpanel.is-up.align-right{border-radius:8px 8px 0 8px}
+.hvt-mpanel.is-down.is-flush{border-top-left-radius:0;border-top-right-radius:0} /* as wide as its button: square where they join */
+.hvt-mpanel.is-up.is-flush{border-bottom-left-radius:0;border-bottom-right-radius:0}
 .hvt-ditem{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;
   background:transparent;color:inherit;cursor:pointer;text-align:left;white-space:nowrap;
   font:inherit;font-size:14px;font-weight:400;line-height:21px}
@@ -1139,6 +1141,11 @@ function MenuButton({
       maxHeight: Math.max(120, room),
     };
   };
+  useLayoutEffect(() => { // a menu as wide as its button joins it with square corners on both sides
+    const m = listRef.current;
+    if (!open || !m || !btnRef.current) return;
+    m.classList.toggle("is-flush", Math.abs(m.offsetWidth - btnRef.current.offsetWidth) < 1);
+  });
   useEffect(() => { // placed over the page, the menu follows its button when the panel or the page scrolls
     if (!open || !fixed) return undefined;
     const follow = (e) => {
@@ -4828,7 +4835,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 04:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 04:50"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
