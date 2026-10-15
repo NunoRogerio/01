@@ -2730,11 +2730,26 @@ export function DataTable({
     setDragView(viewFor(d, orderKeys, dx, "drag"));
   };
 
-  const finishDrag = (d, orderKeys) => {
+  const finishDrag = (d, dropped) => {
     d.settling = true;
+    /* fixed columns follow the Configure Columns rule: a fixed column keeps its pin while it stays among the fixed ones
+       and loses it once dropped among the unfixed; an unfixed column cannot enter the fixed area and lands right after it */
+    let orderKeys = dropped;
+    const shownPins = dropped.filter((k) => pinned.includes(k));
+    let newPinned = null;
+    if (pinned.includes(d.key)) {
+      const otherPins = shownPins.filter((k) => k !== d.key);
+      const idx = dropped.indexOf(d.key);
+      if (idx > otherPins.length) newPinned = pinned.filter((k) => k !== d.key); // dropped among the unfixed: unpinned
+      else newPinned = [...dropped.filter((k) => k === d.key || otherPins.includes(k)), ...pinned.filter((k) => !dropped.includes(k))]; // reordered among the fixed
+    } else if (shownPins.length && dropped.indexOf(d.key) < shownPins.length) {
+      const rest = dropped.filter((k) => k !== d.key);
+      orderKeys = [...rest.slice(0, shownPins.length), d.key, ...rest.slice(shownPins.length)];
+    }
     setDragView(viewFor(d, orderKeys, 0, "drop"));
     const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setTimeout(() => {
+      if (newPinned && newPinned.join("|") !== pinned.join("|")) { setPinned(newPinned); if (onPinnedChange) onPinnedChange(newPinned); }
       if (orderKeys.some((k, i) => k !== d.rects[i].key)) {
         commitReorder(orderKeys);
         const t = (columns.find((c) => c.key === d.key) || {}).title;
@@ -4397,7 +4412,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:46"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:57"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
