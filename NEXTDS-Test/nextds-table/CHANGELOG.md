@@ -3,7 +3,7 @@
 ## 0.4.8 — 2026-10-15
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
-- Header: every tool (search, filter, button, maximize, more options) 32px from the next.
+- Header: every tool (search, filter, button, maximize, more options) 24px from the next.
 - Balanced and Compact: the card sits 16px from the bottom edge, like the left and right (was 24px).
 - Pagination: 4px between the arrows and the page field; the chosen values (rows per page, current page) are semibold in the text colour; "1 of 8" instead of "1 / 8".
 - Rows per page: reads "[5] rows per page"; the number is a filled field like the page number (no caret, border on hover). The total row count is no longer shown in the pager.
