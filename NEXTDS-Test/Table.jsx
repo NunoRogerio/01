@@ -293,7 +293,7 @@ const CSS = `
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
 .hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open,.in-menu-zone)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
 .hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn{background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
-.hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 2px var(--border-hover-selected)}
+.hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 1px var(--border-hover-selected)} /* a selected row: white, 1px outline */
 .hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
 .hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
 .hvt-cell.is-tagedge{padding-left:calc(var(--hvt-cellpad) / 2)}
@@ -565,7 +565,6 @@ const CSS = `
 .hvt-bulk-count{display:flex;align-items:center;gap:4px;white-space:nowrap}
 .hvt-bulk-count b{font-weight:600;line-height:21px}
 .hvt-bulk-btn{padding:0 16px 0 8px}
-.hvt-bulk :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 80%,transparent) !important;box-shadow:none !important} /* on the blue selection bar the hover is white, like on the green filter bar */
 .hvt-btn:disabled{color:var(--content-disabled);cursor:default}
 .hvt-btn:disabled:hover{background:transparent}
 
@@ -817,7 +816,7 @@ const CSS = `
 .hvt-root.has-hscroll .hvt-row--body{position:relative}
 .hvt-root.has-hscroll:not(.is-joined) .hvt-group.is-selected > .hvt-row--body::after,
 .hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{content:"";position:absolute;z-index:2;top:0;bottom:0;left:var(--hvt-fix-l,0px);right:var(--hvt-fix-r,0px);
-  border-radius:var(--component-containerradius);box-shadow:inset 0 0 0 2px var(--border-hover-selected);pointer-events:none}
+  border-radius:var(--component-containerradius);box-shadow:inset 0 0 0 1px var(--border-hover-selected);pointer-events:none}
 .hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{box-shadow:inset 0 0 0 2px var(--semantic-negative)}
 `;
 
@@ -4320,7 +4319,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:02"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:04"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
