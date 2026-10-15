@@ -327,8 +327,8 @@ const CSS = `
 .hvt-cell.is-lifted{transition:none;position:relative;z-index:6;background:transparent}
 .hvt-cell.is-lifted.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 /* the lifted column is one container: the title and every row line inside it */
-.hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);
-  border-radius:var(--component-inputradius);box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 3px var(--cat1-100)} /* the lifted column: 3px outline */
+.hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);border-radius:0;
+  box-shadow:-3px 0 0 var(--cat1-100),3px 0 0 var(--cat1-100),inset 0 8px 8px -8px rgba(0,0,0,.18),inset 0 -8px 8px -8px rgba(0,0,0,.18)} /* the lifted column: square, the full height of the table, 3px lines on its left and right only, a soft inner shadow at the top and bottom */
 .hvt-dragcol.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 .hvt-dropzone{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none;background:var(--container-edit);
   border:1px dashed var(--cat1-100);border-radius:4px;transition:left .2s cubic-bezier(.2,.8,.2,1)}
@@ -4197,6 +4197,7 @@ const SCREEN_CSS = `
 .hvs-head{margin:-24px -24px 0;padding:16px 24px 8px;background:var(--hvs-bar)}
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
 .hvs-ctl .hvs-databar{margin-bottom:0}
+.hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp) 0 8.49px,transparent 8.49px 16.97px)} /* the stripes inside the darker grey of the multibuttons and dropdowns */
 .hvs-ctl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:min(96px,100%);z-index:-1;pointer-events:none;
   background:repeating-linear-gradient(-60deg,var(--hvs-sp) 0 8.49px,transparent 8.49px 16.97px);
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.016) 38.75%,rgba(0,0,0,.0625) 47.5%,rgba(0,0,0,.14) 56.25%,rgba(0,0,0,.25) 65%,rgba(0,0,0,.39) 73.75%,rgba(0,0,0,.56) 82.5%,rgba(0,0,0,.77) 91.25%,#000 100%);
@@ -4501,7 +4502,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 16:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

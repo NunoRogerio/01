@@ -315,8 +315,8 @@
 .hvt-cell.is-lifted{transition:none;position:relative;z-index:6;background:transparent}
 .hvt-cell.is-lifted.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 /* the lifted column is one container: the title and every row line inside it */
-.hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);
-  border-radius:var(--component-inputradius);box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 3px var(--cat1-100)} /* the lifted column: 3px outline */
+.hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);border-radius:0;
+  box-shadow:-3px 0 0 var(--cat1-100),3px 0 0 var(--cat1-100),inset 0 8px 8px -8px rgba(0,0,0,.18),inset 0 -8px 8px -8px rgba(0,0,0,.18)} /* the lifted column: square, the full height of the table, 3px lines on its left and right only, a soft inner shadow at the top and bottom */
 .hvt-dragcol.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 .hvt-dropzone{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none;background:var(--container-edit);
   border:1px dashed var(--cat1-100);border-radius:4px;transition:left .2s cubic-bezier(.2,.8,.2,1)}
