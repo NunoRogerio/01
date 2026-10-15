@@ -2256,7 +2256,7 @@ function DataTable({
   rowView = true,
   rowMenu = true,
   maximizeTop = 0,
-  filterUi = "rows",
+  filterUi = "group",
   addLabel = "Add Row",
   addedMessage = "New item added.",
   deleteMessage = "Are you sure you want to delete this row?",
@@ -2264,7 +2264,14 @@ function DataTable({
   onView,
   onMore,
   onExport,
+  /* data from a server: "client" (default) filters, sorts and pages the rows it is given;
+     "server" shows `rows` as the current page, takes the total from `rowCount`,
+     and asks for each page through `onQueryChange({ page, pageSize, sort, filterModel })` */
+  dataMode = "client",
+  rowCount,
+  onQueryChange,
 }) {
+  const serverMode = dataMode === "server";
   const [searchText, setSearchText] = useState((initialFilterModel.quickFilterValues || []).join(" "));
   const [searchExpanded, setSearchExpanded] = useState(searchMode === "persistent");
   const [sort, setSort] = useState(initialSort);
@@ -2523,6 +2530,7 @@ function DataTable({
   const addRecent = (term) => setRecents((prev) => [term, ...prev.filter((x) => x.toLowerCase() !== term.toLowerCase())].slice(0, 5));
 
   const processed = useMemo(() => {
+    if (serverMode) return localRows; // the server already searched, filtered and sorted this page
     const terms = (model.quickFilterValues || []).map((t) => String(t).toLowerCase());
     let out = localRows;
     if (terms.length) {
@@ -2549,12 +2557,26 @@ function DataTable({
       });
     }
     return out;
-  }, [localRows, columns, colByKey, model.quickFilterValues, model.quickFilterLogicOperator, activeItems, model.logicOperator, sort]);
+  }, [localRows, columns, colByKey, model.quickFilterValues, model.quickFilterLogicOperator, activeItems, model.logicOperator, sort, serverMode]);
 
-  const total = processed.length;
+  const total = serverMode ? (rowCount != null ? rowCount : localRows.length) : processed.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const safePage = Math.min(page, pageCount);
-  const visible = showPagination ? processed.slice((safePage - 1) * pageSize, safePage * pageSize) : processed;
+  const visible = serverMode || !showPagination ? processed : processed.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  /* server mode: every change of page, page size, sort, filters or search asks the app for the matching page */
+  const queryKey = serverMode ? JSON.stringify([page, pageSize, sort, activeItems, model.logicOperator, model.quickFilterValues || [], model.quickFilterLogicOperator]) : "";
+  const queryCb = useRef(onQueryChange);
+  queryCb.current = onQueryChange;
+  useEffect(() => {
+    if (!serverMode || !queryCb.current) return;
+    queryCb.current({
+      page, // 1-based
+      pageSize,
+      sort: sort && sort.key ? { field: sort.key, direction: sort.dir === "desc" ? "desc" : "asc" } : null,
+      filterModel: { items: activeItems, logicOperator: model.logicOperator || "and", quickFilterValues: model.quickFilterValues || [], quickFilterLogicOperator: model.quickFilterLogicOperator || "and" },
+    });
+  }, [queryKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { setDraftPage(String(safePage)); }, [safePage]);
 
@@ -3670,7 +3692,7 @@ function DataTable({
             </div>
           </div>
         ))
-      ) : localRows.length === 0 && !editing ? (
+      ) : localRows.length === 0 && !editing && !(serverMode && (activeItems.length || (model.quickFilterValues || []).length)) ? ( /* server mode: an empty page under filters is "no match", not "no data" */
         <div className="hvt-emptystate" role="status">
           <div className="hvt-es-body">
             <span className="hvt-es-icon" aria-hidden="true">{Icons.Saucer}</span>
@@ -4439,7 +4461,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 11:06"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 11:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

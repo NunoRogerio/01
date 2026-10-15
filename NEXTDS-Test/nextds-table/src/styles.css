@@ -1,0 +1,826 @@
+/* @nextds/table styles: tokens of the NEXT library (Dawn and Wicked) and the table. Import once. */
+.hvt-root,.hvt-scope{
+  /* NEXT tokens, theme Dawn (library v6.3.2.1, collection "Color Palette") */
+  --page-background:#ffffff;
+  --container-background:#f0f0f0;
+  --container-secondary-background:#fbfcfc;
+  --container-hover-background:rgba(217,217,217,.6);
+  --container-disabled-background:#e8e8e8;
+  --container-edit:#e0e6f5;
+  --container-filter:#dfead7;
+  --overlay:rgba(34,34,34,.6);
+  --content-primary:#222222;
+  --content-placeholder:#6c6b6b;
+  --content-disabled:#999999;
+  --outline:#6c6b6b;
+  --border-default:#d9d9d9;
+  --border-hover-selected:#4d4d4d;
+  --border-focus:#5b78be;
+  --cat1-100:#98acdd;
+  --semantic-informative:#bfcded;
+  --semantic-negative:#c82333;
+  --base-dark:#222222;
+  --semantic-negative-20:#fbe5e8;
+  --semantic-positive:#146c2e;
+  --semantic-positive-20:#deede2;
+  --semantic-warning:#ffbe2e;
+  --semantic-warning-20:#fcf2d9;
+  --semantic-warning-text:#6d4d09;
+  --cat1-20:#e0e6f5;
+  --cat1-140:#5b78be;
+  --cat2-20:#f5dfcc;
+  --cat2-140:#ce6f1d;
+  --cat3-20:#dfead7;
+  --cat3-140:#5f903c;
+  --cat4-20:#f2d8cf;
+  --cat4-140:#984020;
+  --cat5-20:#dfe1ea;
+  --cat5-140:#404b8c;
+  --cat6-20:#f5eec6;
+  --cat6-140:#a98f0f;
+  --cat7-20:#daeff6;
+  --cat7-140:#257f9d;
+  --cat8-20:#ede3eb;
+  --cat8-140:#7b4b6b;
+  --cat9-20:#f8e9ce;
+  --cat9-140:#be8546;
+  --cat10-20:#e2dbf0;
+  --cat10-140:#5f3da4;
+  --cat11-20:#f3e2e3;
+  --cat11-140:#cd5a6e;
+  --cat12-20:#d7eae5;
+  --cat12-140:#328871;
+  --accent-accent1:var(--content-placeholder);
+  --spacing-xs:8px;
+  --spacing-sm:16px;
+  --component-containerradius:8px;
+  --component-inputradius:8px;
+  --component-buttonradius:999px;
+  --hvt-row-h:48px;
+  --hvt-head-h:56px;
+  --hvt-row-gap:12px;
+  --hvt-colgap:0px;      /* space between columns */
+  --hvt-cellpad:16px;    /* padding left and right inside a column */
+  --hvt-rowpad:0px;      /* padding left and right of a row */
+  --hvt-tablepad:16px;   /* padding left and right of the table */
+  --hvt-divider:var(--border-default);
+  --hvt-ctl:32px;
+  --hvt-lead:0px;
+  --hvt-hover-w:2px;
+  --hvt-input-hover-bg:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--container-secondary-background);
+  --hvt-focus-w:2px;
+  --hvt-guide-w:3px;
+  --hvt-row-px:0px;
+  --hvt-visible-rows:4;
+  --hvt-col-min:160px;
+  --hvt-rows-page-h:calc(var(--hvt-page-rows) * var(--hvt-row-h) + (var(--hvt-page-rows) - 1) * var(--hvt-row-gap));
+  --hvt-rows-max-h:calc(var(--hvt-visible-rows) * var(--hvt-row-h) + (var(--hvt-visible-rows) - 1) * var(--hvt-row-gap));
+  --hvt-head-gap:var(--hvt-row-gap);
+  --hvt-scroll-max-h:calc(var(--hvt-head-h) + var(--hvt-head-gap) + var(--hvt-rows-max-h));
+
+  color:var(--content-primary);
+  font-family:"Hitachi Sans","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  font-size:14px;line-height:24px;
+}
+/* theme Wicked */
+.hvt-root[data-theme="wicked"],.hvt-scope[data-theme="wicked"]{
+  color-scheme:dark;
+  --page-background:#101010;
+  --container-background:#2b2b2b;
+  --container-secondary-background:#1c1c1c;
+  --container-hover-background:rgba(93,93,93,.5);
+  --container-disabled-background:#424242;
+  --container-edit:#262d40;
+  --container-filter:#1f3112;
+  --overlay:rgba(148,148,148,.8);
+  --content-primary:#e6e6e6;
+  --content-placeholder:#b0b0b0;
+  --content-disabled:#949494;
+  --outline:#b0b0b0;
+  --border-default:#4e4e4e;
+  --border-hover-selected:#b7b7b7;
+  --border-focus:#bfcded;
+  --semantic-negative:#ff8d8d;
+  --semantic-negative-20:#532d2d;
+  --semantic-positive:#a5e07c;
+  --semantic-positive-20:#274511;
+  --semantic-warning:#ffd36a;
+  --semantic-warning-20:#56451f;
+  --semantic-warning-text:#ffd36a;
+  --cat1-20:#24355b;
+  --cat1-140:#bfcded;
+  --cat2-20:#542c08;
+  --cat2-140:#e8af7d;
+  --cat3-20:#1f3112;
+  --cat3-140:#a3c78a;
+  --cat4-20:#4e1e0d;
+  --cat4-140:#d98768;
+  --cat5-20:#0f1743;
+  --cat5-140:#a6a9c3;
+  --cat6-20:#554807;
+  --cat6-140:#f0e29e;
+  --cat7-20:#0f384d;
+  --cat7-140:#85d0ea;
+  --cat8-20:#3c1f33;
+  --cat8-140:#d1afc6;
+  --cat9-20:#5c4429;
+  --cat9-140:#f5d5a1;
+  --cat10-20:#2c1853;
+  --cat10-140:#a38dce;
+  --cat11-20:#6e1c29;
+  --cat11-140:#e7bbc3;
+  --cat12-20:#0a4c3a;
+  --cat12-140:#a9d3c7;
+}
+.hvt-root{
+  box-sizing:border-box;position:relative;width:100%;
+  padding:0 0 8px var(--hvt-tablepad);
+  background:var(--container-background);
+  border-radius:var(--component-containerradius);
+}
+.hvt-root *,.hvt-scope *{box-sizing:border-box}
+
+/* title bar */
+.hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
+.hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
+.hvt-title{flex:1;min-width:0;font-size:16px;font-weight:700;line-height:24px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
+/* quick filter (search): trigger + control + clear, modelled on MUI X QuickFilter */
+.hvt-qf{display:flex;align-items:center;flex:none;width:32px;height:32px;overflow:hidden;
+  background:transparent;border:0 solid var(--outline);border-radius:var(--component-buttonradius);
+  transition:width .18s ease,background-color .18s ease,border-radius .18s ease}
+.hvt-qf.is-open{width:189px;background:var(--container-secondary-background);
+  border-width:1px;border-radius:var(--component-inputradius)}
+.hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the border stays */
+/* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
+.hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
+.hvt-qf.is-open.is-panel,.hvt-qf.is-open.is-panel:hover,.hvt-qf.is-open.is-panel:focus-within{border-color:var(--outline);border-bottom-color:var(--border-default);
+  border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:none;background:var(--container-secondary-background)}
+.hvt-qf.is-open.is-error,.hvt-qf.is-open.is-error:hover,.hvt-qf.is-open.is-error:focus-within{border-color:var(--semantic-negative);box-shadow:inset 0 0 0 1px var(--semantic-negative);background:var(--container-secondary-background)}
+.hvt-qf.is-open.is-disabled,.hvt-qf.is-open.is-disabled:hover{border-color:var(--content-disabled);box-shadow:none;background:var(--container-background);color:var(--content-disabled)}
+.hvt-qf.is-disabled .hvt-qf-input::placeholder{color:var(--content-disabled)}
+.hvt-qf.is-disabled .hvt-qf-trigger{color:var(--content-disabled)}
+.hvt-qfwrap{position:relative;display:flex;flex:none}
+.hvt-qfpanel{position:absolute;z-index:40;top:100%;left:0;width:100%;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:4px;background:var(--container-secondary-background);
+  border:1px solid var(--outline);border-top:0;border-radius:0 0 var(--component-inputradius) var(--component-inputradius);box-shadow:0 4px 8px rgba(0,0,0,.12)}
+.hvt-qfhead{display:flex;align-items:center;height:32px;padding:0 8px;font-size:14px;font-weight:400;line-height:21px;color:var(--content-disabled)}
+.hvt-qfopt{display:flex;flex:none;align-items:center;height:32px;padding:0 8px;border-radius:4px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
+.hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
+.hvt-qfopt b{font-weight:600}
+.hvt-qfmore{display:block;flex:none;width:100%;height:32px;margin-top:4px;border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.hvt-qf-clear{flex:none;height:26px;margin:2px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.hvt-qf-clear:hover{background:var(--container-hover-background)}
+.hvt-qf-div{flex:none;width:1px;height:18px;background:var(--outline)}
+.hvt-qf-err{position:absolute;z-index:5;left:0;top:100%;display:flex;align-items:center;margin-top:4px;font-size:14px;line-height:21px;color:var(--semantic-negative);white-space:nowrap}
+.hvt-qf-err i{display:block;width:24px;height:24px;margin-left:-4px}
+.hvt-qf-err i svg{display:block;width:100%;height:100%}
+.hvt-qf-input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;
+  font:inherit;font-size:14px;line-height:24px;padding:0 0 0 12px}
+.hvt-qf-input::placeholder{color:var(--content-placeholder);opacity:1}
+.hvt-qf:not(.is-open) .hvt-qf-input{flex:0 0 0;width:0;padding:0;opacity:0;pointer-events:none}
+.hvt-qf-trigger{position:relative}
+/* while the input box is visible the box hovers as a whole: the search icon has no hover of its own */
+.hvt-qf.is-open .hvt-qf-trigger:hover:not(:disabled){background:transparent;box-shadow:none}
+.hvt-qf-trigger[data-active="true"]::after{content:"";position:absolute;top:5px;right:5px;width:8px;height:8px;
+  border-radius:50%;background:var(--content-primary)}
+@media (prefers-reduced-motion:reduce){.hvt-qf{transition:none}}
+.hvt-iconwrap{position:relative;display:inline-flex;flex:none}
+.hvt-actions-bar{display:flex;align-items:center;justify-content:flex-end;gap:32px;flex:none;min-width:0;margin-left:auto}
+.hvt-sf,.hvt-btns{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:none}
+.hvt-fbadge{position:absolute;top:0;right:0;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+  background:var(--content-primary);color:var(--page-background);font-size:11px;font-weight:600;line-height:16px;
+  text-align:center;pointer-events:none}
+
+/* icon + pill buttons */
+.hvt-icon{width:32px;height:32px;flex:none;display:inline-flex;align-items:center;justify-content:center;
+  padding:0;border:0;background:transparent;color:inherit;cursor:pointer;
+  border-radius:var(--component-buttonradius)}
+.hvt-icon svg{width:100%;height:100%;display:block}
+.hvt-icon:hover:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+.hvt-icon:disabled{opacity:.35;cursor:default}
+.hvt-btn{display:inline-flex;align-items:center;justify-content:center;height:32px;padding:0 16px;
+  border:0;background:transparent;color:inherit;cursor:pointer;white-space:nowrap;
+  font-family:inherit;font-size:14px;font-weight:600;line-height:21px;
+  border-radius:var(--component-buttonradius)}
+.hvt-btn:hover:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+.hvt-btn--icon-left{padding-left:0}
+.hvt-btn--primary{background:var(--content-primary);color:var(--container-secondary-background)}
+.hvt-btn--primary:hover:not(:disabled){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--content-primary);box-shadow:none}
+:is(.hvt-root,.hvt-scope) :is(button,input,select):focus-visible{outline:var(--hvt-focus-w) solid var(--border-focus);outline-offset:1px}
+/* fields draw their own focus border (NEXT: 2px #4d4d4d), so they must not also get the generic outline */
+:is(.hvt-root,.hvt-scope) :is(.hvt-qf-input,.hvt-text,.hvt-select,.hvt-ms-btn,.hvt-cbi):focus-visible{outline:0}
+.hvt-muted{color:var(--content-placeholder);font-size:14px;line-height:24px}
+
+/* layout */
+.hvt-area{position:relative;display:flex;align-items:stretch}
+.hvt-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--hvt-row-gap);padding-bottom:8px}
+.hvt-gutter{width:var(--hvt-tablepad);flex:none;display:flex;flex-direction:column;align-items:center}
+
+/* filter bar */
+.hvt-filterbar{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:0 8px 8px;
+  background:var(--container-filter);border-radius:var(--component-containerradius)}
+.hvt-chips{flex:1;min-width:0;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 0}
+.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:3px;overflow:hidden;
+  background:transparent;transition:background-color .15s ease;
+  border:1px solid var(--outline);border-radius:var(--component-inputradius);
+  font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
+/* an added filter has no fill, like the closed Filters button, and does not change on hover: only its X and its label show their own hover */
+.hvt-chip .hvt-icon{width:24px;height:24px}
+/* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
+.hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
+.hvt-chip .hvt-chipx:hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 80%,transparent);box-shadow:none} /* on the green filter bar the hover is white at 80%: grey reads poorly there */
+.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 2px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
+  font:inherit;font-size:14px;font-weight:600;line-height:21px}
+.hvt-chiptrigger:hover{background:color-mix(in srgb,var(--page-background) 80%,transparent)}
+.hvt-chiplabel{pointer-events:none}
+.hvt-chipchev{display:inline-flex;flex:none;width:20px;height:20px;pointer-events:none}
+.hvt-chipchev svg{display:block;width:100%;height:100%}
+
+/* rows */
+.hvt-row{display:flex;align-items:center;gap:var(--hvt-colgap);min-height:var(--hvt-row-h);padding:0 var(--hvt-rowpad);
+  background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
+.hvt-row--head{height:var(--hvt-head-h);min-height:var(--hvt-head-h);overflow:clip visible} /* clips sideways only, so the grown resize marker is not cut */
+.hvt-row--body{background:transparent;border-radius:0}
+/* the row has no padding of its own: the first column starts 16px from the row edge and the last one ends 16px from it */
+.hvt-root.has-lead .hvt-row > :first-child{margin-left:calc(var(--hvt-cellpad) / 2)} /* the check box and the arrow have their own hover shape: 8px from the edge */
+.hvt-root.has-actions .hvt-actions{padding-right:calc(var(--hvt-cellpad) / 2)} /* the buttons have their own hover shape: 8px from the edge */
+.hvt-root.has-lead .hvt-editfields{padding-left:calc(var(--hvt-cellpad) / 2)}
+.hvt-root.has-actions .hvt-editfields{padding-right:calc(var(--hvt-cellpad) / 2)}
+.hvt-rows{display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
+.hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
+.hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
+/* header (title bar and filter bar): buttons hover with their fill only, no outline */
+.hvt-titlebar :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-qf-trigger):not(.is-open):hover,.hvt-filterbar :is(.hvt-btn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
+/* pagination: buttons and inputs hover with their fill only, no outline */
+.hvt-pager :is(button,.hvt-mbtn,.hvt-icon):hover{box-shadow:none !important}
+/* experiment: every button inside the table body hovers with its fill only, no outline */
+.hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
+/* every dropdown button (row menu …, rows per page, More options, Filters, the filter selects):
+   hover changes the fill only and keeps the button's own border (1px on the outlined ones);
+   once clicked it is white with its 1px outline, which stays while open; hover then changes only the fill,
+   and only after the pointer has left the button and come back (data-hoveroff marks the click) */
+.hvt-mbtn:hover:not(:disabled):not(.is-open):not(.is-hot){box-shadow:none !important}
+.hvt-mb--secondary .hvt-mbtn:hover:not(:disabled):not(.is-open):not(.is-hot){box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-mbtn.is-open:not(.is-hot),.hvt-mbtn.is-open:not(.is-hot):hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-mbtn.is-open:not(.is-hot){background:var(--page-background) !important}
+.hvt-mbtn.is-open:not(.is-hot):hover{background:var(--container-hover-background) !important}
+.hvt-mbtn.is-open[data-hoveroff]:not(.is-hot),.hvt-mbtn.is-open[data-hoveroff]:not(.is-hot):hover{background:var(--page-background) !important}
+.hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
+.hvt-mb--secondary .hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:var(--container-secondary-background) !important}
+.hvt-filterbar .hvt-fgbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
+.hvt-filterbar .hvt-fgbtn:hover:not(.is-open):not(.is-hot):not([data-hoveroff]),.hvt-filterbar .hvt-btn:hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 80%,transparent) !important} /* white hover at 80% on the green bar */
+.hvt-mbtn[data-hoveroff]:focus-visible{outline:none !important} /* a mouse click shows no focus ring */
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn:not(.is-open){background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]:not(.is-open){background:transparent !important}
+/* hovering a row turns its background white (the page background) */
+.hvt-root .hvt-group:not(.is-selected):hover{background:var(--page-background);--hvt-row-bg:var(--page-background)}
+/* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
+.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open,.in-menu-zone)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn{background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
+.hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 1px var(--border-hover-selected)} /* a selected row: white, 1px outline */
+.hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
+.hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
+.hvt-cell.is-tagedge{padding-left:calc(var(--hvt-cellpad) / 2)}
+.hvt-cell.hvt-head.is-tagedge{padding-left:var(--hvt-cellpad)} /* only the tags move to the edge: the title keeps its room for the drag icon */
+.hvt-cell.is-tagend{padding-right:calc(var(--hvt-cellpad) / 2)}
+.hvt-cell > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-cell--right{justify-content:flex-end;text-align:right}
+.hvt-head{font-weight:600;line-height:21px}
+/* column header: one hover/drag/click area around the title (and sort icon) */
+.hvt-hgrab{position:relative;display:flex;align-items:center;width:100%;min-width:0;max-width:100%;height:32px;
+  padding:0;margin:0;border:0;background:transparent;color:inherit;cursor:pointer;
+  font:inherit;font-weight:600;line-height:21px;touch-action:pan-y;border-radius:var(--component-inputradius)}
+/* no background on hover: only the drag icon shows */
+.hvt-cell--right .hvt-hgrab{justify-content:flex-end}
+.hvt-htitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* the sort arrow hugs the title (as in the Figma header) so titles keep their room at 800px */
+.hvt-hgrab > .hvt-icon{margin:0 -10px 0 -8px}
+.hvt-grip{position:absolute;left:-13px;top:50%;width:10px;height:15px;margin-top:-7.5px;opacity:0;
+  transition:opacity .12s;pointer-events:none;display:none;color:var(--content-primary)}
+.hvt-root.can-reorder .hvt-hgrab{cursor:grab}
+.hvt-root.can-reorder .hvt-grip{display:block}
+.hvt-root.can-reorder .hvt-hgrab:hover .hvt-grip,.hvt-root.can-reorder .hvt-hgrab:focus-visible .hvt-grip{opacity:1}
+.hvt-grip svg{display:block;width:100%;height:100%}
+.hvt-root.is-colDragging,.hvt-root.is-colDragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
+
+/* column drag and drop: slot uses the library's Drop Zone look (#e0e6f5 fill, #98acdd dashed 1px; 2px solid on drop) */
+.hvt-table{position:relative;display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
+.hvt-root.is-joined .hvt-table{gap:0}
+.hvt-row--head.is-dragging{overflow:visible}
+.hvt-cell.is-shifting{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.hvt-cell.is-lifted{transition:none;position:relative;z-index:6;background:transparent}
+.hvt-cell.is-lifted.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+/* the lifted column is one container: the title and every row line inside it */
+.hvt-dragcol{position:absolute;top:0;bottom:0;z-index:5;pointer-events:none;background:var(--page-background);
+  border-radius:var(--component-inputradius);box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 3px var(--cat1-100)} /* the lifted column: 3px outline */
+.hvt-dragcol.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.hvt-dropzone{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none;background:var(--container-edit);
+  border:1px dashed var(--cat1-100);border-radius:4px;transition:left .2s cubic-bezier(.2,.8,.2,1)}
+.hvt-dropzone.is-settle{border:2px solid var(--cat1-100)}
+@media (prefers-reduced-motion:reduce){.hvt-cell.is-shifting,.hvt-cell.is-lifted.is-settling,.hvt-dropzone,.hvt-dragcol.is-settling{transition:none}}
+.hvt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hvt-actions{flex:none;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding-left:8px}
+.hvt-actions--ghost > *{visibility:hidden}
+.hvt-empty{flex:1;justify-content:center;gap:8px;min-height:96px;flex-wrap:wrap;background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
+.hvt-root.is-max .hvt-rows{min-height:0}
+.hvt-fillrow{flex:1 1 0;min-height:0;border-radius:var(--component-containerradius);background:var(--container-secondary-background);pointer-events:none}
+.hvt-card .hvt-fillrow,.hvt-card .hvt-empty{background:transparent}
+
+/* pagination */
+.hvt-pager{position:relative;display:flex;align-items:center;height:32px;padding:0 4px}
+.hvt-pager-left{position:absolute;left:4px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:2px;height:32px}
+.hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center}
+.hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
+.hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
+.hvt-pagenum{position:relative}
+.hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
+  border:1px solid var(--outline);border-radius:var(--component-inputradius);box-sizing:border-box;
+  font:inherit;font-size:14px;font-weight:400;line-height:21px;transition:width .18s cubic-bezier(.4,0,.2,1)}
+@media (prefers-reduced-motion:reduce){.hvt-pagenum input{transition:none}}
+.hvt-pagenum input.is-filled{color:var(--content-primary)}
+.hvt-pagenum input:hover:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, no outline */
+.hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
+.hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
+.hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
+.hvt-pagenum.is-error input,.hvt-pagenum.is-error input:hover,.hvt-pagenum.is-error input:focus{border-color:var(--semantic-negative);box-shadow:inset 0 0 0 1px var(--semantic-negative);background:var(--container-secondary-background)}
+.hvt-pn-err{position:absolute;left:4px;bottom:100%;z-index:5;display:block;width:24px;height:24px;margin-bottom:2px} /* the pager sits at the bottom edge, so the icon goes above the box */
+.hvt-pn-err svg{display:block;width:100%;height:100%}
+.hvt-pagenum input::-webkit-outer-spin-button,.hvt-pagenum input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.hvt-caption{font-size:12px;line-height:20px;white-space:nowrap}
+/* NEXT dropdown: BUTTON Dropdown (ghost / secondary) + dropdown menu panel */
+.hvt-mb{position:relative;display:inline-flex;min-width:0}
+.hvt-mb.is-block{display:flex;width:100%}
+.hvt-mbtn{position:relative;display:inline-flex;align-items:center;height:32px;min-width:0;padding:0;border:0;
+  border-radius:8px;background:transparent;color:inherit;cursor:pointer;text-align:left;
+  font:inherit;font-size:14px;font-weight:600;line-height:21px}
+.hvt-mb--ghost .hvt-mbtn:not(.is-icon){padding-left:12px}
+.hvt-mb--secondary .hvt-mbtn{width:100%;padding-left:12px;font-weight:400;
+  background:var(--container-secondary-background);box-shadow:inset 0 0 0 1px var(--outline)}
+.hvt-mbtn.is-icon{width:32px;justify-content:center}
+.hvt-mbtn:hover:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+.hvt-mbtn:disabled{opacity:.5;cursor:default}
+.hvt-mbtn.is-open{z-index:41;background:var(--container-secondary-background);box-shadow:inset 0 0 0 1px var(--outline)}
+.hvt-mbtn.is-open.is-down{border-radius:8px 8px 0 0}
+.hvt-mbtn.is-open.is-up{border-radius:0 0 8px 8px}
+.hvt-mbtn.is-open::after{content:"";position:absolute;left:1px;right:1px;height:1px;background:var(--border-default)}
+.hvt-mbtn.is-open.is-detached{border-radius:8px} /* the panel was dragged away: the button stays active, with all its corners round */
+.hvt-mbtn.is-open.is-detached::after{display:none}
+.hvt-mbtn.is-hot{z-index:46;background:var(--container-hover-background) !important;box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected) !important} /* shown above the dragged panel */
+.hvt-fg.is-dragging,.hvt-fg.is-dragging *{cursor:grabbing !important;user-select:none;-webkit-user-select:none}
+.hvt-fg.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.hvt-fg > .hvt-panel-head{flex:none}
+.hvt-fg.is-detached{margin-top:-40px;z-index:45} /* detached, the panel stays where it was and its header rises over the Filters button */
+.hvt-mbtn.is-open.is-down::after{bottom:0}
+.hvt-mbtn.is-open.is-up::after{top:0}
+.hvt-mico,.hvt-mchev{display:block;width:32px;height:32px;flex:none}
+.hvt-mico svg,.hvt-mchev svg{display:block;width:100%;height:100%}
+.hvt-mchev{margin-left:-6px}
+.hvt-mb--secondary .hvt-mchev{margin-left:0}
+.hvt-mlabel{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-mb--secondary .hvt-mlabel{flex:1}
+@keyframes hvtMenuDownIn{from{clip-path:inset(0 -32px 100% -32px)}to{clip-path:inset(0 -32px -32px -32px)}}
+@keyframes hvtMenuDownOut{from{clip-path:inset(0 -32px -32px -32px)}to{clip-path:inset(0 -32px 100% -32px)}}
+@keyframes hvtMenuUpIn{from{clip-path:inset(100% -32px 0 -32px)}to{clip-path:inset(-32px -32px 0 -32px)}}
+@keyframes hvtMenuUpOut{from{clip-path:inset(-32px -32px 0 -32px)}to{clip-path:inset(100% -32px 0 -32px)}}
+.hvt-mpanel.is-down,.hvt-qfpanel,.hvt-fg,.hvt-panel{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button (search field, Filters button) */
+.hvt-qfpanel.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+.hvt-mpanel.is-up{animation:hvtMenuUpIn .18s cubic-bezier(.4,0,.2,1)}
+.hvt-mpanel.is-down.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none} /* folds back up into it */
+.hvt-mpanel.is-up.is-closing{animation:hvtMenuUpOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up,.hvt-qfpanel,.hvt-fg,.hvt-panel{animation:none}.hvt-mpanel.is-closing,.hvt-qfpanel.is-closing{display:none}}
+.hvt-mpanel{position:absolute;z-index:40;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto;
+  padding:16px;background:var(--container-secondary-background);border:1px solid var(--outline);
+  box-shadow:0 0 8px rgba(0,0,0,.12)}
+.hvt-mpanel.is-down{top:100%;margin-top:-1px}
+.hvt-mpanel.is-up{bottom:100%;margin-bottom:-1px}
+.hvt-mpanel.align-left{left:0}
+.hvt-mpanel.align-right{right:0}
+.hvt-mpanel.is-down.align-left{border-radius:0 8px 8px 8px}
+.hvt-mpanel.is-down.align-right{border-radius:8px 0 8px 8px}
+.hvt-mpanel.is-up.align-left{border-radius:8px 8px 8px 0}
+.hvt-mpanel.is-up.align-right{border-radius:8px 8px 0 8px}
+.hvt-ditem{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;
+  background:transparent;color:inherit;cursor:pointer;text-align:left;white-space:nowrap;
+  font:inherit;font-size:14px;font-weight:400;line-height:21px}
+.hvt-ditem:hover:not(:disabled),.hvt-ditem:focus-visible{background:var(--container-hover-background)}
+.hvt-ditem.is-selected{background:var(--container-hover-background);font-weight:600}
+.hvt-ditem:disabled{color:var(--content-disabled);cursor:default}
+.hvt-ditem--check{padding-left:0}
+.hvt-ms-head{display:flex;align-items:center;justify-content:space-between;flex:none;padding:0 0 4px 8px}
+
+/* title bar buttons: Ghost icon-only BUTTON (Maximize) */
+.hvt-gbtn{display:inline-flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;
+  border:0;border-radius:8px;background:transparent;color:inherit;cursor:pointer}
+.hvt-gbtn svg{display:block;width:100%;height:100%}
+.hvt-gbtn:hover{background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+
+/* maximized: the table fills the viewport over a scrim, and keeps its old space in the page */
+.hvt-outer{position:relative}
+.hvt-scrim{position:fixed;inset:var(--hvt-max-top,0px) 0 0 0;z-index:999;background:var(--overlay);animation:hvtScrimIn .36s cubic-bezier(.4,0,.2,1)}
+.hvt-scrim.is-leaving{opacity:0;pointer-events:none;transition:opacity .36s cubic-bezier(.4,0,.2,1)}
+@keyframes hvtScrimIn{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hvt-scrim{animation:none}.hvt-scrim.is-leaving{transition:none}}
+/* maximized: the table hugs its content, up to the height of the screen; the space under it is the overlay */
+.hvt-root.is-max{position:fixed;top:calc(var(--hvt-max-top,0px) + 16px);left:16px;right:16px;bottom:auto;max-height:calc(100vh - var(--hvt-max-top,0px) - 32px);z-index:1000;width:auto;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+
+/* the rows area keeps the height of a full page, so the dashboard layout stays still */
+.hvt-rows{min-height:var(--hvt-rows-page-h)}
+
+/* filter panel */
+/* filter panel: draggable, filter-tone header, 8px padding all around (FILTER GROUP: #fbfcfc, 1px #6c6b6b, #d9d9d9 action bar) */
+.hvt-panel{position:absolute;z-index:30;width:min(680px,calc(100% - 24px));display:flex;flex-direction:column;
+  background:var(--container-secondary-background);border:1px solid var(--outline);
+  border-radius:var(--component-containerradius);box-shadow:0 0 8px rgba(0,0,0,.12)}
+.hvt-panel.is-dragging{box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.hvt-panel-head{display:flex;align-items:center;gap:8px;padding:8px;cursor:grab;touch-action:none;
+  user-select:none;-webkit-user-select:none;background:var(--container-filter);
+  border-radius:calc(var(--component-containerradius) - 1px) calc(var(--component-containerradius) - 1px) 0 0}
+.hvt-panel.is-dragging .hvt-panel-head,.hvt-panel.is-dragging .hvt-pdrag{cursor:grabbing}
+.hvt-pdrag{cursor:grab}
+.hvt-panel-head .hvt-gbtn{width:24px;height:24px} /* header of the draggable filter panels: 8px all around */
+.hvt-panel-head .hvt-pdrag{width:10px;height:24px;padding:0}
+.hvt-panel-head .hvt-pdrag svg{width:10px;height:15px}
+.hvt-pdrag,.hvt-pdrag:hover{background:transparent !important;box-shadow:none !important} /* the drag icon only says the panel can be moved: no hover of its own */
+.hvt-panel-title{margin:0;font-size:16px;font-weight:600;line-height:24px}
+.hvt-panel-name{display:flex;align-items:baseline;gap:8px;min-width:0}
+.hvt-panel-count{white-space:nowrap;font-size:16px;line-height:24px}
+.hvt-panel-body{padding:8px}
+.hvt-panel-body .hvt-frow:last-child{margin-bottom:0}
+.hvt-panel-foot{display:flex;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--hvt-divider)}
+/* direction B: the whole panel is a filter-tone frame around a white card */
+.hvt-panel.is-frame{padding:8px;gap:8px;background:var(--container-filter)}
+.hvt-panel.is-frame .hvt-panel-head{padding:0;background:transparent;border-radius:0}
+.hvt-panel.is-frame .hvt-panel-body{background:var(--container-secondary-background);border-radius:var(--component-inputradius)}
+.hvt-panel.is-frame .hvt-panel-foot{padding:0;border-top:0}
+.hvt-frow{display:grid;grid-template-columns:32px 72px minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);
+  gap:8px;align-items:center;margin-bottom:8px}
+.hvt-where{padding-left:4px;font-size:14px;font-weight:600;line-height:21px}
+.hvt-fcell{position:relative;min-width:0}
+.hvt-select,.hvt-text,.hvt-ms-btn{display:block;width:100%;height:32px;margin:0;
+  background-color:var(--container-secondary-background);color:var(--content-primary);
+  border:1px solid var(--outline);border-radius:var(--component-inputradius);
+  font:inherit;font-size:14px;line-height:24px}
+.hvt-select,.hvt-ms-btn{appearance:none;-webkit-appearance:none;padding:0 32px 0 12px;text-align:left;cursor:pointer;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23222' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;background-size:16px}
+.hvt-select:disabled{opacity:.5;cursor:default}
+[data-theme="wicked"] .hvt-select,[data-theme="wicked"] .hvt-ms-btn{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23e6e6e6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E")}
+.hvt-text{padding:0 12px}
+.hvt-text::placeholder{color:var(--content-placeholder);opacity:1}
+.hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
+.hvt-select:focus,.hvt-text:focus,.hvt-ms-btn:focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
+.hvt-grow{flex:1}
+.hvt-allrow{flex:none}
+.hvt-ditem--check{cursor:pointer}
+.hvt-ditem--check .hvt-selbox:hover{background:transparent} /* a check box and its label are one object: one hover, on the whole row, and a click anywhere on it toggles */
+.hvt-allcount{padding-right:8px}
+.hvt-checklist{display:flex;flex-direction:column;gap:4px}
+.hvt-qf--field{width:100%}
+.hvt-qf-glyph{flex:none;pointer-events:none}
+.hvt-checklist-head{display:flex;align-items:center;justify-content:space-between;padding:0 0 0 8px}
+.hvt-checklist-body{display:flex;flex-direction:column;gap:2px;max-height:160px;overflow:auto}
+/* FILTER GROUP: attached dropdown, #fbfcfc, 1px outline, divider #d9d9d9 above the action bar */
+.hvt-fg{position:absolute;z-index:30;width:min(640px,calc(100% - 24px));display:flex;flex-direction:column;
+  background:var(--container-secondary-background);border:1px solid var(--outline);border-radius:0 var(--component-containerradius) var(--component-containerradius) var(--component-containerradius);
+  box-shadow:0 0 8px rgba(0,0,0,.12)}
+.hvt-fg.is-float{border-radius:var(--component-containerradius)}
+.hvt-fg-body{display:flex;min-height:240px;max-height:380px}
+.hvt-fg-fields{display:flex;flex-direction:column;gap:4px;flex:none;width:200px;overflow:auto;padding:16px 8px 16px 16px;border-right:1px solid var(--border-default)}
+.hvt-fg-field{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;background:transparent;color:inherit;cursor:pointer;
+  font:inherit;font-size:14px;line-height:21px;text-align:left}
+.hvt-fg-field:hover{background:var(--container-hover-background)}
+.hvt-fg-field[aria-current="true"]{background:var(--container-hover-background);font-weight:600}
+.hvt-fg-n{flex:none;padding-left:8px;font-variant-numeric:tabular-nums}
+.hvt-fg-n b{font-weight:600}
+.hvt-fg-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--content-primary)} /* a filter is applied to this column: a dot, no count */
+.hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
+.hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
+.hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hvt-fg-note{margin:0;font-size:12px;line-height:18px;color:var(--content-placeholder)}
+.hvt-switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:21px;cursor:pointer;white-space:nowrap}
+.hvt-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.hvt-fg-titlebar .hvt-switch > span:last-child{order:-1} /* "Advanced" comes before its toggle, so the toggle lines up on the right with the Apply button below */
+.hvt-switch-track{position:relative;flex:none;width:32px;height:18px;border-radius:9px;background:var(--content-disabled);transition:background .15s}
+.hvt-switch-track i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--container-secondary-background);transition:transform .15s}
+.hvt-switch input:checked + .hvt-switch-track{background:var(--border-hover-selected)}
+.hvt-switch input:checked + .hvt-switch-track i{transform:translateX(14px)}
+.hvt-switch input:focus-visible + .hvt-switch-track{outline:2px solid var(--border-focus);outline-offset:2px}
+.hvt-fg-title{font-size:14px;font-weight:700;line-height:21px}
+.hvt-fg-cond{display:grid;grid-template-columns:minmax(0,1fr) 32px;gap:8px;align-items:start;padding-bottom:12px;border-bottom:1px solid var(--border-default)}
+.hvt-fg-cond-main{display:flex;flex-direction:column;gap:8px;min-width:0}
+.hvt-fg-foot{display:flex;align-items:center;gap:8px;padding:16px;border-top:1px solid var(--border-default)} /* the same padding vertically and horizontally */
+.hvt-fgbtn{width:auto !important;gap:0;padding:0 12px 0 0 !important}
+.hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-self:stretch;padding-top:8px} /* the Filters button takes the height of the filter bar */
+.hvt-filterbar > .hvt-mb:has(.hvt-fgbtn){align-items:flex-end}
+.hvt-filterbar .hvt-fgbtn{height:100%;align-items:flex-end;transition:height .2s cubic-bezier(.4,0,.2,1)} /* its icon, label and count stay at the bottom */
+.hvt-filterbar .hvt-fgbtn.is-open:not(.is-detached),.hvt-filterbar .hvt-fgbtn.is-folding{height:32px;transition-delay:0s}
+.hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-folding){transition-delay:.06s} /* it grows only after the panel has folded away */ /* with the panel attached it is one row tall; detached or closed, it fills the bar again */
+@media (prefers-reduced-motion:reduce){.hvt-filterbar .hvt-fgbtn{transition:none}}
+.hvt-filterbar .hvt-fgbtn .hvt-mlabel{line-height:32px}
+.hvt-filterbar .hvt-fgbtn .hvt-fgcount{margin-bottom:7px;line-height:18px}
+.hvt-fgnum{display:inline-grid;justify-items:end} /* the applied count turns semibold once it is not zero; it keeps the semibold width so nothing moves */
+.hvt-fgnum > i,.hvt-fgnum::after{grid-area:1 / 1;font-style:normal}
+.hvt-fgnum::after{content:attr(data-n);font-weight:600;visibility:hidden}
+.hvt-fgnum.is-on > i{font-weight:600}
+.hvt-fgbtn .hvt-mlabel{padding:0;font-weight:600} /* "Filters" in semibold, the count stays regular */
+.hvt-fgcount{font-size:14px;font-weight:400;color:var(--content-primary);padding-left:8px;border-left:1px solid var(--border-default)}
+.hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button keeps only its outline */
+
+/* selection checkbox, expand button, bulk actions bar, detail panel */
+.hvt-cbi{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.hvt-cbi:disabled{cursor:default}
+.hvt-cbicon{display:block;width:100%;height:100%;pointer-events:none}
+.hvt-cbicon svg{display:block;width:100%;height:100%}
+.hvt-selbox:has(.hvt-cbi:disabled){opacity:.35}
+.hvt-selbox:has(.hvt-cbi:focus-visible){outline:var(--hvt-focus-w) solid var(--border-focus);outline-offset:1px}
+.hvt-root .hvt-selbox,.hvt-root .hvt-expand{width:var(--hvt-ctl);height:var(--hvt-ctl)}
+.hvt-root .hvt-icon.hvt-expand{border-radius:8px} /* the hover and focus shape of the arrow: a square with 8px corners */
+.hvt-selbox{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  border-radius:8px} /* hover and focus: a square with 8px corners, like the other controls of the table */
+.hvt-selbox:hover{background:var(--container-hover-background)}
+
+.hvt-toolbars{display:flex;flex-direction:column;gap:1px;overflow:hidden;border-radius:var(--component-containerradius)}
+.hvt-toolbars .hvt-filterbar{border-radius:0}
+.hvt-bulk{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;
+  background:var(--container-secondary-background)}
+.hvt-bulk-left,.hvt-bulk-right{display:flex;align-items:center;gap:8px}
+.hvt-bulk-left{gap:0}
+.hvt-bulk-count{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.hvt-bulk-count b{font-weight:600;line-height:21px}
+.hvt-bulk-btn{padding:0 16px 0 8px}
+.hvt-bulk :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover{box-shadow:none !important} /* inside the table: hover shows the fill only, no border */
+.hvt-btn:disabled{color:var(--content-disabled);cursor:default}
+.hvt-btn:disabled:hover{background:transparent}
+
+@keyframes hvtDetailIn{from{grid-template-rows:0fr}to{grid-template-rows:1fr}}
+@keyframes hvtDetailOut{from{grid-template-rows:1fr}to{grid-template-rows:0fr}}
+.hvt-detail-wrap{display:grid;grid-template-rows:1fr;overflow:hidden;animation:hvtDetailIn .2s cubic-bezier(.4,0,.2,1)} /* grows down; the details are already in place and get uncovered */
+.hvt-detail-wrap.is-closing{animation:hvtDetailOut .2s cubic-bezier(.4,0,.2,1) forwards} /* folds back up */
+.hvt-detail-wrap > .hvt-detail{min-height:0;overflow:hidden}
+@media (prefers-reduced-motion:reduce){.hvt-detail-wrap{animation:none}}
+.hvt-detail{margin:0;padding:0 16px 16px calc(8px + var(--hvt-lead) + 8px)}
+.hvt-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px;
+  margin:0;padding:12px 0 0;border-top:1px solid var(--hvt-divider)}
+.hvt-detail-grid dt{font-size:12px;line-height:20px;color:var(--content-placeholder)}
+.hvt-detail-grid dd{margin:0;font-size:14px;line-height:24px}
+
+/* density: Balanced and Compact are one card with divider lines (as in the Figma frames) */
+.hvt-root.no-header{padding-top:16px}
+.hvt-root.is-joined{padding-bottom:16px;
+  --hvt-head-gap:0px;
+  --hvt-rows-page-h:calc(var(--hvt-page-rows) * (var(--hvt-row-h) + 1px) - 1px + 13px);
+  --hvt-rows-max-h:calc(var(--hvt-visible-rows) * (var(--hvt-row-h) + 1px) - 1px + 13px)}
+.hvt-root.is-joined .hvt-content{gap:12px}
+.hvt-card{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
+.hvt-card .hvt-row--head{background:transparent;border-radius:0;border-bottom:1px solid var(--hvt-divider)}
+.hvt-card .hvt-rows{gap:0;padding:8px 0 5px}
+/* Compact: every row has the same height, the first and the last included (no extra space above the first or under the last) */
+.hvt-root.is-compact .hvt-card .hvt-rows{padding:0}
+.hvt-root.is-compact{--hvt-rows-page-h:calc(var(--hvt-page-rows) * (var(--hvt-row-h) + 1px) - 1px);--hvt-rows-max-h:calc(var(--hvt-visible-rows) * (var(--hvt-row-h) + 1px) - 1px)}
+.hvt-card .hvt-group:has(+ .hvt-fillrow){border-bottom:0}
+.hvt-card .hvt-group{background:transparent;border-radius:0;border-bottom:1px solid var(--hvt-divider)}
+.hvt-card .hvt-group:last-child{border-bottom:0}
+.hvt-card .hvt-group.is-selected{background:var(--page-background);box-shadow:none}
+.hvt-card .hvt-row--body{padding:0 var(--hvt-rowpad)}
+.hvt-card .hvt-detail{padding-left:calc(var(--hvt-lead) + 8px)}
+.hvt-card .hvt-pager{height:49px;padding:8px 4px;border-top:1px solid var(--hvt-divider)}
+.hvt-root.is-compact .hvt-row--body .hvt-cell{min-height:0;padding-top:0;padding-bottom:0}
+.hvt-root.is-compact .hvt-actions .hvt-icon{width:24px;height:24px}
+.hvt-root.is-compact .hvt-actions .hvt-btn{height:24px}
+
+/* column resize: handle on the edge between two headers; the guide reuses the library's "Drop in between" line (3px, #98acdd) */
+.hvt-cell.hvt-head{position:relative}
+.hvt-cell.hvt-head{align-self:stretch} /* the title cell takes the full header height, so the resize marker is measured on the header, not on the 32px title */
+.hvt-resize{display:none;position:absolute;top:25%;bottom:25%;right:-6px;width:12px;z-index:3;cursor:col-resize;touch-action:none}
+.hvt-root.can-resize .hvt-resize{display:block}
+.hvt-resize::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;margin-left:-.5px;opacity:0;
+  background:var(--border-default);transition:opacity .15s ease,top .2s cubic-bezier(.4,0,.2,1),bottom .2s cubic-bezier(.4,0,.2,1),width .2s ease,margin-left .2s ease,background-color .2s ease}
+.hvt-row--head:hover .hvt-resize::before{opacity:1}
+.hvt-resize:hover::before,.hvt-resize:focus-visible::before{opacity:1;width:4px;margin-left:-2px;border-radius:999px;background:var(--cat1-100);top:-15%;bottom:-15%} /* on hover the marker takes the drag line colour, is 4px wide and grows 30% (15% above and below) */
+.hvt-resize.is-active::before{opacity:1;top:-15%;bottom:-15%;width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100)}
+@media (prefers-reduced-motion:reduce){.hvt-resize::before{transition:none}}
+.hvt-root.is-resizing,.hvt-root.is-resizing *{cursor:col-resize !important;user-select:none;-webkit-user-select:none}
+.hvt-guide{position:absolute;top:0;bottom:0;width:var(--hvt-guide-w);margin-left:calc(var(--hvt-guide-w) / -2);border-radius:999px;
+  background:var(--cat1-100);z-index:7;pointer-events:none}
+.hvt-fill{flex:1 1 0;min-width:0}
+
+
+/* row editing (SKit "Server Edit Table Flow"): edit panel in the edit tone + action toolbar, notification banners */
+.hvt-btn--secondary{box-shadow:inset 0 0 0 1px var(--outline)}
+/* text buttons: hover changes the fill only; an outlined (secondary) button keeps its 1px border */
+.hvt-btn:hover:not(:disabled){box-shadow:none}
+/* every close / remove X: on hover the X turns half a turn (180°), slowly, without bounce */
+.hvt-xspin{display:inline-flex;width:100%;height:100%;align-items:center;justify-content:center;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.hvt-xspin svg{display:block;width:100%;height:100%}
+:hover > .hvt-xspin{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.hvt-xspin{transition:none}}
+/* the X in the green header of the draggable filter panels hovers like the X of an added filter: white at 80%, no border */
+.hvt-panel-head .hvt-gbtn:not(.hvt-pdrag):hover{background:color-mix(in srgb,var(--page-background) 80%,transparent) !important;box-shadow:none !important}
+.hvt-btn--secondary:hover:not(:disabled){box-shadow:inset 0 0 0 1px var(--outline) !important}
+/* a button with an icon and a label hovers as one: the icon inside it has no hover of its own */
+.hvt-btn > .hvt-icon{pointer-events:none}
+.hvt-editrow{display:flex;flex-direction:column;background:var(--container-edit);border-radius:var(--component-containerradius)}
+.hvt-editfields{display:flex;align-items:center;gap:var(--hvt-colgap);padding:8px var(--hvt-rowpad)}
+.hvt-editlead{flex:none;width:var(--hvt-lead)}
+.hvt-editcell{min-height:32px;padding:0 12px}
+.hvt-editcell > *{min-width:0}
+.hvt-editcell > input{width:100%}
+.hvt-edittools{display:flex;justify-content:flex-end;gap:8px;padding:8px;border-top:1px solid var(--border-default)}
+.hvt-card .hvt-editfields{padding:8px 0}
+.hvt-card .hvt-editrow{margin-bottom:5px}
+.hvt-group.is-delete-target{box-shadow:inset 0 0 0 2px var(--semantic-negative)}
+.hvt-banner-wrap{display:grid;grid-template-rows:0fr;margin-bottom:calc(var(--hvt-row-gap) * -1);
+  transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1),margin-bottom .4s cubic-bezier(.4,0,.2,1)}
+.hvt-banner-wrap.is-open{grid-template-rows:1fr;margin-bottom:0}
+.hvt-banner-clip{min-height:0;overflow:hidden}
+.hvt-banner-wrap.is-closed > .hvt-banner-clip{visibility:hidden;transition:visibility 0s .4s}
+.hvt-banner-wrap.is-settled > .hvt-banner-clip{overflow:visible}
+.hvt-banner-wrap.is-flat{margin-bottom:0}
+.hvt-gbtn[aria-pressed="true"]{background:var(--container-hover-background)}
+/* a banner takes its space from the rows: the table keeps its size and the rows pushed past the bottom are cut off */
+.hvt-rows.has-banner{max-height:calc(var(--hvt-rows-page-h) + var(--hvt-max-extra,0px));overflow:hidden}
+.hvt-root.has-vscroll .hvt-rows.has-banner{max-height:none;overflow:visible}
+.hvt-root.is-joined .hvt-banner-wrap{margin-bottom:0}
+/* a deleted row slides down inside its own row space, then the space closes */
+.hvt-group.is-removing{overflow:hidden;animation:hvtCollapse .2s cubic-bezier(.4,0,.2,1) .22s forwards;background:transparent;box-shadow:none}
+.hvt-group.is-removing > *{animation:hvtSlideOut .22s cubic-bezier(.4,0,1,1) forwards}
+.hvt-group.is-removing > .hvt-row{background:var(--container-secondary-background);border-radius:var(--component-containerradius);box-shadow:inset 0 0 0 2px var(--semantic-negative)}
+.hvt-root.is-joined .hvt-group.is-removing{--hvt-row-gap:0px}
+.hvt-group.is-edit-out{overflow:hidden;animation:hvtCollapse .4s cubic-bezier(.4,0,.2,1) forwards}
+.hvt-group.is-edit-out > *{animation:hvtFadeOut .25s ease forwards}
+.hvt-group.is-edit-in{overflow:hidden;animation:hvtExpand .4s cubic-bezier(.4,0,.2,1) both}
+.hvt-group.is-edit-in > *{animation:hvtFadeIn .3s ease .1s both}
+.hvt-root.is-joined .hvt-group.is-edit-out,.hvt-root.is-joined .hvt-group.is-edit-in{--hvt-row-gap:0px}
+@keyframes hvtFadeOut{to{opacity:0}}
+@keyframes hvtFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes hvtExpand{from{height:0;margin-bottom:calc(var(--hvt-row-gap) * -1)}to{height:var(--h);margin-bottom:0}}
+@keyframes hvtSlideOut{to{transform:translateY(100%);opacity:0}}
+@keyframes hvtCollapse{from{height:var(--h);margin-bottom:0}to{height:0;margin-bottom:calc(var(--hvt-row-gap) * -1)}}
+@media (prefers-reduced-motion:reduce){.hvt-banner-wrap{transition:none}.hvt-group.is-removing,.hvt-group.is-removing > *,.hvt-group.is-edit-in,.hvt-group.is-edit-in > *{animation:none}.hvt-group.is-edit-out{display:none}}
+.hvt-banner{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px;border-radius:var(--component-containerradius)}
+.hvt-banner.is-info{background:var(--semantic-informative);color:var(--base-dark)}
+.hvt-banner.is-error{background:var(--semantic-negative);color:var(--container-secondary-background)}
+.hvt-banner-icon{display:block;flex:none;width:32px;height:32px}
+.hvt-banner-icon svg{display:block;width:100%;height:100%}
+.hvt-banner-text{flex:1;min-width:0;padding:6px 24px 6px 0;font-size:14px;line-height:21px}
+.hvt-btn--banner{color:inherit;box-shadow:inset 0 0 0 1px currentColor}
+.hvt-banner .hvt-btn:hover:not(:disabled),.hvt-banner .hvt-icon:hover:not(:disabled){background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 2px currentColor}
+.hvt-root.is-compact .hvt-actions .hvt-mbtn.is-icon,.hvt-root.is-compact .hvt-actions .hvt-mico{width:24px;height:24px}
+
+/* More options: multi-page menu + Configure Columns (SKit "Editable Table Configure Columns") */
+.hvt-mtitle{display:flex;align-items:center;flex:none;height:32px;margin:-8px -8px 0 -8px;font-size:14px;font-weight:600;line-height:21px}
+.hvt-mtitle span{padding:0 8px}
+.hvt-cl{position:relative;display:flex;flex-direction:column;padding:0 0 4px}
+.hvt-cl-note{margin:0;padding:4px 8px 8px;font-size:12px;line-height:18px;color:var(--content-placeholder)}
+.hvt-cl-row{position:relative;display:flex;align-items:center;gap:4px;height:36px;padding:0 4px;background:var(--container-secondary-background)}
+.hvt-cl-row:hover{background:var(--container-hover-background)}
+.hvt-cl-row.is-pinned{background:var(--container-background)}
+.hvt-cl-row.is-pin-last{box-shadow:0 1px 0 var(--border-default)}
+.hvt-cl-row.is-drag{z-index:3;background:var(--page-background);box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:grabbing}
+.hvt-cl-grip{flex:none;display:flex;align-items:center;justify-content:center;width:24px;height:32px;padding:0;border:0;background:transparent;color:var(--content-placeholder);cursor:grab;touch-action:none}
+.hvt-cl-grip svg{display:block;width:10px;height:15px} /* the same drag icon as the column titles */
+.hvt-cl-grip:hover,.hvt-cl-row.is-drag .hvt-cl-grip{color:var(--content-primary)}
+.hvt-cl-check{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:4px;height:32px;cursor:pointer}
+.hvt-cl-check .hvt-cbi{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.hvt-cl-check .hvt-cbicon{flex:none;display:flex;width:32px;height:32px}
+.hvt-cl-check .hvt-cbicon svg{display:block;width:100%;height:100%}
+.hvt-cl-check .hvt-cbi:focus-visible + .hvt-cbicon{outline:var(--hvt-focus-w,2px) solid var(--border-focus);outline-offset:-2px}
+.hvt-cl-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;line-height:21px}
+.hvt-cl-title.is-off{color:var(--content-disabled)}
+.hvt-cl-row{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.hvt-cl-row.is-drag,.hvt-cl-row.is-drag *{cursor:grabbing}
+.hvt-cl-row .hvt-cl-check{cursor:inherit}
+.hvt-cl-row:hover .hvt-cl-grip{color:var(--content-primary)} /* the whole line is the handle: hovering it darkens the drag icon */
+.hvt-cl-pin{flex:none;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;background:transparent;color:var(--content-primary);opacity:.45;cursor:pointer}
+.hvt-cl-pin svg{display:block;width:100%;height:100%}
+.hvt-cl-pin:hover{opacity:.8}
+.hvt-cl-pin[aria-pressed="true"]{opacity:1}
+.hvt-cl-restore{align-self:stretch;margin:8px 8px 0;justify-content:center}
+/* the back button in a submenu title: 8px rounded, and its hover is only the background (no outline) */
+.hvt-mtitle .hvt-gbtn,.hvt-mtitle .hvt-icon{border-radius:8px}
+.hvt-mtitle .hvt-gbtn:hover:not(:disabled),.hvt-mtitle .hvt-icon:hover:not(:disabled){background:var(--container-hover-background);box-shadow:none}
+.hvt-ditem-tag{flex:none;margin-left:12px;padding:0 6px;border:1px solid var(--semantic-negative);color:var(--semantic-negative);background:color-mix(in srgb,var(--semantic-negative) 12%,transparent);font-size:11px;font-weight:600;line-height:16px}
+.hvt-ditem-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hvt-ditem-chev{display:block;flex:none;width:32px;height:32px;margin-right:-8px}
+.hvt-ditem-chev svg{display:block;width:100%;height:100%}
+.hvt-cfg{display:flex;flex-direction:column;gap:16px;width:238px}
+.hvt-cfg-sec{display:flex;flex-direction:column;gap:8px}
+.hvt-cfg-head{display:flex;align-items:center;height:32px;font-size:14px;font-weight:600;line-height:21px}
+.hvt-cfg-head .hvt-mico{margin-left:-4px}
+.hvt-cfg-count{margin-left:auto;font-size:12px;font-weight:400;color:var(--content-placeholder)}
+.hvt-cfg-list{position:relative;display:flex;flex-direction:column;gap:4px;min-height:32px}
+.hvt-cfg-item{display:flex;align-items:center;flex:none;height:32px;padding:0 8px 0 0;border-radius:4px;cursor:grab;
+  user-select:none;-webkit-user-select:none;touch-action:none;font-size:14px;line-height:21px;white-space:nowrap}
+.hvt-cfg-item .hvt-mico{opacity:.55}
+.hvt-cfg-item:hover{background:var(--container-hover-background)}
+.hvt-cfg-item.is-source{opacity:.35}
+.hvt-cfg-item.is-ghost{position:fixed;z-index:80;pointer-events:none;cursor:grabbing;background:var(--container-secondary-background);
+  box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 1px var(--cat1-100)}
+.hvt-cfg-line{position:absolute;left:0;right:0;height:var(--hvt-guide-w);margin-top:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100);pointer-events:none;z-index:2}
+.hvt-cfg-empty{display:flex;align-items:center;justify-content:center;height:48px;border:1px dashed var(--cat1-100);
+  border-radius:4px;background:var(--container-edit);font-size:12px;line-height:20px}
+.hvt-cfg-empty.is-over{border:2px solid var(--cat1-100)}
+.hvt-cfg-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;margin:0 -16px -16px;padding:8px 16px;
+  border-top:1px solid var(--border-default)}
+.hvt-cfg-foot .hvt-cfg-restore{margin-right:auto}
+.hvt-cfg-empty.is-lock{height:56px;gap:0;padding-right:8px}
+.hvt-cfg-empty.is-lock .hvt-mico{width:40px;height:40px}
+.hvt-cfg-tip{margin:0;font-size:12px;line-height:18px;color:var(--content-placeholder)}
+
+/* TAG (Figma): Status = icon + semibold label on a tinted fill; Categorical = regular label on a category tint */
+.hvt-tag{display:flex;width:fit-content;align-items:center;height:28px;max-width:100%;box-sizing:border-box;border:1px solid var(--tag-stroke,var(--outline));
+  border-radius:8px;background:var(--tag-fill,transparent);color:var(--tag-text,var(--content-primary));font-size:14px;line-height:21px;white-space:nowrap}
+.hvt-tag-ico{display:block;flex:none;width:28px;height:28px;margin:-1px 0 -1px -2px}
+.hvt-tag-ico svg{display:block;width:100%;height:100%}
+.hvt-tag.is-status{padding:0 9px 0 1px;font-weight:600}
+.hvt-tag.is-cat{padding:0 9px;font-weight:400}
+.hvt-tag-label{display:grid;min-width:0;overflow:hidden}
+.hvt-tag-label > *{grid-area:1 / 1;min-width:0;white-space:nowrap}
+.hvt-tag-body{display:flex;align-items:center;justify-self:start;max-width:100%} /* icon at the left, label left aligned, the same start in every tag of the column */
+.hvt-tag-text{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hvt-tag-ghost .hvt-tag-text::before{content:attr(data-text)}
+.hvt-tag-ghost{display:flex;align-items:center;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
+.hvt-root.is-compact .hvt-tag-ghost{display:none}
+.hvt-root.is-compact .hvt-tag-body{justify-self:start}
+.hvt-tag.is-negative{--tag-fill:var(--semantic-negative-20);--tag-stroke:var(--semantic-negative);--tag-text:var(--semantic-negative)}
+.hvt-tag.is-warning{--tag-fill:var(--semantic-warning-20);--tag-stroke:var(--semantic-warning);--tag-text:var(--semantic-warning-text)}
+.hvt-tag.is-positive{--tag-fill:var(--semantic-positive-20);--tag-stroke:var(--semantic-positive);--tag-text:var(--semantic-positive)}
+.hvt-tag.is-info{--tag-fill:var(--cat1-20);--tag-stroke:var(--cat1-140)}
+.hvt-cell > .hvt-tag{overflow:hidden}
+/* Compact: no tag container and no icon, only the label and its colour */
+.hvt-root.is-compact .hvt-tag{height:auto;padding:0;border:0;border-radius:0;background:transparent}
+.hvt-root.is-compact .hvt-tag-ico{display:none}
+
+/* loading skeleton rows, empty state (library EMPTY STATE: 40px padding, 96px illustration, 208px content) */
+.hvt-skel-row{pointer-events:none}
+.hvt-skel{display:block;height:12px;width:70%;border-radius:6px;background:var(--container-disabled-background);animation:hvtPulse 1.2s ease-in-out infinite}
+.hvt-skel.is-short{width:40%}
+@keyframes hvtPulse{0%,100%{opacity:.5}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hvt-skel{animation:none}}
+.hvt-emptystate{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;min-height:240px;padding:40px;
+  border-radius:var(--component-containerradius);background:var(--container-secondary-background);text-align:center}
+.hvt-es-body{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:320px}
+.hvt-es-icon{display:flex;align-items:center;justify-content:center;width:96px;height:96px}
+.hvt-es-icon svg{width:76px;height:76px;color:var(--content-primary)}
+.hvt-es-text{display:flex;flex-direction:column;gap:16px;padding-top:16px}
+.hvt-es-text h4{margin:0;font-size:16px;font-weight:700;line-height:24px}
+.hvt-es-text p{margin:0;font-size:14px;line-height:21px}
+.hvt-es-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.hvt-mgroup{flex:none;padding:8px 8px 2px;font-size:12px;font-weight:700;line-height:18px;color:var(--content-placeholder)}
+.hvt-mgroup:first-child{padding-top:0}
+
+/* real scrolling (SCROLLBAR look: 6px bar in a 16px track) and fixed columns (sticky, with a divider) */
+.hvt-hscroller{min-width:0}
+.hvt-root.has-hscroll .hvt-hscroller,.hvt-root.has-vscroll .hvt-hscroller{overflow:auto;scrollbar-width:none;overscroll-behavior:none;contain:paint} /* no elastic bounce at the ends; nothing paints outside the scroll area */
+.hvt-root.has-hscroll .hvt-hscroller::-webkit-scrollbar,.hvt-root.has-vscroll .hvt-hscroller::-webkit-scrollbar{display:none}
+.hvt-root.has-vscroll .hvt-hscroller{max-height:var(--hvt-scroll-max-h)}
+.hvt-root.is-max.has-vscroll .hvt-hscroller{max-height:none}
+.hvt-root.has-hscroll .hvt-row--head,.hvt-root.has-vscroll .hvt-row--head{overflow:visible}
+.hvt-root.has-vscroll .hvt-row--head{position:sticky;top:0;z-index:4;box-shadow:0 var(--hvt-head-gap) 0 var(--container-background)}
+.hvt-root.has-vscroll.is-joined .hvt-row--head{box-shadow:none;background:var(--container-secondary-background)}
+.hvt-root.has-hscroll .hvt-table{min-width:max-content}
+.hvt-root.has-hscroll .hvt-cell{flex:1 0 var(--hvt-col-min)}
+.hvt-hbar{position:relative;height:16px;flex:none}
+.hvt-vbar{position:absolute;right:0;width:16px}
+.hvt-thumb{position:absolute;display:block;border-radius:4px;background:var(--accent-accent1);cursor:grab;touch-action:none}
+.hvt-thumb::before{content:"";position:absolute;inset:-5px}
+.hvt-thumb:hover{background:var(--content-primary)}
+.hvt-hbar .hvt-thumb{top:5px;height:6px}
+.hvt-vbar .hvt-thumb{left:5px;width:6px}
+.hvt-row--head,.hvt-group{--hvt-row-bg:var(--container-secondary-background)}
+.hvt-group.is-selected{--hvt-row-bg:var(--page-background)}
+.hvt-editrow{--hvt-row-bg:var(--container-edit)}
+.hvt-root.has-hscroll .is-pinned,.hvt-root.has-hscroll .is-sticky{background:var(--hvt-row-bg)}
+.hvt-root.has-hscroll .hvt-cell.is-pin-last{box-shadow:1px 0 0 var(--border-default)}
+.hvt-root.has-hscroll .hvt-actions{position:sticky;right:var(--hvt-row-px);z-index:3;background:var(--hvt-row-bg);box-shadow:-1px 0 0 var(--border-default)}
+.hvt-root.has-hscroll .hvt-row--head > .hvt-actions--ghost{box-shadow:none} /* the title row has no label over the actions: no divider there */
+
+/* focus rings sit inside their own control, so they never cover a neighbour or get clipped by a container */
+.hvt-selbox:has(.hvt-cbi:focus-visible){outline:0}
+.hvt-selbox::after{content:"";position:absolute;inset:18.75%;border-radius:4px;pointer-events:none}
+.hvt-selbox:has(.hvt-cbi:focus-visible)::after{box-shadow:0 0 0 var(--hvt-focus-w,2px) var(--border-focus)}
+.hvt-chip :is(.hvt-chipx,.hvt-chiptrigger):focus-visible{outline-offset:calc(var(--hvt-focus-w,2px) * -1)}
+.hvt-qf :is(.hvt-qf-trigger,.hvt-qf-clear):focus-visible{outline-offset:calc(var(--hvt-focus-w,2px) * -1)}
+
+/* horizontal scroll: the fixed area (control columns, fixed columns, row actions) covers whatever scrolls under it, to the row edge and over the full row height */
+.hvt-root.has-hscroll .hvt-row--body{--hvt-cover-h:var(--hvt-row-h)}
+.hvt-root.has-hscroll .hvt-row--head{--hvt-cover-h:var(--hvt-head-h)}
+.hvt-root.has-hscroll .hvt-row > .is-sticky{background:transparent}
+.hvt-root.has-hscroll .hvt-row > .is-sticky:hover{background:var(--container-hover-background)}
+.hvt-root.has-hscroll .hvt-row--head > .is-sticky{visibility:visible !important;pointer-events:none}
+.hvt-root.has-hscroll .hvt-row > .is-sticky::before{content:"";position:absolute;z-index:-1;left:0;right:0;
+  top:calc((var(--hvt-ctl) - var(--hvt-cover-h)) / 2);bottom:calc((var(--hvt-ctl) - var(--hvt-cover-h)) / 2);background:var(--hvt-row-bg);pointer-events:none}
+.hvt-root.has-hscroll .hvt-row > .is-sticky:first-child::before{left:calc(var(--hvt-cellpad) / -2)}
+.hvt-root.has-hscroll:not(.is-joined) .hvt-row--body > .is-sticky:first-child::before{border-radius:var(--component-containerradius) 0 0 var(--component-containerradius)}
+.hvt-root.has-hscroll .hvt-row > .is-pinned,.hvt-root.has-hscroll .hvt-row > .hvt-actions{align-self:stretch}
+
+/* horizontal scroll: the selected (or about to be deleted) outline belongs to the scrolling part of the row:
+   it starts after the fixed area on the left and ends before the row actions, so its edges show at the start and the end of the scroll and slide under the fixed area in between */
+.hvt-root.has-hscroll:not(.is-joined) .hvt-group.is-selected,.hvt-root.has-hscroll .hvt-group.is-delete-target{box-shadow:none}
+.hvt-root.has-hscroll .hvt-row--body{position:relative}
+.hvt-root.has-hscroll:not(.is-joined) .hvt-group.is-selected > .hvt-row--body::after,
+.hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{content:"";position:absolute;z-index:2;top:0;bottom:0;left:var(--hvt-fix-l,0px);right:var(--hvt-fix-r,0px);
+  border-radius:var(--component-containerradius);box-shadow:inset 0 0 0 1px var(--border-hover-selected);pointer-events:none}
+.hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{box-shadow:inset 0 0 0 2px var(--semantic-negative)}
