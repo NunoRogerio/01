@@ -4630,7 +4630,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 21:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 21:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5787,7 +5787,7 @@ export default function App() {
                   ))}
                 </div>
               </CtlField>
-              <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset settings<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
+              <button type="button" className="hvt-btn hvs-resetbtn" aria-label="Reset settings" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
           </section>
