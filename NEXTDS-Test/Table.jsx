@@ -4388,6 +4388,7 @@ const SCREEN_CSS = `
  *   --ctl-text          #222222                  #f0f0f0
  *   --ctl-text-2        #5c5c5c                  #c4c4c4
  *   --ctl-text-3        #8a8a8a                  #9a9a9a
+ *   --ctl-label         #666666                  #b0b0b0   (control titles: Theme, Header, Density…)
  *   --ctl-border        black 18%                white 22%
  *   --ctl-hover         black 6%                 white 10%
  *   --ctl-stripe        black 5.88%              white 11%
@@ -4398,12 +4399,13 @@ const SCREEN_CSS = `
  * ================================================================== */
 .hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-raised:#ffffff;
   --ctl-text:#222222;--ctl-text-2:#5c5c5c;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
-  --ctl-stripe:rgba(0,0,0,.0588);--ctl-inset:rgba(0,0,0,.24);--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
+  --ctl-stripe:rgba(0,0,0,.0588);--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
 .hvs[data-theme="wicked"]{--ctl-bar:#2e2e2e;--ctl-track:#161616;--ctl-raised:#5a5a5a;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
-  --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
+  --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
+.hvs-cf-l{color:var(--ctl-label)} /* the control titles, a step darker than the hint text so they read easily */
 .hvs-pkgbtn{padding:0 12px;background:transparent;color:var(--ctl-text);font-weight:400} /* React Package: no background, normal text, like a plain text button; the download arrow and its hover drop stay */
 .hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-hover)}
 .hvs-pkglabel[data-busy]::after{color:var(--ctl-text)}
@@ -4628,7 +4630,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
