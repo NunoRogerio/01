@@ -3936,12 +3936,13 @@ const SCREEN_CSS = `
 .hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
 .hvs-fopt:disabled:hover{background:var(--cl-raised)}
-.hvs-fwrap:has(.hvs-fpart){gap:2px} /* "Filter:" and its type are two blocks, 2px apart */
-/* control bar options: 4px corners, semibold; "Filter:" + its type read as one option (round outer corners only),
+.hvs-fwrap:has(.hvs-fpart){gap:1px} /* "Filter:" and its type are two blocks, 1px apart */
+/* control bar options: semibold; "Filter:" + its type read as one option (round outer corners only),
    and the type, a choice inside that option, stays regular */
-.hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-seg .hvs-segbtn[aria-pressed]{border-radius:4px;font-weight:600}
-.hvs-ctl .hvs-seg .hvs-fpart.is-a{border-radius:4px 0 0 4px}
-.hvs-ctl .hvs-seg .hvs-fpart.is-b{border-radius:0 4px 4px 0;font-weight:400}
+.hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-seg .hvs-segbtn[aria-pressed]{font-weight:600}
+.hvs-ctl .hvs-seg .hvs-fpart.is-b{font-weight:400;display:inline-flex;align-items:center;gap:4px;padding-right:8px}
+.hvs-fcaret{display:inline-flex;width:16px;height:16px;color:var(--cl-track)} /* the caret takes the grey of the multibutton track */
+.hvs-fcaret svg{display:block;width:100%;height:100%}
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
 /* fields */
 .hvs-side .hvt-select,.hvs-side .hvt-text{height:34px;border:1px solid var(--cl-border);border-radius:8px;background-color:var(--cl-surface);color:var(--cl-text);
@@ -3983,6 +3984,13 @@ const SCREEN_CSS = `
   --cl-track:#151515;--cl-raised:#3a3a3a;--cl-accent:#8c8c8c;--cl-accent-soft:rgba(176,176,176,.2);
   --cl-focus:rgba(200,200,200,.5);--cl-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hvs-side,.hvs-side *,.hvs-ctl,.hvs-ctl *,.hvs-head,.hvs-head *{border-radius:0 !important}
+/* the control bar: options with 4px corners, their track concentric around them (4 + 3px padding);
+   "Filter:" + its type read as one option, so only its outer corners are round */
+.hvs-ctl .hvs-seg{border-radius:7px !important}
+.hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-input,.hvs-head .hvs-pagebtn,.hvs-ctl .hvs-fopt,.hvs-head .hvs-fopt{border-radius:4px !important}
+.hvs-ctl .hvs-fpop,.hvs-head .hvs-fpop{border-radius:7px !important}
+.hvs-ctl .hvs-seg .hvs-fpart.is-a{border-radius:4px 0 0 4px !important}
+.hvs-ctl .hvs-seg .hvs-fpart.is-b{border-radius:0 4px 4px 0 !important}
 .hvs-side,.hvs-side *,.hvs-ctl,.hvs-ctl *,.hvs-head,.hvs-head *{font-family:var(--cl-font) !important}
 .hvs-side .hvs-acc-btn,.hvs-side .hvs-acc-badge{font-weight:600}
 .hvs-side .hvs-acc.level-2 > .hvs-acc-h .hvs-acc-btn{font-weight:400}
@@ -4210,7 +4218,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4412,7 +4420,7 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
     <span className="hvs-fwrap" ref={ref}>
       <button type="button" className="hvs-segbtn hvs-fpart is-a" aria-pressed={on} onClick={() => (on ? onOff() : onOn())}>Filter:</button>
       <button type="button" className="hvs-segbtn hvs-fpart is-b" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
-              aria-label={`Filter type: ${name}`} onClick={() => setOpen((o) => !o)}>{name}</button>
+              aria-label={`Filter type: ${name}`} onClick={() => setOpen((o) => !o)}>{name}<span className="hvs-fcaret" aria-hidden="true">{Icons.ChevronDown}</span></button>
       {open && (
         <span className="hvs-fpop" role="menu" aria-label="Filter type">
           {FILTER_TYPES.map(([v, t]) => (
