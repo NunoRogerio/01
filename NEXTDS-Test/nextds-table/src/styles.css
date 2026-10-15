@@ -248,10 +248,10 @@
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
 /* an added filter has no fill, like the closed Filters button, and does not change on hover: only its X and its label show their own hover */
 .hvt-chip .hvt-icon{width:24px;height:24px}
-/* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
+/* the label comes first and the x after it (its own square button); the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:30px;height:auto;border-radius:0} /* the inner hovers fill the chip to its edges (no padding around them); the chip's rounded border clips them */
 .hvt-chip .hvt-chipx:hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 72%,transparent);box-shadow:none} /* on the green filter bar the hover is white at 72%: grey reads poorly there */
-.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:auto;padding:0 11px 0 4px;border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;
+.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:auto;padding:0 4px 0 11px;border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
 .hvt-chiptrigger:hover{background:color-mix(in srgb,var(--page-background) 72%,transparent)}
 .hvt-chiplabel{pointer-events:none}

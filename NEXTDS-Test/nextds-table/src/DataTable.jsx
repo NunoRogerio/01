@@ -2807,13 +2807,13 @@ export function DataTable({
           const label = chipLabel(it, colByKey[it.field], optionsOf(colByKey[it.field]).length);
           return (
             <span className="hvt-chip" key={it.id} data-chip={it.id}>
-              <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
-                      onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
-                <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
-              </button>
               <button type="button" className="hvt-chiptrigger" data-filter-trigger aria-label={`Edit filter ${label}`}
                       onClick={() => { if (panel && panel.field === it.field) closeFilterPanel(); else openPanel("bar", false, it.field); }}>
                 <span className="hvt-chiplabel">{label}</span>
+              </button>
+              <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
+                      onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
+                <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
               </button>
             </span>
           );
