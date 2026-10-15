@@ -286,10 +286,10 @@ const CSS = `
 .hvt-root.has-actions .hvt-editfields{padding-right:calc(var(--hvt-cellpad) / 2)}
 .hvt-rows{display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
 .hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
-.hvt-root.hover-row .hvt-group:hover,.hvt-root.hover-buttons .hvt-group:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--container-secondary-background)}
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
+/* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
+.hvt-root.hover-row .hvt-group.is-clickable:hover .hvt-actions :is(.hvt-btn,.hvt-mbtn):not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
 .hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 2px var(--border-hover-selected)}
-.hvt-root.hover-row .hvt-group.is-selected:hover,.hvt-root.hover-buttons .hvt-group.is-selected:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--page-background)}
 .hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
 .hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
 .hvt-cell.is-tagedge{padding-left:calc(var(--hvt-cellpad) / 2)}
@@ -576,9 +576,7 @@ const CSS = `
 .hvt-card .hvt-group:has(+ .hvt-fillrow){border-bottom:0}
 .hvt-card .hvt-group{background:transparent;border-radius:0;border-bottom:1px solid var(--hvt-divider)}
 .hvt-card .hvt-group:last-child{border-bottom:0}
-.hvt-root.hover-row .hvt-card .hvt-group:hover,.hvt-root.hover-buttons .hvt-card .hvt-group:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){background:var(--container-hover-background)}
 .hvt-card .hvt-group.is-selected{background:var(--page-background);box-shadow:none}
-.hvt-root.hover-row .hvt-card .hvt-group.is-selected:hover,.hvt-root.hover-buttons .hvt-card .hvt-group.is-selected:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--page-background)}
 .hvt-card .hvt-row--body{padding:0 var(--hvt-rowpad)}
 .hvt-card .hvt-detail{padding-left:calc(var(--hvt-lead) + 8px)}
 .hvt-card .hvt-pager{height:49px;padding:8px 4px;border-top:1px solid var(--hvt-divider)}
@@ -772,9 +770,7 @@ const CSS = `
 .hvt-hbar .hvt-thumb{top:5px;height:6px}
 .hvt-vbar .hvt-thumb{left:5px;width:6px}
 .hvt-row--head,.hvt-group{--hvt-row-bg:var(--container-secondary-background)}
-.hvt-root.hover-row .hvt-group:hover,.hvt-root.hover-buttons .hvt-group:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){--hvt-row-bg:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--container-secondary-background)}
 .hvt-group.is-selected{--hvt-row-bg:var(--page-background)}
-.hvt-root.hover-row .hvt-group.is-selected:hover,.hvt-root.hover-buttons .hvt-group.is-selected:has(.hvt-btn:hover,.hvt-mbtn:hover,.hvt-mbtn.is-open,.hvt-icon:hover,.hvt-selbox:hover){--hvt-row-bg:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--page-background)}
 .hvt-editrow{--hvt-row-bg:var(--container-edit)}
 .hvt-root.has-hscroll .is-pinned,.hvt-root.has-hscroll .is-sticky{background:var(--hvt-row-bg)}
 .hvt-root.has-hscroll .hvt-cell.is-pin-last{box-shadow:1px 0 0 var(--border-default)}
@@ -4250,7 +4246,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:11"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:14"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
