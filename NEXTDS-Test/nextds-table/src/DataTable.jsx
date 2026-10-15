@@ -1906,7 +1906,7 @@ export function DataTable({
     "--component-containerradius": `${containerRadius}px`,
     "--hvt-row-gap": `${rowGap}px`,
     "--hvt-row-h": density === "compact" ? "28px" : density === "balanced" ? "40px" : "48px",
-    "--hvt-head-h": density === "compact" ? "40px" : "56px", // Compact: a 40px column titles row
+    "--hvt-head-h": density === "compact" ? "40px" : "48px", // Comfortable and Balanced: a 48px column titles row // Compact: a 40px column titles row
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
     "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),

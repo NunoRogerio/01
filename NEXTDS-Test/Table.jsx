@@ -2814,7 +2814,7 @@ export function DataTable({
     "--component-containerradius": `${containerRadius}px`,
     "--hvt-row-gap": `${rowGap}px`,
     "--hvt-row-h": density === "compact" ? "28px" : density === "balanced" ? "40px" : "48px",
-    "--hvt-head-h": density === "compact" ? "40px" : "56px", // Compact: a 40px column titles row
+    "--hvt-head-h": density === "compact" ? "40px" : "48px", // Comfortable and Balanced: a 48px column titles row // Compact: a 40px column titles row
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
     "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),
@@ -4749,7 +4749,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 02:42"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 02:46"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
