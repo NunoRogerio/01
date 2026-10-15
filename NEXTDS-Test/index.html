@@ -985,6 +985,9 @@ const applyItem = (row, item, col) => {
 };
 
 /* Chip text follows the Figma examples: “Online Status: Online”, “IP Location: 3 / 20” */
+/* filter condition ids: one shared counter, so a condition added in a new session of the panel never reuses an id
+   (repeated ids made the X of one added filter remove others too) */
+const FILTER_IDS = { current: 10000 };
 const chipLabel = (item, col, total) => {
   const op = item.operator, v = item.value, title = col.filterLabel || col.title;
   if (MULTI_OPS.has(op)) {
@@ -1479,7 +1482,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   const firstWith = columns.find((c) => model.items.some((i) => i.field === c.key));
   const [field, setField] = useState((columns.find((c) => c.key === initialField) || firstWith || columns[0] || {}).key);
   useEffect(() => { if (initialField && columns.some((c) => c.key === initialField)) setField(initialField); }, [initialField, fieldNonce]); // eslint-disable-line
-  const idRef = useRef(5000);
+  const idRef = FILTER_IDS; // one id source for every filter condition, so ids never repeat between panel sessions
   const col = columns.find((c) => c.key === field) || columns[0];
   const type = typeOf(col);
   const mine = draft.items.filter((i) => i.field === field);
@@ -2398,7 +2401,7 @@ function DataTable({
   const resizeRef = useRef(null);
   const widthsRef = useRef({});
   const panelRef = useRef(null);
-  const idRef = useRef(1000);
+  const idRef = FILTER_IDS;
 
   const filterCols = useMemo(() => {
     const count = {};
@@ -4396,7 +4399,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:37"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
