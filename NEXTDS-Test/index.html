@@ -292,7 +292,8 @@ const CSS = `
 /* a row menu (…) once opened: white with its outline; the outline stays while it is open, hover only changes the fill */
 .hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
 .hvt-group .hvt-mbtn.is-open{background:var(--page-background) !important}
-.hvt-group .hvt-mbtn.is-open:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open{background:var(--container-hover-background) !important}
+.hvt-group .hvt-mbtn.is-open:hover{background:var(--container-hover-background) !important} /* open: only the pointer on the button itself hovers it */
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open:not(:hover){background:var(--page-background) !important}
 /* right after the click it stays white: its hover comes back only once the pointer has left it and returned */
 .hvt-group .hvt-mbtn[data-hoveroff],.hvt-group .hvt-mbtn[data-hoveroff]:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]{background:var(--page-background) !important}
 /* hovering a row turns its background white (the page background) */
@@ -2534,6 +2535,7 @@ function DataTable({
   const hasActions = viewBtn || rowMenu;
   /* the part of a row to the right of the View button belongs to the row menu (…): returns that menu's button when the pointer is there */
   const menuZone = (e) => {
+    if (e.target.closest && e.target.closest(".hvt-mpanel")) return null; // the open menu itself is not part of the row zone
     const act = e.currentTarget.querySelector(".hvt-actions");
     const view = act && act.querySelector(".hvt-btn"), menu = act && act.querySelector(".hvt-mbtn");
     return view && menu && e.clientX > view.getBoundingClientRect().right ? menu : null;
@@ -4271,7 +4273,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:28"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
