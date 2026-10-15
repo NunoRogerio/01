@@ -3933,10 +3933,13 @@ const SCREEN_CSS = `
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
 .hvs-fopt{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px;padding:0 8px 0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
 .hvs-ftype{position:relative;display:inline-flex}
+.hvs-ctl .hvs-seg .hvs-fpart.is-solo{border-radius:4px !important} /* a select on its own: all four corners round */
+.hvs-fopt .hvs-ftag{margin-left:8px;color:var(--cl-text-3);font-weight:400}
+.hvs-ctl .hvs-ftype > .hvs-fpop{min-width:100%;width:max-content}
 .hvs-ctl .hvs-ftype > .hvs-fpop{left:0;right:auto;top:calc(100% + 3px);margin-top:0;border-radius:0 0 7px 7px !important;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
 .hvs-fname{display:inline-grid} /* every type label sits in the same cell: the block keeps the width of the longest, so switching never resizes it */
 .hvs-fname > span{grid-area:1 / 1;text-align:left}
-.hvs-fcheck{display:inline-flex;width:13.4px;height:13.4px;color:var(--cl-text);opacity:1} /* the chosen option: a check in the text colour */
+.hvs-fcheck{display:inline-flex;width:13.4px;height:13.4px;color:var(--cl-text);opacity:.8} /* the chosen option: a check in the text colour */
 .hvs-fcheck svg{display:block;width:100%;height:100%}
 .hvs-fopt:hover,.hvs-fopt:focus-visible{background:var(--cl-hover)}
 .hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
@@ -3947,7 +3950,7 @@ const SCREEN_CSS = `
    and the type, a choice inside that option, stays regular */
 .hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-seg .hvs-segbtn[aria-pressed]{font-weight:600}
 .hvs-ctl .hvs-seg .hvs-fpart.is-b{font-weight:400;display:inline-flex;align-items:center;gap:4px;padding-right:8px}
-.hvs-fcaret{display:inline-flex;flex:none;width:8.1px;height:4.9px;color:var(--cl-text);opacity:1} /* the caret: a filled triangle in the text colour, centred with the text */
+.hvs-fcaret{display:inline-flex;flex:none;width:8.1px;height:4.9px;color:var(--cl-text);opacity:.8} /* the caret: a filled triangle in the text colour at 80%, centred with the text */
 .hvs-fcaret svg{display:block;width:100%;height:100%}
 .hvs-fcaret svg{display:block;width:100%;height:100%}
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
@@ -4225,7 +4228,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:51"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:56"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4437,6 +4440,47 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
           ))}
         </span>
       )}
+      </span>
+    </span>
+  );
+}
+
+/* a single-choice control of the control bar, built like the filter type block ("Group"): one raised block in the grey track,
+   its value plus a caret; the menu hangs from the track, aligned to the block, with a check on the current value */
+function CtlSelect({ value, options, onPick, ariaLabel }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", out);
+    document.addEventListener("keydown", esc);
+    const first = ref.current && ref.current.querySelector(".hvs-fopt:not(:disabled)");
+    if (first) first.focus();
+    return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
+  }, [open]);
+  const cur = options.find((o) => o.value === value);
+  const shown = cur ? options : [...options, { value, label: "Custom" }];
+  return (
+    <span className="hvs-seg hvs-selseg" ref={ref}>
+      <span className="hvs-ftype">
+        <button type="button" className="hvs-segbtn hvs-fpart is-b is-solo" aria-pressed="true" aria-haspopup="menu" aria-expanded={open}
+                aria-label={`${ariaLabel}: ${cur ? cur.label : "Custom"}`} onClick={() => setOpen((o) => !o)}>
+          <span className="hvs-fname">{shown.map((o) => (<span key={String(o.value)} aria-hidden={o.value !== value} style={{ visibility: o.value === value ? "visible" : "hidden" }}>{o.label}</span>))}</span>
+          <span className="hvs-fcaret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M0 0h10L5 6z" fill="currentColor" /></svg></span>
+        </button>
+        {open && (
+          <span className="hvs-fpop" role="menu" aria-label={ariaLabel}>
+            {options.map((o) => (
+              <button key={String(o.value)} type="button" role="menuitemradio" aria-checked={o.value === value} disabled={o.value === value} className="hvs-fopt"
+                      onClick={() => { setOpen(false); onPick(o.value); }}>
+                <span>{o.label}{o.tag ? <span className="hvs-ftag">{o.tag}</span> : null}</span>
+                {o.value === value ? <span className="hvs-fcheck" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span> : null}
+              </button>
+            ))}
+          </span>
+        )}
       </span>
     </span>
   );
@@ -5011,26 +5055,23 @@ export default function App() {
                             onSelect={(it) => switchDataset(it.value)} />
               </CtlField>
               <CtlField label="Number of rows">
-                <MenuButton variant="ghost" role="listbox" ariaLabel="Number of rows" value={dataRows.length} minWidth={120} label={String(dataRows.length)}
-                            items={ROW_COUNTS.map((n) => ({ value: n, label: String(n) }))}
-                            onSelect={(it) => {
-                              const n = it.value;
+                <CtlSelect ariaLabel="Number of rows" value={dataRows.length}
+                            options={ROW_COUNTS.map((n) => ({ value: n, label: String(n) }))}
+                            onPick={(n) => {
                               setDataRows(ds.rows.slice(0, n));
                               // 3 and 5 rows start without pagination; 7 and 40 bring it back when it was only off because of that
                               set({ rowCount: n, ...(n <= 5 ? LIST_PATCH.none : listModeOf(cfg) === "none" ? LIST_PATCH.pagination : {}) });
                             }} />
               </CtlField>
               <CtlField label="Pagination">
-                <MenuButton variant="ghost" role="listbox" ariaLabel="Pagination" value={listModeOf(cfg)} minWidth={270}
-                            label={(LIST_MODES.find((x) => x[0] === listModeOf(cfg)) || [0, "Custom"])[1]}
-                            items={LIST_MODES.map(([value, label, tag]) => ({ value, label, tag }))}
-                            onSelect={(it) => set(LIST_PATCH[it.value])} />
+                <CtlSelect ariaLabel="Pagination" value={listModeOf(cfg)}
+                           options={LIST_MODES.map(([value, label, tag]) => ({ value, label, tag }))}
+                           onPick={(v) => set(LIST_PATCH[v])} />
               </CtlField>
               <CtlField label="State">
-                <MenuButton variant="ghost" role="listbox" ariaLabel="State" value={cfg.tableState} minWidth={200}
-                            label={STATES.find((x) => x[0] === cfg.tableState)[1]}
-                            items={STATES.map(([value, label]) => ({ value, label }))}
-                            onSelect={(it) => set({ tableState: it.value })} />
+                <CtlSelect ariaLabel="State" value={cfg.tableState}
+                           options={STATES.map(([value, label]) => ({ value, label }))}
+                           onPick={(v) => set({ tableState: v })} />
               </CtlField>
               {cfg.tableState === "error" && !errorShown && errorLeft > 0 && (
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
