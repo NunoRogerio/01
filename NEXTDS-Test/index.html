@@ -1359,7 +1359,7 @@ function FilterPanel({
           Add Filter
         </button>
         <span className="hvt-grow" />
-        <button type="button" className="hvt-btn" onClick={() => onChange({ ...model, items: [] })}>Clear All</button>
+        <button type="button" className="hvt-btn" disabled={model.items.length === 0} onClick={() => onChange({ ...model, items: [] })}>Clear All</button>
         <button type="button" className="hvt-btn hvt-btn--primary" onClick={onClose}>Done</button>
       </div>
     </div>
@@ -1597,7 +1597,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
                     items={[{ value: "and", label: "Match all conditions" }, { value: "or", label: "Match any condition" }]} minWidth={200}
                     onSelect={(it) => setDraft((d) => ({ ...d, logicOperator: it.value }))} />
         <span className="hvt-grow" />
-        <button type="button" className="hvt-btn" onClick={() => setDraft((d) => ({ ...d, items: [] }))}>Clear All</button>
+        <button type="button" className="hvt-btn" disabled={draft.items.length === 0} onClick={() => setDraft((d) => ({ ...d, items: [] }))}>Clear All</button>
         <button type="button" className="hvt-btn hvt-btn--secondary" onClick={onClose}>Cancel</button>
         <button type="button" className="hvt-btn hvt-btn--primary" onClick={apply}>Apply{totalComplete ? ` (${totalComplete})` : ""}</button>
       </div>
@@ -4361,7 +4361,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:16"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:18"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
