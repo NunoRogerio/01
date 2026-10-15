@@ -4400,9 +4400,9 @@ const SCREEN_CSS = `
   --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
-.hvs-pkgbtn{background:var(--ctl-primary);color:var(--ctl-on-primary)}
-.hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-primary-hover)}
-.hvs-pkglabel[data-busy]::after{color:var(--ctl-on-primary)}
+.hvs-pkgbtn{padding:0 12px;background:transparent;color:var(--ctl-text);font-weight:400} /* React Package: no background, normal text, like a plain text button; the download arrow and its hover drop stay */
+.hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-hover)}
+.hvs-pkglabel[data-busy]::after{color:var(--ctl-text)}
 .hvs-fpop{outline:1px solid var(--ctl-pop-border);outline-offset:-1px} /* dark menus get a fine edge: their shadow does not show on a dark page */
 
 `;
@@ -4624,7 +4624,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
