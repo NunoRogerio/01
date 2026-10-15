@@ -4212,6 +4212,7 @@ const SCREEN_CSS = `
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
+.hvs-ctl .hvs-segbtn[aria-pressed="true"]:disabled:not([data-unpick])::before{display:none} /* chosen but disabled: no block */
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
   background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
@@ -4232,9 +4233,14 @@ const SCREEN_CSS = `
 .hvs-fcheck{display:inline-flex;width:13.4px;height:13.4px;color:var(--cl-text);opacity:.8} /* the chosen option: a check in the text colour */
 .hvs-fcheck svg{display:block;width:100%;height:100%}
 .hvs-fopt:hover,.hvs-fopt:focus-visible{background:var(--cl-hover)}
-.hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
+.hvs-fopt{position:relative;isolation:isolate}
+.hvs-fopt[aria-checked="true"]{font-weight:600}
+.hvs-fopt[aria-checked="true"]::before,.hvs-fopt[data-unpick]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:var(--cl-raised)} /* the white block, a layer that opens and closes like the multibuttons' */
+.hvs-fopt[aria-checked="true"]:hover{background:transparent}
+.hvs-fpop{animation:hvsPopIn .2s cubic-bezier(.4,0,.2,1)} /* menus grow down from their control */
+@keyframes hvsPopIn{from{clip-path:inset(0 -32px 100% -32px)}to{clip-path:inset(0 -32px -32px -32px)}}
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
-.hvs-fopt:disabled:hover{background:var(--cl-raised)}
+.hvs-fopt:disabled:hover{background:transparent}
 .hvs-fwrap:has(.hvs-fpart){gap:0} /* "Filter:" and its type touch */
 .hvs-ctl .hvs-seg:has(.hvs-fcaret){padding:4px} /* controls with a caret: 4px around, like the menu they open */
 .hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px;margin:-4px 0} /* the type block carries its own 4px all around: that is its distance from "Filter:" */
@@ -4515,7 +4521,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:25"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4699,9 +4705,36 @@ const listModeOf = (c) => {
    the type ("Group" or "MUI") opens the choice of type below it (the current type is disabled);
    picking a type while the filter is off also turns it on */
 const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
-function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
-  const [open, setOpen] = useState(false);
+/* the control dropdowns: the menu grows down when it opens and folds back up when it closes; pressing an option moves the
+   white block to it at once (it opens from a line while the old one closes), releasing picks it and folds the menu */
+function useFoldMenu() {
+  const [open, setOpenRaw] = useState(false);
+  const [pending, setPending] = useState(null);
   const ref = useRef(null);
+  const closing = useRef(false);
+  const close = () => {
+    if (closing.current) return;
+    const pop = ref.current && ref.current.querySelector(".hvs-fpop");
+    const done = () => { closing.current = false; setOpenRaw(false); setPending(null); };
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!pop || !pop.animate || reduce) { done(); return; }
+    closing.current = true;
+    const from = getComputedStyle(pop).clipPath;
+    const a = pop.animate([{ clipPath: from && from !== "none" ? from : "inset(0 -32px -32px -32px)" }, { clipPath: "inset(0 -32px 100% -32px)" }],
+      { duration: 200, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+    a.onfinish = a.oncancel = done;
+  };
+  const setOpen = (v) => { const next = typeof v === "function" ? v(open) : v; if (next) { closing.current = false; setOpenRaw(true); } else if (open) close(); };
+  const optProps = (v, current, onPick) => ({
+    "aria-checked": v === (pending != null ? pending : current),
+    onPointerDown: (e) => { if (e.button === 0 && v !== current) setPending(v); },
+    onPointerLeave: () => { if (pending === v) setPending(null); },
+    onClick: () => { onPick(v); close(); },
+  });
+  return { open, setOpen, ref, optProps };
+}
+function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
+  const { open, setOpen, ref, optProps } = useFoldMenu();
   useEffect(() => {
     if (!open) return undefined;
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -4722,8 +4755,7 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
       {open && (
         <span className="hvs-fpop" role="menu" aria-label="Filter type">
           {FILTER_TYPES.map(([v, t]) => (
-            <button key={v} type="button" role="menuitemradio" aria-checked={v === type} disabled={v === type} className="hvs-fopt"
-                    onClick={() => { setOpen(false); onPick(v); }}><span>{t}</span><span className="hvs-fcheck" aria-hidden="true" style={{ visibility: v === type ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
+            <button key={v} type="button" role="menuitemradio" disabled={v === type} className="hvs-fopt" {...optProps(v, type, onPick)}><span>{t}</span><span className="hvs-fcheck" aria-hidden="true" style={{ visibility: v === type ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
           ))}
         </span>
       )}
@@ -4735,8 +4767,7 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
 /* a single-choice control of the control bar, built like the filter type block ("Group"): one raised block in the grey track,
    its value plus a caret; the menu hangs from the track, aligned to the block, with a check on the current value */
 function CtlSelect({ value, options, onPick, ariaLabel }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const { open, setOpen, ref, optProps } = useFoldMenu();
   useEffect(() => {
     if (!open) return undefined;
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -4760,8 +4791,7 @@ function CtlSelect({ value, options, onPick, ariaLabel }) {
         {open && (
           <span className="hvs-fpop" role="menu" aria-label={ariaLabel}>
             {options.map((o) => (
-              <button key={String(o.value)} type="button" role="menuitemradio" aria-checked={o.value === value} disabled={o.value === value} className="hvs-fopt"
-                      onClick={() => { setOpen(false); onPick(o.value); }}>
+              <button key={String(o.value)} type="button" role="menuitemradio" disabled={o.value === value} className="hvs-fopt" {...optProps(o.value, value, onPick)}>
                 <span>{o.label}{o.tag ? <span className="hvs-ftag">{o.tag}</span> : null}</span>
                 <span className="hvs-fcheck" aria-hidden="true" style={{ visibility: o.value === value ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
               </button>
@@ -4903,8 +4933,7 @@ function Seg({ label, value, options, onChange }) {
 const PAGES = [["table", "Table"], ["tags", "Tags"], ["search", "Search"]];
 /* "Workbench: Table" — the component name opens the list of workbench pages (the current one is disabled) */
 function PageSwitch({ page, onPick }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+  const { open, setOpen, ref, optProps } = useFoldMenu();
   useEffect(() => {
     if (!open) return undefined;
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -4924,8 +4953,7 @@ function PageSwitch({ page, onPick }) {
       {open && (
         <span className="hvs-fpop" role="menu" aria-label="Component">
           {PAGES.map(([v, t]) => (
-            <button key={v} type="button" role="menuitemradio" aria-checked={v === page} disabled={v === page} className="hvs-fopt"
-                    onClick={() => { setOpen(false); onPick(v); }}><span>{t}</span><span className="hvs-fcheck" aria-hidden="true" style={{ visibility: v === page ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
+            <button key={v} type="button" role="menuitemradio" disabled={v === page} className="hvs-fopt" {...optProps(v, page, onPick)}><span>{t}</span><span className="hvs-fcheck" aria-hidden="true" style={{ visibility: v === page ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
           ))}
         </span>
       )}
@@ -5095,8 +5123,16 @@ export default function App() {
       if (reduce) return;
       list.forEach((m) => {
         const b = m.target;
-        if (!b.matches(".hvs-ctl .hvs-segbtn") || b.matches(".is-solo") || !b.animate) return;
-        const on = b.getAttribute("aria-pressed") === "true", was = m.oldValue === "true";
+        if (!b.matches(".hvs-ctl .hvs-segbtn, .hvs-fopt") || b.matches(".is-solo") || !b.animate) return;
+        let on, was;
+        if (b.matches(".hvs-fopt")) {
+          if (m.attributeName !== "aria-checked") return;
+          on = b.getAttribute("aria-checked") === "true"; was = m.oldValue === "true";
+        } else { // a multibutton option shows its block only while chosen and enabled: turning disabled closes it like a deselect
+          const pressed = b.getAttribute("aria-pressed") === "true";
+          on = pressed && !b.disabled;
+          was = m.attributeName === "disabled" ? pressed && m.oldValue === null : m.oldValue === "true" && !b.disabled;
+        }
         if (on === was) return;
         const line = Math.min(1, 2 / Math.max(1, b.offsetHeight)); // a horizontal line about 2px tall, across the option
         if (!on) { // deselected: the block closes back into the line, at the same time as the new one opens
@@ -5120,7 +5156,7 @@ export default function App() {
         } catch (err) { /* no pseudo-element animation in this browser: the block just appears */ }
       });
     });
-    mo.observe(root, { subtree: true, attributes: true, attributeFilter: ["aria-pressed"], attributeOldValue: true });
+    mo.observe(root, { subtree: true, attributes: true, attributeFilter: ["aria-pressed", "aria-checked", "disabled"], attributeOldValue: true });
     return () => mo.disconnect();
   }, []);
   useLayoutEffect(() => {
