@@ -3049,7 +3049,7 @@ export function DataTable({
               }
             }}
           />
-          <span className="hvt-caption">of <b className="hvt-num">{pageCount}</b></span>
+          <span className="hvt-caption">of {pageCount}</span>
           {pnError && <i className="hvt-pn-err" aria-hidden="true">{Icons.StatusCritical}</i>}
         </div>
         <button type="button" className="hvt-icon" aria-label="Next page" disabled={safePage === pageCount}
