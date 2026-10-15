@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.4.5.tgz
+npm install ./vendor/nextds-table-0.4.6.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -184,7 +184,7 @@ The table uses the **Hitachi Sans** font (regular, semibold, bold). The font is 
 | `columns`, `rows` | | The data. |
 | `dataMode`, `rowCount`, `onQueryChange` | `"client"` | Server mode, see above. |
 | `loading`, `error`, `emptyState` | | Skeleton rows, error banner, texts when there is no data. |
-| `title`, `showTitle` | | The header title. |
+| `title`, `showTitle`, `description` | | The header title, and an optional description at its right. |
 | `searchEnabled`, `searchMode`, `searchRecent` | `true`, `"persistent"` | The search field. |
 | `filterUi` | `"group"` | `"group"` or `"rows"` (MUI style). |
 | `showFilterBar`, `initialFilterModel`, `onFilterModelChange` | | The filter bar and the filters. |
@@ -208,7 +208,7 @@ This package is the reference for how the NEXT table looks and behaves. Your tea
 ### Run it and change it
 
 ```bash
-tar -xzf nextds-table-0.4.5.tgz && cd package   # the file from the React Package button
+tar -xzf nextds-table-0.4.6.tgz && cd package   # the file from the React Package button
 npm install          # dev tools only: esbuild, React, TypeScript
 npm run demo         # http://localhost:5173: client mode, server mode, custom cells, Dawn / Wicked
 ```

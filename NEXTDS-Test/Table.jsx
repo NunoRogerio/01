@@ -159,7 +159,9 @@ const CSS = `
 /* title bar */
 .hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
-.hvt-title{flex:1;min-width:0;font-size:16px;font-weight:700;line-height:24px;
+.hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px}
+.hvt-titledesc{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400;line-height:21px;color:var(--content-placeholder)} /* the description, right of the title */
+.hvt-title{flex:0 1 auto;min-width:0;font-size:16px;font-weight:700;line-height:24px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
 /* quick filter (search): trigger + control + clear, modelled on MUI X QuickFilter */
 .hvt-qf{display:flex;align-items:center;flex:none;width:32px;height:32px;overflow:hidden;
@@ -348,6 +350,13 @@ const CSS = `
 .hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center}
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
+/* Compact: the pager is compact too: every element at the caption's 12px text, 24px controls */
+.hvt-root.is-compact .hvt-pager,.hvt-root.is-compact .hvt-pager-left{height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
+.hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon svg{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
 .hvt-pagenum{position:relative}
 .hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
   border:1px solid var(--outline);border-radius:var(--component-inputradius);box-sizing:border-box;
@@ -918,6 +927,8 @@ const MULTI_OPS = new Set(["isAnyOf", "isNoneOf"]); // includes / excludes a lis
 const opLabel = (type, op) => (OPERATORS[type] || OPERATORS.string).find((o) => o[0] === op)?.[1] ?? op;
 const defaultValue = (op) => (MULTI_OPS.has(op) ? [] : "");
 const typeOf = (col) => (col && col.type) || "string";
+/* a button that shows the + icon does not repeat "Add" in its label: "Add Storage System" reads "+ Storage System" */
+const plusLabel = (label) => { const t = String(label || "").replace(/^add\s+/i, ""); return t ? t.charAt(0).toUpperCase() + t.slice(1) : label; };
 
 const itemIsComplete = (item, col) => {
   if (!col) return false;
@@ -1400,7 +1411,7 @@ function FilterPanel({
       <div className="hvt-panel-foot">
         <button type="button" className="hvt-btn hvt-btn--icon-left" onClick={onAdd}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>
-          Add Filter
+          Filter
         </button>
         <span className="hvt-grow" />
         <button type="button" className="hvt-btn" disabled={model.items.length === 0} onClick={() => onChange({ ...model, items: [] })}>Clear All</button>
@@ -1640,7 +1651,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
           {advanced && (
             <button type="button" className="hvt-btn hvt-btn--icon-left" style={{ alignSelf: "flex-start" }}
                     onClick={() => setDraft((d) => ({ ...d, items: [...d.items, blank(field)] }))}>
-              <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>Add condition
+              <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>Condition
             </button>
           )}
         </div>
@@ -2235,6 +2246,7 @@ function Banner({ kind, text, action, onClose, closing }) {
  * ------------------------------------------------------------------ */
 export function DataTable({
   title = "Table Title",
+  description = null, // optional text shown at the right of the title
   columns: columnsProp = DEFAULT_COLUMNS,
   rows = DEFAULT_ROWS,
   showTitle = true,
@@ -2712,7 +2724,7 @@ export function DataTable({
     "--component-containerradius": `${containerRadius}px`,
     "--hvt-row-gap": `${rowGap}px`,
     "--hvt-row-h": density === "compact" ? "28px" : density === "balanced" ? "40px" : "48px",
-    "--hvt-head-h": "56px",
+    "--hvt-head-h": density === "compact" ? "32px" : "56px", // Compact: the column titles bar about 40% lower
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
     "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),
@@ -3575,7 +3587,7 @@ export function DataTable({
         <button type="button" className="hvt-btn hvt-btn--icon-left" data-filter-trigger
                 onClick={() => openPanel("bar", true)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>
-          Add Filter
+          Filter
         </button>
       )}
       <div className="hvt-chips">
@@ -3893,7 +3905,12 @@ export function DataTable({
 
       {hasHeader && (
         <div className="hvt-titlebar">
-          {showTitle && <h3 className="hvt-title">{title}</h3>}
+          {(showTitle || description) && (
+            <div className="hvt-titlewrap">
+              {showTitle && <h3 className="hvt-title">{title}</h3>}
+              {description && <span className="hvt-titledesc">{description}</span>}
+            </div>
+          )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}
           <div className="hvt-actions-bar">
             {(searchEnabled || showFilterButton) && (
@@ -3931,7 +3948,7 @@ export function DataTable({
                 {editable && showAdd && (
                   <button type="button" className="hvt-btn hvt-btn--icon-left" onClick={startAdd}
                           disabled={!!editing && editing.mode === "add"}>
-                    <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>{addLabel}
+                    <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>{plusLabel(addLabel)}
                   </button>
                 )}
                 {showMaximize && (
@@ -4268,8 +4285,12 @@ const SCREEN_CSS = `
    The title row and the controls row share one background, so they read as one bar. */
 .hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.24)}
 .hvs[data-theme="wicked"]{--hvs-sp:rgba(255,255,255,.09);--hvs-sp2:rgba(255,255,255,.0756);--hvs-insh:rgba(0,0,0,.65)} /* sp2: inside the multibuttons and dropdowns, 16% fainter */
-.hvs-head{margin:-24px -24px 0;padding:18px 24px 8px;background:var(--hvs-bar)}
-.hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
+.hvs-head{position:relative;z-index:1;margin:-24px -24px 0;padding:18px 24px 8px;background:transparent}
+.hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:transparent;isolation:isolate}
+/* the control panel is one container: a single grey layer behind the title row and the controls, as tall as both (measured in App) */
+.hvs{position:relative}
+.hvs::before{content:"";position:absolute;left:0;right:0;top:0;height:var(--hvs-top-h,0px);background:var(--hvs-bar);pointer-events:none;z-index:0;transition:opacity .32s cubic-bezier(.4,0,.2,1)}
+.hvs.is-ctl-closed::before,.hvs.is-ctl-folding::before{opacity:0} /* folded: the grey container fades away */
 .hvs-ctl .hvs-databar{margin-bottom:0}
 .hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 3.74px,transparent 3.74px 7.49px);box-shadow:inset 0 1px 4px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (3.74px bands and gaps), and a soft inner shadow */
 /* (16:24) no stripe band at the foot of the control bar */
@@ -4289,8 +4310,8 @@ const SCREEN_CSS = `
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]:disabled:not([data-unpick])::before{display:none} /* chosen but disabled: no block */
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
   background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1),background-color .32s cubic-bezier(.4,0,.2,1)}
-.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px;background-color:transparent} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
+.hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
+.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
@@ -4407,6 +4428,8 @@ const SCREEN_CSS = `
   --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
+/* switching Dawn / Wicked: every colour eases over to the new theme (only while switching, so hovers stay quick) */
+.hvs.is-theming,.hvs.is-theming *,.hvs.is-theming *::before,.hvs.is-theming *::after{transition:background-color .6s ease,color .6s ease,border-color .6s ease,box-shadow .6s ease,fill .6s ease,stroke .6s ease,outline-color .6s ease !important}
 .hvs-cf-l{color:var(--ctl-label)} /* the control titles, a step darker than the hint text so they read easily */
 .hvs-pkgbtn{padding:0 12px;background:transparent;color:var(--ctl-text);font-weight:400} /* React Package: no background, normal text, like a plain text button; the download arrow and its hover drop stay */
 .hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-hover)}
@@ -4632,7 +4655,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 22:35"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 23:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4781,7 +4804,7 @@ const DEFAULT_OPEN = { global: true, features: true, "f-layout": true, "f-rows":
 const DEFAULT_CFG = {
   theme: "dawn", product: "vsp360", version: "6.3.2.1", component: "table",
   size: "comfortable", selectable: false, expandable: false,
-  showTitle: true, titleText: null, showPagination: true, pageSize: 5, rowGap: 12, colGap: 0, cellPad: 16, rowPad: 0, tablePad: 16, rowH: null, headH: null,
+  showTitle: true, showDescription: false, titleText: null, showPagination: true, pageSize: 5, rowGap: 12, colGap: 0, cellPad: 16, rowPad: 0, tablePad: 16, rowH: null, headH: null,
   showMaximize: true, showMoreOptions: true,
   showFilterBar: false, filterPanelStyle: "header",
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
@@ -5266,6 +5289,35 @@ export default function App() {
   const benchRef = useRef(null);
   const ctlBusy = useRef(false);
   const ctlOpening = useRef(null);
+  /* a smooth change of theme (runs before anything measures the page, so the colours can still transition) */
+  const themeSeen = useRef(null);
+  useLayoutEffect(() => {
+    const root = benchRef.current;
+    if (!root) return undefined;
+    if (themeSeen.current === null) { themeSeen.current = cfg.theme; return undefined; }
+    if (themeSeen.current === cfg.theme) return undefined;
+    themeSeen.current = cfg.theme;
+    root.classList.add("is-theming");
+    const t = setTimeout(() => root.classList.remove("is-theming"), 700);
+    return () => clearTimeout(t);
+  }, [cfg.theme]);
+  /* one container: the grey layer behind the title row and the controls follows their height (also while folding) */
+  useLayoutEffect(() => {
+    const root = benchRef.current;
+    if (!root || typeof ResizeObserver === "undefined") return undefined;
+    const head = root.querySelector(".hvs-head"), ctl = root.querySelector(".hvs-ctl");
+    const fit = () => {
+      const top = root.getBoundingClientRect().top;
+      const el = ctl && ctl.offsetParent ? ctl : head;
+      if (el) root.style.setProperty("--hvs-top-h", `${Math.ceil(el.getBoundingClientRect().bottom - top)}px`);
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    if (head) ro.observe(head);
+    if (ctl) ro.observe(ctl);
+    window.addEventListener("resize", fit);
+    return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
+  }); // every render: the page and its controls may have changed
   /* the control multibuttons choose on mouse press, not on release: the press runs the button's click at once,
      and the click the browser sends on release is dropped (keyboard Enter / Space still work as clicks) */
   useEffect(() => {
@@ -5748,7 +5800,7 @@ export default function App() {
               {/* component parts: what the table is made of */}
               <CtlField label="Header">
                 <div className="hvs-seg" role="group" aria-label="Header (select several)">
-                  {[["showTitle", "Title"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
+                  {[["showTitle", "Title"], ["showDescription", "Description"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
                     const on = !!cfg[key];
                     if (key === "showFilterButton") return (
                       <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true })}
@@ -5816,6 +5868,7 @@ export default function App() {
               theme={cfg.theme}
               tokens={{ ...tokenStyle, ...layoutVars }}
               showTitle={cfg.showTitle}
+              description={cfg.showDescription ? `${dataRows.length} ${ds.label.toLowerCase()}` : null}
               showFilterBar={cfg.showFilterBar}
               onFilterBarChange={(v) => set({ showFilterBar: v })}
               showPagination={cfg.showPagination}

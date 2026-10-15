@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.6 — 2026-10-15
+
+- `description`: optional text at the right of the title.
+- Buttons with the + icon drop the word "Add" ("+ Storage System", "+ Filter", "+ Condition"); `addLabel` can still say "Add …", the table shortens it.
+- Compact density: the pager is compact too (12px text, 24px controls), and the column titles bar is 32px high (was 56px).
+- No outline on the Filters button and the added filters (0.4.5).
+
 ## 0.4.5 — 2026-10-15
 
 - The filter bar's Filters button and the added filters have no outline; only their hovers show.

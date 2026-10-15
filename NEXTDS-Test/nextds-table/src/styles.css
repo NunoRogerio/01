@@ -147,7 +147,9 @@
 /* title bar */
 .hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
-.hvt-title{flex:1;min-width:0;font-size:16px;font-weight:700;line-height:24px;
+.hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px}
+.hvt-titledesc{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400;line-height:21px;color:var(--content-placeholder)} /* the description, right of the title */
+.hvt-title{flex:0 1 auto;min-width:0;font-size:16px;font-weight:700;line-height:24px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
 /* quick filter (search): trigger + control + clear, modelled on MUI X QuickFilter */
 .hvt-qf{display:flex;align-items:center;flex:none;width:32px;height:32px;overflow:hidden;
@@ -336,6 +338,13 @@
 .hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center}
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
+/* Compact: the pager is compact too: every element at the caption's 12px text, 24px controls */
+.hvt-root.is-compact .hvt-pager,.hvt-root.is-compact .hvt-pager-left{height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
+.hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pager .hvt-icon svg{width:24px;height:24px}
+.hvt-root.is-compact .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
 .hvt-pagenum{position:relative}
 .hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
   border:1px solid var(--outline);border-radius:var(--component-inputradius);box-sizing:border-box;

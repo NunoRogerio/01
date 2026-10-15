@@ -82,6 +82,8 @@ const MULTI_OPS = new Set(["isAnyOf", "isNoneOf"]); // includes / excludes a lis
 const opLabel = (type, op) => (OPERATORS[type] || OPERATORS.string).find((o) => o[0] === op)?.[1] ?? op;
 const defaultValue = (op) => (MULTI_OPS.has(op) ? [] : "");
 const typeOf = (col) => (col && col.type) || "string";
+/* a button that shows the + icon does not repeat "Add" in its label: "Add Storage System" reads "+ Storage System" */
+const plusLabel = (label) => { const t = String(label || "").replace(/^add\s+/i, ""); return t ? t.charAt(0).toUpperCase() + t.slice(1) : label; };
 
 const itemIsComplete = (item, col) => {
   if (!col) return false;
@@ -526,7 +528,7 @@ function FilterPanel({
       <div className="hvt-panel-foot">
         <button type="button" className="hvt-btn hvt-btn--icon-left" onClick={onAdd}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>
-          Add Filter
+          Filter
         </button>
         <span className="hvt-grow" />
         <button type="button" className="hvt-btn" disabled={model.items.length === 0} onClick={() => onChange({ ...model, items: [] })}>Clear All</button>
@@ -766,7 +768,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
           {advanced && (
             <button type="button" className="hvt-btn hvt-btn--icon-left" style={{ alignSelf: "flex-start" }}
                     onClick={() => setDraft((d) => ({ ...d, items: [...d.items, blank(field)] }))}>
-              <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>Add condition
+              <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>Condition
             </button>
           )}
         </div>
@@ -1361,6 +1363,7 @@ function Banner({ kind, text, action, onClose, closing }) {
  * ------------------------------------------------------------------ */
 export function DataTable({
   title = "Table Title",
+  description = null, // optional text shown at the right of the title
   columns: columnsProp = NO_ROWS,
   rows = NO_ROWS,
   showTitle = true,
@@ -1838,7 +1841,7 @@ export function DataTable({
     "--component-containerradius": `${containerRadius}px`,
     "--hvt-row-gap": `${rowGap}px`,
     "--hvt-row-h": density === "compact" ? "28px" : density === "balanced" ? "40px" : "48px",
-    "--hvt-head-h": "56px",
+    "--hvt-head-h": density === "compact" ? "32px" : "56px", // Compact: the column titles bar about 40% lower
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
     "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),
@@ -2701,7 +2704,7 @@ export function DataTable({
         <button type="button" className="hvt-btn hvt-btn--icon-left" data-filter-trigger
                 onClick={() => openPanel("bar", true)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>
-          Add Filter
+          Filter
         </button>
       )}
       <div className="hvt-chips">
@@ -3018,7 +3021,12 @@ export function DataTable({
 
       {hasHeader && (
         <div className="hvt-titlebar">
-          {showTitle && <h3 className="hvt-title">{title}</h3>}
+          {(showTitle || description) && (
+            <div className="hvt-titlewrap">
+              {showTitle && <h3 className="hvt-title">{title}</h3>}
+              {description && <span className="hvt-titledesc">{description}</span>}
+            </div>
+          )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}
           <div className="hvt-actions-bar">
             {(searchEnabled || showFilterButton) && (
@@ -3056,7 +3064,7 @@ export function DataTable({
                 {editable && showAdd && (
                   <button type="button" className="hvt-btn hvt-btn--icon-left" onClick={startAdd}
                           disabled={!!editing && editing.mode === "add"}>
-                    <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>{addLabel}
+                    <span className="hvt-icon" aria-hidden="true">{Icons.Plus}</span>{plusLabel(addLabel)}
                   </button>
                 )}
                 {showMaximize && (

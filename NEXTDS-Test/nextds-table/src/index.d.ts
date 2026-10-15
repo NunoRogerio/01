@@ -85,6 +85,8 @@ export interface TableError {
 
 export interface EmptyState {
   title?: string;
+  /** Text at the right of the title (e.g. a count or a short note). */
+  description?: ReactNode;
   message?: string;
   actions?: Array<{ label: string; onClick: () => void }>;
 }
