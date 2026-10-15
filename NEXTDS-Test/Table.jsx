@@ -240,7 +240,7 @@ const CSS = `
   background:transparent;transition:background-color .15s ease;
   border:1px solid var(--outline);border-radius:var(--component-inputradius);
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
-.hvt-chip:hover{background:var(--container-secondary-background)} /* hover turns it white; the 1px border stays as it is */ /* an added filter has no fill, like the closed Filters button; on hover it turns white */
+/* an added filter has no fill, like the closed Filters button, and does not change on hover: only its X and its label show their own hover */
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
@@ -267,21 +267,26 @@ const CSS = `
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
 /* header (title bar and filter bar): buttons hover with their fill only, no outline */
 .hvt-titlebar :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-qf-trigger):not(.is-open):hover,.hvt-filterbar :is(.hvt-btn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
-.hvt-filterbar .hvt-fgbtn:not(.is-hot):hover{box-shadow:none !important}
 /* pagination: buttons and inputs hover with their fill only, no outline */
 .hvt-pager :is(button,.hvt-mbtn,.hvt-icon):hover{box-shadow:none !important}
 /* experiment: every button inside the table body hovers with its fill only, no outline */
 .hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
-/* a row menu (…) once opened: white with its outline; the outline stays while it is open, hover only changes the fill */
-.hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover,.hvt-pager .hvt-mbtn.is-open,.hvt-pager .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
-.hvt-group .hvt-mbtn.is-open,.hvt-pager .hvt-mbtn.is-open{background:var(--page-background) !important}
-.hvt-pager .hvt-mbtn.is-open:hover{background:var(--container-hover-background) !important}
-.hvt-pager .hvt-mbtn[data-hoveroff],.hvt-pager .hvt-mbtn[data-hoveroff]:hover{background:var(--page-background) !important} /* rows per page: same hover as the row menu (…) */
-.hvt-pager .hvt-mbtn[data-hoveroff]:not(.is-open),.hvt-group .hvt-mbtn[data-hoveroff]:not(.is-open){background:transparent !important} /* closed again by the click: no hover until the pointer leaves */
-.hvt-group .hvt-mbtn.is-open:hover{background:var(--container-hover-background) !important} /* open: only the pointer on the button itself hovers it */
-.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open:not(:hover){background:var(--page-background) !important}
-/* right after the click it stays white: its hover comes back only once the pointer has left it and returned */
-.hvt-group .hvt-mbtn[data-hoveroff],.hvt-group .hvt-mbtn[data-hoveroff]:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]{background:var(--page-background) !important}
+/* every dropdown button (row menu …, rows per page, More options, Filters, the filter selects):
+   hover changes the fill only and keeps the button's own border (1px on the outlined ones);
+   once clicked it is white with its 1px outline, which stays while open; hover then changes only the fill,
+   and only after the pointer has left the button and come back (data-hoveroff marks the click) */
+.hvt-mbtn:hover:not(:disabled):not(.is-open):not(.is-hot){box-shadow:none !important}
+.hvt-mb--secondary .hvt-mbtn:hover:not(:disabled):not(.is-open):not(.is-hot){box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-mbtn.is-open:not(.is-hot),.hvt-mbtn.is-open:not(.is-hot):hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-mbtn.is-open:not(.is-hot){background:var(--page-background) !important}
+.hvt-mbtn.is-open:not(.is-hot):hover{background:var(--container-hover-background) !important}
+.hvt-mbtn.is-open[data-hoveroff]:not(.is-hot),.hvt-mbtn.is-open[data-hoveroff]:not(.is-hot):hover{background:var(--page-background) !important}
+.hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
+.hvt-mb--secondary .hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:var(--container-secondary-background) !important}
+.hvt-filterbar .hvt-fgbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
+.hvt-mbtn[data-hoveroff]:focus-visible{outline:none !important} /* a mouse click shows no focus ring */
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn:not(.is-open){background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]:not(.is-open){background:transparent !important}
 /* hovering a row turns its background white (the page background) */
 .hvt-root .hvt-group:not(.is-selected):hover{background:var(--page-background);--hvt-row-bg:var(--page-background)}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
@@ -1076,7 +1081,8 @@ function MenuButton({
       <button ref={btnRef} type="button" disabled={disabled}
               className={`hvt-mbtn${iconOnly ? " is-icon" : ""}${open ? ` is-open is-${dir}` : ""}`}
               aria-haspopup={isList ? "listbox" : "menu"} aria-expanded={open} aria-label={ariaLabel}
-              onClick={(e) => { e.currentTarget.setAttribute("data-hoveroff", ""); if (open) setOpen(false); else openMenu(); }}
+              onPointerDown={(e) => e.currentTarget.setAttribute("data-hoveroff", "")}
+              onClick={() => { if (open) setOpen(false); else openMenu(); }}
               onMouseLeave={(e) => e.currentTarget.removeAttribute("data-hoveroff")}
               onKeyDown={(e) => { if (e.key === "ArrowDown" && !open) { e.preventDefault(); openMenu(); } }}>
         {icon && <span className="hvt-mico" aria-hidden="true">{icon}</span>}
@@ -2237,6 +2243,7 @@ export function DataTable({
   const [trigHot, setTrigHot] = useState(false); // a dragged panel is over the Filters button: the button shows its hover, and releasing snaps the panel home // the panel is following a drag that started on the Filters button
   const onTrigDown = (e) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.currentTarget.setAttribute("data-hoveroff", "");
     const d = { id: e.pointerId, sx: e.clientX, sy: e.clientY, active: false, base: panel && fgDetached ? fgPos : { x: 0, y: 0 }, dx: 0, dy: 0 };
     const activate = () => { d.active = true; setTrigFollow(true); if (!panel) openPanel("bar", false); setFgDetached(true); setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy }); };
     d.timer = setTimeout(() => { if (trigRef.current === d && !d.active) activate(); }, 500);
@@ -3357,6 +3364,7 @@ export function DataTable({
                   aria-expanded={!!panel} aria-label="Filters" style={{ touchAction: "none" }}
                   onPointerDown={onTrigDown} onPointerMove={onTrigMove} onPointerUp={onTrigUp} onPointerCancel={onTrigUp}
                   onContextMenu={(e) => e.preventDefault()}
+                  onMouseLeave={(e) => e.currentTarget.removeAttribute("data-hoveroff")}
                   onClick={() => { if (trigSuppress.current) { trigSuppress.current = false; return; } if (panel) closeFilterPanel(); else openPanel("bar", false); }}>
             <span className="hvt-mico" aria-hidden="true">{Icons.Filter}</span>
             <span className="hvt-mlabel">Filters</span>
@@ -4310,7 +4318,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:49"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
