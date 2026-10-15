@@ -603,7 +603,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <section aria-label="Detections" style="display: {{evD}}; align-self: stretch; margin: 0 0 56px; flex-direction: column; flex-shrink: 0; text-align: left">   <!-- (Oct 13) right under the verification: the sources the decision rests on -->
         <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 8px"><h3 style="margin: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #1C1C1E">Detections</h3><span class="wf-note">{{evCount}}</span></span>
         <!-- One container per source: the satellite pass, the drone scan, then any forest camera, car cameras, phone cameras or 911 call -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin: 0">
+        <div style="display: flex; flex-direction: column; gap: 16px; margin: 0">
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
             <!-- (Oct 13, 08:22) one row per source: its type icon by the title; under it the image small (96px) with the description beside it -->
             <!-- (Oct 13, 14:07) structured as a chat card: a header (type icon, name, the FFW mark when it is one of the app's passive cameras, the

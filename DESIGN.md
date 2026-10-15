@@ -1994,3 +1994,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 14, 22:40) Opening from a map card: the still copy now sits beside the card in the same place of the map (same parent, classes and styles), so it is exactly the card (same width, nothing reflows); the live card is hidden under it. Supersedes the 18:10 copy laid over the page.
 - (Oct 14, 22:40) Every app frame (the incident inside its chat, the rising panel, the map under the menu) is width 1px with min-width 100%: iOS widened the frame to its content by a few pixels and the incident page sat off centre (22 px left, 13 px right).
 - Oct 15, 06:01: a tap anywhere on a map tooltip panel closes it (every kind: detections, candidates, fires, stations), with its usual fade back toward the marker; its buttons keep their own action.
+- Oct 15, 06:54: cards in the same list sit 16px apart, every list (detections, incident cards, notifications, pinned chat cards).

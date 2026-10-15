@@ -221,7 +221,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <h3 style="margin: 48px 0 0; font-size: 15px; font-weight: 600; line-height: 20px; color: #6E6E73">{{nearT}}</h3>
         <!-- (Oct 5, 06:49) one white card per fire, 8px apart: its marker, the place, its stage tag under it, distance and drive time, and an arrow to the right -->
         <sc-if value="{{noFires}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; padding: 16px; border-radius: 16px; background: #FFFFFF; box-shadow: none; font-size: 17px; line-height: 22px; color: #000000">{{noFiresTxt}}</p></sc-if>
-        <ul style="display: {{firesD}}; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none">
+        <ul style="display: {{firesD}}; flex-direction: column; gap: 16px; margin: 0; padding: 0; list-style: none">
           <sc-for list="{{fires}}" as="f" hint-placeholder-count="2">
             <!-- (Oct 5, 07:46) the incident card of the incidents list (Main): place and stage tag, then distance and drive time -->
             <li style="border-radius: 16px; box-shadow: none">
