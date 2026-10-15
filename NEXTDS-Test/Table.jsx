@@ -270,8 +270,11 @@ const CSS = `
 /* experiment: every button inside the table body hovers with its fill only, no outline */
 .hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
 /* a row menu (…) once opened: white with its outline; the outline stays while it is open, hover only changes the fill */
-.hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
-.hvt-group .hvt-mbtn.is-open{background:var(--page-background) !important}
+.hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover,.hvt-pager .hvt-mbtn.is-open,.hvt-pager .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-group .hvt-mbtn.is-open,.hvt-pager .hvt-mbtn.is-open{background:var(--page-background) !important}
+.hvt-pager .hvt-mbtn.is-open:hover{background:var(--container-hover-background) !important}
+.hvt-pager .hvt-mbtn[data-hoveroff],.hvt-pager .hvt-mbtn[data-hoveroff]:hover{background:var(--page-background) !important} /* rows per page: same hover as the row menu (…) */
+.hvt-pager .hvt-mbtn[data-hoveroff]:not(.is-open),.hvt-group .hvt-mbtn[data-hoveroff]:not(.is-open){background:transparent !important} /* closed again by the click: no hover until the pointer leaves */
 .hvt-group .hvt-mbtn.is-open:hover{background:var(--container-hover-background) !important} /* open: only the pointer on the button itself hovers it */
 .hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open:not(:hover){background:var(--page-background) !important}
 /* right after the click it stays white: its hover comes back only once the pointer has left it and returned */
@@ -1069,7 +1072,8 @@ function MenuButton({
       <button ref={btnRef} type="button" disabled={disabled}
               className={`hvt-mbtn${iconOnly ? " is-icon" : ""}${open ? ` is-open is-${dir}` : ""}`}
               aria-haspopup={isList ? "listbox" : "menu"} aria-expanded={open} aria-label={ariaLabel}
-              onClick={() => (open ? setOpen(false) : openMenu())}
+              onClick={(e) => { e.currentTarget.setAttribute("data-hoveroff", ""); if (open) setOpen(false); else openMenu(); }}
+              onMouseLeave={(e) => e.currentTarget.removeAttribute("data-hoveroff")}
               onKeyDown={(e) => { if (e.key === "ArrowDown" && !open) { e.preventDefault(); openMenu(); } }}>
         {icon && <span className="hvt-mico" aria-hidden="true">{icon}</span>}
         {!iconOnly && <span className="hvt-mlabel">{text}</span>}
@@ -4273,7 +4277,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:37"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:39"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
