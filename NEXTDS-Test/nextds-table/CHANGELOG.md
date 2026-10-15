@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 — 2026-10-15
+
+- Filter chips: the hovers of the X and of the label fill the chip to its edges.
+- Hovers on the filter bar (chips, Filters, Clear All) are white at 72%.
+
 ## 0.4.0 — 2026-10-15
 
 - A starting point for adapting the table: `npm run demo` (a live demo on `src/`), `examples/` (data adapter, server mode over REST, custom cells), `docs/ARCHITECTURE.md` (map of the code).
