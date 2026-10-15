@@ -1747,6 +1747,34 @@ export function DataTable({
     setPage(1);
     if (onFilterModelChange) onFilterModelChange(next);
   };
+  const modelNow = useRef(model);
+  modelNow.current = model;
+  /* removing an added filter with its x: the filter slides a little to the left and fades out while its place closes,
+     so the filters after it move in; then the filter is removed */
+  const removeChip = (id, el) => {
+    const drop = () => {
+      const bar = el && el.closest(".hvt-filterbar");
+      if (bar) { // the other filters already moved in: they start from where they are now, not glide again
+        const base = bar.getBoundingClientRect();
+        bar.querySelectorAll("[data-chip]").forEach((c) => {
+          if (c === el) return;
+          const r = c.getBoundingClientRect();
+          chipPos.current[c.getAttribute("data-chip")] = { x: r.left - base.left, y: r.top - base.top };
+        });
+      }
+      const m = modelNow.current; updateModel({ ...m, items: m.items.filter((x) => x.id !== id) });
+    };
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || !el.animate || reduce || el.hasAttribute("data-leaving")) { if (!el || !el.hasAttribute("data-leaving")) drop(); return; }
+    el.setAttribute("data-leaving", "");
+    const cs = getComputedStyle(el), w = el.offsetWidth, gap = parseFloat(getComputedStyle(el.parentElement).columnGap) || 0;
+    const edge = (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0);
+    const a = el.animate([
+      { opacity: 1, transform: "translateX(0)", width: `${w}px`, marginRight: "0px" },
+      { opacity: 0, transform: "translateX(-16px)", width: "0px", marginRight: `${-(gap + edge)}px` }, // its border stays: the margin takes it back
+    ], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+    a.onfinish = drop;
+  };
   const blankItem = () => {
     const col = columns[0];
     const op = OPERATORS[typeOf(col)][0][0];
@@ -2854,7 +2882,7 @@ export function DataTable({
                 <span className="hvt-chiplabel">{label}</span>
               </button>
               <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
-                      onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
+                      onClick={(e) => removeChip(it.id, e.currentTarget.closest(".hvt-chip"))}>
                 <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
               </button>
             </span>

@@ -585,6 +585,7 @@
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
 .hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
+.hvt-chip[data-leaving]{pointer-events:none;flex:none}
 /* hovering the x or the label outlines the whole filter, 2px in the hover colour, drawn inside its edge so nothing moves (the x keeps no fill while the label is hovered) */
 .hvt-filterbar .hvt-chip:has(.hvt-chipx:hover:not(:disabled)),.hvt-filterbar .hvt-chip:has(.hvt-chiptrigger:hover){outline:2px solid color-mix(in srgb,var(--page-background) 72%,transparent);outline-offset:-2px}
 

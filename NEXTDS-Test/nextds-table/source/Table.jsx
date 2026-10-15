@@ -597,6 +597,7 @@ const CSS = `
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
 .hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
+.hvt-chip[data-leaving]{pointer-events:none;flex:none}
 /* hovering the x or the label outlines the whole filter, 2px in the hover colour, drawn inside its edge so nothing moves (the x keeps no fill while the label is hovered) */
 .hvt-filterbar .hvt-chip:has(.hvt-chipx:hover:not(:disabled)),.hvt-filterbar .hvt-chip:has(.hvt-chiptrigger:hover){outline:2px solid color-mix(in srgb,var(--page-background) 72%,transparent);outline-offset:-2px}
 
@@ -2670,6 +2671,34 @@ export function DataTable({
     setPage(1);
     if (onFilterModelChange) onFilterModelChange(next);
   };
+  const modelNow = useRef(model);
+  modelNow.current = model;
+  /* removing an added filter with its x: the filter slides a little to the left and fades out while its place closes,
+     so the filters after it move in; then the filter is removed */
+  const removeChip = (id, el) => {
+    const drop = () => {
+      const bar = el && el.closest(".hvt-filterbar");
+      if (bar) { // the other filters already moved in: they start from where they are now, not glide again
+        const base = bar.getBoundingClientRect();
+        bar.querySelectorAll("[data-chip]").forEach((c) => {
+          if (c === el) return;
+          const r = c.getBoundingClientRect();
+          chipPos.current[c.getAttribute("data-chip")] = { x: r.left - base.left, y: r.top - base.top };
+        });
+      }
+      const m = modelNow.current; updateModel({ ...m, items: m.items.filter((x) => x.id !== id) });
+    };
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || !el.animate || reduce || el.hasAttribute("data-leaving")) { if (!el || !el.hasAttribute("data-leaving")) drop(); return; }
+    el.setAttribute("data-leaving", "");
+    const cs = getComputedStyle(el), w = el.offsetWidth, gap = parseFloat(getComputedStyle(el.parentElement).columnGap) || 0;
+    const edge = (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0);
+    const a = el.animate([
+      { opacity: 1, transform: "translateX(0)", width: `${w}px`, marginRight: "0px" },
+      { opacity: 0, transform: "translateX(-16px)", width: "0px", marginRight: `${-(gap + edge)}px` }, // its border stays: the margin takes it back
+    ], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+    a.onfinish = drop;
+  };
   const blankItem = () => {
     const col = columns[0];
     const op = OPERATORS[typeOf(col)][0][0];
@@ -3777,7 +3806,7 @@ export function DataTable({
                 <span className="hvt-chiplabel">{label}</span>
               </button>
               <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
-                      onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
+                      onClick={(e) => removeChip(it.id, e.currentTarget.closest(".hvt-chip"))}>
                 <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
               </button>
             </span>
@@ -4835,7 +4864,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 04:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 05:15"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
