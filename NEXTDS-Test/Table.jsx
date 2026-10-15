@@ -4091,7 +4091,12 @@ const SCREEN_CSS = `
 .hvs-searchroot{min-height:420px}
 .hvs-searchout{margin:24px 0 0}
 .hvs-pkgbtn{height:28px;margin-left:auto;padding:0 16px;border:0;background:#1f1f1f;color:#fff;font:inherit;font-size:12px;font-weight:600;line-height:18px;cursor:pointer}
-.hvs-pkgbtn:hover{background:#3a3a3a}
+.hvs-pkgbtn:hover:not(:disabled){background:#3a3a3a}
+.hvs-pkgbtn:disabled{cursor:default}
+.hvs-pkglabel{display:inline-grid}
+.hvs-pkglabel[data-busy]{color:transparent}
+.hvs-pkglabel[data-busy]::after{content:"Loading…";grid-area:1 / 1;color:#fff;text-align:center} /* the button keeps its size; only the label becomes Loading… */
+.hvs-pkglabel::after{grid-area:1 / 1}
 .hvs-pkgbtn:focus-visible{outline:2px solid var(--cl-focus);outline-offset:2px}
 .hvs-pkg-scrim{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.32)}
 .hvs-pkg{width:min(560px,100%);display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--cl-surface);color:var(--cl-text);box-shadow:var(--cl-shadow);font-family:var(--cl-font)}
@@ -4412,7 +4417,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:57"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 11:06"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4690,8 +4695,46 @@ function pkgSource() {
     .replace(/\nReactDOM\.createRoot[^\n]*\n?$/, "\n")
     .replace(/<\\\/script/g, "</script");
 }
+/* the package as a .zip (stored, no compression): Table.jsx, index.js, package.json, README.md */
+const CRC_TABLE = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = (b) => { let c = 0xffffffff; for (let i = 0; i < b.length; i++) c = CRC_TABLE[(c ^ b[i]) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+function makeZip(files) {
+  const enc = new TextEncoder(), parts = [], central = [];
+  let offset = 0;
+  const u16 = (v) => [v & 0xff, (v >>> 8) & 0xff], u32 = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
+  files.forEach(({ name, text }) => {
+    const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db);
+    const head = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0)]);
+    parts.push(head, nb, db);
+    central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]), nb);
+    offset += head.length + nb.length + db.length;
+  });
+  const size = central.reduce((n, p) => n + p.length, 0);
+  const end = new Uint8Array([...u32(0x06054b50), ...u16(0), ...u16(0), ...u16(files.length), ...u16(files.length), ...u32(size), ...u32(offset), ...u16(0)]);
+  return new Blob([...parts, ...central, end], { type: "application/zip" });
+}
+function packageFiles(src) {
+  return [
+    { name: "nextds-table/Table.jsx", text: src },
+    { name: "nextds-table/index.js", text: 'export { DataTable } from "./Table.jsx";\n' },
+    { name: "nextds-table/package.json", text: JSON.stringify({ name: "nextds-table", version: "0.1.0", description: "The NEXT Design System table for React (themes Dawn and Wicked)", main: "index.js", module: "index.js", peerDependencies: { react: "^18.0.0", "react-dom": "^18.0.0" }, license: "UNLICENSED", private: true }, null, 2) + "\n" },
+    { name: "nextds-table/README.md", text: "# nextds-table\n\nThe NEXT Design System table as one React file. Needs React 18 and nothing else; themes Dawn and Wicked included.\n\n```jsx\n" + PKG_USAGE + "\n```\n\n`Table.jsx` also carries the Workbench test page as its default export; your app only needs `DataTable`.\n" },
+  ];
+}
+async function downloadPackage(src) {
+  const blob = makeZip(packageFiles(src));
+  const name = "nextds-table.zip";
+  let downloads = null;
+  try { downloads = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch (err) { downloads = null; }
+  if (downloads) { await downloads.save({ filename: name, data: blob }); return "saved"; }
+  const url = URL.createObjectURL(blob); // outside claude.ai (e.g. GitHub Pages) the browser saves it directly
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return "saved";
+}
 function PackageDialog({ onClose }) {
   const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
   const src = useMemo(pkgSource, []);
   const codeRef = useRef(null);
   useEffect(() => {
@@ -4712,13 +4755,19 @@ function PackageDialog({ onClose }) {
           <h2 id="hvs-pkg-t">React Package</h2>
           <button type="button" className="hvs-pkg-x" aria-label="Close" onClick={onClose}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
         </div>
-        <p className="hvs-pkg-p">The NEXT table as one React file: <b>Table.jsx</b>. It needs React 18 and nothing else. Themes Dawn and Wicked included.</p>
+        <p className="hvs-pkg-p">The NEXT table as a React package: <b>nextds-table.zip</b> with Table.jsx, index.js, package.json and a README. It needs React 18 and nothing else. Themes Dawn and Wicked included.</p>
         <pre className="hvs-pkg-code" ref={codeRef}>{PKG_USAGE}</pre>
         <div className="hvs-pkg-foot">
           <a className="hvs-pkg-link" href={PKG_URL} target="_blank" rel="noreferrer">Open on GitHub</a>
           <span className="hvs-grow" />
           <button type="button" className="hvs-pkg-btn is-quiet" onClick={() => copy(PKG_USAGE, "Usage")}>Copy usage</button>
-          <button type="button" className="hvs-pkg-btn" disabled={!src} onClick={() => copy(src, `Table.jsx (${Math.round(src.length / 1024)} KB)`)}>Copy Table.jsx</button>
+          <button type="button" className="hvs-pkg-btn is-quiet" disabled={!src} onClick={() => copy(src, `Table.jsx (${Math.round(src.length / 1024)} KB)`)}>Copy Table.jsx</button>
+          <button type="button" className="hvs-pkg-btn" disabled={!src || busy} onClick={async () => {
+            setBusy(true);
+            try { await downloadPackage(src); setMsg("nextds-table.zip saved."); }
+            catch (err) { setMsg(err && err.code === "declined" ? "Download cancelled." : "The download is not available here. Use Open on GitHub."); }
+            setBusy(false);
+          }}>{busy ? "Loading…" : "Download package"}</button>
         </div>
         <p className="hvs-pkg-msg" role="status">{msg}</p>
       </div>
@@ -5327,8 +5376,14 @@ export default function App() {
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
               <button type="button" className="hvt-btn" onClick={reset}>Reset settings</button>
-              <button type="button" className="hvs-pkgbtn" onClick={() => setPkgOpen(true)}>React Package</button>
-              {pkgOpen && <PackageDialog onClose={() => setPkgOpen(false)} />}
+              <button type="button" className="hvs-pkgbtn" disabled={pkgOpen} onClick={async () => {
+                const src = pkgSource();
+                if (!src) { setLast("React Package: open the page to download it"); return; }
+                setPkgOpen(true);
+                try { await downloadPackage(src); setLast("React Package → nextds-table.zip"); }
+                catch (err) { setLast(err && err.code === "declined" ? "React Package: download cancelled" : "React Package: download not available here"); }
+                setPkgOpen(false);
+              }}><span className="hvs-pkglabel" data-busy={pkgOpen ? "" : undefined}>React Package</span></button>
             </div>
           </div>
           </section>
