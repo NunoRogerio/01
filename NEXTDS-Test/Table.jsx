@@ -372,7 +372,8 @@ const CSS = `
   font:inherit;font-size:14px;font-weight:400;line-height:21px;transition:width .18s cubic-bezier(.4,0,.2,1)}
 @media (prefers-reduced-motion:reduce){.hvt-pagenum input{transition:none}}
 .hvt-pagenum input.is-filled{color:var(--content-primary)}
-.hvt-pagenum input:hover:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, no outline */
+.hvt-pagenum:not(.is-error) input:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg);border-color:transparent} /* at rest: the hover fill, no border */
+.hvt-pagenum:not(.is-error) input:hover:not(:disabled):not(:focus){border-color:var(--outline)} /* on hover the border shows */
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
 .hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
@@ -4732,7 +4733,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

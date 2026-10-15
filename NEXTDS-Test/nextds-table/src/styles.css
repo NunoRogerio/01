@@ -360,7 +360,8 @@
   font:inherit;font-size:14px;font-weight:400;line-height:21px;transition:width .18s cubic-bezier(.4,0,.2,1)}
 @media (prefers-reduced-motion:reduce){.hvt-pagenum input{transition:none}}
 .hvt-pagenum input.is-filled{color:var(--content-primary)}
-.hvt-pagenum input:hover:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, no outline */
+.hvt-pagenum:not(.is-error) input:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg);border-color:transparent} /* at rest: the hover fill, no border */
+.hvt-pagenum:not(.is-error) input:hover:not(:disabled):not(:focus){border-color:var(--outline)} /* on hover the border shows */
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
 .hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
