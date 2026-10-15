@@ -628,7 +628,7 @@ const CSS = `
   --hvt-head-gap:0px;
   --hvt-rows-page-h:calc(var(--hvt-page-rows) * (var(--hvt-row-h) + 1px) - 1px + 13px);
   --hvt-rows-max-h:calc(var(--hvt-visible-rows) * (var(--hvt-row-h) + 1px) - 1px + 13px)}
-.hvt-root.is-joined .hvt-content{gap:12px}
+.hvt-root.is-joined .hvt-content{gap:12px;padding-bottom:0} /* Balanced and Compact: the card sits 16px from the left, right and bottom edges */
 .hvt-card{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
 .hvt-card .hvt-row--head{background:transparent;border-radius:0;border-bottom:1px solid var(--hvt-divider)}
 .hvt-card .hvt-rows{gap:0;padding:8px 0 5px}
@@ -4748,7 +4748,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 01:52"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 02:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
