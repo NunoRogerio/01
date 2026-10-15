@@ -4180,6 +4180,7 @@ const SCREEN_CSS = `
 .hvs-side .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"],
 .hvs-side .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled),.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:var(--cl-raised);color:var(--cl-text);border-color:var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-side .hvs-segbtn:disabled,.hvs-ctl .hvs-segbtn:disabled{opacity:.4;cursor:default}
+.hvs-ctl .hvs-segbtn{transition:opacity .36s cubic-bezier(.3,0,.2,1)} /* turning disabled fades the option while its block closes, so the deselect stays visible */
 /* buttons */
 .hvs-side .hvt-btn,.hvs-ctl .hvt-btn,.hvs-headacts .hvt-btn{border-radius:8px;font-family:var(--cl-font);font-weight:500;color:var(--cl-text);background:transparent;box-shadow:none}
 .hvs-side .hvt-btn:hover:not(:disabled),.hvs-ctl .hvt-btn:hover:not(:disabled){background:var(--cl-hover);box-shadow:none}
@@ -4585,7 +4586,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:15"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
