@@ -4264,6 +4264,9 @@ const SCREEN_CSS = `
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
 .hvs-fopt:disabled:hover{background:transparent}
 .hvs-fwrap:has(.hvs-fpart){gap:0} /* "Filter:" and its type touch */
+.hvs-ctl .hvs-fwrap > .hvs-ftype::before{content:"";position:absolute;left:0;top:50%;width:4px;height:2px;margin-top:-1px;background:var(--cl-raised);
+  opacity:0;transform:scaleY(0);transition:opacity .36s,transform .36s cubic-bezier(.3,0,.2,1);pointer-events:none}
+.hvs-ctl .hvs-fwrap:has(.hvs-fpart.is-a[aria-pressed="true"]:not(:disabled)) > .hvs-ftype::before{opacity:1;transform:none} /* a 2px white line joins "Filter:" and its type while the filter is on */
 .hvs-ctl .hvs-seg:has(.hvs-fcaret){padding:4px} /* controls with a caret: 4px around, like the menu they open */
 .hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px;margin:-4px 0} /* the type block carries its own 4px all around: that is its distance from "Filter:" */
 .hvs-ctl .hvs-fwrap > .hvs-ftype > .hvs-fpop{left:0;top:100%;min-width:100%} /* the menu starts at the type's container edge and hangs from the track */
@@ -4543,7 +4546,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
