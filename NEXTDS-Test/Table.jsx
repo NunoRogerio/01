@@ -4281,8 +4281,8 @@ const SCREEN_CSS = `
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]:disabled:not([data-unpick])::before{display:none} /* chosen but disabled: no block */
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
   background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
-.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px} /* closed, the bar is just the title row */
+.hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1),background-color .32s cubic-bezier(.4,0,.2,1)}
+.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px;background-color:transparent} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
@@ -4624,7 +4624,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:50"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
