@@ -266,7 +266,7 @@ const CSS = `
 .hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
-.hvt-root.hover-row .hvt-group.is-clickable:hover .hvt-actions :is(.hvt-btn,.hvt-mbtn):not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
 .hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 2px var(--border-hover-selected)}
 .hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
 .hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
@@ -2496,7 +2496,7 @@ export function DataTable({
   /* Compact shows only the row menu (the three dots): View moves inside it */
   const viewInMenu = rowView && rowMenu && density === "compact";
   const viewBtn = rowView && !viewInMenu;
-  const actionCount = (viewBtn ? 1 : 0) + (rowMenu ? 1 : 0) + (expandable ? 1 : 0) + (selectable ? 1 : 0);
+  const actionCount = (viewBtn || rowMenu ? 1 : 0) + (expandable ? 1 : 0) + (selectable ? 1 : 0); // View and its row menu (…) count as one action
   const hoverMode = actionCount === 1 ? "hover-row" : actionCount > 1 ? "hover-buttons" : "hover-none";
   const hasActions = viewBtn || rowMenu;
   const singleAction = actionCount === 1
@@ -4224,7 +4224,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:14"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:16"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
