@@ -565,6 +565,7 @@ const CSS = `
 .hvt-bulk-count{display:flex;align-items:center;gap:4px;white-space:nowrap}
 .hvt-bulk-count b{font-weight:600;line-height:21px}
 .hvt-bulk-btn{padding:0 16px 0 8px}
+.hvt-bulk :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover{box-shadow:none !important} /* inside the table: hover shows the fill only, no border */
 .hvt-btn:disabled{color:var(--content-disabled);cursor:default}
 .hvt-btn:disabled:hover{background:transparent}
 
@@ -4319,7 +4320,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:04"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
