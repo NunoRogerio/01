@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 22:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 22:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4896,9 +4896,9 @@ function JellyHover({ rootRef }) {
       if (!st.raf) st.raf = requestAnimationFrame(tick);
     };
     const drop = (x, y, vx, vy, r) => st.drops.push({ x, y, vx, vy, r, life: 1 });
-    const colour = (t, a) => { // vivid lime <-> fluorescent magenta
-      const s = (Math.sin(t * 0.0009) + 1) / 2, k = s * s * (3 - 2 * s);
-      const r = Math.round(170 + (255 - 170) * k), g = Math.round(255 * (1 - k)), b = Math.round(0 + 230 * k);
+    const colour = (t, a) => { // fluorescent magenta, pulsing gently to a brighter magenta (the drips stay lime)
+      const s = (Math.sin(t * 0.0045) + 1) / 2, k = s * s * (3 - 2 * s);
+      const r = Math.round(235 + 20 * k), g = Math.round(0 + 90 * k), b = Math.round(200 + 45 * k);
       return `rgba(${r},${g},${b},${a})`;
     };
     function tick(now) {
