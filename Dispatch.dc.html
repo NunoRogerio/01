@@ -76,14 +76,14 @@
 /* (Oct 15, 15:05) the safety pin and Send share one striped track: the stripe pattern over its full height, a subtle inner shadow (blur only) */
 .wf-ul{background-color:rgba(118,118,128,0.12);background-image:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px)}
 html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px)}
-.wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
+.wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
 .wf-ul .wf-ulu{position:absolute;left:64px;right:64px;top:8px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .wf-ul .wf-ulb.on{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;cursor:pointer;pointer-events:auto}
 .wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,opacity .3s ease .35s}
 .wf-ul.full .wf-ulp{transition-delay:0s,0s,0s}
 /* (Oct 15, 15:22) the green Send rides with the pin: it waits just past the track's right end, 8px right of the pin, and the pin drags it in over the faded Send (supersedes the 15:15 reveal) */
-.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
+.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
 .wf-ul.unl .wf-ulg{transform:none}
 :root .wf-iadone,:root .wf-iadone:hover{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:transparent!important;cursor:pointer}   /* the sent attack, green, back to the map */
 /* (Oct 15, 15:22) locked, the track wears the unlocked grey stripe pattern 15% darker (20% until 15:31) (the yellow hazard stripes were dropped); right of
@@ -96,6 +96,8 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 /* (Oct 15, 15:33) the sequence, a second after unlocking: the pin fades (0.3 s); from 0.2 s Send grows to fill the track (0.45 s); filled,
    the track gives a small bounce (0.4 s). The inner shadow stays. Relocking runs it backwards: Send shrinks, then the pin fades back in */
 .wf-ul.full .wf-ulb,.wf-ul.full .wf-ulu{left:0;right:0;top:0;height:64px;transition-delay:.2s,.2s,.2s,.2s,0s,0s}
+:root .wf-ul.full .wf-ulb{height:64px!important}   /* (15:36) prefs.js holds every .btn at 48px: this one must grow */
+.wf-ul.unl .wf-ulg{visibility:hidden}   /* unlocked, the riding green hands over to Send itself (same place), so nothing stays behind as Send grows */
 .wf-ul.full{animation:wf-ulbn .4s cubic-bezier(.3,0,.3,1) .65s both}
 @keyframes wf-ulbn{0%{transform:scale(1)}40%{transform:scale(1.03)}75%{transform:scale(.995)}100%{transform:scale(1)}}
 .wf-ul.full .wf-ulp{opacity:0;pointer-events:none}
@@ -103,7 +105,7 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 /* (Oct 15, 15:25) locked, no faded Send: an instruction with an arrow in its place ("← Swipe to send"), dark grey on the
    darker stripes, from 16px to the pin; the pin drags the green Send in over it */
 .wf-ul:not(.unl) .wf-ulb,.wf-ul:not(.unl) .wf-ulu{display:none}
-.wf-ul .wf-ull{position:absolute;left:16px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:#3A3A3C;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;pointer-events:none}
+.wf-ul .wf-ull{position:absolute;left:16px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:#3A3A3C;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;pointer-events:none}
 .wf-ul .wf-ull>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .wf-ul .wf-ull>svg{flex:none}
 .wf-ul.unl .wf-ull{display:none}
