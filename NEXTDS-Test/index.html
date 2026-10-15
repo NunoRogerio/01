@@ -3951,8 +3951,8 @@ const SCREEN_CSS = `
 .hvs-cf > .hvs-cf-l{padding-left:0} /* control titles align left, with the edge of their control */
 .hvs-databar{row-gap:16px} /* 16px between two rows of controls */
 .hvs-fwrap{position:relative;display:inline-flex}
-.hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
-  background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
+.hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:8px;
+  background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 8px inside; aligned to the right of the block that opens it */
 .hvs-fopt{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px;padding:0 8px 0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
 .hvs-ftype{position:relative;display:inline-flex}
 .hvs-ctl .hvs-ftype > .hvs-fpop{left:0;right:auto;top:calc(100% + 3px);margin-top:0;border-radius:0 0 7px 7px !important;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
@@ -4247,7 +4247,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:49"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:50"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
