@@ -4627,7 +4627,7 @@ const SCREEN_CSS = `
 .hvs-pkg-msg{margin:0;min-height:18px;font-size:12px;line-height:18px;color:var(--cl-text-2)}
 .hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
 .hvs-cf > .hvs-cf-l{padding-left:0} /* control titles align left, with the edge of their control */
-.hvs-databar{row-gap:16px;column-gap:16px} /* 16px between control blocks, across and down */ /* 16px between two rows of controls */
+.hvs-databar{row-gap:16px;column-gap:24px} /* 24px between control blocks side by side, 16px between rows */ /* 16px between two rows of controls */
 /* the top bar: light grey, the full width of the page, with the title and the page's controls inside, and the stripes along its foot.
    The title row and the controls row share one background, so they read as one bar. */
 .hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.24)}
@@ -4667,7 +4667,8 @@ const SCREEN_CSS = `
 .hvs-ftype{position:relative;display:inline-flex}
 .hvs-fopt .hvs-ftag{margin-left:8px;color:var(--cl-text-3);font-weight:400}
 .hvs-ctl .hvs-ftype > .hvs-fpop{min-width:calc(100% + 8px);width:max-content} /* its options line up with the white block above and are at least as wide */
-.hvs-cf > .hvs-selseg{display:flex;align-self:stretch;margin-right:0} /* a select fills the width of its field */
+.hvs-cf > .hvs-selseg{display:flex;align-self:stretch;margin-right:0}
+.hvs-cf > .hvs-seg{margin-right:0} /* the blocks are spaced by the bar's gap only */ /* a select fills the width of its field */
 .hvs-selseg > .hvs-ftype{flex:1 1 auto}
 .hvs-ctl .hvs-selseg .hvs-fpart.is-solo{flex:1 1 auto;justify-content:space-between}
 .hvs-ctl .hvs-ftype > .hvs-fpop{left:-4px;right:auto;top:calc(100% + 4px);margin-top:0;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
@@ -4687,7 +4688,8 @@ const SCREEN_CSS = `
 .hvs-fwrap:has(.hvs-fpart){gap:0} /* "Filter:" and its type touch */
 /* (18:55) no joining bar between "Filter:" and its type */
 .hvs-ctl .hvs-seg:has(.hvs-fcaret){padding:4px} /* controls with a caret: 4px around, like the menu they open */
-.hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px 4px 4px 3px;margin:-4px 0} /* the type block carries its own 4px all around: that is its distance from "Filter:" */
+.hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px 4px 4px 3px;margin:-4px 0}
+.hvs-ctl .hvs-seg > .hvs-fwrap:last-child > .hvs-ftype{padding-right:0} /* last in its track: the track keeps its 4px on the right, like every track */ /* the type block carries its own 4px all around: that is its distance from "Filter:" */
 .hvs-ctl .hvs-fwrap > .hvs-ftype > .hvs-fpop{left:0;top:100%;min-width:100%} /* the menu starts at the type's container edge and hangs from the track */
 /* control bar options: semibold; "Filter:" + its type read as one option (round outer corners only),
    and the type, a choice inside that option, stays regular */
@@ -5008,7 +5010,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 07:26"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 07:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
