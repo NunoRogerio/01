@@ -287,6 +287,8 @@ const CSS = `
 .hvt-rows{display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
 .hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
+/* pagination: buttons and inputs hover with their fill only, no outline */
+.hvt-pager :is(button,.hvt-mbtn,.hvt-icon):hover{box-shadow:none !important}
 /* experiment: every button inside the table body hovers with its fill only, no outline */
 .hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
 /* a row menu (…) once opened: white with its outline; the outline stays while it is open, hover only changes the fill */
@@ -362,7 +364,7 @@ const CSS = `
   font:inherit;font-size:14px;font-weight:400;line-height:21px;transition:width .18s cubic-bezier(.4,0,.2,1)}
 @media (prefers-reduced-motion:reduce){.hvt-pagenum input{transition:none}}
 .hvt-pagenum input.is-filled{color:var(--content-primary)}
-.hvt-pagenum input:hover:not(:disabled):not(:focus){border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
+.hvt-pagenum input:hover:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, no outline */
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
 .hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
@@ -4293,7 +4295,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:36"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:37"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
