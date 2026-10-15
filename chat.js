@@ -55,7 +55,11 @@
   /* (Oct 11, 12:52) night: a candidate detected at night wears the moon instead of the asterisk (icD); n: a boolean, a chat, an incident or a live record */
   function candStage(conf, nt) { if (window.__wfConfNow && nt && typeof nt === 'object' && (nt.id || nt.incId)) conf = window.__wfConfNow(nt.id || nt.incId, conf); var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
     return Object.assign({}, STAGES[0], { en: n ? n + '% confidence' : 'Candidate', pt: n ? n + '% de confiança' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
-  function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf, ch) : STAGES[ch.stage] || STAGES[0]; }
+  /* (Oct 15, 15:52) the initial attack makes a candidate a fire, everywhere (header, map, lists, chat): First alert as it is sent,
+     Ongoing (the units en route) 5 s later, Crews on scene once the first unit on scene declares it; a smoke check leaves it a candidate */
+  function fireStage(c) { if (!c) return 0; var s = c.stage || 0; if (s || c.dismissed || c.kind !== 'cand' || !c.iaAt) return s; return Date.now() - c.iaAt >= 5000 ? 2 : 1; }
+  function iaGo(c) { if (!c || c.iaAt || c.chk || c.kind !== 'cand') return; c.iaAt = Date.now(); c.iaVt = vnow(c); markConfirmed(c); setTimeout(function () { try { emit(); } catch (e) {} }, 5100); }
+  function stageOf(ch) { var fs = fireStage(ch); return ch.dismissed ? DISMISSED : !fs ? candStage(ch.conf, ch) : STAGES[fs] || STAGES[0]; }
   /* (Oct 13, 14:10) a candidate's band shows when it was detected (as on its page), never when its chat opened */
   function detAt(c) { if (c.det) return c.det; try { var id = String(c.incId || c.id || ''), R = (window.__wfLiveCandsAll || []).concat(window.__wfLiveCands || []), r = R.find(function (q) { return q && String(q[2]) === id; }); if (r && r[9] && r[9].t) return Date.parse(r[9].t) || null; } catch (e) {} return null; }
   function candMeta(c) { try { var t = detAt(c) || since(c); if (!t) return ''; var d = new Date(t); return d.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t); } catch (e) { return ''; } }
@@ -393,7 +397,7 @@
       for (var i = 0; i < K.length; i++) if (id && D[K[i]]) return D[K[i]];
       var nm = String((window.__wfFireName ? window.__wfFireName(inc.place || '', '', inc.id) : inc.place) || '').toLowerCase().trim(); if (!nm) return null;
       var la = +inc.lat, lo = +inc.lon, best = null;
-      Object.keys(D).forEach(function (k) { var c = D[k]; if (!c || c.kind === 'dm' || String(c.place || '').toLowerCase().trim() !== nm) return; if (inc.kind === 'cand' ? c.kind !== 'cand' : (c.kind === 'cand' && !(c.stage >= 1))) return;
+      Object.keys(D).forEach(function (k) { var c = D[k]; if (!c || c.kind === 'dm' || String(c.place || '').toLowerCase().trim() !== nm) return; if (inc.kind === 'cand' ? c.kind !== 'cand' : (c.kind === 'cand' && !(fireStage(c) >= 1))) return;
         if (isFinite(la) && isFinite(lo) && la && c.lat) { var dy = (c.lat - la) * 111, dx = (c.lon - lo) * 111 * Math.cos(la * Math.PI / 180); if (dx * dx + dy * dy > 9) return; }
         if (!best || (best.closed && !c.closed) || (c.updated || 0) > (best.updated || 0)) best = c; });
       return best; } catch (e) { return null; } }
@@ -691,7 +695,7 @@
   /* the dispatcher's decision releases the held story: the initial attack (or the one engine of a smoke check) is sent from now */
   function dspGo(id, kind) { var db = load(), c = null; Object.keys(db.chats).forEach(function (k) { var x = db.chats[k]; if (x && String(x.incId) === String(id)) c = x; }); if (!c || !c.dspHold) return false;
     /* (Oct 14, 17:20) the initial attack the captain of a smoke check asked for: the rest of the response plan rolls, he declares the fire */
-    if (c.chkWait) { if (kind !== 'sent') return false; c.chkWait = false; c.dspHold = false; c.chk = false; c.dsp = 'sent';
+    if (c.chkWait) { if (kind !== 'sent') return false; c.chkWait = false; c.dspHold = false; c.chk = false; c.dsp = 'sent'; iaGo(c);
       var nG = 0; (c.forces || []).forEach(function (f) { if (f.st === 'standby' && nG < 1 && !busyElse(c, f)) { f.st = 'enroute'; nG++; } });
       var un = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
       card(c, { tag: { en: dcOf(c) + ' · Dispatch', pt: dcOf(c) + ' · Despacho' }, tagC: '#0A66CC', title: { en: 'Initial attack dispatched', pt: 'Despacho de 1.º alerta' },
@@ -711,7 +715,7 @@
     try { var A0 = depAcks(); A0[c.key] = Date.now(); localStorage.setItem(DAK, JSON.stringify(A0)); } catch (e) {}
     if (c.kind === 'cand') candRest(c, true); else fireRest(c);
     c.asgMine = false; assignMine(c); }
-  function candRest(c, live) { var P = c.people, E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
+  function candRest(c, live) { iaGo(c); var P = c.people, E = evidOf(c), us = isUS(c), ECC = dcOf(c), sent = c.stations.slice(0, 2).map(function (q) { return q.short; });
     {
       initialAttack(c);
       var units = (c.forces || []).filter(function (f) { return f.st === 'enroute'; }).map(function (f) { return ((f.veh || [])[0] || f.station) + ' (' + f.station + ')'; });
@@ -1276,7 +1280,7 @@
   /* (Oct 12) our station agreed to help on this incident (mutual aid): it is ours to work, wherever it is */
   /* (Oct 12, 10:08) one name rule everywhere: an incident once declared is a fire and is called so ("Temecula Fire", "Incêndio de
      Temecula"); a candidate keeps its place name; a direct message or a police chat keeps its own */
-  function nameOf(c) { if (!c) return ''; var fire = c.kind !== 'dm' && !c.police && !c.dismissed && (c.kind === 'fire' || c.stage >= 1);
+  function nameOf(c) { if (!c) return ''; var fire = c.kind !== 'dm' && !c.police && !c.dismissed && (c.kind === 'fire' || fireStage(c) >= 1);
     return window.__wfIncName ? window.__wfIncName(c.place || '', fire) : (c.place || ''); }
   function aided(c) { try { var A = JSON.parse(localStorage.getItem('wf-aid-assign') || '{}') || {}, id = String((c && c.incId) || ''), raw = id.replace(/^F-/, ''); return !!(A[id] || A[raw] || A['F-' + raw]); } catch (e) { return false; } }
   /* (Oct 12, 06:19) an incident is ours to work when it is in our station's area, when our station gave mutual aid there, when we
@@ -1818,7 +1822,8 @@
   function markDismissed(c) {
     if (c.kind !== 'cand') return;
     var d = {}; try { d = JSON.parse(sessionStorage.getItem('wf-dismissed') || '{}') || {}; } catch (e) {}
-    d[c.incId] = true; try { sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d }); try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
+    d[c.incId] = true; try { sessionStorage.setItem('wf-dismissed', JSON.stringify(d)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { dismissed: d });
+    /* (Oct 15) an initial attack that finds no fire: it stops being a fire too */ var f = {}; try { f = JSON.parse(sessionStorage.getItem('wf-confirmed') || '{}') || {}; } catch (e) {} if (f[c.incId]) { delete f[c.incId]; try { sessionStorage.setItem('wf-confirmed', JSON.stringify(f)); } catch (e) {} window.__wfMem.confirmed = f; } try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
   }
 
   // ---- a change of state moves the forces with it ---------------------------------------------------------------------
@@ -1870,7 +1875,7 @@
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else if (m.kind === 'arrive') arrive(c);
-        else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
+        else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { if (c.iaVt && !(c.hist || []).some(function (h) { return h.s === 1; })) { var v1 = Math.min(c.iaVt, vnow(c)); (c.hist = c.hist || []).push({ s: 1, vt: v1 }, { s: 2, vt: Math.min(v1 + 5000, vnow(c)) }); } settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
         else if (m.kind === 'cancelled') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, false); markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c); sys(c, 'Candidate cancelled · the crews are back in service', 'Candidato cancelado · equipas de volta ao serviço', 600, 0); } }
         else if (m.kind === 'capt' && m.a === 'release') { (c.forces || []).forEach(function (f) { if (LIVE[f.st] && ownForce(c, f)) f.st = 'released'; }); try { localStorage.setItem('wf-asg-next', String(Date.now())); } catch (e) {} }   /* the next assignment comes on the home screen (station.js) */   /* (Oct 12, 12:40) the commander releases the Captain's engine: back in service, no assignment */
         else if (m.kind === 'capt' && m.a === 'next') { if (!c.closed && !c.dismissed && c.stage === m.from) captMove(c, m.to); }   /* (Oct 12, 12:30) the commander accepts the Captain's recommendation */
@@ -1906,7 +1911,8 @@
 
   // ---- resolution: stats, and the achievement that goes into each firefighter's profile ---------------------------------
   function stageDurs(c) {
-    var H = c.hist || [], end = vnow(c);
+    var H = c.hist || [], end = vnow(c), fs = fireStage(c);
+    if (fs > (c.stage || 0) && c.iaVt) { H = H.concat([{ s: 1, vt: Math.min(c.iaVt, end) }]); if (fs >= 2) H.push({ s: 2, vt: Math.min(c.iaVt + 5000, end) }); }
     var D = H.map(function (h, i) { return { s: h.s, vt: h.vt, ms: Math.max(0, (H[i + 1] ? H[i + 1].vt : end) - h.vt), cur: !H[i + 1] && !c.closed }; });
     /* (Oct 12, 19:35) First alert is a moment (the declaration): its time, no duration. Ongoing (the crews en route) always has its time:
        when the engines rolled before the declaration (the dispatch center's initial attack), the drive is taken out of the candidate stage */
@@ -1999,7 +2005,7 @@
     return A.filter(function (k) { return by[k]; }).map(function (k) { return by[k]; }).concat(dms); }
   function assign(k) { var A = mineKeys().filter(function (x) { return x !== k; }); A.unshift(k); try { localStorage.setItem(AKEY, JSON.stringify(A.slice(0, MAXOWN))); } catch (e) {} remember(A.slice(0, MAXOWN)); }
   function fresh(c) { return c.msgs.filter(function (m) { return m.t > (c.seenAt || 0) && m.from !== 'me' && m.kind !== 'sys'; }).length; }   /* newer than the last look (the badge itself stays on while a candidate is undecided) */
-  function unread(c) { var open0 = c.stage === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
+  function unread(c) { var open0 = fireStage(c) === 0 && !c.dismissed && !c.closed;   /* (Oct 5) an undecided candidate keeps its count however often the chat is opened: only declaring or dismissing clears it */
     return c.msgs.filter(function (m) { return m.t > (open0 ? 0 : (c.seenAt || 0)) && m.from !== 'me' && m.kind !== 'sys' && !(m.kind === 'card' && !(m.actions && m.actions.length) && !m.req); }).length; }   /* (Oct 5) information cards (stage changes) are not counted: the badge counts what people said and what waits for a decision */
   function lastMsg(c) { for (var i = c.msgs.length - 1; i >= 0; i--) { var m = c.msgs[i]; if (m.kind !== 'stage') return m; } return null; }
   function typingRadio(c) { if (c.pending && Date.now() - c.pending.at < 45000) return false; var q = c.queue && c.queue[0]; return !!(q && q.m && q.m.kind === 'msg' && q.m.radio); }
@@ -2111,7 +2117,7 @@
   // spectrum (ANEPC code, else the feed's tone), the label the source gives (e.g. "45% contained"), and the stage's colours and icon
   /* (Oct 8, 23:09) one status everywhere: a fire with a chat is at the chat's stage (incident page, map, lists, notifications) */
   function chatStage(f) { try { var id = String((f && f.id) || ''); if (!id) return null; var c = chatFor(f.kind ? f : Object.assign({ kind: 'fire' }, f));
-      return c && !c.dismissed && c.stage >= 1 ? Math.min(7, c.stage) : null; } catch (e) { return null; } }
+      return c && !c.dismissed && fireStage(c) >= 1 ? Math.min(7, fireStage(c)) : null; } catch (e) { return null; } }
   function stageIdx(f) { var cs = chatStage(f); if (cs != null) return cs; var I0 = (f && f.info) || {};
     /* (Oct 12, 12:55) a simulated fire with no chat moves on with time, as a small fire does: First alert (15 min), Ongoing (to 30 min),
        Crews on scene (to 1 h 30), Resolving (to 4 h), Concluding (to 12 h), then Surveillance; never stuck on First alert */
@@ -2120,7 +2126,7 @@
     if (!I.sc && sc === 5 && I.startMs && Date.now() - I.startMs > 90 * MIN) sc = 6; return stageFromCode(sc); }
   function fireMeta(id, c) {   /* (Oct 10, 23:52) one stage button everywhere, the chat as the reference: the fire's burned area and time active as its chat has them ("8 ac. 1 d 7 h"); the live feed only for a fire with no chat */
       try { var PT = window.__wfLang === 'pt', raw = String(id || '').replace(/^f:/, ''); if (!c && raw) c = chatFor({ kind: 'fire', id: raw });
-        if (c && c.kind !== 'dm' && !c.dismissed && (c.kind === 'fire' || c.stage >= 1)) { var ha = areaNow(c) || c.ha || 0, us = isUS(c), end = c.closed ? (c.closedVt || vnow(c)) : vnow(c), t0 = since(c);
+        if (c && c.kind !== 'dm' && !c.dismissed && (c.kind === 'fire' || fireStage(c) >= 1)) { var ha = areaNow(c) || c.ha || 0, us = isUS(c), end = c.closed ? (c.closedVt || vnow(c)) : vnow(c), t0 = since(c);
           var size = ha ? (us && !PT ? Math.round(ha * 2.471) + ' ac' : (Math.round(ha * 10) / 10) + ' ha') : '', on = t0 ? fmtDur(Math.max(0, end - t0)) : ''; return [size, on].filter(Boolean).join('. '); }
         var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
         var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
@@ -2147,7 +2153,7 @@
     crest: function (c, station) {   // a station of this chat, by short or full name
       var st = (c.stations || []).find(function (x) { return x.short === station || x.name === station; }) || (c.forces || []).find(function (f) { return f.station === station; }) || {};
       return window.__wfCrest ? window.__wfCrest(st.ck || '', st.name || st.full || station) : { url: '', kind: 'drawn', label: '', color: '' };
-    }, stageDurs: stageDurs, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, candStage: candStage, candMeta: candMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
+    }, stageDurs: stageDurs, fireStage: fireStage, stats: stats, sizeClass: sizeClass, fmtDur: fmtDur, typingRadio: typingRadio, fireMeta: fireMeta, candStage: candStage, candMeta: candMeta, person: person, isUS: isUS, leadRole: leadRole, active: active, ensureAir: ensureAir,
     inScope: inScope,
     get: function (k) { var c = load().chats[k] || null; if (c && c.kind !== 'dm' && !(c.stations || []).length && !c.closed && !c.dismissed) teamLater(c); return c; },   /* (Oct 12) a chat still without its team gets it on the screen showing it */
     find: function (inc) { return chatFor(inc); },
@@ -2344,7 +2350,7 @@
     try { C0 = JSON.parse(sessionStorage.getItem('wf-confirmed') || '{}') || {}; } catch (e) {} try { D0 = JSON.parse(sessionStorage.getItem('wf-dismissed') || '{}') || {}; } catch (e) {}
     Object.keys(db.chats).forEach(function (k) { var c = db.chats[k]; if (!c || c.kind !== 'cand' || c.incId == null) return;
       if (c.dismissed) { if (!D0[c.incId]) { D0[c.incId] = true; add = true; } }
-      else if (c.stage >= 1 && !C0[c.incId]) { C0[c.incId] = (c.hist || []).filter(function (h) { return h.s === 1; }).map(function (h) { return h.vt; })[0] || Date.now(); add = true; } });
+      else if (fireStage(c) >= 1 && !C0[c.incId]) { C0[c.incId] = c.iaAt || (c.hist || []).filter(function (h) { return h.s === 1; }).map(function (h) { return h.vt; })[0] || Date.now(); add = true; } });
     if (add) { try { sessionStorage.setItem('wf-confirmed', JSON.stringify(C0)); sessionStorage.setItem('wf-dismissed', JSON.stringify(D0)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: C0, dismissed: D0 }); }
   } catch (e) {} })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', offerBoot); else offerBoot();

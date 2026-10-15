@@ -22,7 +22,7 @@
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1792067104"></script>
 <script src="live.js?v=1792066597"></script>
-<script src="chat.js?v=1792067104"></script>
+<script src="chat.js?v=1792076398"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -680,7 +680,7 @@ class Component extends DCLogic {
       items.forEach((q) => { const x = q.kind === 'fire' ? q.r[5] : q.r[7], y = q.kind === 'fire' ? q.r[6] : q.r[8]; if (x == null) return; x0 = Math.min(x0, x - 12); x1 = Math.max(x1, x + 12); y0 = Math.min(y0, y - 12); y1 = Math.max(y1, y + 12); });   /* the incidents too, so mutual aid is in view */
       z = Math.max(0.3, Math.min((W - 32 - 92) / Math.max(1, x1 - x0), (H - 96) / Math.max(1, y1 - y0))); fx = (x0 + x1) / 2 + 30 / z; fy = (y0 + y1) / 2 - 16 / z; }   /* clear of the map controls on the right and the legend at the top */
     /* (Oct 11, 09:04) the map shows what the list shows: a candidate its chat declared a fire is a fire on the map (its stage round), never a candidate */
-    const isFireNow = (q) => q.kind === 'cand' && q.c && !q.c.dismissed && q.c.stage >= 1;
+    const isFireNow = (q) => q.kind === 'cand' && q.c && !q.c.dismissed && (window.__wfChat && window.__wfChat.fireStage ? window.__wfChat.fireStage(q.c) : q.c.stage) >= 1;
     const onMap = items.map((q) => { if (!isFireNow(q)) return q; const r = q.r, lv = r[9] || {}; return Object.assign({}, q, { kind: 'fire', r: [r[0], r[1], r[2], q.c.place || r[3], '', r[7], r[8], null, (q.c && q.c.ha) || 0, Object.assign({}, lv, { resolved: !!q.c.closed, startMs: lv.t ? Date.parse(lv.t) : 0 })] }); });   /* (Oct 8) the team lead's area map shows every incident of the station's area too (his list stays his deployments) */
     const SRCN = { sat: 'Satellite' };
     const ign = onMap.filter((q) => q.kind === 'cand').map((q) => { const [st, co, id, place, conf, spec, ago, x, y, live] = q.r; const srcs = String(spec || '').split('|').map((p) => { const [k, ref] = p.split(':'); return { kind: k, ref: ref || '', label: (SRCN[k] || k) + (ref ? ' ' + ref : '') }; });
@@ -739,7 +739,7 @@ class Component extends DCLogic {
     const closedRows = (C && C.list ? C.list() : []).filter((c) => c && (!c.updated || Date.now() - c.updated < 7 * 864e5) && (((c.closed || c.dismissed) && c.kind !== 'dm') || (c.kind === 'dm' && c.done && !c.police)) && ((c.forces || []).some((f) => f.ck === ck0 || f.full === S.name) || !lead || c.dismissed) && (c.kind === 'dm' || !window.__wfChatIsOurs || window.__wfChatIsOurs(c, S))).map((c) => { if (c.kind === 'dm') { const P0 = (c.people || [])[0] || {}, OK = (window.__wfStTag || {}).ok || { bg: 'rgba(52,199,89,0.16)', fg: '#186B2D' }, ttl = c.req ? L('Help request. ', 'Pedido de ajuda. ') + (c.reg || P0.name) : c.help ? L('Help offered. ', 'Ajuda oferecida. ') + (c.reg || P0.name) : (c.reg || c.place);   /* (Oct 8, 22:52) a mutual aid conversation marked done */
         return { simD: 'block', ...MK.fire, moonD: 'none', sub2: '', sub2D: 'none', place: ttl, aria: ttl, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} }, _t: c.doneAt || 0, tagTxt: L('Done', 'Feito'), tagFg: OK.fg, tagBg: OK.bg, tagIc: 'M5 12.5l4.5 4.5L19 7.5', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.topic ? c.topic.place + '. ' : '') + L('Mutual aid.', 'Auxílio.') }; }
       const Sg = C.stageOf(c);
-      return { simD: simOf(c.incId), ...((c.kind === 'fire' || (c.stage >= 1 && !c.dismissed)) ? { mkFill: '#6F2B06', mkStroke: 'none', mkSw: '0' } : Object.assign({ _conf: c.conf || 0, _nt: c }, MK.cand))   /* (Oct 8, 22:21) a candidate declared a fire is listed as the fire it became; a dismissed one as a candidate */, moonD: 'none', sub2: '', sub2D: 'none', place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
+      return { simD: simOf(c.incId), ...((c.kind === 'fire' || ((window.__wfChat && window.__wfChat.fireStage ? window.__wfChat.fireStage(c) : c.stage) >= 1 && !c.dismissed)) ? { mkFill: '#6F2B06', mkStroke: 'none', mkSw: '0' } : Object.assign({ _conf: c.conf || 0, _nt: c }, MK.cand))   /* (Oct 8, 22:21) a candidate declared a fire is listed as the fire it became; a dismissed one as a candidate */, moonD: 'none', sub2: '', sub2D: 'none', place: c.place, aria: c.place, href: 'Chat.dc.html', go: () => { try { sessionStorage.setItem('wf-chat-open', c.key); } catch (e) {} },
         _t: c.closedVt || 0, tagTxt: PT ? Sg.pt : Sg.en, tagFg: Sg.c, tagBg: Sg.bg, tagIc: ((Sg && Sg.icD) || C.ICON[Sg.icon]) || '', tagIcD: 'block', aidD: 'none', aidTxt: '', sub: (c.closedVt ? new Date(c.closedVt).toLocaleDateString(PT ? 'pt-PT' : 'en-US', { day: 'numeric', month: 'short' }) + '. ' : '') + (c.dismissed ? L('No fire on the ground.', 'Sem incêndio no terreno.') : L('Resolution summary in the chat.', 'Resumo da resolução na conversa.')) }; });
     // (Oct 8, 17:35) Resolved loads lazily: the last 5 first (the newest closed incidents, then the latest duties done), and a swipe
     // towards the end of the list brings 5 more (no "Show more" button). Resolved items are a record: not dismissable, a duty can only be reopened.
