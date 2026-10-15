@@ -569,6 +569,12 @@ const CSS = `
 .hvt-btn:disabled{color:var(--content-disabled);cursor:default}
 .hvt-btn:disabled:hover{background:transparent}
 
+@keyframes hvtDetailIn{from{grid-template-rows:0fr}to{grid-template-rows:1fr}}
+@keyframes hvtDetailOut{from{grid-template-rows:1fr}to{grid-template-rows:0fr}}
+.hvt-detail-wrap{display:grid;grid-template-rows:1fr;overflow:hidden;animation:hvtDetailIn .2s cubic-bezier(.4,0,.2,1)} /* grows down; the details are already in place and get uncovered */
+.hvt-detail-wrap.is-closing{animation:hvtDetailOut .2s cubic-bezier(.4,0,.2,1) forwards} /* folds back up */
+.hvt-detail-wrap > .hvt-detail{min-height:0;overflow:hidden}
+@media (prefers-reduced-motion:reduce){.hvt-detail-wrap{animation:none}}
 .hvt-detail{margin:0;padding:0 16px 16px calc(8px + var(--hvt-lead) + 8px)}
 .hvt-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px;
   margin:0;padding:12px 0 0;border-top:1px solid var(--hvt-divider)}
@@ -2510,12 +2516,23 @@ export function DataTable({
     if (allSelected) allIds.forEach((id) => next.delete(id)); else allIds.forEach((id) => next.add(id));
     emitSelection(next);
   };
-  const toggleOpen = (id) =>
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
+  /* an expanded row grows its details down and folds them back up when it closes, like the dropdown menus */
+  const [closingIds, setClosingIds] = useState(() => new Set());
+  const toggleOpen = (id) => {
+    if (closingIds.has(id)) return;
+    if (expandedIds.has(id)) {
+      const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const drop = () => {
+        setExpandedIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
+        setClosingIds((prev) => { const next = new Set(prev); next.delete(id); return next; });
+      };
+      if (reduce) { drop(); return; }
+      setClosingIds((prev) => new Set(prev).add(id));
+      setTimeout(drop, 200);
+      return;
+    }
+    setExpandedIds((prev) => new Set(prev).add(id));
+  };
 
   const goTo = (n) => {
     const next = Math.min(pageCount, Math.max(1, n));
@@ -3466,7 +3483,8 @@ export function DataTable({
   );
 
   const renderRowGroup = (r, editClass) => {
-    const isOpen = expandable && expandedIds.has(r.id);
+    const isClosing = expandable && closingIds.has(r.id);
+    const isOpen = expandable && expandedIds.has(r.id) && !isClosing; // the chevron turns back as soon as it starts to close
     const isSel = selectable && selected.has(r.id);
     const label = r.name ?? `row ${r.id}`;
     return (
@@ -3514,8 +3532,8 @@ export function DataTable({
             ))}
           </div>}
         </div>
-        {isOpen && (
-          <div className="hvt-detail" id={`hvt-detail-${r.id}`} role="region" aria-label={`Details for ${label}`}>
+        {(isOpen || isClosing) && (
+          <div className={`hvt-detail-wrap${isClosing ? " is-closing" : ""}`}><div className="hvt-detail" id={`hvt-detail-${r.id}`} role="region" aria-label={`Details for ${label}`}>
             {renderDetail ? renderDetail(r) : (
               <dl className="hvt-detail-grid">
                 {Object.entries(r.details || {}).map(([k, v]) => (
@@ -3523,7 +3541,7 @@ export function DataTable({
                 ))}
               </dl>
             )}
-          </div>
+          </div></div>
         )}
       </div>
     );
@@ -4320,7 +4338,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:09"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
