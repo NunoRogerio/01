@@ -261,7 +261,8 @@ const CSS = `
 /* an added filter has no fill, like the closed Filters button, and does not change on hover: only its X and its label show their own hover */
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the label comes first and the x after it (its own square button); the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
-.hvt-chip .hvt-chipx{width:30px;height:auto;border-radius:0} /* the inner hovers fill the chip to its edges (no padding around them); the chip's rounded border clips them */
+.hvt-chip .hvt-chipx{width:30px;height:auto;border-radius:0}
+.hvt-chip .hvt-chipx .hvt-xspin{margin-left:-1px} /* half a pixel to the left: the x sits centred in its hover box, the same space left and right (a margin, so the hover turn does not flip it) */ /* the inner hovers fill the chip to its edges (no padding around them); the chip's rounded border clips them */
 .hvt-chip .hvt-chipx:hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 72%,transparent);box-shadow:none} /* on the green filter bar the hover is white at 72%: grey reads poorly there */
 .hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:auto;padding:0 4px 0 11px;border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
@@ -4785,7 +4786,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 03:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 03:48"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
