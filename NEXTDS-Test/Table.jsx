@@ -4192,16 +4192,13 @@ const SCREEN_CSS = `
 .hvs-databar{row-gap:16px} /* 16px between two rows of controls */
 /* the top bar: light grey, the full width of the page, with the title and the page's controls inside, and the stripes along its foot.
    The title row and the controls row share one background, so they read as one bar. */
-.hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588)}
-.hvs[data-theme="wicked"]{--hvs-sp:rgba(255,255,255,.09);--hvs-sp2:rgba(255,255,255,.0756)} /* sp2: inside the multibuttons and dropdowns, 16% fainter */
+.hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.16)}
+.hvs[data-theme="wicked"]{--hvs-sp:rgba(255,255,255,.09);--hvs-sp2:rgba(255,255,255,.0756);--hvs-insh:rgba(0,0,0,.5)} /* sp2: inside the multibuttons and dropdowns, 16% fainter */
 .hvs-head{margin:-24px -24px 0;padding:16px 24px 8px;background:var(--hvs-bar)}
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
 .hvs-ctl .hvs-databar{margin-bottom:0}
-.hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 5.94px,transparent 5.94px 11.88px)} /* the stripes inside the darker grey of the multibuttons and dropdowns */
-.hvs-ctl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:min(24px,25%);z-index:-1;pointer-events:none;
-  background:repeating-linear-gradient(-60deg,var(--hvs-sp) 0 5.94px,transparent 5.94px 11.88px);
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.016) 38.75%,rgba(0,0,0,.0625) 47.5%,rgba(0,0,0,.14) 56.25%,rgba(0,0,0,.25) 65%,rgba(0,0,0,.39) 73.75%,rgba(0,0,0,.56) 82.5%,rgba(0,0,0,.77) 91.25%,#000 100%);
-  mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.016) 38.75%,rgba(0,0,0,.0625) 47.5%,rgba(0,0,0,.14) 56.25%,rgba(0,0,0,.25) 65%,rgba(0,0,0,.39) 73.75%,rgba(0,0,0,.56) 82.5%,rgba(0,0,0,.77) 91.25%,#000 100%)} /* the firefighter stripes of the other apps, 30% narrower here: -60deg, 5.94px bands and gaps, black 7% (white 9% in Wicked), rising to full at the foot */
+.hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 4.16px,transparent 4.16px 8.32px);box-shadow:inset 0 1px 3px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (4.16px bands and gaps), and a soft inner shadow */
+/* (16:24) no stripe band at the foot of the control bar */
 .hvs-sec{margin-bottom:0}
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
@@ -4502,7 +4499,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:35"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 16:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
