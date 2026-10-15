@@ -153,13 +153,13 @@
     for (j = rows - 1; j >= 0; j--) { o += '<line x1="' + pl + '" x2="' + W + '" y1="' + ((rows - 1 - j) * rh + rh / 2) + '" y2="' + ((rows - 1 - j) * rh + rh / 2) + '" stroke="rgba(60,60,67,0.10)" stroke-dasharray="3 4"/>'; }
     for (j = 0; j < rows; j++) for (i = 0; i < cols; i++) { var f = v[q++] / mx; colSum[i] += f;
       var b = f <= 0 ? 0 : f < 0.35 ? 1 : f < 0.6 ? 2 : f < 0.82 ? 3 : 4, sz = f <= 0 ? 4 : Math.max(8, 22.1 * Math.sqrt(f)), cx = pl + i * cw + cw / 2, cy = (rows - 1 - j) * rh + rh / 2;
-      o += '<rect class="tsq an-b" data-bx="' + cx.toFixed(1) + '" data-by="' + cy.toFixed(1) + '" data-z="' + sz.toFixed(1) + '"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
-      o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% likelihood. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
+      o += '<rect class="tsq an-b" data-bx="' + cx.toFixed(1) + '" data-by="' + cy.toFixed(1) + '" data-z="' + sz.toFixed(1) + '"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% confidence. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - sz / 2).toFixed(1) + '" y="' + (cy - sz / 2).toFixed(1) + '" width="' + sz.toFixed(1) + '" height="' + sz.toFixed(1) + '" rx="4" style="fill:' + HEAT[b] + '"/>';
+      o += '<rect class="tslot"' + tipA((i * 2) + ':00 to ' + (i * 2 + 2) + ':00', (j * 20) + ' to ' + (j * 20 + 20) + '% confidence. ' + v[q - 1] + (v[q - 1] === 1 ? ' candidate.' : ' candidates.'), cx, cy - sz / 2) + ' x="' + (cx - cw / 2).toFixed(1) + '" y="' + (cy - rh / 2).toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + rh + '" fill="#000" fill-opacity="0" data-sq="1"/>'; }
     colSum.forEach(function (c, k) { if (c > best) { best = c; bi = k; } });
     var ty = function (y, t) { return '<text x="0" y="' + (y + 4) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13">' + t + '</text>'; };
     var lbl = [[0, '0 h'], [3, '6 h'], [6, '12 h'], [9, '18 h'], [12, '24 h']].map(function (a) { return '<text x="' + (pl + a[0] * cw).toFixed(1) + '" y="' + (H - 2) + '" style="fill:var(--wf-sec,#6E6E73)" font-size="13" text-anchor="' + (a[0] === 0 ? 'start' : a[0] === 12 ? 'end' : 'middle') + '">' + a[1] + '</text>'; }).join('');
     var leg = '<div style="display:flex;align-items:center;gap:8px;margin-top:16px;font-size:14px;line-height:16px;color:#6E6E73"><span>Fewer</span>' + HEAT.map(function (f, k) { var z = [8, 11, 15, 19, 22][k]; return '<span aria-hidden="true" style="width:' + z + 'px;height:' + z + 'px;flex-shrink:0;border-radius:4px;background:' + f + '"></span>'; }).join('') + '<span>More</span></div>';
-    return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and likelihood" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
+    return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and confidence" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
   }
 
   // ---- real data (Oct 12): the live feeds' fires and ignition candidates in the selected area and period ----------------
@@ -180,7 +180,7 @@
   /* (Oct 12) the panel's own words in Portuguese too (the cards are built as text, so they are translated here) */
   var PTW = { 'Ignition candidates vs burned area': 'Candidatos a ignição e área ardida', 'Burned area': 'Área ardida', 'Top 5 fires by area burned': 'Os 5 maiores incêndios', 'Fastest time to containment': 'Dominados mais depressa',
     'Fires by size class': 'Incêndios por classe de área', 'Fires by stage': 'Incêndios por fase', 'Resources on fires now': 'Meios nos incêndios agora', 'Detection sources': 'Fontes de deteção', 'Night vs day detections': 'Deteções de noite e de dia',
-    'Time of day vs likelihood': 'Hora do dia e probabilidade', 'Detections by hour of the day': 'Deteções por hora do dia', candidates: 'candidatos', candidate: 'candidato', fire: 'incêndio', fires: 'incêndios', 'fire now': 'incêndio agora', 'fires now': 'incêndios agora',
+    'Time of day vs confidence': 'Hora do dia e confiança', 'Detections by hour of the day': 'Deteções por hora do dia', candidates: 'candidatos', candidate: 'candidato', fire: 'incêndio', fires: 'incêndios', 'fire now': 'incêndio agora', 'fires now': 'incêndios agora',
     people: 'pessoas', source: 'fonte', sources: 'fontes', 'busiest slot': 'período com mais', 'busiest hour': 'hora com mais', 'Local time.': 'Hora local.', People: 'Pessoas', Vehicles: 'Veículos', Aircraft: 'Meios aéreos', Night: 'Noite', Day: 'Dia', Others: 'Outras',
     'Each fire\'s stage in its official feed.': 'A fase de cada incêndio na sua fonte oficial.', 'Start to contained, as the feed reports it.': 'Do início a dominado, como a fonte indica.', 'Which satellite saw each candidate.': 'O satélite que viu cada candidato.',
     'A is under 0.25 ac. G is over 5,000 ac.': 'A é menos de 0,1 ha. G é mais de 2000 ha.', 'A is under 0.1 ha. G is over 2,000 ha.': 'A é menos de 0,1 ha. G é mais de 2000 ha.',
@@ -203,7 +203,7 @@
     res: 'Pessoas, veículos e meios aéreos que as fontes indicam nos incêndios ativos em {r} agora. Incêndios sem essa indicação não contam (sem estimativas).',
     src: 'O satélite que detetou cada candidato a ignição em {r} {p} (NASA FIRMS).',
     night: 'Os candidatos a ignição {p}, consoante foram detetados de noite ou de dia: {v} ao todo. Os incêndios noturnos são mais difíceis de ver e de alcançar.',
-    tod: 'Quando foram detetados os candidatos a ignição, em hora local, e a probabilidade de serem incêndios reais. Quadrados maiores e mais escuros têm mais candidatos; o período com mais começa às {v}.',
+    tod: 'Quando foram detetados os candidatos a ignição, em hora local, e a confiança de serem incêndios reais. Quadrados maiores e mais escuros têm mais candidatos; o período com mais começa às {v}.',
     hour: 'Os candidatos a ignição pela hora do dia em que foram detetados, em hora local. A hora com mais começa às {v}.' };
   function none(t) { return { v: '', u: '', n: t, h: '' }; }   /* says plainly there is no data: no number, no chart */
   var CLS = [['A', 0.25], ['B', 10], ['C', 100], ['D', 300], ['E', 1000], ['F', 5000], ['G', Infinity]];   // NWCG size classes, in acres
@@ -243,7 +243,7 @@
         if (!k.length) return none('No ignition candidates in this period.');
         var ni = k.filter(function (c) { return c.night != null ? !!c.night : window.__wfNightAt(c.t, c.lat, c.lon); }).length;
         return { v: fmt(k.length), u: k.length === 1 ? 'candidate' : 'candidates', n: '', h: donut([{ n: tr('Night'), v: ni, c: INK }, { n: tr('Day'), v: k.length - ni, c: LIME }], true) }; } },
-    { k: 'tod', t: 'Time of day vs likelihood', on: 1, top: 1, f: function (R, rg, X) { if (!X.D.cands.length) return none('No ignition candidates in this period.'); var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Local time.', h: b.h }; } },
+    { k: 'tod', t: 'Time of day vs confidence', on: 1, top: 1, f: function (R, rg, X) { if (!X.D.cands.length) return none('No ignition candidates in this period.'); var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Local time.', h: b.h }; } },
     { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < 24; i++) s.push(0); if (!D.cands.length) return none('No ignition candidates in this period.');
         D.cands.forEach(function (c) { s[locHour(c)]++; }); var pk = s.indexOf(Math.max.apply(null, s));
         return { v: pk + ':00', u: 'busiest hour', n: 'Local time.', h: columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]) }; } }
@@ -310,7 +310,7 @@
     res: 'People, vehicles and aircraft that the feeds report on the active fires in {r} now. Fires without a report are not counted (no estimates).',
     src: 'Which satellite detected each ignition candidate in {r} over {p} (NASA FIRMS).',
     night: 'Ignition candidates over {p} split by whether they were detected at night or by day: {v} in all. Night fires are harder to see and to reach.',
-    tod: 'When ignition candidates were detected, in local time, against how likely they are to be real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
+    tod: 'When ignition candidates were detected, in local time, against the confidence that they are real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
     hour: 'Ignition candidates by the hour of the day they were detected, in local time. The busiest hour starts at {v}.'
   };
   function explain(d, rg, o) { var t = (PTL() && EXPL_PT[d.k]) || EXPL[d.k]; if (!t) return ''; if (PTL()) return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, tr(o.u)).replace(/\{p\}/g, ({ m: 'no último mês', h: 'nos últimos 6 meses', y: 'no último ano' })[rg.id] || '').replace(/\{r\}/g, regionName());

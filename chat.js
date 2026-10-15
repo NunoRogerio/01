@@ -54,7 +54,7 @@
      (light under 60%, yellow 60 to 79%, strong 80% and over: live.js __wfConfTag), dark text; on its right, when it was detected */
   /* (Oct 11, 12:52) night: a candidate detected at night wears the moon instead of the asterisk (icD); n: a boolean, a chat, an incident or a live record */
   function candStage(conf, nt) { if (window.__wfConfNow && nt && typeof nt === 'object' && (nt.id || nt.incId)) conf = window.__wfConfNow(nt.id || nt.incId, conf); var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
-    return Object.assign({}, STAGES[0], { en: n ? n + '% likelihood' : 'Candidate', pt: n ? n + '% de probabilidade' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
+    return Object.assign({}, STAGES[0], { en: n ? n + '% confidence' : 'Candidate', pt: n ? n + '% de confiança' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
   function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf, ch) : STAGES[ch.stage] || STAGES[0]; }
   /* (Oct 13, 14:10) a candidate's band shows when it was detected (as on its page), never when its chat opened */
   function detAt(c) { if (c.det) return c.det; try { var id = String(c.incId || c.id || ''), R = (window.__wfLiveCandsAll || []).concat(window.__wfLiveCands || []), r = R.find(function (q) { return q && String(q[2]) === id; }); if (r && r[9] && r[9].t) return Date.parse(r[9].t) || null; } catch (e) {} return null; }
@@ -488,7 +488,7 @@
     var base = { tag: { en: S.en, pt: S.pt }, tagC: S.ink || S.c, stage: s };
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
-      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Likelihood', pt: 'Probabilidade' }, c: '#3A3A3C' } : null });
+      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Confidence', pt: 'Probabilidade' }, c: '#3A3A3C' } : null });
     if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire', pt: 'Incêndio ativo' },   /* (Oct 10, 23:42) the name is in the header */
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
       rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }).map(function (r, i, R) { if (c.sentIdx && i === R.length - 1) sentRows(c, R); return r; }) });
@@ -1482,7 +1482,7 @@
     c.topic = { id: inc.id, kind: inc.kind, place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, conf: inc.conf || null, x: inc.x, y: inc.y };
     mine(c, 'Topic: ' + inc.place + '.', 'Tópico: ' + inc.place + '.');
     card(c, { topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: (fire ? 'Fire. ' : 'Ignition candidate. ') + inc.place, pt: (fire ? 'Incêndio. ' : 'Candidato a ignição. ') + inc.place },
-      body: { en: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km from the station' + (!fire && inc.conf ? '. ' + inc.conf + '% likelihood' : ''), pt: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km do quartel' + (!fire && inc.conf ? '. ' + inc.conf + '% de probabilidade' : '') },
+      body: { en: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km from the station' + (!fire && inc.conf ? '. ' + inc.conf + '% confidence' : ''), pt: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km do quartel' + (!fire && inc.conf ? '. ' + inc.conf + '% de confiança' : '') },
       link: { en: 'View', pt: 'Ver' }, inc: c.topic }, 300, 0);
     say(c, 0, fire ? 'Copy, ' + inc.place + '. We know the area, tell us what you need there.' : 'Copy, the candidate at ' + inc.place + '. We can go and check it if you want.',
       fire ? 'Entendido, ' + inc.place + '. Conhecemos a zona, diga o que precisa lá.' : 'Entendido, o candidato em ' + inc.place + '. Podemos ir verificar, se quiser.', 2400, 2);

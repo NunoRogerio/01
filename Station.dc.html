@@ -18,11 +18,11 @@
 <script src="feedcam.js?v=1791719825"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
-<script src="station.js?v=1791871146"></script>
+<script src="station.js?v=1792067104"></script>
 <script src="menu.js?v=1791782987"></script>
-<script src="i18n.js?v=1791964493"></script>
+<script src="i18n.js?v=1792067104"></script>
 <script src="live.js?v=1792066597"></script>
-<script src="chat.js?v=1792066665"></script>
+<script src="chat.js?v=1792067104"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -630,8 +630,8 @@ class Component extends DCLogic {
         return Object.assign(base, MK.fire, { place: (C.nameOf ? C.nameOf(ch) : ch.place) || r[3] || r[2], aria: ((C.nameOf ? C.nameOf(ch) : ch.place) || r[3] || r[2]) + ', ' + (PT ? Sg.pt : Sg.en) + (aid ? ', ' + aidT.label : ''), tagTxt: PT ? Sg.pt : Sg.en, tagR: (C.fireMeta ? C.fireMeta(ch.incId || r[2], ch) : '') || base.tagR || '', tagFg: Sg.c, tagBg: Sg.bg, tagIc: ((Sg && Sg.icD) || C.ICON[Sg.icon]) || '', tagIcD: 'block', href: 'Chat.dc.html', go: () => { try { if (navigator.vibrate) navigator.vibrate(8); sessionStorage.setItem('wf-chat-open', ch.key); } catch (e) {} } }); }
       if (q.kind === 'fire') return Object.assign(base, fireTag(r), { place: r[3] || r[2], aria: (r[3] || r[2]) + (aid ? ', ' + aidT.label : ''), href: 'Chat.dc.html', go: chatGo(C && C.incFire ? C.incFire({ id: r[2], place: r[3], note: r[4], x: r[5], y: r[6], info: r[9] || {}, st: r[0], co: r[1], res: r[7] || null }) : null) });
       const CT = window.__wfConfTag ? window.__wfConfTag(r[4]) : { fg: '#185A93', bg: '#E3EEFB' };
-      /* (Oct 11, 00:28) a candidate's band names what it shows: "Likelihood" on the left, the percentage on the right, as a fire's stage band */
-      return Object.assign(base, { _conf: r[4], place: r[3], aria: r[3] + ', ' + r[4] + L('% likelihood', '% de probabilidade') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + L('% likelihood', '% de probabilidade'), tagR: (() => { const t = Date.parse((r[9] || {}).t || ''); if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), tagFg: CT.fg, tagBg: CT.bg,   /* (Oct 11, 07:11) the candidate is a stage: Candidate and its likelihood on the left, when it was detected on the right */ tagIc: (C && C.ICON && (base._night ? C.ICON.candN : C.ICON.cand)) || '', tagIcD: 'block', href: 'Chat.dc.html', go: chatGo(C && C.incCand ? C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] }) : null) }); };
+      /* (Oct 11, 00:28) a candidate's band names what it shows: "Confidence" on the left, the percentage on the right, as a fire's stage band */
+      return Object.assign(base, { _conf: r[4], place: r[3], aria: r[3] + ', ' + r[4] + L('% confidence', '% de confiança') + (aid ? ', ' + aidT.label : ''), tagTxt: r[4] + L('% confidence', '% de confiança'), tagR: (() => { const t = Date.parse((r[9] || {}).t || ''); if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(L('en-GB', 'pt-PT'), { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), tagFg: CT.fg, tagBg: CT.bg,   /* (Oct 11, 07:11) the candidate is a stage: Candidate and its likelihood on the left, when it was detected on the right */ tagIc: (C && C.ICON && (base._night ? C.ICON.candN : C.ICON.cand)) || '', tagIcD: 'block', href: 'Chat.dc.html', go: chatGo(C && C.incCand ? C.incCand({ id: r[2], place: r[3], conf: r[4], src: r[5], x: r[7], y: r[8], live: r[9] || null, st: r[0], co: r[1] }) : null) }); };
     // (Oct 8, 17:45) the team lead sees the incidents first too: his deployments on top, then every incident of the station's area
     // (the captain's incident cards, the same everywhere), so what matters most is never only on the map at the end
     const nDep = lead ? rows.length : 0;

@@ -17,10 +17,10 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792013917"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
-<script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791964493"></script>
+<script src="station.js?v=1792067104"></script>
+<script src="i18n.js?v=1792067104"></script>
 <script src="live.js?v=1792066597"></script>
-<script src="chat.js?v=1792066665"></script>
+<script src="chat.js?v=1792067104"></script>
 <script src="tour.js?v=1791897367"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791876476"></script>
@@ -1107,7 +1107,7 @@ class Component extends DCLogic {
       C.act(c.key, key, id); };
     const openSheet = () => { if (c.stage === 7 && !c.dismissed) { openSummary(); return; } try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ sheet: true }); };
     const summary = c.dismissed ? L('No fire on the ground · crews released', 'Sem incêndio no terreno · equipas libertadas')
-      : c.stage === 0 ? (c.conf ? c.conf + L('% likelihood. ', '% de probabilidade. ') : '') + (c.src || '')
+      : c.stage === 0 ? (c.conf ? c.conf + L('% confidence. ', '% de confiança. ') : '') + (c.src || '')
       : c.stage === 1 ? (c.flags.dispatched ? L('Dispatch orders sent', 'Ordens de despacho enviadas') : L('Awaiting your dispatch order', 'A aguardar a sua ordem de despacho'))
       : c.stage === 2 ? L('Crews en route', 'Meios a caminho')
       : c.stage === 3 ? L('Crews on the fire line', 'Equipas na linha de fogo') + (c.flags.air ? L(' · air support', ' · meio aéreo') : '') + (c.flags.evac ? L(' · evacuation', ' · evacuação') : '')
@@ -1286,7 +1286,7 @@ class Component extends DCLogic {
             const T = fire && window.__wfStageTag ? window.__wfStageTag(o.inc) : null, S1 = T ? null : S0, mn = Math.round(o.km * 1.3 / 50 * 60);
             const CT = !fire && o.inc.conf && window.__wfConfTag ? window.__wfConfTag(o.inc.conf) : null;   /* a candidate shows its likelihood tag, as in the incidents list */
             return { tagIcD: 'block', sub2: '', mk: fire ? '#E8590C' : 'color-mix(in srgb, ' + Y + ' 80%, transparent)', mkS: fire ? 'none' : '#3A3A3C', mkR: fire ? 8.8 : 8,
-              tagTxt: CT ? o.inc.conf + L('% likelihood', '% de probabilidade') : T ? T.label : L(S0.en, S0.pt), tagFg: CT ? CT.fg : T ? T.fg : S1.c, tagBg: CT ? CT.bg : T ? T.bg : S1.bg, tagIc: CT ? (window.__wfCandNight && window.__wfCandNight(o.inc) ? C.ICON.candN : C.ICON.cand) : T ? T.ic : ((S1 && S1.icD) || C.ICON[S1.icon]),
+              tagTxt: CT ? o.inc.conf + L('% confidence', '% de confiança') : T ? T.label : L(S0.en, S0.pt), tagFg: CT ? CT.fg : T ? T.fg : S1.c, tagBg: CT ? CT.bg : T ? T.bg : S1.bg, tagIc: CT ? (window.__wfCandNight && window.__wfCandNight(o.inc) ? C.ICON.candN : C.ICON.cand) : T ? T.ic : ((S1 && S1.icD) || C.ICON[S1.icon]),
               eta: '~' + (mn < 60 ? mn + ' min' : Math.floor(mn / 60) + ' h' + (mn % 60 ? ' ' + (mn % 60) + ' min' : '')),
               place: o.inc.place, sub: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km. ~' + (mn < 60 ? mn + ' min' : Math.floor(mn / 60) + ' h' + (mn % 60 ? ' ' + (mn % 60) + ' min' : '')) + L(' drive', ' de carro') + (o.inc.reg ? '. ' + o.inc.reg : ''), km: (o.km < 10 ? o.km.toFixed(1) : Math.round(o.km)) + ' km', sep: i ? '0' : '0',
               icD: ((S0 && S0.icD) || C.ICON[S0.icon]), icC: fire ? S0.c : '#3A3A3C', icFill: fire ? 'none' : 'color-mix(in srgb, ' + Y + ' 80%, transparent)', icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',

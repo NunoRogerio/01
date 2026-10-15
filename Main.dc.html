@@ -19,13 +19,13 @@
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792013917"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
-<script src="station.js?v=1791871146"></script>
-<script src="i18n.js?v=1791964493"></script>
+<script src="station.js?v=1792067104"></script>
+<script src="i18n.js?v=1792067104"></script>
 <script src="live.js?v=1792066597"></script>
-<script src="chat.js?v=1792066665"></script>
+<script src="chat.js?v=1792067104"></script>
 <script src="tour.js?v=1791897367"></script>
 <script src="mapsearch.js?v=5"></script>
-<script src="stats.js?v=1791798521"></script>
+<script src="stats.js?v=1792067104"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -296,7 +296,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
         <!-- Column headings in the region table's style (16px regular grey); the value column sorts (tap again to reverse) -->
         <div role="row" style="display: {{li.ignD}}; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; flex-shrink: 0; padding: 0 16px 16px; border-bottom: 0; font-size: 15px; font-weight: 400; line-height: 20px; color: #545458">
           <span>Candidates</span>
-          <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{lsort.lik.aria}}" onClick="{{lsort.lik.pick}}" style="position: relative; color: inherit; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{lsort.lik.op}}; transform: rotate({{lsort.lik.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Likelihood</span></button></span>
+          <span style="display: flex; justify-content: flex-end"><button type="button" class="sorth" aria-sort="{{lsort.lik.aria}}" onClick="{{lsort.lik.pick}}" style="position: relative; color: inherit; text-align: right"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: -17px; top: 50%; margin-top: -6.5px; opacity: {{lsort.lik.op}}; transform: rotate({{lsort.lik.rot}})"><path d="m6 9 6 6 6-6"></path></svg><span style="display: inline-block; white-space: nowrap">Confidence</span></button></span>
         </div>
         <sc-if value="{{noCands}}" hint-placeholder-val="{{ false }}"><span style="flex-shrink: 0; padding: 16px; font-size: 17px; color: #000000; line-height: 22px">None in this area</span></sc-if>
         <sc-for list="{{ignShown}}" as="it" hint-placeholder-count="3">
@@ -1335,7 +1335,7 @@ class Component extends DCLogic {
         const stEx = () => { const D = window.__wfStFile || {}; for (const k in D) { const r = (D[k].rows || []).find((q) => q[4]); if (r) return { k: 'station', title: r[4], sub: Math.abs(r[2]).toFixed(2) + '°' + (r[2] < 0 ? 'S' : 'N') + ' ' + Math.abs(r[3]).toFixed(2) + '°' + (r[3] < 0 ? 'W' : 'E'), tag: '', tagFg: '', tagBg: '' }; } return null; };
         const wxNames = ['Low', 'Moderate', 'High', 'Very high', 'Maximum'];
         const SH = {
-          cand: [['cand', 'Ignition candidate markers', 'Marcadores de candidatos a ignição'], ['night', 'A moon when the heat was seen at night', 'Uma lua quando o calor foi visto de noite'], ['pill', 'Likelihood tags', 'Etiquetas de probabilidade']],
+          cand: [['cand', 'Ignition candidate markers', 'Marcadores de candidatos a ignição'], ['night', 'A moon when the heat was seen at night', 'Uma lua quando o calor foi visto de noite'], ['pill', 'Confidence tags', 'Etiquetas de confiança']],
           fire: [['fire', 'Active fire markers', 'Marcadores de incêndios ativos'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['poly', 'Burned area on the map', 'Área ardida no mapa']]
         };
         const best = (f) => LC.filter(f).sort((x, y) => y[4] - x[4])[0];
@@ -1674,13 +1674,13 @@ class Component extends DCLogic {
     const goFire = (f) => () => { this.wfListFlag(true); this.wfSetFireView(f); };
     const out = [], resOut = [], LL = (en, pt) => (window.__wfLang === 'pt' ? pt : en);
     const cs = CANDS.slice().sort((a, b) => b.conf - a.conf);
-    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', nl: cs[0].live, title: 'New ignition detection', text: cs[0].place + '. ' + cs[0].conf + '% likelihood. ' + (cs[0].srcList || cs[0].src || ''), href: 'Dispatch.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
+    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', nl: cs[0].live, title: 'New ignition detection', text: cs[0].place + '. ' + cs[0].conf + '% confidence. ' + (cs[0].srcList || cs[0].src || ''), href: 'Dispatch.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
     // One notification per place: two fires with the same name read as a duplicate
     const used = new Set(), pickF = (L) => { const f = L.find((q) => !used.has(q.place)); if (f) used.add(f.place); return f; };
     const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
     const stNote = (f) => ({ kind: 'fire', stage: f.info.stEn, title: f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) });
     const fA = pickF(fireSt); if (fA) out.push({ t: T0 - 11 * 60000, ...stNote(fA) });
-    if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', nl: cs[1].live, title: 'Likelihood rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Dispatch.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
+    if (cs[1]) out.push({ t: T0 - 18 * 60000, kind: 'ign', nl: cs[1].live, title: 'Confidence rose to ' + cs[1].conf + '%', text: cs[1].place + '. Another satellite pass agrees', href: 'Dispatch.dc.html', pick: listFocus(cs[1].id), c: confC(cs[1].conf) });
     const fB = pickF(FIRES); if (fB) out.push({ t: T0 - 26 * 60000, kind: 'st', unit: 'truck', title: 'Returning to base', text: 'Leaving ' + fB.place + '. Back in service in about 40 min', href: 'Dispatch.dc.html', pick: goFire(fB) });
     const fC = pickF(FIRES); if (fC) out.push({ t: T0 - 47 * 60000, kind: 'st', unit: 'crew', title: 'Station available again', text: 'Crews released from ' + fC.place + ' can take new dispatches', href: 'Dispatch.dc.html', pick: goFire(fC) });
     const fD = pickF(fireSt); if (fD) out.push({ t: T0 - 72 * 60000, ...stNote(fD) });
@@ -1705,7 +1705,7 @@ class Component extends DCLogic {
         out.push({ t: c.updated || T0, kind: c.stage > 0 ? 'fire' : 'ign', stage: S.en, title: (d.acked ? '' : 'Deployment. ') + (CHm && CHm.nameOf ? CHm.nameOf(c) : c.place), text: (d.acked ? (S.en || '') + '. ' : 'Dispatched. Respond. ') + (d.f.veh || []).join(', ') + '.', href: 'Dispatch.dc.html',
           pick: () => { if (c.kind === 'fire') this.wfSetFireView({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }); else this.wfSetFocus(c.incId); } }); });
       else { CANDS.forEach((cd) => { const ll = cd.live && cd.live.lat != null ? [cd.live.lat, cd.live.lon] : window.__wfIncLatLon(cd.x, cd.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k) return;
-          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', nl: cd.live, title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
+          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', nl: cd.live, title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% confidence. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
         FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn || (f.info.sim && f.info.resolved)) return; try { if (CHm.find && CHm.find({ id: f.id, kind: 'fire' })) return; } catch (e) {}   /* (Oct 8, 23:09) a fire with a chat speaks through its chat's notice (its own stage), not the feed's */
           out.push({ t: f.info.simAt || T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
         CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
@@ -1721,7 +1721,7 @@ class Component extends DCLogic {
     const DSPn = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
     if (DSPn) { out.length = 0;
       CANDS.forEach((cd) => { const t = cd.live && cd.live.t ? Date.parse(cd.live.t) : NaN;
-        out.push({ t: isFinite(t) ? t : T0 - 3 * 60000, kind: 'ign', nl: cd.live, conf: cd.conf, title: cd.place, text: cd.conf + '% likelihood. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
+        out.push({ t: isFinite(t) ? t : T0 - 3 * 60000, kind: 'ign', nl: cd.live, conf: cd.conf, title: cd.place, text: cd.conf + '% confidence. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
       /* (Oct 13, 10:30) Active: the candidates still to verify and the fires the initial attack was sent to */
       /* (Oct 13, 14:20) To verify holds only the candidates awaiting the dispatcher's decision: a confirmed fire is handed over to the
          incident's command, so the verification is done and it goes to Resolved */
@@ -1981,7 +1981,7 @@ class Component extends DCLogic {
     const ignList = CANDS.map((c, i) => {
       const col = colorOf(c.conf);
       return {
-        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Dispatch.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + (window.__wfLang === 'pt' ? '% de probabilidade' : '% likelihood'), bIc: (window.__wfChat && window.__wfChat.ICON && ((window.__wfCandNight ? window.__wfCandNight(c.live) : (window.__wfNight && window.__wfNight(c.live))) ? window.__wfChat.ICON.candN : window.__wfChat.ICON.cand)) || '',   /* (Oct 13, 13:23) the tag leads with the map marker's own icon: the moon for a night detection, no second moon by the name */ bR: (() => { const t = c.live && c.live.t ? Date.parse(c.live.t) : 0; if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(window.__wfLang === 'pt' ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), valW: 600, valC: (window.__wfConfTag ? window.__wfConfTag(c.conf).fg : '#185A93'), valBg: (window.__wfConfTag ? window.__wfConfTag(c.conf).bg : 'rgba(31,111,186,0.12)'), nameW: 600, moonD: 'none',
+        ...c, c: col, iconFill: 'none', iconPath: 'M12 20.5a5 5 0 0 1-5-5c0-3 2.5-4.5 3-7.5 2 1.5 3 3 3 4.5 1-.8 1.5-2 1.5-3 1.6 1.6 2.5 3.6 2.5 6a5 5 0 0 1-5 5Z', isCand: true, isFire: false, href: 'Dispatch.dc.html', sub: c.src + ' · ' + c.ago, val: c.conf + (window.__wfLang === 'pt' ? '% de confiança' : '% confidence'), bIc: (window.__wfChat && window.__wfChat.ICON && ((window.__wfCandNight ? window.__wfCandNight(c.live) : (window.__wfNight && window.__wfNight(c.live))) ? window.__wfChat.ICON.candN : window.__wfChat.ICON.cand)) || '',   /* (Oct 13, 13:23) the tag leads with the map marker's own icon: the moon for a night detection, no second moon by the name */ bR: (() => { const t = c.live && c.live.t ? Date.parse(c.live.t) : 0; if (!t) return ''; const d = new Date(t); return d.toLocaleDateString(window.__wfLang === 'pt' ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); })(), valW: 600, valC: (window.__wfConfTag ? window.__wfConfTag(c.conf).fg : '#185A93'), valBg: (window.__wfConfTag ? window.__wfConfTag(c.conf).bg : 'rgba(31,111,186,0.12)'), nameW: 600, moonD: 'none',
         bg: c.conf > 75 ? 'rgba(122,63,224,0.12)' : (c.conf >= 50 ? 'rgba(10,111,219,0.1)' : 'rgba(60,60,67,0.066)'),
         bd: i === 0 ? 'rgba(232,106,0,0.45)' : 'rgba(60,60,67,0.088)',
         ...anim(i),
