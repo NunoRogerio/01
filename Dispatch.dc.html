@@ -91,6 +91,13 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 .wf-ul::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(-60deg,rgb(169,169,173) 0 8.49px,rgb(182,182,186) 8.49px 16.97px);clip-path:inset(0 var(--wf-ulr,0px) 0 0);transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
 .wf-ul::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 6px rgba(0,0,0,0.3)}
 .wf-ul.unl::before{display:none}
+/* (Oct 15, 15:25) locked, no faded Send: an instruction with an arrow in its place ("← Swipe to send"), dark grey on the
+   darker stripes, from 16px to the pin; the pin drags the green Send in over it */
+.wf-ul:not(.unl) .wf-ulb,.wf-ul:not(.unl) .wf-ulu{display:none}
+.wf-ul .wf-ull{position:absolute;left:16px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:#3A3A3C;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;pointer-events:none}
+.wf-ul .wf-ull>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.wf-ul .wf-ull>svg{flex:none}
+.wf-ul.unl .wf-ull{display:none}
 .wf-ul.drag::before{transition:none}
 .wf-ul.snap::before{transition-duration:.12s;transition-timing-function:cubic-bezier(.2,0,0,1)}
 .wf-ul .wf-ulg>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -949,6 +956,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
            Swipe the pin to the left end: the pin and Send turn green and Send works. Let go early, the pin glides back; unlocked, it locks again after 10 s unpressed -->
       <div class="wf-ul {{iab.ulCls}}" data-wf-unlock="1" role="group" aria-label="{{iab.ulAria}}" onPointerDown="{{iab.ulDown}}" onPointerMove="{{iab.ulMove}}" onPointerUp="{{iab.ulUp}}" onPointerCancel="{{iab.ulUp}}" style="display: {{iab.sendD}}; position: relative; flex: none; height: 64px; border-radius: 999px; touch-action: none; -webkit-user-select: none; user-select: none">
         <span class="wf-ulu" aria-hidden="true"></span>
+        <span class="wf-ull" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg><span>{{iab.ulLbl}}</span></span>
         <button type="button" class="btn wf-ulb {{iab.sendCls}}" onClick="{{iab.send}}" aria-disabled="{{iab.sendDis}}"><span>{{iab.sendLbl}}</span></button>
         <span class="wf-ulg" aria-hidden="true"><span>{{iab.sendLbl}}</span></span>
         <span class="wf-ulp" data-wf-thumb="1" role="slider" aria-label="{{iab.ulTxt}}" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{{iab.ulNow}}" style="position: absolute; right: 8px; top: 8px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: {{iab.ulPin}}; color: rgb(255, 255, 255); transform: translateX({{iab.ulX}}); cursor: grab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{iab.ulIc}}"></path></svg></span>
@@ -1838,8 +1846,8 @@ class Component extends DCLogic {
                 if (ok) { T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
                   setTimeout(() => { T.el.classList.remove('snap'); T.el.classList.add('unl'); { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
                 else { if (th) th.style.transform = ''; { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); me.forceUpdate(); } };
-              Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulCls: UL ? 'unl' : '', ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
-                ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para desbloquear o envio' : 'Swipe left to unlock sending'),
+              Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulCls: UL ? 'unl' : '', ulLbl: PTl ? 'Deslize para enviar' : 'Swipe to send',   /* the blade's title already says Initial attack: no repeat (fits in Portuguese too) */ ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
+                ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para enviar o ataque inicial' : 'Swipe left to send initial attack'),
                 ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'm15 6-6 6 6 6', ulX: UL ? 'calc(64px - var(--wf-ulw, 358px))' : '0px',
                 ulDown: (e) => { if (UL || !nOn) return; const th0 = e.target && e.target.closest && e.target.closest('[data-wf-thumb]'); if (!th0) return; const el = th0.closest('[data-wf-unlock]'); if (!el) return; const r = el.getBoundingClientRect(), g = el.querySelector('.wf-ulg'); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {} th0.style.transition = 'none'; if (g) g.style.transition = 'none'; el.classList.add('drag'); me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0 }; paint(me._ul); },
                 /* (Oct 15, 15:15) a strong snap: once the pin is within 70% of its diameter (33.6px) of the left end, it jumps there and unlocks */
