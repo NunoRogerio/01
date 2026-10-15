@@ -374,6 +374,8 @@ const CSS = `
   font:inherit;font-size:14px;font-weight:400;line-height:21px;transition:width .18s cubic-bezier(.4,0,.2,1)}
 @media (prefers-reduced-motion:reduce){.hvt-pagenum input{transition:none}}
 .hvt-pagenum input.is-filled{color:var(--content-primary)}
+.hvt-pager .hvt-num{font-weight:600} /* numbers semibold, words regular: "[5] rows per page", "[1] of 8" */
+.hvt-pagenum:not(.is-error) input:not(:disabled){color:var(--content-primary)} /* the current page reads like the rows-per-page value */
 .hvt-pagenum:not(.is-error) input:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg);border-color:transparent} /* at rest: the hover fill, no border */
 .hvt-pagenum:not(.is-error) input:hover:not(:disabled):not(:focus){border-color:var(--outline)} /* on hover the border shows */
 /* rows per page: the same filled field as the page number, no caret: "[5] rows per page" */
@@ -3956,7 +3958,7 @@ export function DataTable({
               }
             }}
           />
-          <span className="hvt-caption">of {pageCount}</span>
+          <span className="hvt-caption">of <b className="hvt-num">{pageCount}</b></span>
           {pnError && <i className="hvt-pn-err" aria-hidden="true">{Icons.StatusCritical}</i>}
         </div>
         <button type="button" className="hvt-icon" aria-label="Next page" disabled={safePage === pageCount}
@@ -4748,7 +4750,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 02:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 02:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
