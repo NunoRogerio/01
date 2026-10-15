@@ -3,6 +3,7 @@
 ## 0.4.8 — 2026-10-15
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
+- Pagination: 4px between the arrows and the page field.
 
 ## 0.4.7 — 2026-10-15
 

@@ -355,14 +355,14 @@ const CSS = `
 /* pagination */
 .hvt-pager{position:relative;display:flex;align-items:center;height:32px;padding:0 4px}
 .hvt-pager-left{position:absolute;left:4px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:2px;height:32px}
-.hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center}
+.hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center;gap:4px} /* 4px between the arrows and the page field */
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
 /* the pager is compact in every density: every element at the caption's 12px text, 24px controls, a 40px bar */
 .hvt-root .hvt-pager,.hvt-root .hvt-pager-left{height:24px}
 .hvt-root .hvt-pager{box-sizing:content-box;height:48px;padding-top:0;padding-bottom:0}
 .hvt-root.is-compact .hvt-pager{height:40px}
-.hvt-root.is-comfortable .hvt-pager{height:32px} /* the bar: 32px in Comfortable (its 32px arrows fill it), 48px in Balanced, 40px in Compact */ /* a 40px pagination bar (plus its 1px divider), 24px controls centred */
+.hvt-root.is-comfortable .hvt-pager{height:32px} /* the bar: 32px in Comfortable, 48px in Balanced, 40px in Compact; 24px controls centred */
 .hvt-root .hvt-pager .hvt-mlabel,.hvt-root .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
 .hvt-root .hvt-pager .hvt-mbtn{height:24px}
 .hvt-root .hvt-pager .hvt-icon{width:24px;height:24px}
@@ -4736,7 +4736,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 01:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
