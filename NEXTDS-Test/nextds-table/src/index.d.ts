@@ -37,6 +37,12 @@ export interface TableColumn<R extends TableRow = TableRow> {
   /** Draws the cell yourself (links, icons, bars, several fields…). Search, filters and sorting still use the row's value at `key`,
    *  and `format` still gives the text that search matches. Takes priority over `status` and `tag`. */
   render?: (row: R, value: any) => ReactNode;
+  /** A micro chart in each cell. The row's value at `key` is a list of numbers, oldest first.
+   *  "trend": a line. "area": a line over a soft fill. "bar": one horizontal bar of the latest value, from 0 to `vizMax`.
+   *  The column is not searched or filtered; set `sortable: false`. */
+  viz?: "trend" | "area" | "bar";
+  /** The top of the "bar" micro chart. Default 100. */
+  vizMax?: number;
 }
 
 /** Filter model, the same shape as the MUI X Data Grid GridFilterModel. */

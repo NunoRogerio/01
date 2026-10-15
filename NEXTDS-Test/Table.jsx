@@ -554,6 +554,14 @@ const CSS = `
   background:var(--container-secondary-background);border:1px solid var(--outline);border-radius:0 var(--component-containerradius) var(--component-containerradius) var(--component-containerradius);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
 .hvt-fg.is-float{border-radius:var(--component-containerradius)}
+/* micro charts in cells (column viz): the categorical blue, a line 1.5px, a soft area, a 8px bar */
+.hvt-viz{display:block;width:96px;max-width:100%;height:24px;flex:none}
+.hvt-viz-line{fill:none;stroke:var(--cat1-140);stroke-width:1.5px;stroke-linejoin:round;stroke-linecap:round}
+.hvt-viz-area{fill:var(--cat1-100);opacity:.35;stroke:none}
+.hvt-viz.is-bar{display:flex;align-items:center}
+.hvt-viz-track{position:relative;flex:1;height:8px;border-radius:4px;background:var(--container-hover-background);overflow:hidden}
+.hvt-viz-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--cat1-140)}
+.hvt-root.is-compact .hvt-viz{height:16px}
 /* resizing the filter group panel by its edges and corners */
 .hvt-fg.is-sized .hvt-fg-body{flex:1;min-height:0;max-height:none}
 .hvt-fg.is-resizing{user-select:none}
@@ -1117,6 +1125,31 @@ const EMPTY_MODEL = { items: [], logicOperator: "and", quickFilterValues: [], qu
  * MenuButton: NEXT "BUTTON Dropdown" (Ghost or Secondary) opening the NEXT dropdown menu panel.
  * role "menu" runs an action, role "listbox" picks a value. Opens up when there is no room below.
  * ------------------------------------------------------------------ */
+/* a micro chart in a cell: the column's value is a list of numbers (oldest first).
+   "trend" a line, "area" a line over a soft fill, "bar" one horizontal bar of the latest value (0 to max, 100 by default) */
+function MicroViz({ type = "trend", values, max }) {
+  const v = Array.isArray(values) ? values.filter((n) => typeof n === "number" && isFinite(n)) : [];
+  if (!v.length) return null;
+  if (type === "bar") {
+    const top = max || 100, last = v[v.length - 1], pct = Math.max(0, Math.min(100, (last / top) * 100));
+    return (
+      <span className="hvt-viz is-bar" role="img" aria-label={`${Math.round(last)} of ${top}`}>
+        <span className="hvt-viz-track"><span className="hvt-viz-fill" style={{ width: `${pct}%` }} /></span>
+      </span>
+    );
+  }
+  const W = 96, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
+  const pts = v.map((n, i) => [P + (i * (W - 2 * P)) / Math.max(1, v.length - 1), H - P - ((n - lo) / span) * (H - 2 * P)]);
+  const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  return (
+    <svg className={`hvt-viz is-${type}`} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img"
+         aria-label={`Trend from ${Math.round(v[0])} to ${Math.round(v[v.length - 1])}`}>
+      {type === "area" && <path className="hvt-viz-area" d={`${line} L${pts[pts.length - 1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`} />}
+      <path className="hvt-viz-line" d={line} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 function MenuButton({
   variant = "ghost", icon, label, placeholder, ariaLabel, items, value, onSelect,
   role = "menu", align = "left", minWidth, block = false, disabled = false, title,
@@ -2720,7 +2753,7 @@ export function DataTable({
     const count = {};
     columnsProp.forEach((c) => { count[c.title] = (count[c.title] || 0) + 1; });
     const pos = Object.fromEntries(columnsProp.map((c, i) => [c.key, i + 1]));
-    return columns.map((c) => (count[c.title] > 1 ? { ...c, filterLabel: `${c.title} ${pos[c.key]}` } : c));
+    return columns.filter((c) => !c.viz).map((c) => (count[c.title] > 1 ? { ...c, filterLabel: `${c.title} ${pos[c.key]}` } : c)); // micro charts are not filtered
   }, [columns, columnsProp]);
   const colByKey = useMemo(() => Object.fromEntries(filterCols.map((c) => [c.key, c])), [filterCols]);
   /* a choice of values that takes every value (or none) filters nothing: it is not shown or counted as a filter */
@@ -2835,6 +2868,7 @@ export function DataTable({
   const renderCell = (row, col) => {
     const v = row[col.key];
     if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
+    if (col.viz) return <MicroViz type={col.viz} values={v} max={col.vizMax} />; // a micro chart of the row's numbers
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;
@@ -2846,7 +2880,7 @@ export function DataTable({
     }
     return cellText(row, col);
   };
-  const cellText = (row, col) => (col.format ? col.format(row[col.key]) : String(row[col.key] ?? ""));
+  const cellText = (row, col) => (col.viz ? "" : col.format ? col.format(row[col.key]) : String(row[col.key] ?? "")); // a micro chart has no text to search
   /* the words the search list can suggest: every text in the table, not only the page on screen */
   const [fgAdvanced, setFgAdvanced] = useState(false); // filter group: the simple check lists, or the conditions of each column
   const optionsOf = (c) => {
@@ -4941,7 +4975,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 05:45"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 06:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5091,7 +5125,7 @@ const DEFAULT_CFG = {
   theme: "dawn", product: "vsp360", version: "6.3.2.1", component: "table",
   size: "comfortable", selectable: false, expandable: false,
   showTitle: true, showDescription: false, showInfo: false, titleText: null, showPagination: true, pageSize: 5, rowGap: 12, colGap: 0, cellPad: 16, rowPad: 0, tablePad: 16, rowH: null, headH: null,
-  showMaximize: true, showMoreOptions: true,
+  showMaximize: true, showMoreOptions: true, microViz: false, vizType: "trend",
   showFilterBar: false, filterPanelStyle: "header",
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
   rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
@@ -5125,6 +5159,15 @@ const listModeOf = (c) => {
    the type ("Group" or "MUI") opens the choice of type below it (the current type is disabled);
    picking a type while the filter is off also turns it on */
 const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
+/* Row › Viz: a micro chart column; "Viz:" turns it on or off, the type picks the chart */
+const VIZ_TYPES = [["trend", "Trendline"], ["area", "Area"], ["bar", "Bar"]];
+/* sample history for the micro chart: 12 values from 0 to 100, the same for a row every time (seeded by its id) */
+const vizSeries = (row) => {
+  let seed = [...String(row.id)].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7) || 1;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  let x = 25 + rnd() * 50;
+  return Array.from({ length: 12 }, () => { x = Math.max(4, Math.min(98, x + (rnd() - 0.45) * 18)); return Math.round(x); });
+};
 /* the control dropdowns: the menu grows down when it opens and folds back up when it closes; pressing an option moves the
    white block to it at once (it opens from a line while the old one closes), releasing picks it and folds the menu */
 /* the select animation of the dropdown controls: the white block opens from a horizontal line through the middle (no overshoot in dropdowns) */
@@ -5178,7 +5221,7 @@ function useFoldMenu() {
   });
   return { open, setOpen, ref, optProps };
 }
-function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
+function FilterHeaderBtn({ on, type, onPick, onOff, onOn, types = FILTER_TYPES, label = "Filter:", menuName = "Filter type" }) {
   const { open, setOpen, ref, optProps } = useFoldMenu();
   const typeRef = useRef(null);
   usePickOnChange(type, typeRef);
@@ -5192,16 +5235,16 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
     if (first) first.focus();
     return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
   }, [open]);
-  const name = (FILTER_TYPES.find((t) => t[0] === type) || FILTER_TYPES[0])[1];
+  const name = (types.find((t) => t[0] === type) || types[0])[1];
   return (
     <span className="hvs-fwrap" ref={ref}>
-      <button type="button" className="hvs-segbtn hvs-fpart is-a" aria-pressed={on} onClick={() => (on ? onOff() : onOn())}>Filter:</button>
+      <button type="button" className="hvs-segbtn hvs-fpart is-a" aria-pressed={on} onClick={() => (on ? onOff() : onOn())}>{label}</button>
       <span className="hvs-ftype">
       <button type="button" ref={typeRef} className="hvs-segbtn hvs-fpart is-b" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
-              aria-label={`Filter type: ${name}`} onClick={() => setOpen((o) => !o)}><span className="hvs-fname">{FILTER_TYPES.map(([v, t]) => (<span key={v} aria-hidden={v !== type} style={{ visibility: v === type ? "visible" : "hidden" }}>{t}</span>))}</span><span className="hvs-fcaret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M0 0h10L5 6z" fill="currentColor" /></svg></span></button>
+              aria-label={`${menuName}: ${name}`} onClick={() => setOpen((o) => !o)}><span className="hvs-fname">{types.map(([v, t]) => (<span key={v} aria-hidden={v !== type} style={{ visibility: v === type ? "visible" : "hidden" }}>{t}</span>))}</span><span className="hvs-fcaret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M0 0h10L5 6z" fill="currentColor" /></svg></span></button>
       {open && (
-        <span className="hvs-fpop" role="menu" aria-label="Filter type">
-          {FILTER_TYPES.map(([v, t]) => (
+        <span className="hvs-fpop" role="menu" aria-label={menuName}>
+          {types.map(([v, t]) => (
             <button key={v} type="button" role="menuitemradio" disabled={v === type} className="hvs-fopt" {...optProps(v, type, onPick)}><span>{t}</span><span className="hvs-fcheck" aria-hidden="true" style={{ visibility: v === type ? "visible" : "hidden" }}><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
           ))}
         </span>
@@ -5956,6 +5999,12 @@ export default function App() {
       })),
     [baseColumns, cfg.cols]
   );
+  /* Row › Viz: a micro chart column of sample history, after the data columns */
+  const tableColumns = useMemo(
+    () => (cfg.microViz ? [...columns, { key: "__viz", title: "Trend", viz: cfg.vizType, sortable: false }] : columns),
+    [columns, cfg.microViz, cfg.vizType]
+  );
+  const vizRows = useMemo(() => (cfg.microViz ? dataRows.map((r) => ({ ...r, __viz: vizSeries(r) })) : dataRows), [dataRows, cfg.microViz]);
   const pinnedKeys = useMemo(() => columns.slice(0, cfg.fixedCount).map((c) => c.key), [columns, cfg.fixedCount]);
   const typeName = cfg.selectable && cfg.expandable ? "Expandable + Selectable" : cfg.selectable ? "Selectable" : cfg.expandable ? "Expandable" : "Simple";
 
@@ -6131,6 +6180,9 @@ export default function App() {
                               data-tip={blocked ? "Not available in Compact" : hint} onClick={() => set({ [key]: !on })}>{label}</button>
                     );
                   })}
+                  <FilterHeaderBtn on={!!cfg.microViz} type={cfg.vizType} types={VIZ_TYPES} label="Viz:" menuName="Micro chart"
+                                   onOff={() => set({ microViz: false })} onOn={() => set({ microViz: true })}
+                                   onPick={(v) => set({ microViz: true, vizType: v })} />
                 </div>
               </CtlField>
               <CtlField label="Pagination">
@@ -6164,8 +6216,8 @@ export default function App() {
             <DataTable
               key={`${resetKey}-${cfg.dataset}`}
               title={cfg.titleText ?? ds.title}
-              columns={columns}
-              rows={cfg.tableState === "empty" ? EMPTY_ROWS : dataRows}
+              columns={tableColumns}
+              rows={cfg.tableState === "empty" ? EMPTY_ROWS : vizRows}
               addLabel={ds.addLabel}
               loading={cfg.tableState === "loading"}
               error={cfg.tableState === "error" && errorShown ? { message: `Could not refresh ${ds.label.toLowerCase()}. The rows below may be out of date.`, onRetry: () => set({ tableState: "default" }), onDismiss: () => setErrorShown(false) } : null}

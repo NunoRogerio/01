@@ -110,6 +110,20 @@ All the features of the Table Workbench are in the package. The Workbench contro
 
 Only the Workbench itself stays out: its control bar, the layout grid and the width and height handles (in an app the table takes the width of its container), and the Tags and Search pages.
 
+## Micro charts in a column
+
+Give a column `viz` and put a list of numbers (oldest first) in each row at its key:
+
+```jsx
+const columns = [
+  { key: "name", title: "System" },
+  { key: "history", title: "Trend", viz: "trend", sortable: false }, // "trend", "area" or "bar"
+];
+const rows = [{ id: 1, name: "AMS-560-22", history: [31, 35, 33, 40, 38, 44] }];
+```
+
+`"bar"` draws one horizontal bar of the latest value, from 0 to `vizMax` (100 by default). The chart uses the categorical blue of the library and follows the theme.
+
 ## Data from your API (server mode)
 
 With `dataMode="server"` the table does not filter, sort or page by itself. It calls `onQueryChange` when it opens and every time the page, page size, sort, filters or search change. You fetch that page and pass it back as `rows`, with the total in `rowCount`.

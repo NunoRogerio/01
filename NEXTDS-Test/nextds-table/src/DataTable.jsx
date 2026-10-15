@@ -165,6 +165,31 @@ const EMPTY_MODEL = { items: [], logicOperator: "and", quickFilterValues: [], qu
  * MenuButton: NEXT "BUTTON Dropdown" (Ghost or Secondary) opening the NEXT dropdown menu panel.
  * role "menu" runs an action, role "listbox" picks a value. Opens up when there is no room below.
  * ------------------------------------------------------------------ */
+/* a micro chart in a cell: the column's value is a list of numbers (oldest first).
+   "trend" a line, "area" a line over a soft fill, "bar" one horizontal bar of the latest value (0 to max, 100 by default) */
+function MicroViz({ type = "trend", values, max }) {
+  const v = Array.isArray(values) ? values.filter((n) => typeof n === "number" && isFinite(n)) : [];
+  if (!v.length) return null;
+  if (type === "bar") {
+    const top = max || 100, last = v[v.length - 1], pct = Math.max(0, Math.min(100, (last / top) * 100));
+    return (
+      <span className="hvt-viz is-bar" role="img" aria-label={`${Math.round(last)} of ${top}`}>
+        <span className="hvt-viz-track"><span className="hvt-viz-fill" style={{ width: `${pct}%` }} /></span>
+      </span>
+    );
+  }
+  const W = 96, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
+  const pts = v.map((n, i) => [P + (i * (W - 2 * P)) / Math.max(1, v.length - 1), H - P - ((n - lo) / span) * (H - 2 * P)]);
+  const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+  return (
+    <svg className={`hvt-viz is-${type}`} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img"
+         aria-label={`Trend from ${Math.round(v[0])} to ${Math.round(v[v.length - 1])}`}>
+      {type === "area" && <path className="hvt-viz-area" d={`${line} L${pts[pts.length - 1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`} />}
+      <path className="hvt-viz-line" d={line} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 function MenuButton({
   variant = "ghost", icon, label, placeholder, ariaLabel, items, value, onSelect,
   role = "menu", align = "left", minWidth, block = false, disabled = false, title,
@@ -1768,7 +1793,7 @@ export function DataTable({
     const count = {};
     columnsProp.forEach((c) => { count[c.title] = (count[c.title] || 0) + 1; });
     const pos = Object.fromEntries(columnsProp.map((c, i) => [c.key, i + 1]));
-    return columns.map((c) => (count[c.title] > 1 ? { ...c, filterLabel: `${c.title} ${pos[c.key]}` } : c));
+    return columns.filter((c) => !c.viz).map((c) => (count[c.title] > 1 ? { ...c, filterLabel: `${c.title} ${pos[c.key]}` } : c)); // micro charts are not filtered
   }, [columns, columnsProp]);
   const colByKey = useMemo(() => Object.fromEntries(filterCols.map((c) => [c.key, c])), [filterCols]);
   /* a choice of values that takes every value (or none) filters nothing: it is not shown or counted as a filter */
@@ -1883,6 +1908,7 @@ export function DataTable({
   const renderCell = (row, col) => {
     const v = row[col.key];
     if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
+    if (col.viz) return <MicroViz type={col.viz} values={v} max={col.vizMax} />; // a micro chart of the row's numbers
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;
@@ -1894,7 +1920,7 @@ export function DataTable({
     }
     return cellText(row, col);
   };
-  const cellText = (row, col) => (col.format ? col.format(row[col.key]) : String(row[col.key] ?? ""));
+  const cellText = (row, col) => (col.viz ? "" : col.format ? col.format(row[col.key]) : String(row[col.key] ?? "")); // a micro chart has no text to search
   /* the words the search list can suggest: every text in the table, not only the page on screen */
   const [fgAdvanced, setFgAdvanced] = useState(false); // filter group: the simple check lists, or the conditions of each column
   const optionsOf = (c) => {

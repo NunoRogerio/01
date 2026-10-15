@@ -542,6 +542,14 @@
   background:var(--container-secondary-background);border:1px solid var(--outline);border-radius:0 var(--component-containerradius) var(--component-containerradius) var(--component-containerradius);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
 .hvt-fg.is-float{border-radius:var(--component-containerradius)}
+/* micro charts in cells (column viz): the categorical blue, a line 1.5px, a soft area, a 8px bar */
+.hvt-viz{display:block;width:96px;max-width:100%;height:24px;flex:none}
+.hvt-viz-line{fill:none;stroke:var(--cat1-140);stroke-width:1.5px;stroke-linejoin:round;stroke-linecap:round}
+.hvt-viz-area{fill:var(--cat1-100);opacity:.35;stroke:none}
+.hvt-viz.is-bar{display:flex;align-items:center}
+.hvt-viz-track{position:relative;flex:1;height:8px;border-radius:4px;background:var(--container-hover-background);overflow:hidden}
+.hvt-viz-fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--cat1-140)}
+.hvt-root.is-compact .hvt-viz{height:16px}
 /* resizing the filter group panel by its edges and corners */
 .hvt-fg.is-sized .hvt-fg-body{flex:1;min-height:0;max-height:none}
 .hvt-fg.is-resizing{user-select:none}
