@@ -2030,7 +2030,7 @@ class Component extends DCLogic {
       OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.selF = o ? 'url(#wfSelRing)' : 'none'; m.bdC = 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     /* (Oct 14, 08:41) a detection's marker: the civil (FFW) ones on the civil green, as their cards and tooltip panel; selected, its outline dark grey and 2px */
-    (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(240, 250, 242)' : 'rgb(255, 255, 255)';   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '2px solid rgb(58, 58, 60)' : '1px solid rgba(0, 121, 166, 0.45)'; });
+    (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(239, 246, 255)' : 'rgb(255, 255, 255)';   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '2px solid rgb(58, 58, 60)' : '1px solid rgba(0, 121, 166, 0.45)'; });
     /* (Oct 15, 06:01) a tap on a map tooltip panel closes it, every kind (detections, candidates, fires, stations); its buttons keep their own action */
     OUT.popTap = (e) => { const t = e && e.target; if (t && t.closest && t.closest('a, button')) return; if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
@@ -2104,7 +2104,7 @@ class Component extends DCLogic {
     if (P.kind === 'cam') { const I = m.info || { civ: false, ttl: m.tt || m.label, pct: '', pctW: '', lines: [m.td || ''], when: '', sys: '' }, PTc = window.__wfLang === 'pt';
       Object.assign(OUT.pop, { isCam: true, isIgn: false, isFire: false, notIgn: false, hasView: false, viewD: 'flex', chatD: 'none', camTagD: I.sys ? 'flex' : 'none', camTtl: I.ttl, camPct: I.pct, camPctW: I.pctW, camPctD: I.pct ? 'block' : 'none',
         camLines: (I.lines || []).filter(Boolean).map((t) => ({ t })), camWhen: I.when ? (PTc ? 'Viu o ponto às ' : 'Saw the point at ') + I.when + '.' : '', camWhenD: I.when ? 'block' : 'none', camSys: I.sys, tt: I.ttl, btnPad: '0 16px 16px', btnMt: '8px',
-        bg: I.civ ? 'rgba(240, 250, 242, 0.86)' : 'rgba(255, 255, 255, 0.72)' }); }
+        bg: I.civ ? 'rgba(239, 246, 255, 0.86)' : 'rgba(255, 255, 255, 0.72)' }); }
     return OUT;
   }
 }
