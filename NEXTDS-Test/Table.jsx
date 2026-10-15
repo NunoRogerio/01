@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 21:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 22:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4863,7 +4863,7 @@ function JellyHover({ rootRef }) {
     const ctx = cv.getContext("2d");
     const N = 56, R = 15;
     const pts = Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 }));
-    const st = { px: 0, py: 0, cx: 0, cy: 0, cvx: 0, cvy: 0, inside: false, el: null, opt: null, last: 0, alpha: 0, born: false, drops: [], raf: 0, t0: performance.now(), nextPop: performance.now() + 4000, nextDrip: 0 };
+    const st = { px: 0, py: 0, cx: 0, cy: 0, cvx: 0, cvy: 0, inside: false, el: null, opt: null, last: 0, alpha: 0, born: false, drops: [], raf: 0, t0: performance.now(), nextPop: performance.now() + 4000, nextDrip: 0, load: 0, sag: 0, sagV: 0, nextR: 0 };
     const fit = () => { const d = window.devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
     fit();
     const OPT = ".hvs-segbtn, .hvs-fpart";
@@ -4907,7 +4907,12 @@ function JellyHover({ rootRef }) {
       ctx.clearRect(0, 0, W, H);
       const rested = st.opt && now - st.last > 700;
       const dripping = rested && now - st.last > 2700; // resting on the shape for 2 s: it starts to drip
-      const sag = dripping ? Math.min((now - st.last - 2700) / 1500, 1) * (5 + Math.sin(now * 0.004) * 1.5) : 0;
+      // the belly: while dripping it fills with the next drop and bends down; when the drop falls it springs back up and bounces
+      if (dripping) { if (!st.nextR) st.nextR = 2 + Math.pow(Math.random(), 2) * 8; st.load = Math.min(st.load + 0.08, 3 + st.nextR * 1.4); }
+      else st.load = 0;
+      st.sagV = (st.sagV + (st.load - st.sag) * 0.07) * 0.88;
+      st.sag += st.sagV;
+      const sag = Math.max(-4, st.sag);
       // the centre follows the mouse (or the rested option) with a soft delay
       let tx = st.px, ty = st.py, rect = null;
       if (rested) { rect = st.opt.getBoundingClientRect(); tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2; }
@@ -4942,13 +4947,16 @@ function JellyHover({ rootRef }) {
       }
       // dripping: drops gather under the shape and fall onto the top of the table header, where they splash
       if (dripping && rect && now > st.nextDrip) {
-        st.nextDrip = now + 700 + Math.random() * 1100;
+        st.nextDrip = now + 800 + Math.random() * 1400;
+        const r = st.nextR || 3; // random sizes: mostly small, now and then a big one
+        st.nextR = 2 + Math.pow(Math.random(), 2) * 8;
+        st.sagV -= st.load * 0.55; st.load = 2; // the drop leaves: the belly springs up
         const head = document.querySelector(".hvt-root .hvt-row--head");
         const hr = head && head.getBoundingClientRect();
         const x = st.cx + (Math.random() - 0.5) * rect.width * 0.6;
         // it splashes on the table header when it falls onto it; elsewhere it falls off the screen
         const floor = hr && hr.top > rect.bottom + 8 && x >= hr.left && x <= hr.right ? hr.top : Infinity;
-        st.drops.push({ kind: "fall", x, y: rect.bottom + 2 + sag, vx: 0, vy: 0.4, r: 2.5 + Math.random() * 2.5, life: 1, floor });
+        st.drops.push({ kind: "fall", x, y: rect.bottom + 2 + sag, vx: 0, vy: 0.4, r, life: 1, floor, lime: true });
       }
       // now and then a bubble pops off
       if (st.inside && now > st.nextPop) {
@@ -4971,14 +4979,15 @@ function JellyHover({ rootRef }) {
       st.drops = st.drops.filter((d) => d.life > 0.02);
       if (st.drops.length > 400) st.drops.splice(0, st.drops.length - 400);
       st.drops.forEach((d) => {
-        ctx.fillStyle = colour(now - st.t0, 0.42 * d.life);
+        ctx.fillStyle = d.lime ? `rgba(170,255,0,${0.5 * d.life})` : colour(now - st.t0, 0.42 * d.life); // the drips fall in lime green
         if (d.kind === "fall") { // a falling drop: stretches with speed, splashes on the header
           d.vy += 0.28; d.y += d.vy;
           if (d.y > innerHeight + 20) { d.life = 0; return; }
           if (d.y + d.r >= d.floor) {
             d.life = 0;
-            for (let j = 0; j < 5; j++) born.push({ x: d.x, y: d.floor - 1, vx: (Math.random() - 0.5) * 4, vy: -0.6 - Math.random() * 1.6, r: 1 + Math.random() * 1.6, life: 1 });
-            born.push({ kind: "trail", x: d.x, y: d.floor, vy: 0.22 + Math.random() * 0.12, r: d.r * 0.9, life: 1, len: 0 });
+            const n = 3 + Math.round(d.r);
+            for (let j = 0; j < n; j++) born.push({ x: d.x, y: d.floor - 1, vx: (Math.random() - 0.5) * (2 + d.r * 0.6), vy: -0.5 - Math.random() * (0.8 + d.r * 0.25), r: 0.8 + Math.random() * d.r * 0.35, life: 1, lime: true });
+            born.push({ kind: "trail", x: d.x, y: d.floor, vy: 0.18 + Math.random() * 0.12 + d.r * 0.015, r: d.r * 0.9, life: 1, len: 0, lime: true });
             return;
           }
           ctx.beginPath(); ctx.ellipse(d.x, d.y, d.r * 0.85, d.r * (1 + Math.min(d.vy * 0.12, 1.2)), 0, 0, Math.PI * 2); ctx.fill();
