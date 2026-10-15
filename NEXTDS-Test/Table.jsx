@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 22:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 22:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4922,7 +4922,7 @@ function JellyHover({ rootRef }) {
       const speed = Math.hypot(st.cvx, st.cvy);
       st.alpha += ((st.inside ? 1 : 0) - st.alpha) * 0.12;
       // target shape: a stretched drop while moving, the option's rounded rectangle once rested
-      const ang = Math.atan2(st.cvy, st.cvx), stretch = Math.min(speed * 0.09, 1.7);
+      const ang = Math.atan2(st.cvy, st.cvx), stretch = Math.min(speed * 0.035, 0.5); // grows only a little
       const k = rested ? 0.13 : 0.04, damp = rested ? 0.87 : 0.9; // moving: soft and stretchy; rested: a strong snap with a fluid bounce
       for (let i = 0; i < N; i++) {
         const a = (i / N) * Math.PI * 2, p = pts[i];
@@ -4933,8 +4933,10 @@ function JellyHover({ rootRef }) {
           const bx = rect.left + 8 + (st.dropU != null ? st.dropU : 0.5) * (rect.width - 16), wx = Math.exp(-Math.pow((st.cx + q.x - bx) / Math.max(10, rect.width * 0.22), 2));
           gy = st.cy + q.y + (q.y > 0 ? sag * Math.pow(q.y / (rect.height / 2 + 2), 4) * (0.25 + 0.75 * wx) : 0); // dripping: the bottom sags most where the next drop forms
         } else {
-          const rx = R * (1 + stretch), ry = R / (1 + stretch * 0.5), lx = Math.cos(a) * rx, ly = Math.sin(a) * ry;
-          gx = st.cx + lx * Math.cos(ang) - ly * Math.sin(ang); gy = st.cy + lx * Math.sin(ang) + ly * Math.cos(ang);
+          // moving: a small rectangle-ish jelly with 8px corners, stretching a little along the movement
+          const hw = 14 * (1 + stretch * Math.abs(Math.cos(ang))), hh = 10 * (1 + stretch * Math.abs(Math.sin(ang)));
+          const q = roundRectPoint(Math.cos(a), Math.sin(a), hw, hh, 8);
+          gx = st.cx + q.x; gy = st.cy + q.y;
         }
         const prev = pts[(i + N - 1) % N], next = pts[(i + 1) % N];
         p.vx = (p.vx + (gx - p.x) * k + ((prev.x + next.x) / 2 - p.x) * (rect ? 0.015 : 0.18)) * damp; // liquid while moving; little smoothing once snapped, so the 8px corners stay crisp
@@ -4953,11 +4955,20 @@ function JellyHover({ rootRef }) {
         const x = rect.left + 8 + (st.dropU != null ? st.dropU : 0.5) * (rect.width - 16); // from anywhere along the bottom edge
         st.nextR = 2.5 + Math.random() * 2.5; st.dropU = Math.random();
         st.sagV -= st.load * 0.55; st.load = 2; // the drop leaves: the belly springs up
-        // it lands at random on the table header or one of the first three rows, when it falls onto the table; elsewhere off the screen
+        // it always lands on the table: at random on its header or one of the first three rows. A drop that starts beside the
+        // table drifts sideways as it falls, as if the table pulled it in.
         const surfaces = [document.querySelector(".hvt-root .hvt-row--head"), ...Array.from(document.querySelectorAll(".hvt-root .hvt-group")).slice(0, 3)]
-          .filter(Boolean).map((el) => el.getBoundingClientRect()).filter((r2) => r2.top > rect.bottom + 8 && x >= r2.left && x <= r2.right);
-        const floor = surfaces.length ? surfaces[Math.floor(Math.random() * surfaces.length)].top : Infinity;
-        st.drops.push({ kind: "fall", x, y: rect.bottom + 2 + sag, vx: 0, vy: 0.4, r, life: 1, floor, lime: true });
+          .filter(Boolean).map((el) => el.getBoundingClientRect()).filter((r2) => r2.top > rect.bottom + 8);
+        const y0 = rect.bottom + 2 + sag;
+        let floor = Infinity, vx = 0;
+        if (surfaces.length) {
+          const t2 = surfaces[Math.floor(Math.random() * surfaces.length)];
+          floor = t2.top;
+          const lx = Math.min(Math.max(x, t2.left + 24), t2.right - 24); // where it lands, inside the table
+          const frames = Math.sqrt((2 * Math.max(10, floor - y0)) / 0.28);
+          vx = (lx - x) / frames;
+        }
+        st.drops.push({ kind: "fall", x, y: y0, vx, vy: 0.4, r, life: 1, floor, lime: true });
       }
       // now and then a bubble pops off
       if (st.inside && now > st.nextPop) {
@@ -4982,7 +4993,7 @@ function JellyHover({ rootRef }) {
       st.drops.forEach((d) => {
         ctx.fillStyle = d.lime ? `rgba(170,255,0,${0.5 * d.life})` : colour(now - st.t0, 0.42 * d.life); // the drips fall in lime green
         if (d.kind === "fall") { // a falling drop: stretches with speed, splashes on the header
-          d.vy += 0.28; d.y += d.vy;
+          d.vy += 0.28; d.y += d.vy; d.x += d.vx || 0;
           if (d.y > innerHeight + 20) { d.life = 0; return; }
           if (d.y + d.r >= d.floor) {
             d.life = 0;
