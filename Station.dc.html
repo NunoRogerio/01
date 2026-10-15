@@ -21,8 +21,8 @@
 <script src="station.js?v=1791871146"></script>
 <script src="menu.js?v=1791782987"></script>
 <script src="i18n.js?v=1791964493"></script>
-<script src="live.js?v=1791923933"></script>
-<script src="chat.js?v=1791994350"></script>
+<script src="live.js?v=1792066597"></script>
+<script src="chat.js?v=1792066597"></script>
 
 <title>Fire station</title>
 <script src="./support.js"></script>
@@ -831,6 +831,7 @@ class Component extends DCLogic {
     return { d: 'flex', title: PTs ? L('Neighbouring brigades', 'Corpos de bombeiros vizinhos') : L('Neighbouring departments', 'Corpos de bombeiros vizinhos'), rows };
   }
   renderVals() {
+    if (window.__wfConfFix) window.__wfConfFix();   // (Oct 15) a captain's confirmation on scene shows as 100% everywhere
     const S = this.station(), T = (S && S.tags) || {};
     const PT = window.__wfLang === 'pt', L = (en, pt) => (PT ? pt : en);
     const MINE = this.home(), home = !!MINE, lead = home && MINE.level === 'lead'; let MC = (MINE && MINE.crew) || 0;   /* (Oct 11, 17:25) the crew whose view this is: Engine 11 (Captain, Engineer) or Brush 11 (Firefighter) */

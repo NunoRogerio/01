@@ -21,8 +21,8 @@
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791964493"></script>
-<script src="live.js?v=1791923933"></script>
-<script src="chat.js?v=1791994350"></script>
+<script src="live.js?v=1792066597"></script>
+<script src="chat.js?v=1792066597"></script>
 <script src="tour.js?v=1791897367"></script>
 <script src="mapsearch.js?v=5"></script>
 <script src="stats.js?v=1791798521"></script>
@@ -1834,6 +1834,7 @@ class Component extends DCLogic {
     return { svw: V.w, vw: V.w, vh: V.h, side, sl, sr: V.sr || 0, colL: side ? sl : 0, colW, padL: side ? sl : 0, padLn: side ? -sl : 0, barH: 132, glass: side ? '' : 'wf-glass', scrimBg: side ? 'transparent' : 'rgba(242,242,247,0.35)', scrimBlur: side ? 'none' : 'blur(10px) saturate(120%)' };
   }
   renderVals() {
+    if (window.__wfConfFix) window.__wfConfFix();   // (Oct 15) a captain's confirmation on scene shows as 100% everywhere
     const L = this.wfLayout();
     const s = this.state || {};
     const SC = this.wfScoped();

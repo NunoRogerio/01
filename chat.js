@@ -53,7 +53,7 @@
   /* (Oct 11, 07:11) the candidate is a stage like the others: "Candidate" and its likelihood ("Candidate 68%"), on the likelihood's yellow
      (light under 60%, yellow 60 to 79%, strong 80% and over: live.js __wfConfTag), dark text; on its right, when it was detected */
   /* (Oct 11, 12:52) night: a candidate detected at night wears the moon instead of the asterisk (icD); n: a boolean, a chat, an incident or a live record */
-  function candStage(conf, nt) { var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
+  function candStage(conf, nt) { if (window.__wfConfNow && nt && typeof nt === 'object' && (nt.id || nt.incId)) conf = window.__wfConfNow(nt.id || nt.incId, conf); var n = Math.round(+conf || 0), T = window.__wfConfTag ? window.__wfConfTag(n) : { fg: '#3A3A3C', bg: '#FFE680' }, N = window.__wfCandNight ? window.__wfCandNight(nt) : false;
     return Object.assign({}, STAGES[0], { en: n ? n + '% likelihood' : 'Candidate', pt: n ? n + '% de probabilidade' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
   function stageOf(ch) { return ch.dismissed ? DISMISSED : !ch.stage ? candStage(ch.conf, ch) : STAGES[ch.stage] || STAGES[0]; }
   /* (Oct 13, 14:10) a candidate's band shows when it was detected (as on its page), never when its chat opened */
