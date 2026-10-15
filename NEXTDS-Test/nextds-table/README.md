@@ -117,10 +117,12 @@ Give a column `viz` and put a list of numbers (oldest first) in each row at its 
 ```jsx
 const columns = [
   { key: "name", title: "System" },
-  { key: "history", title: "Trend", viz: "trend", sortable: false }, // "trend", "area" or "bar"
+  { key: "history", title: "Trend", viz: "trend", vizFormat: (n) => `${n}K`, sortable: false }, // "trend", "area" or "bar"
 ];
 const rows = [{ id: 1, name: "AMS-560-22", history: [31, 35, 33, 40, 38, 44] }];
 ```
+
+Every chart has its metric on its left: the latest value, as `vizFormat(latest)` returns it (for example `(n) => `${n}%``). The metrics of a column share one width, so the numbers line up on the right.
 
 `"bar"` draws one horizontal bar of the latest value, from 0 to `vizMax` (100 by default). The chart uses the categorical blue of the library and follows the theme.
 

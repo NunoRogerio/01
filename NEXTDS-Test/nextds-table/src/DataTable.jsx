@@ -178,7 +178,7 @@ function MicroViz({ type = "trend", values, max }) {
       </span>
     );
   }
-  const W = 96, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
+  const W = 64, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
   const pts = v.map((n, i) => [P + (i * (W - 2 * P)) / Math.max(1, v.length - 1), H - P - ((n - lo) / span) * (H - 2 * P)]);
   const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
   return (
@@ -1908,7 +1908,17 @@ export function DataTable({
   const renderCell = (row, col) => {
     const v = row[col.key];
     if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
-    if (col.viz) return <MicroViz type={col.viz} values={v} max={col.vizMax} />; // a micro chart of the row's numbers
+    if (col.viz) { // a micro chart of the row's numbers, always with its metric (the latest value) on its left
+      const nums = Array.isArray(v) ? v.filter((n) => typeof n === "number" && isFinite(n)) : [];
+      if (!nums.length) return "";
+      const last = nums[nums.length - 1];
+      return (
+        <span className="hvt-vizcell">
+          <span className="hvt-vizval">{col.vizFormat ? col.vizFormat(last) : String(last)}</span>
+          <MicroViz type={col.viz} values={nums} max={col.vizMax} />
+        </span>
+      );
+    }
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;
@@ -2349,8 +2359,13 @@ export function DataTable({
       const inner = cell.querySelector(":scope > span");
       if (!inner) return;
       const tag = inner.querySelector(".hvt-tag");
+      const vizc = inner.classList.contains("hvt-vizcell") ? inner : inner.querySelector(".hvt-vizcell");
       let w;
-      if (tag) {
+      if (vizc) { // a micro chart: its metric, the 8px gap and the chart at its full 64px
+        const val = vizc.querySelector(".hvt-vizval");
+        w = Math.max(40, val ? natural(val) : 0) + 8 + 64;
+      }
+      else if (tag) {
         // the tag's own padding, border and icon do not depend on how wide the column is right now
         const lbl = tag.querySelector(".hvt-tag-label"), tcs = getComputedStyle(tag);
         const chrome = (parseFloat(tcs.paddingLeft) || 0) + (parseFloat(tcs.paddingRight) || 0) + (parseFloat(tcs.borderLeftWidth) || 0) + (parseFloat(tcs.borderRightWidth) || 0);
@@ -2584,6 +2599,17 @@ export function DataTable({
     setFitted({});
   };
   autoLayoutRef.current = autoOn ? autoLayout : null;
+  /* the metrics beside the micro charts of a column share one width, so the numbers line up on the right and the charts start together */
+  useLayoutEffect(() => {
+    const t = tableRef.current;
+    if (!t) return;
+    columns.filter((c) => c.viz).forEach((c) => {
+      const vals = Array.from(t.querySelectorAll(`[data-col="${c.key}"] .hvt-vizval`));
+      vals.forEach((v) => { v.style.minWidth = ""; });
+      const w = Math.ceil(Math.max(0, ...vals.map((v) => v.scrollWidth)));
+      vals.forEach((v) => { v.style.minWidth = `${w}px`; });
+    });
+  });
   useEffect(() => { if (scrollbarHorizontal) { setWidths({}); setFitted({}); } }, [scrollbarHorizontal]); // sideways scroll uses the minimum column width instead
   useLayoutEffect(() => {
     if (!autoOn || !rootRef.current) return undefined;

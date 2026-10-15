@@ -43,6 +43,8 @@ export interface TableColumn<R extends TableRow = TableRow> {
   viz?: "trend" | "area" | "bar";
   /** The top of the "bar" micro chart. Default 100. */
   vizMax?: number;
+  /** The text of the metric shown on the left of every micro chart (the latest value). Default: the number as it is. */
+  vizFormat?: (latest: number) => string;
 }
 
 /** Filter model, the same shape as the MUI X Data Grid GridFilterModel. */

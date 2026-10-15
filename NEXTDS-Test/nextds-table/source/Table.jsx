@@ -555,7 +555,9 @@ const CSS = `
   box-shadow:0 0 8px rgba(0,0,0,.12)}
 .hvt-fg.is-float{border-radius:var(--component-containerradius)}
 /* micro charts in cells (column viz): the categorical blue, a line 1.5px, a soft area, a 8px bar */
-.hvt-viz{display:block;width:96px;max-width:100%;height:24px;flex:none}
+.hvt-vizcell{display:flex;align-items:center;gap:8px;min-width:0}
+.hvt-vizval{flex:0 0 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums} /* the metric: numbers right-aligned so they line up */
+.hvt-viz{display:block;width:64px;max-width:100%;height:24px;flex:0 1 64px;min-width:40px}
 .hvt-viz-line{fill:none;stroke:var(--cat1-140);stroke-width:1.5px;stroke-linejoin:round;stroke-linecap:round}
 .hvt-viz-area{fill:var(--cat1-100);opacity:.35;stroke:none}
 .hvt-viz.is-bar{display:flex;align-items:center}
@@ -1138,7 +1140,7 @@ function MicroViz({ type = "trend", values, max }) {
       </span>
     );
   }
-  const W = 96, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
+  const W = 64, H = 24, P = 2, lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1;
   const pts = v.map((n, i) => [P + (i * (W - 2 * P)) / Math.max(1, v.length - 1), H - P - ((n - lo) / span) * (H - 2 * P)]);
   const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
   return (
@@ -2868,7 +2870,17 @@ export function DataTable({
   const renderCell = (row, col) => {
     const v = row[col.key];
     if (col.render) return col.render(row, v); // a custom cell: the app draws it (search and sorting still use the value)
-    if (col.viz) return <MicroViz type={col.viz} values={v} max={col.vizMax} />; // a micro chart of the row's numbers
+    if (col.viz) { // a micro chart of the row's numbers, always with its metric (the latest value) on its left
+      const nums = Array.isArray(v) ? v.filter((n) => typeof n === "number" && isFinite(n)) : [];
+      if (!nums.length) return "";
+      const last = nums[nums.length - 1];
+      return (
+        <span className="hvt-vizcell">
+          <span className="hvt-vizval">{col.vizFormat ? col.vizFormat(last) : String(last)}</span>
+          <MicroViz type={col.viz} values={nums} max={col.vizMax} />
+        </span>
+      );
+    }
     if (col.status && col.status[v]) {
       const kind = col.status[v];
       const icon = kind === "negative" ? Icons.StatusCritical : kind === "warning" ? Icons.StatusWarning : kind === "info" ? Icons.StatusInfo : Icons.StatusGood;
@@ -3309,8 +3321,13 @@ export function DataTable({
       const inner = cell.querySelector(":scope > span");
       if (!inner) return;
       const tag = inner.querySelector(".hvt-tag");
+      const vizc = inner.classList.contains("hvt-vizcell") ? inner : inner.querySelector(".hvt-vizcell");
       let w;
-      if (tag) {
+      if (vizc) { // a micro chart: its metric, the 8px gap and the chart at its full 64px
+        const val = vizc.querySelector(".hvt-vizval");
+        w = Math.max(40, val ? natural(val) : 0) + 8 + 64;
+      }
+      else if (tag) {
         // the tag's own padding, border and icon do not depend on how wide the column is right now
         const lbl = tag.querySelector(".hvt-tag-label"), tcs = getComputedStyle(tag);
         const chrome = (parseFloat(tcs.paddingLeft) || 0) + (parseFloat(tcs.paddingRight) || 0) + (parseFloat(tcs.borderLeftWidth) || 0) + (parseFloat(tcs.borderRightWidth) || 0);
@@ -3544,6 +3561,17 @@ export function DataTable({
     setFitted({});
   };
   autoLayoutRef.current = autoOn ? autoLayout : null;
+  /* the metrics beside the micro charts of a column share one width, so the numbers line up on the right and the charts start together */
+  useLayoutEffect(() => {
+    const t = tableRef.current;
+    if (!t) return;
+    columns.filter((c) => c.viz).forEach((c) => {
+      const vals = Array.from(t.querySelectorAll(`[data-col="${c.key}"] .hvt-vizval`));
+      vals.forEach((v) => { v.style.minWidth = ""; });
+      const w = Math.ceil(Math.max(0, ...vals.map((v) => v.scrollWidth)));
+      vals.forEach((v) => { v.style.minWidth = `${w}px`; });
+    });
+  });
   useEffect(() => { if (scrollbarHorizontal) { setWidths({}); setFitted({}); } }, [scrollbarHorizontal]); // sideways scroll uses the minimum column width instead
   useLayoutEffect(() => {
     if (!autoOn || !rootRef.current) return undefined;
@@ -4895,7 +4923,7 @@ const DATASETS = [
       SEL("model", "Model", VSP_MODELS.map((m) => m[0]), { tag: MODEL_TAGS }), SEL("site", "Site", SITES),
       NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("alerts", "Alerts", { sortable: true })],
     extra: [TXT("serial", "Serial number"), NUM("totalTB", "Total capacity (TB)", { format: fmt }), NUM("iops", "IOPS", { format: fmt }), NUM("latency", "Latency (ms)", { format: dec1 }), TXT("microcode", "Microcode")],
-    viz: { type: "trend", title: "IOPS trend" },
+    viz: { type: "trend", title: "IOPS trend", format: (n) => `${n}K` },
     sort: { key: "name", dir: "asc" }, make: makeSystem,
     detailsOf: (r) => ({ "Serial number": r.serial ?? "", Microcode: r.microcode ?? "", "Total capacity": r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", IOPS: r.iops != null ? fmt(r.iops) : "", Latency: r.latency != null ? `${dec1(r.latency)} ms` : "" }),
     rows: buildRows(48, makeSystem, (r) => ({ "Serial number": r.serial, Microcode: r.microcode, "Total capacity": `${fmt(r.totalTB)} TB`, IOPS: fmt(r.iops), Latency: `${dec1(r.latency)} ms` })) },
@@ -4904,7 +4932,7 @@ const DATASETS = [
       SEL("type", "Type", POOL_TYPES, { tag: { "Dynamic Provisioning": 7, "Dynamic Tiering": 10, Snapshot: 12 } }), TXT("system", "Storage system"),
       NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("subscription", "Subscription", { sortable: true, format: pctFmt })],
     extra: [NUM("totalTB", "Capacity (TB)", { format: fmt }), NUM("volumes", "Volumes")],
-    viz: { type: "area", title: "Used trend" },
+    viz: { type: "area", title: "Used trend", format: (n) => `${n}%` },
     sort: { key: "name", dir: "asc" }, make: makePool,
     detailsOf: (r) => ({ Capacity: r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", Volumes: r.volumes ?? "" }),
     rows: buildRows(40, makePool, (r) => ({ Capacity: `${fmt(r.totalTB)} TB`, Volumes: r.volumes })) },
@@ -4912,7 +4940,7 @@ const DATASETS = [
     columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("ldev", "LDEV ID", { sortable: true }), TXT("name", "Volume"),
       TXT("pool", "Pool"), NUM("capacityGB", "Capacity (GB)", { sortable: true, format: fmt }), SEL("protection", "Protection", PROTECTIONS, { tag: { None: 5, "Local snapshot": 7, "Remote replication": 10, "Global-active device": 12 } })],
     extra: [TXT("host", "Host"), NUM("usedPct", "Used", { format: pctFmt }), TXT("created", "Created")],
-    viz: { type: "bar", title: "Used", of: (r) => (r.usedPct != null ? [r.usedPct] : null) }, // the volume's own Used value
+    viz: { type: "bar", title: "Used", format: (n) => `${n}%`, of: (r) => (r.usedPct != null ? [r.usedPct] : null) }, // the volume's own Used value
     sort: { key: "ldev", dir: "asc" }, make: makeVolume,
     detailsOf: (r) => ({ Host: r.host ?? "", Used: r.usedPct != null ? `${r.usedPct}%` : "", Created: r.created ?? "" }),
     rows: buildRows(60, makeVolume, (r) => ({ Host: r.host, Used: `${r.usedPct}%`, Created: r.created })) },
@@ -4921,7 +4949,7 @@ const DATASETS = [
       SEL("os", "Operating system", HOST_KINDS.map((h) => h[1]), { tag: { "VMware ESXi 8.0": 7, "Windows Server 2022": 1, "RHEL 9.4": 4, "Oracle Linux 8": 4, "AIX 7.3": 9 } }),
       SEL("protocol", "Protocol", PROTOCOLS, { tag: { FC: 3, iSCSI: 8, "NVMe/TCP": 10, "NVMe/FC": 12 } }), NUM("volumes", "Volumes", { sortable: true }), TXT("lastSeen", "Last seen")],
     extra: [TXT("cluster", "Cluster"), TXT("initiator", "Initiator WWN")],
-    viz: { type: "area", title: "I/O trend" },
+    viz: { type: "area", title: "I/O trend", format: (n) => `${n * 10} MB/s` },
     sort: { key: "name", dir: "asc" }, make: makeHost,
     detailsOf: (r) => ({ Cluster: r.cluster ?? "", "Initiator WWN": r.initiator ?? "" }),
     rows: buildRows(40, makeHost, (r) => ({ Cluster: r.cluster, "Initiator WWN": r.initiator })) },
@@ -4929,7 +4957,7 @@ const DATASETS = [
     columns: [SEL("severity", "Severity", ["Critical", "Warning", "Info"], { status: SEVERITY_STATUS }), TXT("message", "Alert"), TXT("resource", "Resource"),
       TXT("system", "Storage system"), TXT("raised", "Raised", { sortable: true }), SEL("state", "State", ["Open", "Acknowledged", "Resolved"], { tag: { Open: 2, Acknowledged: 9, Resolved: 3 } })],
     extra: [TXT("alertId", "Alert ID"), TXT("category", "Category")],
-    viz: { type: "trend", title: "Occurrences" },
+    viz: { type: "trend", title: "Occurrences", max: 12, of: (r) => vizSeries(r).map((n) => Math.round(n / 8)) },
     sort: { key: "raised", dir: "desc" }, make: makeAlert,
     detailsOf: (r) => ({ "Alert ID": r.alertId ?? "", Category: r.category ?? "" }),
     rows: buildRows(50, makeAlert, (r) => ({ "Alert ID": r.alertId, Category: r.category })) },
@@ -4980,7 +5008,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 06:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 07:12"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5135,7 +5163,7 @@ const DEFAULT_CFG = {
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
   rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
   scrollbarHorizontal: false, columnMinWidth: 160, scrollbarVertical: false, visibleRows: 4,
-  dataset: INITIAL_DS, tableState: "default", columnConfig: "latest", rowCount: 40, widthMode: "grid", gridCanvas: 1440, gridSpan: 8, showGrid: false, heightMode: "auto", heightRows: 8, added: [],
+  dataset: INITIAL_DS, tableState: "default", columnConfig: "latest", rowCount: 40, widthMode: "grid", gridCanvas: 1440, gridSpan: 10, showGrid: false, heightMode: "auto", heightRows: 8, added: [],
   cols: initCols(dsById(INITIAL_DS)),
   tokens: { dawn: {}, wicked: {} },
 };
@@ -6008,11 +6036,17 @@ export default function App() {
   const dsViz = ds.viz || { type: "trend", title: "Trend" }; // every dataset shows one micro chart column by default, each its own kind
   const vizType = cfg.vizType || dsViz.type;
   const tableColumns = useMemo(
-    () => (cfg.microViz ? [...columns, { key: "__viz", title: dsViz.title, viz: vizType, sortable: false }] : columns),
+    () => (cfg.microViz ? [...columns, { key: "__viz", title: dsViz.title, viz: vizType, vizFormat: dsViz.format, vizMax: dsViz.max, sortable: false }] : columns),
     [columns, cfg.microViz, vizType, dsViz.title]
   );
+  const vizValuesOf = (r) => { // the dataset's own values; one value alone (Volumes' Used) ends a sample history when the chart is a line
+    const own = dsViz.of && dsViz.of(r);
+    if (!own || !own.length) return vizSeries(r);
+    if (own.length > 1 || vizType === "bar") return own;
+    const h = vizSeries(r); h[h.length - 1] = own[0]; return h;
+  };
   const vizRows = useMemo(
-    () => (cfg.microViz ? dataRows.map((r) => ({ ...r, __viz: (vizType === dsViz.type && dsViz.of && dsViz.of(r)) || vizSeries(r) })) : dataRows),
+    () => (cfg.microViz ? dataRows.map((r) => ({ ...r, __viz: vizValuesOf(r) })) : dataRows),
     [dataRows, cfg.microViz, vizType, dsViz]
   );
   const pinnedKeys = useMemo(() => columns.slice(0, cfg.fixedCount).map((c) => c.key), [columns, cfg.fixedCount]);
