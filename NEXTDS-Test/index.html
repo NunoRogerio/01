@@ -3958,7 +3958,7 @@ const SCREEN_CSS = `
 .hvs-fopt[aria-checked="true"]{background:var(--cl-raised);font-weight:600}
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
 .hvs-fopt:disabled:hover{background:var(--cl-raised)}
-.hvs-fwrap:has(.hvs-fpart){gap:2px} /* "Filter:" and its type are two blocks, 2px apart */
+.hvs-fwrap:has(.hvs-fpart){gap:1px} /* "Filter:" and its type are two blocks, 1px apart */
 /* control bar options: semibold; "Filter:" + its type read as one option (round outer corners only),
    and the type, a choice inside that option, stays regular */
 .hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-seg .hvs-segbtn[aria-pressed]{font-weight:600}
@@ -4238,7 +4238,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:28"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:29"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
