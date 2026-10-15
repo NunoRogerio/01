@@ -4524,7 +4524,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:35"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5124,17 +5124,27 @@ export default function App() {
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mo = new MutationObserver((list) => {
       if (reduce) return;
+      // one render can change several attributes of a button at once (Compact turns Selectable off and disables it):
+      // compare each button's state before the first change with its state now
+      const before = new Map();
       list.forEach((m) => {
         const b = m.target;
+        if (!before.has(b)) before.set(b, {});
+        const o = before.get(b);
+        if (!(m.attributeName in o)) o[m.attributeName] = m.oldValue;
+      });
+      before.forEach((o, b) => {
         if (!b.matches(".hvs-ctl .hvs-segbtn, .hvs-fopt") || b.matches(".is-solo") || !b.animate) return;
         let on, was;
         if (b.matches(".hvs-fopt")) {
-          if (m.attributeName !== "aria-checked") return;
-          on = b.getAttribute("aria-checked") === "true"; was = m.oldValue === "true";
+          if (!("aria-checked" in o)) return;
+          on = b.getAttribute("aria-checked") === "true"; was = o["aria-checked"] === "true";
         } else { // a multibutton option shows its block only while chosen and enabled: turning disabled closes it like a deselect
-          const pressed = b.getAttribute("aria-pressed") === "true";
-          on = pressed && !b.disabled;
-          was = m.attributeName === "disabled" ? pressed && m.oldValue === null : m.oldValue === "true" && !b.disabled;
+          const pressedNow = b.getAttribute("aria-pressed") === "true";
+          const pressedBefore = "aria-pressed" in o ? o["aria-pressed"] === "true" : pressedNow;
+          const disabledBefore = "disabled" in o ? o.disabled !== null : b.disabled;
+          on = pressedNow && !b.disabled;
+          was = pressedBefore && !disabledBefore;
         }
         if (on === was) return;
         const line = Math.min(1, 2 / Math.max(1, b.offsetHeight)); // a horizontal line about 2px tall, across the option
