@@ -189,7 +189,7 @@ const CSS = `
   transition:width .18s ease,background-color .18s ease,border-radius .18s ease}
 .hvt-qf.is-open{width:189px;background:var(--container-secondary-background);
   border-width:1px;border-radius:var(--component-inputradius)}
-.hvt-qf.is-open:hover{border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
+.hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the border stays */
 /* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
 .hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-panel,.hvt-qf.is-open.is-panel:hover,.hvt-qf.is-open.is-panel:focus-within{border-color:var(--outline);border-bottom-color:var(--border-default);
@@ -287,6 +287,8 @@ const CSS = `
 .hvt-rows{display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
 .hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
+/* header (title bar and filter bar): buttons hover with their fill only, no outline */
+.hvt-titlebar :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-qf-trigger):not(.is-open):hover,.hvt-filterbar :is(.hvt-btn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
 /* pagination: buttons and inputs hover with their fill only, no outline */
 .hvt-pager :is(button,.hvt-mbtn,.hvt-icon):hover{box-shadow:none !important}
 /* experiment: every button inside the table body hovers with its fill only, no outline */
@@ -411,11 +413,12 @@ const CSS = `
 @keyframes hvtMenuDownOut{from{clip-path:inset(0 -32px -32px -32px)}to{clip-path:inset(0 -32px 100% -32px)}}
 @keyframes hvtMenuUpIn{from{clip-path:inset(100% -32px 0 -32px)}to{clip-path:inset(-32px -32px 0 -32px)}}
 @keyframes hvtMenuUpOut{from{clip-path:inset(-32px -32px 0 -32px)}to{clip-path:inset(100% -32px 0 -32px)}}
-.hvt-mpanel.is-down{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button */
+.hvt-mpanel.is-down,.hvt-qfpanel{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button (or search field) */
+.hvt-qfpanel.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
 .hvt-mpanel.is-up{animation:hvtMenuUpIn .18s cubic-bezier(.4,0,.2,1)}
 .hvt-mpanel.is-down.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none} /* folds back up into it */
 .hvt-mpanel.is-up.is-closing{animation:hvtMenuUpOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
-@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up{animation:none}.hvt-mpanel.is-closing{display:none}}
+@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up,.hvt-qfpanel{animation:none}.hvt-mpanel.is-closing,.hvt-qfpanel.is-closing{display:none}}
 .hvt-mpanel{position:absolute;z-index:40;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto;
   padding:16px;background:var(--container-secondary-background);border:1px solid var(--outline);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
@@ -1605,6 +1608,19 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
   }, [q, suggestions]);
   const items = q ? matches : recents;
   const showPanel = open && focused && !disabled && !dismissed && (q ? true : recents.length > 0);
+  /* the list grows down from the field when it opens and folds back up into it when it closes, like the menus */
+  const lastPanel = useRef({ q: "", items: [] });
+  const [panelClosing, setPanelClosing] = useState(false);
+  const wasPanel = useRef(false);
+  if (showPanel) lastPanel.current = { q, items };
+  useEffect(() => {
+    if (showPanel) { wasPanel.current = true; setPanelClosing(false); return undefined; }
+    if (!wasPanel.current) return undefined;
+    wasPanel.current = false;
+    setPanelClosing(true);
+    const t = setTimeout(() => setPanelClosing(false), 180);
+    return () => clearTimeout(t);
+  }, [showPanel]);
 
   useEffect(() => {
     if (!persistent && expanded && inputRef.current) inputRef.current.focus();
@@ -1680,18 +1696,21 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
           {Icons.Search}
         </button>
       </div>
-      {showPanel && (
-        <div className="hvt-qfpanel" id="hvt-qf-list" role="listbox" aria-label={q ? "Suggestions" : "Recent searches"} onMouseDown={keepFocus}>
-          {!q && <div className="hvt-qfhead">Recents</div>}
-          {items.map((t, i) => (
-            <div key={t} role="option" aria-selected={i === active} className={`hvt-qfopt${i === active ? " is-active" : ""}`}
-                 onClick={() => pick(t)}>{q ? highlight(t) : t}</div>
+      {(showPanel || panelClosing) && (() => {
+        const pq = showPanel ? q : lastPanel.current.q, pitems = showPanel ? items : lastPanel.current.items; // while folding away it keeps what it showed
+        return (
+        <div className={`hvt-qfpanel${showPanel ? "" : " is-closing"}`} id="hvt-qf-list" role="listbox" aria-label={pq ? "Suggestions" : "Recent searches"} aria-hidden={!showPanel || undefined} onMouseDown={keepFocus}>
+          {!pq && <div className="hvt-qfhead">Recents</div>}
+          {pitems.map((t, i) => (
+            <div key={t} role="option" aria-selected={showPanel && i === active} className={`hvt-qfopt${showPanel && i === active ? " is-active" : ""}`}
+                 onClick={() => pick(t)}>{pq ? highlight(t) : t}</div>
           ))}
-          {q && (
-            <button type="button" className={`hvt-qfmore${moreIndex === active ? " is-active" : ""}`} onClick={viewAll}>View All Results</button>
+          {pq && (
+            <button type="button" className={`hvt-qfmore${showPanel && moreIndex === active ? " is-active" : ""}`} onClick={viewAll}>View All Results</button>
           )}
         </div>
-      )}
+        );
+      })()}
       {error && open && (
         <div className="hvt-qf-err" role="alert"><i aria-hidden="true">{Icons.StatusCritical}</i><span>{error}</span></div>
       )}
@@ -4299,7 +4318,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:39"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:45"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
