@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 21:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 21:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4850,7 +4850,7 @@ function JellyHover({ rootRef }) {
     const ctx = cv.getContext("2d");
     const N = 36, R = 15;
     const pts = Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 }));
-    const st = { px: 0, py: 0, cx: 0, cy: 0, cvx: 0, cvy: 0, inside: false, el: null, opt: null, last: 0, alpha: 0, born: false, drops: [], raf: 0, t0: performance.now(), nextPop: performance.now() + 2500 };
+    const st = { px: 0, py: 0, cx: 0, cy: 0, cvx: 0, cvy: 0, inside: false, el: null, opt: null, last: 0, alpha: 0, born: false, drops: [], raf: 0, t0: performance.now(), nextPop: performance.now() + 4000 };
     const fit = () => { const d = window.devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
     fit();
     const OPT = ".hvs-segbtn, .hvs-fpart";
@@ -4882,14 +4882,14 @@ function JellyHover({ rootRef }) {
       // the centre follows the mouse (or the rested option) with a soft delay
       let tx = st.px, ty = st.py, rect = null;
       if (rested) { rect = st.opt.getBoundingClientRect(); tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2; }
-      st.cvx = (st.cvx + (tx - st.cx) * (rested ? 0.2 : 0.07)) * (rested ? 0.7 : 0.8);
-      st.cvy = (st.cvy + (ty - st.cy) * (rested ? 0.2 : 0.07)) * (rested ? 0.7 : 0.8);
+      st.cvx = (st.cvx + (tx - st.cx) * (rested ? 0.16 : 0.045)) * (rested ? 0.8 : 0.86);
+      st.cvy = (st.cvy + (ty - st.cy) * (rested ? 0.16 : 0.045)) * (rested ? 0.8 : 0.86);
       st.cx += st.cvx; st.cy += st.cvy;
       const speed = Math.hypot(st.cvx, st.cvy);
       st.alpha += ((st.inside ? 1 : 0) - st.alpha) * 0.12;
       // target shape: a stretched drop while moving, the option's rounded rectangle once rested
-      const ang = Math.atan2(st.cvy, st.cvx), stretch = Math.min(speed * 0.06, 1.2);
-      const k = rested ? 0.24 : 0.1, damp = rested ? 0.74 : 0.8; // rested: stiffer and livelier, a quick bounce
+      const ang = Math.atan2(st.cvy, st.cvx), stretch = Math.min(speed * 0.09, 1.7);
+      const k = rested ? 0.2 : 0.06, damp = rested ? 0.83 : 0.87; // moving: soft and stretchy; rested: a strong snap with a fluid bounce
       for (let i = 0; i < N; i++) {
         const a = (i / N) * Math.PI * 2, p = pts[i];
         let gx, gy;
@@ -4902,18 +4902,18 @@ function JellyHover({ rootRef }) {
           gx = st.cx + lx * Math.cos(ang) - ly * Math.sin(ang); gy = st.cy + lx * Math.sin(ang) + ly * Math.cos(ang);
         }
         const prev = pts[(i + N - 1) % N], next = pts[(i + 1) % N];
-        p.vx = (p.vx + (gx - p.x) * k + ((prev.x + next.x) / 2 - p.x) * 0.08) * damp;
-        p.vy = (p.vy + (gy - p.y) * k + ((prev.y + next.y) / 2 - p.y) * 0.08) * damp;
+        p.vx = (p.vx + (gx - p.x) * k + ((prev.x + next.x) / 2 - p.x) * 0.12) * damp;
+        p.vy = (p.vy + (gy - p.y) * k + ((prev.y + next.y) / 2 - p.y) * 0.12) * damp;
         p.x += p.vx; p.y += p.vy;
       }
       // shaken too hard: bits at the back tear off
-      if (st.inside && speed > 14 && Math.random() < Math.min(0.9, (speed - 14) / 20)) {
+      if (st.inside && speed > 16 && Math.random() < Math.min(0.8, (speed - 16) / 24)) {
         const back = pts[Math.floor(((ang + Math.PI) / (Math.PI * 2)) * N + N) % N];
         drop(back.x, back.y, -st.cvx * 0.25 + (Math.random() - 0.5) * 3, -st.cvy * 0.25 + (Math.random() - 0.5) * 3, 2 + Math.random() * 5);
       }
       // now and then a bubble pops off
       if (st.inside && now > st.nextPop) {
-        st.nextPop = now + 1800 + Math.random() * 3500;
+        st.nextPop = now + 4500 + Math.random() * 6000;
         const p = pts[Math.floor(Math.random() * N)];
         const dx = p.x - st.cx, dy = p.y - st.cy, d = Math.hypot(dx, dy) || 1;
         p.vx += (dx / d) * 6; p.vy += (dy / d) * 6;
