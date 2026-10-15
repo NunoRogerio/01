@@ -4537,7 +4537,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5108,7 +5108,7 @@ function App() {
   const benchRef = useRef(null);
   const ctlBusy = useRef(false);
   const ctlOpening = useRef(null);
-  /* choosing in a multibutton: the white block starts as a thin line in the middle and grows to the option, with a subtle overshoot */
+  /* choosing in a multibutton: the white block starts as a thin horizontal line through the middle and opens up and down to the option, with a subtle overshoot */
   useEffect(() => {
     const root = benchRef.current;
     if (!root || typeof MutationObserver === "undefined") return undefined;
@@ -5119,12 +5119,12 @@ function App() {
         const b = m.target;
         if (b.getAttribute("aria-pressed") !== "true" || m.oldValue === "true") return;
         if (!b.matches(".hvs-ctl .hvs-segbtn") || b.matches(".is-solo") || !b.animate) return;
-        const line = Math.min(1, 2 / Math.max(1, b.offsetWidth)); // about 2px wide
+        const line = Math.min(1, 2 / Math.max(1, b.offsetHeight)); // a horizontal line about 2px tall, across the option
         try {
           b.animate([
-            { transform: `scaleX(${line})`, opacity: 0.6 },
-            { transform: "scaleX(1.04)", opacity: 1, offset: 0.7 },
-            { transform: "scaleX(1)", opacity: 1 },
+            { transform: `scaleY(${line})`, opacity: 0.6 },
+            { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 },
+            { transform: "scaleY(1)", opacity: 1 },
           ], { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
         } catch (err) { /* no pseudo-element animation in this browser: the block just appears */ }
       });
