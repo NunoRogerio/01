@@ -4370,7 +4370,7 @@ const SCREEN_CSS = `
 .hvs-rz::after{content:"";position:absolute;left:5px;top:20px;bottom:20px;width:4px;border-left:1px solid var(--container-secondary-background);border-right:1px solid var(--container-secondary-background)}
 .hvs-rz.is-l{left:-22px}
 .hvs-rz.is-r{right:-22px}
-.hvs-slot:hover .hvs-rz,.hvs-rz:focus-visible,.hvs-rz.is-active{opacity:1}
+.hvs-slot.is-near .hvs-rz,.hvs-rz:focus-visible,.hvs-rz.is-active{opacity:1} /* the resize handles show only while the pointer is in the 56px band around the table, not over the table itself */
 .hvs-rz-v{top:auto;left:50%;width:56px;height:14px;margin:0 0 0 -28px;cursor:ns-resize}
 .hvs-rz-v::after{left:20px;right:20px;top:5px;bottom:auto;width:auto;height:4px;border-left:0;border-right:0;border-top:1px solid var(--container-secondary-background);border-bottom:1px solid var(--container-secondary-background)}
 .hvs-rz-v.is-t{top:-22px}
@@ -4864,7 +4864,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 05:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 05:22"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5499,6 +5499,20 @@ export default function App() {
   const ctlBusy = useRef(false);
   const ctlOpening = useRef(null);
   const benchTip = useTips(benchRef, ".hvt-root, .hvs"); // the workbench's own tooltips; the table shows its own
+  useEffect(() => { // the table's resize handles show only in the 56px band around it (not over the table, where they would distract)
+    const near = (e) => {
+      document.querySelectorAll(".hvs-slot").forEach((slot) => {
+        const r = slot.getBoundingClientRect(), x = e.clientX, y = e.clientY, B = 56;
+        const inBand = x >= r.left - B && x <= r.right + B && y >= r.top - B && y <= r.bottom + B;
+        const inside = x > r.left && x < r.right && y > r.top && y < r.bottom;
+        slot.classList.toggle("is-near", inBand && !inside);
+      });
+    };
+    const leave = () => document.querySelectorAll(".hvs-slot.is-near").forEach((s) => s.classList.remove("is-near"));
+    document.addEventListener("pointermove", near);
+    document.documentElement.addEventListener("pointerleave", leave);
+    return () => { document.removeEventListener("pointermove", near); document.documentElement.removeEventListener("pointerleave", leave); };
+  }, []);
   /* a smooth change of theme (runs before anything measures the page, so the colours can still transition) */
   const themeSeen = useRef(null);
   useLayoutEffect(() => {
