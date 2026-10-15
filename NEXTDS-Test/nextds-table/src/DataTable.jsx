@@ -2846,6 +2846,11 @@ export function DataTable({
       const dx = p.x - next[id].x, dy = p.y - next[id].y;
       if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) c.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], ease); // a chip that moves glides to its new place
     });
+    const empty = bar.querySelector(".hvt-chips > .hvt-muted");
+    if (empty && Object.keys(chipPos.current).length && !reduce && empty.animate) { // the last filter was removed: "No filters applied" slides in from the left, 0.2 s later
+      empty.animate([{ opacity: 0, transform: "translateX(-16px)" }, { opacity: 1, transform: "none" }],
+        { duration: 260, delay: 200, easing: "cubic-bezier(.4,0,.2,1)", fill: "backwards" });
+    }
     chipPos.current = next;
   }, [barKey]); // only when the chips change: other renders (hover, the panel folding) leave a running animation alone
 
