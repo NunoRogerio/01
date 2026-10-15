@@ -4895,6 +4895,7 @@ const DATASETS = [
       SEL("model", "Model", VSP_MODELS.map((m) => m[0]), { tag: MODEL_TAGS }), SEL("site", "Site", SITES),
       NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("alerts", "Alerts", { sortable: true })],
     extra: [TXT("serial", "Serial number"), NUM("totalTB", "Total capacity (TB)", { format: fmt }), NUM("iops", "IOPS", { format: fmt }), NUM("latency", "Latency (ms)", { format: dec1 }), TXT("microcode", "Microcode")],
+    viz: { type: "trend", title: "IOPS trend" },
     sort: { key: "name", dir: "asc" }, make: makeSystem,
     detailsOf: (r) => ({ "Serial number": r.serial ?? "", Microcode: r.microcode ?? "", "Total capacity": r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", IOPS: r.iops != null ? fmt(r.iops) : "", Latency: r.latency != null ? `${dec1(r.latency)} ms` : "" }),
     rows: buildRows(48, makeSystem, (r) => ({ "Serial number": r.serial, Microcode: r.microcode, "Total capacity": `${fmt(r.totalTB)} TB`, IOPS: fmt(r.iops), Latency: `${dec1(r.latency)} ms` })) },
@@ -4903,6 +4904,7 @@ const DATASETS = [
       SEL("type", "Type", POOL_TYPES, { tag: { "Dynamic Provisioning": 7, "Dynamic Tiering": 10, Snapshot: 12 } }), TXT("system", "Storage system"),
       NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("subscription", "Subscription", { sortable: true, format: pctFmt })],
     extra: [NUM("totalTB", "Capacity (TB)", { format: fmt }), NUM("volumes", "Volumes")],
+    viz: { type: "area", title: "Used trend" },
     sort: { key: "name", dir: "asc" }, make: makePool,
     detailsOf: (r) => ({ Capacity: r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", Volumes: r.volumes ?? "" }),
     rows: buildRows(40, makePool, (r) => ({ Capacity: `${fmt(r.totalTB)} TB`, Volumes: r.volumes })) },
@@ -4910,6 +4912,7 @@ const DATASETS = [
     columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("ldev", "LDEV ID", { sortable: true }), TXT("name", "Volume"),
       TXT("pool", "Pool"), NUM("capacityGB", "Capacity (GB)", { sortable: true, format: fmt }), SEL("protection", "Protection", PROTECTIONS, { tag: { None: 5, "Local snapshot": 7, "Remote replication": 10, "Global-active device": 12 } })],
     extra: [TXT("host", "Host"), NUM("usedPct", "Used", { format: pctFmt }), TXT("created", "Created")],
+    viz: { type: "bar", title: "Used", of: (r) => (r.usedPct != null ? [r.usedPct] : null) }, // the volume's own Used value
     sort: { key: "ldev", dir: "asc" }, make: makeVolume,
     detailsOf: (r) => ({ Host: r.host ?? "", Used: r.usedPct != null ? `${r.usedPct}%` : "", Created: r.created ?? "" }),
     rows: buildRows(60, makeVolume, (r) => ({ Host: r.host, Used: `${r.usedPct}%`, Created: r.created })) },
@@ -4918,6 +4921,7 @@ const DATASETS = [
       SEL("os", "Operating system", HOST_KINDS.map((h) => h[1]), { tag: { "VMware ESXi 8.0": 7, "Windows Server 2022": 1, "RHEL 9.4": 4, "Oracle Linux 8": 4, "AIX 7.3": 9 } }),
       SEL("protocol", "Protocol", PROTOCOLS, { tag: { FC: 3, iSCSI: 8, "NVMe/TCP": 10, "NVMe/FC": 12 } }), NUM("volumes", "Volumes", { sortable: true }), TXT("lastSeen", "Last seen")],
     extra: [TXT("cluster", "Cluster"), TXT("initiator", "Initiator WWN")],
+    viz: { type: "area", title: "I/O trend" },
     sort: { key: "name", dir: "asc" }, make: makeHost,
     detailsOf: (r) => ({ Cluster: r.cluster ?? "", "Initiator WWN": r.initiator ?? "" }),
     rows: buildRows(40, makeHost, (r) => ({ Cluster: r.cluster, "Initiator WWN": r.initiator })) },
@@ -4925,6 +4929,7 @@ const DATASETS = [
     columns: [SEL("severity", "Severity", ["Critical", "Warning", "Info"], { status: SEVERITY_STATUS }), TXT("message", "Alert"), TXT("resource", "Resource"),
       TXT("system", "Storage system"), TXT("raised", "Raised", { sortable: true }), SEL("state", "State", ["Open", "Acknowledged", "Resolved"], { tag: { Open: 2, Acknowledged: 9, Resolved: 3 } })],
     extra: [TXT("alertId", "Alert ID"), TXT("category", "Category")],
+    viz: { type: "trend", title: "Occurrences" },
     sort: { key: "raised", dir: "desc" }, make: makeAlert,
     detailsOf: (r) => ({ "Alert ID": r.alertId ?? "", Category: r.category ?? "" }),
     rows: buildRows(50, makeAlert, (r) => ({ "Alert ID": r.alertId, Category: r.category })) },
@@ -4975,7 +4980,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 06:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 06:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5125,7 +5130,7 @@ const DEFAULT_CFG = {
   theme: "dawn", product: "vsp360", version: "6.3.2.1", component: "table",
   size: "comfortable", selectable: false, expandable: false,
   showTitle: true, showDescription: false, showInfo: false, titleText: null, showPagination: true, pageSize: 5, rowGap: 12, colGap: 0, cellPad: 16, rowPad: 0, tablePad: 16, rowH: null, headH: null,
-  showMaximize: true, showMoreOptions: true, microViz: false, vizType: "trend",
+  showMaximize: true, showMoreOptions: true, microViz: true, vizType: null, // vizType null: the dataset's own micro chart
   showFilterBar: false, filterPanelStyle: "header",
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
   rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
@@ -6000,11 +6005,16 @@ export default function App() {
     [baseColumns, cfg.cols]
   );
   /* Row › Viz: a micro chart column of sample history, after the data columns */
+  const dsViz = ds.viz || { type: "trend", title: "Trend" }; // every dataset shows one micro chart column by default, each its own kind
+  const vizType = cfg.vizType || dsViz.type;
   const tableColumns = useMemo(
-    () => (cfg.microViz ? [...columns, { key: "__viz", title: "Trend", viz: cfg.vizType, sortable: false }] : columns),
-    [columns, cfg.microViz, cfg.vizType]
+    () => (cfg.microViz ? [...columns, { key: "__viz", title: dsViz.title, viz: vizType, sortable: false }] : columns),
+    [columns, cfg.microViz, vizType, dsViz.title]
   );
-  const vizRows = useMemo(() => (cfg.microViz ? dataRows.map((r) => ({ ...r, __viz: vizSeries(r) })) : dataRows), [dataRows, cfg.microViz]);
+  const vizRows = useMemo(
+    () => (cfg.microViz ? dataRows.map((r) => ({ ...r, __viz: (vizType === dsViz.type && dsViz.of && dsViz.of(r)) || vizSeries(r) })) : dataRows),
+    [dataRows, cfg.microViz, vizType, dsViz]
+  );
   const pinnedKeys = useMemo(() => columns.slice(0, cfg.fixedCount).map((c) => c.key), [columns, cfg.fixedCount]);
   const typeName = cfg.selectable && cfg.expandable ? "Expandable + Selectable" : cfg.selectable ? "Selectable" : cfg.expandable ? "Expandable" : "Simple";
 
@@ -6022,7 +6032,7 @@ export default function App() {
   const switchDataset = (id, patch = {}, rows) => {
     const d = dsById(id);
     saveChoice(id);
-    setCfg((c) => ({ ...c, ...patch, dataset: id, added: [], cols: initCols(d), titleText: null }));
+    setCfg((c) => ({ ...c, ...patch, dataset: id, added: [], cols: initCols(d), titleText: null, vizType: null })); // its own micro chart again
     setDataRows((rows || d.rows).slice(0, cfg.rowCount)); // the chosen number of rows follows the dataset
     setStartModel(EMPTY_MODEL);
     setModel(EMPTY_MODEL);
@@ -6132,7 +6142,7 @@ export default function App() {
                   ))}
                 </div>
               </CtlField>
-              <CtlField label="Number of rows">
+              <CtlField label="Nº of rows">
                 <CtlSelect ariaLabel="Number of rows" value={dataRows.length}
                             options={ROW_COUNTS.map((n) => ({ value: n, label: String(n) }))}
                             onPick={(n) => {
@@ -6180,7 +6190,7 @@ export default function App() {
                               data-tip={blocked ? "Not available in Compact" : hint} onClick={() => set({ [key]: !on })}>{label}</button>
                     );
                   })}
-                  <FilterHeaderBtn on={!!cfg.microViz} type={cfg.vizType} types={VIZ_TYPES} label="Viz:" menuName="Micro chart"
+                  <FilterHeaderBtn on={!!cfg.microViz} type={vizType} types={VIZ_TYPES} label="Viz:" menuName="Micro chart"
                                    onOff={() => set({ microViz: false })} onOn={() => set({ microViz: true })}
                                    onPick={(v) => set({ microViz: true, vizType: v })} />
                 </div>
