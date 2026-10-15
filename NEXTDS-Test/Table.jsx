@@ -4209,6 +4209,11 @@ const SCREEN_CSS = `
 .hvs-paneltgl-chev{transform-origin:8px 9.5px;transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed .hvs-paneltgl-chev,.hvs.is-ctl-folding .hvs-paneltgl-chev{transform:rotate(180deg)} /* close panel: the chevron points up; open panel: it turns to point down */
 .hvs.is-ctl-closed .hvs-ctl{display:none}
+/* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
+.hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
+.hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
+.hvs-ctl .hvs-segbtn[aria-pressed="true"]::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px} /* closed, the bar is just the title row */
 .hvs-fwrap{position:relative;display:inline-flex}
@@ -4510,7 +4515,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5081,6 +5086,30 @@ export default function App() {
   const benchRef = useRef(null);
   const ctlBusy = useRef(false);
   const ctlOpening = useRef(null);
+  /* choosing in a multibutton: the white block starts as a thin line in the middle and grows to the option, with a subtle overshoot */
+  useEffect(() => {
+    const root = benchRef.current;
+    if (!root || typeof MutationObserver === "undefined") return undefined;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mo = new MutationObserver((list) => {
+      if (reduce) return;
+      list.forEach((m) => {
+        const b = m.target;
+        if (b.getAttribute("aria-pressed") !== "true" || m.oldValue === "true") return;
+        if (!b.matches(".hvs-ctl .hvs-segbtn") || b.matches(".is-solo") || !b.animate) return;
+        const line = Math.min(1, 2 / Math.max(1, b.offsetWidth)); // about 2px wide
+        try {
+          b.animate([
+            { transform: `scaleX(${line})`, opacity: 0.6 },
+            { transform: "scaleX(1.04)", opacity: 1, offset: 0.7 },
+            { transform: "scaleX(1)", opacity: 1 },
+          ], { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
+        } catch (err) { /* no pseudo-element animation in this browser: the block just appears */ }
+      });
+    });
+    mo.observe(root, { subtree: true, attributes: true, attributeFilter: ["aria-pressed"], attributeOldValue: true });
+    return () => mo.disconnect();
+  }, []);
   useLayoutEffect(() => {
     const o = ctlOpening.current;
     if (!ctlOpen || !o) return;
