@@ -4629,7 +4629,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:50"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5711,17 +5711,17 @@ export default function App() {
                 <button type="button" className="hvs-segbtn hvs-pill-b is-wicked" aria-pressed={cfg.theme === "wicked"} onClick={() => set({ theme: "wicked" })}>Wicked</button>
               </div>
               </CtlField>
+              <CtlField label="Data">
+                <CtlSelect ariaLabel="Data" value={cfg.dataset}
+                           options={PRODUCT_DATASETS.map((d) => ({ value: d.id, label: d.label }))}
+                           onPick={(v) => switchDataset(v)} />
+              </CtlField>
               <CtlField label="Density">
                 <div className="hvs-seg" role="group" aria-label="Density">
                   {SIZES.map(([value, label]) => (
                     <button key={value} type="button" className="hvs-segbtn" aria-pressed={cfg.size === value} onClick={() => setSize(value)}>{label}</button>
                   ))}
                 </div>
-              </CtlField>
-              <CtlField label="Data">
-                <CtlSelect ariaLabel="Data" value={cfg.dataset}
-                           options={PRODUCT_DATASETS.map((d) => ({ value: d.id, label: d.label }))}
-                           onPick={(v) => switchDataset(v)} />
               </CtlField>
               <CtlField label="Number of rows">
                 <CtlSelect ariaLabel="Number of rows" value={dataRows.length}
