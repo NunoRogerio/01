@@ -3942,8 +3942,8 @@ const SCREEN_CSS = `
 /* control bar options: semibold; "Filter:" + its type read as one option (round outer corners only),
    and the type, a choice inside that option, stays regular */
 .hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-seg .hvs-segbtn[aria-pressed]{font-weight:600}
-.hvs-ctl .hvs-seg .hvs-fpart.is-b{font-weight:400;position:relative}
-.hvs-fcaret{position:absolute;right:2px;bottom:2px;display:block;width:7px;height:4.2px;color:var(--cl-text);opacity:1;pointer-events:none} /* the caret: a filled triangle in the text colour, in the bottom-right corner, 2px in */
+.hvs-ctl .hvs-seg .hvs-fpart.is-b{font-weight:400;display:inline-flex;align-items:center;gap:4px;padding-right:8px}
+.hvs-fcaret{display:inline-flex;flex:none;width:8.1px;height:4.9px;color:var(--cl-text);opacity:1} /* the caret: a filled triangle in the text colour, centred with the text */
 .hvs-fcaret svg{display:block;width:100%;height:100%}
 .hvs-fcaret svg{display:block;width:100%;height:100%}
 .hvs-cf-l{padding:0 0 0 12px;font-size:11px;line-height:14px;color:var(--cl-text-3);font-family:var(--cl-font)}
@@ -4221,7 +4221,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:42"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:43"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
