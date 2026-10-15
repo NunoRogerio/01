@@ -87,7 +87,7 @@ export interface EmptyState {
   title?: string;
   /** Text at the right of the title (e.g. a count or a short note). */
   description?: ReactNode;
-  /** An information icon after the title; its text shows as a tooltip. */
+  /** An information icon after the title; its text shows as a tooltip. A header has a description or an info icon, not both: with a description, `info` is ignored. */
   info?: string;
   message?: string;
   actions?: Array<{ label: string; onClick: () => void }>;

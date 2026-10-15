@@ -2320,7 +2320,7 @@ function TipBubble({ tip }) {
 export function DataTable({
   title = "Table Title",
   description = null, // optional text shown at the right of the title
-  info = null, // optional: an information icon after the title that shows this text as a tooltip
+  info = null, // optional: an information icon after the title that shows this text as a tooltip (not with a description: only one of the two)
   columns: columnsProp = DEFAULT_COLUMNS,
   rows = DEFAULT_ROWS,
   showTitle = true,
@@ -3985,7 +3985,7 @@ export function DataTable({
             <div className="hvt-titlewrap">
               {showTitle && <h3 className="hvt-title">{title}</h3>}
               {description && <span className="hvt-titledesc">{description}</span>}
-              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 15.5C12.1421 15.5 15.5 12.1421 15.5 8C15.5 3.85786 12.1421 0.5 8 0.5C3.85786 0.5 0.5 3.85786 0.5 8C0.5 12.1421 3.85786 15.5 8 15.5Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 8.625V4.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 10.875C8.31066 10.875 8.5625 11.1268 8.5625 11.4375C8.5625 11.7482 8.31066 12 8 12C7.68934 12 7.4375 11.7482 7.4375 11.4375C7.4375 11.1268 7.68934 10.875 8 10.875Z" fill="currentColor" stroke="currentColor" strokeWidth="0.125" /></svg></button>}
+              {info && !description && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 15.5C12.1421 15.5 15.5 12.1421 15.5 8C15.5 3.85786 12.1421 0.5 8 0.5C3.85786 0.5 0.5 3.85786 0.5 8C0.5 12.1421 3.85786 15.5 8 15.5Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 8.625V4.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 10.875C8.31066 10.875 8.5625 11.1268 8.5625 11.4375C8.5625 11.7482 8.31066 12 8 12C7.68934 12 7.4375 11.7482 7.4375 11.4375C7.4375 11.1268 7.68934 10.875 8 10.875Z" fill="currentColor" stroke="currentColor" strokeWidth="0.125" /></svg></button>}
             </div>
           )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}
@@ -4732,7 +4732,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5888,7 +5888,8 @@ export default function App() {
                     const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
                     return (
                       <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
-                              data-tip={blocked ? "Turn on Add, Edit and Delete rows to use the button" : undefined} onClick={() => set({ [key]: !on })}>{label}</button>
+                              data-tip={blocked ? "Turn on Add, Edit and Delete rows to use the button" : undefined}
+                              onClick={() => set({ [key]: !on, ...(!on && key === "showDescription" ? { showInfo: false } : {}), ...(!on && key === "showInfo" ? { showDescription: false } : {}) })}>{label}</button>
                     );
                   })}
                 </div>
