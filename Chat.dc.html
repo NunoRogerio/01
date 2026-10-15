@@ -20,7 +20,7 @@
 <script src="station.js?v=1791871146"></script>
 <script src="i18n.js?v=1791964493"></script>
 <script src="live.js?v=1792066597"></script>
-<script src="chat.js?v=1792066597"></script>
+<script src="chat.js?v=1792066665"></script>
 <script src="tour.js?v=1791897367"></script>
 <script src="feedcam.js?v=1791719825"></script>
 <script src="trophy.js?v=1791876476"></script>
@@ -1120,6 +1120,7 @@ class Component extends DCLogic {
     const items = [], pends = [];
     const onlyDec = c.closed && s.hTab === 'dec';
     c.msgs.forEach((m) => {
+      if (m.ev) return;   /* (Oct 15, 13:17) the detections are on the incident page, not in the chat (older chats keep none either) */
       if (m.kind === 'card' && m.tag && m.tag.en === 'Fire reported') return; if (m.kind === 'sys' && /^(Called you( \(fire owner\))? and the (crew coordinators|officers) of |Chat opened for this fire)/.test(m.en || '')) { m = Object.assign({}, m, { en: 'Called you and the officers of the nearest stations', pt: 'Chamados: o próprio e os chefes dos quartéis mais próximos' }); } if (m.kind === 'card' && m.title && /^Active fire · /.test(m.title.en || '')) { m = Object.assign({}, m, { title: { en: 'Active fire', pt: 'Incêndio ativo' } }); }   /* (Oct 10, 23:41) saved chats too: no opening card repeating the fire */
       if (onlyDec && m.kind !== 'card') return;   /* (Oct 8, 22:15) Decisions: the cards only, no chat text (mine included) */
       const vt = m.vt || m.t, d = new Date(vt).toDateString();

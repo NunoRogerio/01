@@ -2004,3 +2004,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The coordinates and the detection / start time cards close the incident page, after Summary, Detections and key figures.
 - (Oct 15, 13:14) A captain who confirms the fire on scene makes the candidate's likelihood 100%, on its page, the main map and every list (live.js __wfConfNow / __wfConfFix); the detections keep their own confidences.
 - (Oct 15, 13:14) Likelihood above 85%: the likelihood tag turns a transparent red (rgba(255, 59, 48, 0.18), text rgb(142, 27, 19)), everywhere __wfConfTag colours it.
+- (Oct 15, 13:17) The detections are not repeated in the incident chat: they live on the incident page only.

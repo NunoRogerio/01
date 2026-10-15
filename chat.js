@@ -683,8 +683,8 @@
       if (c.asgMine) { holdFor(c, ev0); return; }
       /* (Oct 13, 16:54) the dispatch center's own view: nothing is sent until its dispatcher decides (Send initial attack, Smoke check or
          Dismiss on the incident's page); until then the chat holds the detections only, and the story starts with that decision */
-      if (dspMe() && !dspDone(c)) { ev0.kind = 'card'; ev0.id = newId(); ev0.t = ev0.vt = Date.now() - 60000; ev0.st0 = c.stage; c.msgs.push(ev0); c.msgs.push({ kind: 'sys', id: newId(), t: Date.now(), vt: Date.now(), st0: c.stage, en: 'Send the initial attack or a smoke check to call the team', pt: 'Envie o ataque inicial ou um reconhecimento para chamar a equipa' }); c.hold = true; c.dspHold = true; c.holdAt = Date.now(); c.updated = Date.now(); return; }
-      card(c, ev0, 300, 0); candRest(c, false); return; }
+      if (dspMe() && !dspDone(c)) { c.msgs.push({ kind: 'sys', id: newId(), t: Date.now(), vt: Date.now(), st0: c.stage, en: 'Send the initial attack or a smoke check to call the team', pt: 'Envie o ataque inicial ou um reconhecimento para chamar a equipa' }); c.hold = true; c.dspHold = true; c.holdAt = Date.now(); c.updated = Date.now(); return; }
+      candRest(c, false); return; }
     fireStart(c); }
   function dspMe() { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } }
   function dspDone(c) { try { var D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; return D[c.incId] === 'sent' || D[c.incId] === 'check'; } catch (e) { return false; } }
@@ -701,9 +701,9 @@
     if (kind === 'dismissed') { c.dismissed = true; c.updated = Date.now(); save(); return true; }
     candRest(c, true); c.updated = Date.now(); save(); try { window.dispatchEvent(new Event('wf-chat')); } catch (e) {} return true; }
   function holdFor(c, ev) { var now = Date.now(), M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
-    ev.kind = 'card'; ev.id = newId(); ev.t = ev.vt = now - 60000; ev.st0 = c.stage; c.msgs.push(ev);
+    /* (Oct 15, 13:17) the detections live on the incident page only, never repeated in the chat */
     c.msgs.push({ kind: 'card', id: newId(), t: now, vt: now, st0: c.stage, asgOrder: true, ask: 'ff', req: 'order', tag: { en: dcOf(c) + ' · Dispatch order', pt: dcOf(c) + ' · Ordem de despacho' }, tagC: '#0A66CC', title: { en: 'Respond', pt: 'Responder' },
-      body: { en: u + ' assigned to this incident. Read the detections, then respond.', pt: 'O ' + u + ' foi atribuído a este incidente. Leia as deteções e responda.' }, actions: [{ key: 'respond', en: 'Responding', pt: 'A responder', primary: true }] });
+      body: { en: u + ' assigned to this incident.', pt: 'O ' + u + ' foi atribuído a este incidente.' }, actions: [{ key: 'respond', en: 'Responding', pt: 'A responder', primary: true }] });
     c.hold = true; c.holdAt = now; c.updated = now; }
   function release(c) { if (!c.hold) return; c.hold = false; var dz = Date.now() - (c.holdAt || Date.now()) + 3000; (c.queue || []).forEach(function (q) { q.due += dz; }); c.queue.sort(function (a, b) { return a.due - b.due; });   /* what waited during the hold comes after the start of the story */ var M = window.__wfMine ? window.__wfMine() : null, u = (M && M.unit) || 'Engine';
     (c.msgs || []).forEach(function (m) { if (m.asgOrder && !m.done) m.done = 'respond'; });
