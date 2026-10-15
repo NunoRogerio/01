@@ -4230,6 +4230,7 @@ const SCREEN_CSS = `
 .hvs-pkgbtn:focus-visible{outline:2px solid var(--cl-focus);outline-offset:2px}
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
+.hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
 .hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:28px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
 .hvs-resetbtn:hover .hvs-resetico{transform:rotate(-360deg)} /* on hover the reset arrow turns once, backwards */
@@ -4312,11 +4313,9 @@ const SCREEN_CSS = `
 .hvs-fopt:disabled{color:var(--cl-text-3);cursor:default}
 .hvs-fopt:disabled:hover{background:transparent}
 .hvs-fwrap:has(.hvs-fpart){gap:0} /* "Filter:" and its type touch */
-.hvs-ctl .hvs-fwrap > .hvs-ftype::before{content:"";position:absolute;left:-1px;top:50%;width:6px;height:8px;margin-top:-4px;background:var(--cl-raised);
-  opacity:0;transform:scaleY(0);transition:opacity .36s,transform .36s cubic-bezier(.3,0,.2,1);pointer-events:none}
-.hvs-ctl .hvs-fwrap:has(.hvs-fpart.is-a[aria-pressed="true"]:not(:disabled)) > .hvs-ftype::before{opacity:1;transform:none} /* an 8px white bar joins "Filter:" and its type while the filter is on, touching both blocks */
+/* (18:55) no joining bar between "Filter:" and its type */
 .hvs-ctl .hvs-seg:has(.hvs-fcaret){padding:4px} /* controls with a caret: 4px around, like the menu they open */
-.hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px;margin:-4px 0} /* the type block carries its own 4px all around: that is its distance from "Filter:" */
+.hvs-ctl .hvs-fwrap > .hvs-ftype{padding:4px 4px 4px 3px;margin:-4px 0} /* the type block carries its own 4px all around: that is its distance from "Filter:" */
 .hvs-ctl .hvs-fwrap > .hvs-ftype > .hvs-fpop{left:0;top:100%;min-width:100%} /* the menu starts at the type's container edge and hangs from the track */
 /* control bar options: semibold; "Filter:" + its type read as one option (round outer corners only),
    and the type, a choice inside that option, stays regular */
@@ -4630,7 +4629,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:50"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5705,54 +5704,17 @@ export default function App() {
           <section className="hvs-sec" aria-label="Configuration">
           <div className="hvs-ctl">
             <div className="hvs-databar" role="toolbar" aria-label="Table controls">
+              {/* environment: how the table is shown and fed */}
               <CtlField label="Theme">
               <div className="hvs-seg hvs-pill" role="group" aria-label="Theme">
                 <button type="button" className="hvs-segbtn hvs-pill-b is-dawn" aria-pressed={cfg.theme === "dawn"} onClick={() => set({ theme: "dawn" })}>Dawn</button>
                 <button type="button" className="hvs-segbtn hvs-pill-b is-wicked" aria-pressed={cfg.theme === "wicked"} onClick={() => set({ theme: "wicked" })}>Wicked</button>
               </div>
               </CtlField>
-              <CtlField label="Header">
-                <div className="hvs-seg" role="group" aria-label="Header (select several)">
-                  {[["showTitle", "Title"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
-                    const on = !!cfg[key];
-                    if (key === "showFilterButton") return (
-                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true })}
-                                       onPick={(v) => set({ showFilterButton: true, filterUi: v })} />
-                    );
-                    const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
-                    return (
-                      <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
-                              title={blocked ? "Turn on Add, Edit and Delete rows to use the button" : undefined} onClick={() => set({ [key]: !on })}>{label}</button>
-                    );
-                  })}
-                </div>
-              </CtlField>
               <CtlField label="Density">
                 <div className="hvs-seg" role="group" aria-label="Density">
                   {SIZES.map(([value, label]) => (
                     <button key={value} type="button" className="hvs-segbtn" aria-pressed={cfg.size === value} onClick={() => setSize(value)}>{label}</button>
-                  ))}
-                </div>
-              </CtlField>
-              <CtlField label="Row">
-                <div className="hvs-seg" role="group" aria-label="Row (select several)">
-                  {[["selectable", "Selectable"], ["expandable", "Expandable"], ["rowView", "Action"], ["rowMenu", "More Actions"]].map(([key, label]) => {
-                    const on = !!cfg[key];
-                    const blocked = (key === "selectable" || key === "expandable") && cfg.size === "compact"; // Compact has no selection or expand column
-                    const hint = { rowView: "Action: the View button in each row", rowMenu: "More Actions: the row menu (three dots) in each row" }[key];
-                    return (
-                      <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
-                              title={blocked ? "Not available in Compact" : hint} onClick={() => set({ [key]: !on })}>{label}</button>
-                    );
-                  })}
-                </div>
-              </CtlField>
-              <CtlField label="Column Config">
-                <div className="hvs-seg" role="group" aria-label="Column Config">
-                  {[["legacy", "Legacy"], ["latest", "Latest"]].map(([value, label]) => (
-                    <button key={value} type="button" className="hvs-segbtn" aria-pressed={cfg.columnConfig === value}
-                            title={value === "legacy" ? "Configure Columns with the Fixed, Visible and Hidden lists and Apply" : "Configure Columns as one list: check, pin and drag"}
-                            onClick={() => set({ columnConfig: value })}>{label}</button>
                   ))}
                 </div>
               </CtlField>
@@ -5770,11 +5732,6 @@ export default function App() {
                               set({ rowCount: n, ...(n <= 5 ? LIST_PATCH.none : listModeOf(cfg) === "none" ? LIST_PATCH.pagination : {}) });
                             }} />
               </CtlField>
-              <CtlField label="Pagination">
-                <CtlSelect ariaLabel="Pagination" value={listModeOf(cfg)}
-                           options={LIST_MODES.map(([value, label, tag]) => ({ value, label, tag }))}
-                           onPick={(v) => set(LIST_PATCH[v])} />
-              </CtlField>
               <CtlField label="State">
                 <CtlSelect ariaLabel="State" value={cfg.tableState}
                            options={STATES.map(([value, label]) => ({ value, label }))}
@@ -5783,6 +5740,52 @@ export default function App() {
               {cfg.tableState === "error" && !errorShown && errorLeft > 0 && (
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
+            </div>
+            <div className="hvs-databar hvs-databar--parts" role="toolbar" aria-label="Component parts">
+              {/* component parts: what the table is made of */}
+              <CtlField label="Header">
+                <div className="hvs-seg" role="group" aria-label="Header (select several)">
+                  {[["showTitle", "Title"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
+                    const on = !!cfg[key];
+                    if (key === "showFilterButton") return (
+                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true })}
+                                       onPick={(v) => set({ showFilterButton: true, filterUi: v })} />
+                    );
+                    const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
+                    return (
+                      <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
+                              title={blocked ? "Turn on Add, Edit and Delete rows to use the button" : undefined} onClick={() => set({ [key]: !on })}>{label}</button>
+                    );
+                  })}
+                </div>
+              </CtlField>
+              <CtlField label="Row">
+                <div className="hvs-seg" role="group" aria-label="Row (select several)">
+                  {[["selectable", "Selectable"], ["expandable", "Expandable"], ["rowView", "Action"], ["rowMenu", "More Actions"]].map(([key, label]) => {
+                    const on = !!cfg[key];
+                    const blocked = (key === "selectable" || key === "expandable") && cfg.size === "compact"; // Compact has no selection or expand column
+                    const hint = { rowView: "Action: the View button in each row", rowMenu: "More Actions: the row menu (three dots) in each row" }[key];
+                    return (
+                      <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
+                              title={blocked ? "Not available in Compact" : hint} onClick={() => set({ [key]: !on })}>{label}</button>
+                    );
+                  })}
+                </div>
+              </CtlField>
+              <CtlField label="Pagination">
+                <CtlSelect ariaLabel="Pagination" value={listModeOf(cfg)}
+                           options={LIST_MODES.map(([value, label, tag]) => ({ value, label, tag }))}
+                           onPick={(v) => set(LIST_PATCH[v])} />
+              </CtlField>
+              <CtlField label="Column Config">
+                <div className="hvs-seg" role="group" aria-label="Column Config">
+                  {[["legacy", "Legacy"], ["latest", "Latest"]].map(([value, label]) => (
+                    <button key={value} type="button" className="hvs-segbtn" aria-pressed={cfg.columnConfig === value}
+                            title={value === "legacy" ? "Configure Columns with the Fixed, Visible and Hidden lists and Apply" : "Configure Columns as one list: check, pin and drag"}
+                            onClick={() => set({ columnConfig: value })}>{label}</button>
+                  ))}
+                </div>
+              </CtlField>
               <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset settings<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
