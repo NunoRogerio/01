@@ -5008,7 +5008,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 07:12"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 07:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5158,7 +5158,7 @@ const DEFAULT_CFG = {
   theme: "dawn", product: "vsp360", version: "6.3.2.1", component: "table",
   size: "comfortable", selectable: false, expandable: false,
   showTitle: true, showDescription: false, showInfo: false, titleText: null, showPagination: true, pageSize: 5, rowGap: 12, colGap: 0, cellPad: 16, rowPad: 0, tablePad: 16, rowH: null, headH: null,
-  showMaximize: true, showMoreOptions: true, microViz: true, vizType: null, // vizType null: the dataset's own micro chart
+  showMaximize: true, showMoreOptions: true, noHeader: false, microViz: true, vizType: null, // vizType null: the dataset's own micro chart
   showFilterBar: false, filterPanelStyle: "header",
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
   rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
@@ -6198,17 +6198,21 @@ export default function App() {
               {/* component parts: what the table is made of */}
               <CtlField label="Header">
                 <div className="hvs-seg" role="group" aria-label="Header (select several)">
+                  {/* No header: the table has no head at all (its top padding becomes the bottom one); picking any header part brings it back */}
+                  <button type="button" className="hvs-segbtn" aria-pressed={!!cfg.noHeader} data-tip="No header: the table without its head"
+                          onClick={() => set({ noHeader: !cfg.noHeader })}>No header</button>
                   {[["showTitle", "Title"], ["showDescription", "Description"], ["showInfo", "Info"], ["searchEnabled", "Search"], ["showFilterButton", "Filter"], ["showFilterBar", "Filter bar"], ["showAddButton", "Button"], ["showMaximize", "Maximize"], ["showMoreOptions", "More options"]].map(([key, label]) => {
-                    const on = !!cfg[key];
+                    const inHead = key !== "showFilterBar"; // the filter bar sits under the head, it stays with No header
+                    const on = !!cfg[key] && !(inHead && cfg.noHeader);
                     if (key === "showFilterButton") return (
-                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true })}
-                                       onPick={(v) => set({ showFilterButton: true, filterUi: v })} />
+                      <FilterHeaderBtn key={key} on={on} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true, noHeader: false })}
+                                       onPick={(v) => set({ showFilterButton: true, filterUi: v, noHeader: false })} />
                     );
                     const blocked = key === "showAddButton" && !cfg.editable; // the add button belongs to the row editing
                     return (
                       <button key={key} type="button" className="hvs-segbtn" aria-pressed={on} disabled={blocked}
                               data-tip={blocked ? "Turn on Add, Edit and Delete rows to use the button" : undefined}
-                              onClick={() => set({ [key]: !on, ...(!on && key === "showDescription" ? { showInfo: false } : {}), ...(!on && key === "showInfo" ? { showDescription: false } : {}) })}>{label}</button>
+                              onClick={() => set({ [key]: !on, ...(!on && inHead ? { noHeader: false } : {}), ...(!on && key === "showDescription" ? { showInfo: false } : {}), ...(!on && key === "showInfo" ? { showDescription: false } : {}) })}>{label}</button>
                     );
                   })}
                 </div>
@@ -6269,9 +6273,9 @@ export default function App() {
               initialSort={ds.sort}
               theme={cfg.theme}
               tokens={{ ...tokenStyle, ...layoutVars }}
-              showTitle={cfg.showTitle}
-              description={cfg.showDescription ? `${dataRows.length} ${ds.label.toLowerCase()}` : null}
-              info={cfg.showInfo ? `${ds.label}: sample data of the Table Workbench.` : null}
+              showTitle={!cfg.noHeader && cfg.showTitle}
+              description={!cfg.noHeader && cfg.showDescription ? `${dataRows.length} ${ds.label.toLowerCase()}` : null}
+              info={!cfg.noHeader && cfg.showInfo ? `${ds.label}: sample data of the Table Workbench.` : null}
               showFilterBar={cfg.showFilterBar}
               onFilterBarChange={(v) => set({ showFilterBar: v })}
               showPagination={cfg.showPagination}
@@ -6281,15 +6285,15 @@ export default function App() {
               columnMinWidth={cfg.columnMinWidth}
               pinnedColumns={pinnedKeys}
               columnConfig={cfg.columnConfig}
-              showMaximize={cfg.showMaximize}
-              showMoreOptions={cfg.showMoreOptions}
+              showMaximize={!cfg.noHeader && cfg.showMaximize}
+              showMoreOptions={!cfg.noHeader && cfg.showMoreOptions}
               onMaximizeChange={(m) => { setMaxOn(m); setLast(m ? "Maximized" : "Restored"); }}
               density={cfg.size}
               onDensityChange={(v) => setSize(v)}
               onColumnsChange={(c) => setColConfig(c)}
               selectable={cfg.selectable}
               expandable={cfg.expandable}
-              searchEnabled={cfg.searchEnabled}
+              searchEnabled={!cfg.noHeader && cfg.searchEnabled}
               searchMode={cfg.searchMode}
               searchPlaceholder={cfg.searchPlaceholder}
               searchDebounceMs={cfg.searchDebounceMs}
@@ -6307,10 +6311,10 @@ export default function App() {
               filterPanelStyle={cfg.filterPanelStyle}
               filterUi={cfg.filterUi}
               editable={cfg.editable}
-              showAdd={cfg.showAddButton}
+              showAdd={!cfg.noHeader && cfg.showAddButton}
               rowView={cfg.rowView}
               rowMenu={cfg.rowMenu}
-              showFilterButton={cfg.showFilterButton}
+              showFilterButton={!cfg.noHeader && cfg.showFilterButton}
               onRowsChange={(next, ch) => { if (cfg.tableState === "empty") { setDataRows([...next, ...dataRows]); set({ tableState: "default" }); } else setDataRows(next); setLast(`${ch.type} → ${ch.row ? (ch.row.name || ch.row.c1 || `row ${ch.row.id}`) : ""} (${next.length} rows)`); }}
               initialFilterModel={startModel}
               onFilterModelChange={setModel}
