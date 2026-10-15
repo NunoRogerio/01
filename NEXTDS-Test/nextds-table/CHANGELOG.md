@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5 — 2026-10-15
+
+- The filter bar's Filters button and the added filters have no outline; only their hovers show.
+
 ## 0.4.4 — 2026-10-15
 
 - The dragged column has 8px corners, a 3px outline all around and a subtle drop shadow.
