@@ -1106,8 +1106,8 @@ function MenuButton({
       if (p.from && p.from !== p.to) {
         const old = p.from;
         old.setAttribute("data-unpick", "");
-        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.3 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
-          { duration: 360, easing: "cubic-bezier(.8,0,.7,1)", pseudoElement: "::before", fill: "forwards" });
+        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
+          { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before", fill: "forwards" }); // closes as the new one opens, same timing
         a.onfinish = a.oncancel = () => { old.removeAttribute("data-unpick"); a.cancel(); };
       }
     } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
@@ -4585,7 +4585,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5209,6 +5209,30 @@ export default function App() {
   const benchRef = useRef(null);
   const ctlBusy = useRef(false);
   const ctlOpening = useRef(null);
+  /* the control multibuttons choose on mouse press, not on release: the press runs the button's click at once,
+     and the click the browser sends on release is dropped (keyboard Enter / Space still work as clicks) */
+  useEffect(() => {
+    const root = benchRef.current;
+    if (!root) return undefined;
+    const seg = (t) => t && t.closest && t.closest(".hvs-ctl .hvs-segbtn");
+    const down = (e) => {
+      if (e.button !== 0) return;
+      const b = seg(e.target);
+      if (!b || b.disabled || b.hasAttribute("aria-haspopup")) return;
+      b._pressAt = Date.now();
+      b.click();
+    };
+    const click = (e) => {
+      const b = seg(e.target);
+      if (!b || !e.isTrusted || !b._pressAt) return;
+      const fresh = Date.now() - b._pressAt < 1500;
+      b._pressAt = 0;
+      if (fresh) { e.stopPropagation(); e.preventDefault(); }
+    };
+    root.addEventListener("pointerdown", down, true);
+    root.addEventListener("click", click, true);
+    return () => { root.removeEventListener("pointerdown", down, true); root.removeEventListener("click", click, true); };
+  }, []);
   /* choosing in a multibutton: the white block starts as a thin horizontal line through the middle and opens up and down to the option, with a subtle overshoot */
   useEffect(() => {
     const root = benchRef.current;
@@ -5243,11 +5267,10 @@ export default function App() {
         if (!on) { // deselected: the block closes back into the line, at the same time as the new one opens
           b.setAttribute("data-unpick", "");
           try {
-            const a = b.animate([
+            const a = b.animate([ // starts closing on the same frame the new block starts opening, with the same timing
               { transform: "scaleY(1)", opacity: 1 },
-              { transform: "scaleY(1.08)", opacity: 1, offset: 0.3 },
               { transform: `scaleY(${line})`, opacity: 0 },
-            ], { duration: 360, easing: "cubic-bezier(.8,0,.7,1)", pseudoElement: "::before", fill: "forwards" });
+            ], { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before", fill: "forwards" });
             a.onfinish = a.oncancel = () => { b.removeAttribute("data-unpick"); a.cancel(); };
           } catch (err) { b.removeAttribute("data-unpick"); }
           return;

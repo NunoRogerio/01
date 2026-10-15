@@ -235,8 +235,8 @@ function MenuButton({
       if (p.from && p.from !== p.to) {
         const old = p.from;
         old.setAttribute("data-unpick", "");
-        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.3 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
-          { duration: 360, easing: "cubic-bezier(.8,0,.7,1)", pseudoElement: "::before", fill: "forwards" });
+        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
+          { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before", fill: "forwards" }); // closes as the new one opens, same timing
         a.onfinish = a.oncancel = () => { old.removeAttribute("data-unpick"); a.cancel(); };
       }
     } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
