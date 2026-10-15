@@ -81,13 +81,14 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .wf-ul .wf-ulb.on{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;cursor:pointer;pointer-events:auto}
 .wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease}
-/* (Oct 15, 15:15) while the pin is dragged, Send turns green from its right end up to the pin; still faded between the pin and the left end */
-.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 var(--wf-ulc,100%));transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
+/* (Oct 15, 15:22) the green Send rides with the pin: it waits just past the track's right end, 8px right of the pin, and the pin drags it in over the faded Send (supersedes the 15:15 reveal) */
+.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
+.wf-ul.unl .wf-ulg{transform:none}
 :root .wf-iadone,:root .wf-iadone:hover{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:transparent!important;cursor:pointer}   /* the sent attack, green, back to the map */
-/* (Oct 15, 15:16) locked, the track wears hazard stripes (safety yellow and dark grey, like a safety sign); as the pin slides left, the
-   track right of the pin turns to the grey stripe pattern, as Send turns green; unlocked, all grey */
-.wf-ul{isolation:isolate}
-.wf-ul::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(-60deg,#F5C400 0 8.49px,#3A3A3C 8.49px 16.97px);clip-path:inset(0 var(--wf-ulr,0px) 0 0);transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
+/* (Oct 15, 15:22) locked, the track wears the unlocked grey stripe pattern 20% darker (the yellow hazard stripes were dropped); right of
+   the sliding pin it turns to the lighter grey; unlocked, all the lighter grey */
+.wf-ul{isolation:isolate;overflow:hidden}
+.wf-ul::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(-60deg,rgb(169,169,173) 0 8.49px,rgb(182,182,186) 8.49px 16.97px);clip-path:inset(0 var(--wf-ulr,0px) 0 0);transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
 .wf-ul::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 6px rgba(0,0,0,0.3)}
 .wf-ul.unl::before{display:none}
 .wf-ul.drag::before{transition:none}
@@ -1831,12 +1832,12 @@ class Component extends DCLogic {
             /* (Oct 15, 14:09) the safety catch replaces the confirmation dialog: Send stays disabled (the faded secondary) until the thumb is swiped to the end */
             { const UL = !!st.iaUnl && opn && !sentAt, go = o.vf && o.vf.sendNow, me = this;
               /* the pin's travel: the track's width less 8px padding at each end and the 48px pin; the green reaches the pin's centre */
-              const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; T.el.style.setProperty('--wf-ulc', Math.max(0, T.w - 96 - T.d) + 'px'); T.el.style.setProperty('--wf-ulr', (32 + T.d) + 'px'); };
+              const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; const g = T.el.querySelector('.wf-ulg'); if (g) g.style.transform = 'translateX(calc(100% + 64px - ' + T.d + 'px))'; T.el.style.setProperty('--wf-ulr', (32 + T.d) + 'px'); };
               const fin = (ok) => { const T = me._ul; if (!T) return; me._ul = null; const th = T.el.querySelector('[data-wf-thumb]'), g = T.el.querySelector('.wf-ulg');
                 if (th) th.style.transition = ''; if (g) g.style.transition = ''; T.el.classList.remove('drag');
                 if (ok) { T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
-                  setTimeout(() => { T.el.classList.remove('snap'); T.el.style.removeProperty('--wf-ulc'); T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
-                else { if (th) th.style.transform = ''; T.el.style.removeProperty('--wf-ulc'); T.el.style.removeProperty('--wf-ulr'); me.forceUpdate(); } };
+                  setTimeout(() => { T.el.classList.remove('snap'); T.el.classList.add('unl'); { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
+                else { if (th) th.style.transform = ''; { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); me.forceUpdate(); } };
               Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulCls: UL ? 'unl' : '', ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
                 ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para desbloquear o envio' : 'Swipe left to unlock sending'),
                 ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'm15 6-6 6 6 6', ulX: UL ? 'calc(64px - var(--wf-ulw, 358px))' : '0px',
