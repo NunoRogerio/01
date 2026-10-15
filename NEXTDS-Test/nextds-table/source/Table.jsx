@@ -593,7 +593,8 @@ const CSS = `
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
 .hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
-.hvt-filterbar .hvt-chip:has(.hvt-chipx:hover:not(:disabled)){border-color:color-mix(in srgb,var(--page-background) 72%,transparent)} /* hovering the x outlines the whole filter in the x's hover colour: the x removes all of it */
+/* hovering the x outlines the whole filter, 2px in the x's hover colour, drawn inside its edge so nothing moves: the x removes all of it */
+.hvt-filterbar .hvt-chip:has(.hvt-chipx:hover:not(:disabled)){outline:2px solid color-mix(in srgb,var(--page-background) 72%,transparent);outline-offset:-2px}
 
 /* selection checkbox, expand button, bulk actions bar, detail panel */
 .hvt-cbi{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
@@ -4787,7 +4788,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 03:52"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 04:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

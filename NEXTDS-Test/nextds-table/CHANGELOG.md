@@ -6,7 +6,7 @@
 - Comfortable and Balanced: the column titles row is 48px tall (was 56px); Compact keeps 40px.
 - Search list: pressing a recent search or a suggestion selects it with the menus' select animation (its background opens from a line); releasing picks it.
 - Focus rings show only for keyboard focus (Tab); a click or tap shows none, in text fields too. Tooltips open on focus only for keyboard focus.
-- Filter bar: an added filter shows its label first and the X after it ("Health: 2 / 3 ×"); the Filters button has no outline on hover, only the fill; hovering a filter's X outlines the whole filter in the X's hover colour.
+- Filter bar: an added filter shows its label first and the X after it ("Health: 2 / 3 ×"); the Filters button has no outline on hover, only the fill; hovering a filter's X outlines the whole filter (2px) in the X's hover colour.
 - Header: every tool (search, filter, button, maximize, more options) 16px from the next.
 - Balanced and Compact: the card sits 16px from the bottom edge, like the left and right (was 24px).
 - Pagination: 4px between the arrows and the page field; the chosen values (rows per page, current page) are semibold in the text colour; "1 of 8" instead of "1 / 8".
