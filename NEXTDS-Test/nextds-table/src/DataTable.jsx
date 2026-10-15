@@ -1403,14 +1403,20 @@ export function DataTable({
   useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
   /* closing a filter panel folds it back into the button that opened it */
   const closingRef = useRef(false);
-  const [folding, setFolding] = useState(false); // the panel is folding back into the Filters button: the button keeps its one-row height until it is gone
+  const [folding, setFolding] = useState(false); // the panel is folding back into the Filters button, which grows back to full height at the same time
   const closeFilterPanel = () => {
     if (closingRef.current) return;
     const el = panelRef.current, root = rootRef.current;
     const t = root && (root.querySelector(".hvt-filterbar [data-filter-trigger]") || root.querySelector(".hvt-titlebar [data-filter-trigger]"));
     const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!el || !t || reduce || !el.animate) { setPanel(null); return; }
-    const pr = el.getBoundingClientRect(), tr = t.getBoundingClientRect();
+    const pr = el.getBoundingClientRect();
+    let tr = t.getBoundingClientRect();
+    const mb = t.closest(".hvt-filterbar") && t.parentElement;
+    if (mb) { // on the filter bar the button grows back to the bar's height while the panel folds: fold into the size it is growing to
+      const r = mb.getBoundingClientRect(), top = r.top + (parseFloat(getComputedStyle(mb).paddingTop) || 0);
+      tr = { left: tr.left, width: tr.width, top, height: Math.max(r.bottom - top, tr.height) };
+    }
     const cur = getComputedStyle(el).transform;
     const base = cur && cur !== "none" ? cur : "";
     closingRef.current = true;
@@ -2590,7 +2596,7 @@ export function DataTable({
     <div className="hvt-filterbar">
       {filterUi === "group" ? (
         <div className="hvt-mb hvt-mb--secondary">
-          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}${trigHot ? " is-hot" : ""}${folding && !fgDetached ? " is-folding" : ""}`} data-filter-trigger aria-haspopup="dialog"
+          <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}${trigHot ? " is-hot" : ""}${folding ? " is-folding" : ""}`} data-filter-trigger aria-haspopup="dialog"
                   aria-expanded={!!panel} aria-label="Filters" style={{ touchAction: "none" }}
                   onPointerDown={onTrigDown} onPointerMove={onTrigMove} onPointerUp={onTrigUp} onPointerCancel={onTrigUp}
                   onContextMenu={(e) => e.preventDefault()}
