@@ -3,7 +3,8 @@
 ## 0.4.8 — 2026-10-15
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
-- Pagination: 4px between the arrows and the page field; the current page number is semibold.
+- Pagination: 4px between the arrows and the page field; the current page number is semibold; "1 of 8" instead of "1 / 8".
+- Rows per page: reads "[5] rows per page"; the number is a filled field like the page number (no caret, border on hover). The total row count is no longer shown in the pager.
 
 ## 0.4.7 — 2026-10-15
 

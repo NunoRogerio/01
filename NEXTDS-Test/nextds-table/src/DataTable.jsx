@@ -3022,7 +3022,7 @@ export function DataTable({
                     items={sizeChoices.map((n) => ({ value: n, label: String(n) }))} minWidth={96}
                     disabled={sizeChoices.length < 2}
                     onSelect={(it) => { userSizedRef.current = true; setMaxExtra(0); setPageSize(it.value); setPage(1); if (onPageSizeChange) onPageSizeChange(it.value); }} />
-        <span className="hvt-caption">of {total} rows</span>
+        <span className="hvt-caption">rows per page</span>
       </div>
 
       <div className="hvt-pager-nav">
@@ -3049,7 +3049,7 @@ export function DataTable({
               }
             }}
           />
-          <span className="hvt-caption">/&nbsp; {pageCount}</span>
+          <span className="hvt-caption">of {pageCount}</span>
           {pnError && <i className="hvt-pn-err" aria-hidden="true">{Icons.StatusCritical}</i>}
         </div>
         <button type="button" className="hvt-icon" aria-label="Next page" disabled={safePage === pageCount}
