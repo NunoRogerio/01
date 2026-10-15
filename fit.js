@@ -139,7 +139,7 @@ window.__wfBlink=function(path,dur){
   var st=document.createElement('style');
   st.textContent='html,body{background:#F2F2F7;overflow:hidden;height:100%;margin:0;overscroll-behavior:none}*{scrollbar-width:none}*::-webkit-scrollbar{display:none;width:0;height:0}'+   /* no scrollbars in any browser (desktop Safari and Chrome draw them) */
     
-    '#dc-root{zoom:var(--fit,1);width:var(--wf-w,'+W+'px);height:var(--wf-h,'+H+'px);margin:0 auto;overflow:hidden;position:relative;top:-'+TOP+'px}';
+    '#dc-root{zoom:var(--fit,1);width:var(--wf-w,'+W+'px);height:var(--wf-h,'+H+'px);margin:0 0 0 var(--wf-ml,0px);overflow:hidden;position:relative;top:-'+TOP+'px}';
   document.head.appendChild(st);
   var probe=null;
   function insets(){
@@ -179,6 +179,8 @@ window.__wfBlink=function(path,dur){
       vp={w:W,h:H,land:false,s:s,sl:0,sr:0};r.removeProperty('--wf-w');r.removeProperty('--wf-h');
     }
     r.setProperty('--fit',String(s));
+    /* (Oct 15, 14:02) the page is centred by an explicit left margin, not margin:auto: Safari resolves an auto margin before the zoom, so a zoomed page that fills the width (the incident page inside the chat, 390 px zoomed to the phone) sat about 6 px right of centre and lost 6 px on the right */
+    (function(){var ml=Math.max(0,(iw-(vp.w||W)*s)/2);if(ml<1)ml=0;r.setProperty('--wf-ml',(ml/s).toFixed(2)+'px');})();
     window.__wfVP=vp;
     var key=vp.w+'x'+vp.h+':'+vp.sl+':'+vp.sr;
     if(key!==last){var first=!last;last=key;if(!first)try{window.dispatchEvent(new Event('wf-vp'));}catch(e){}}
@@ -1363,3 +1365,13 @@ document.addEventListener('click', function (e) { if (Date.now() - (window.__wfK
   /* links that would leave the incident open in the whole app, not inside the blade */
   document.addEventListener('click', function (e) { var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a || /^#|^javascript/.test(a.getAttribute('href') || '')) return; var h = a.getAttribute('href'); if (/^(Dispatch|Alert)\.dc\.html/.test(h)) return; e.preventDefault(); e.stopPropagation(); try { window.top.location.href = h; } catch (x) {} }, true);
 } catch (e) {} })();
+
+/* (Oct 15, 14:04) the confirmation halo: when a captain confirms a fire on scene, the screen's edge glows like Siri's, in red, orange and purple, turning slowly; it fades in, holds, fades out (about 4 s) and never takes a touch */
+window.__wfHalo=function(){try{var d=document;if(!d.getElementById('wf-halo-css')){var c=d.createElement('style');c.id='wf-halo-css';c.textContent='@property --wf-ha{syntax:"<angle>";inherits:false;initial-value:0deg}'+
+'.wf-halo{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:0;transition:opacity .8s cubic-bezier(.45,0,.2,1)}.wf-halo.on{opacity:1}'+
+'.wf-halo i{position:absolute;inset:0;border-radius:44px;padding:4px;background:conic-gradient(from var(--wf-ha),#FF3B30,#FF9500,#AF52DE,#FF2D55,#FF6A00,#8E44EC,#FF3B30);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:wf-ha 3.2s linear infinite}'+
+'.wf-halo b{position:absolute;inset:0;filter:blur(14px);opacity:.9}.wf-halo b i{padding:16px}'+
+'@keyframes wf-ha{to{--wf-ha:360deg}}@media (prefers-reduced-motion: reduce){.wf-halo i{animation:none}}';(d.head||d.documentElement).appendChild(c);}
+var o=d.querySelector('.wf-halo');if(o)o.remove();var h=d.createElement('div');h.className='wf-halo';h.setAttribute('aria-hidden','true');h.innerHTML='<i></i><b><i></i></b>';d.body.appendChild(h);
+requestAnimationFrame(function(){requestAnimationFrame(function(){h.classList.add('on');});});setTimeout(function(){h.classList.remove('on');},3200);setTimeout(function(){h.remove();},4200);
+try{if(navigator.vibrate)navigator.vibrate([12,60,12]);}catch(e){}}catch(e){}};
