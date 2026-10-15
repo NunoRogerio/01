@@ -625,6 +625,16 @@ const CSS = `
 
 /* row editing (SKit "Server Edit Table Flow"): edit panel in the edit tone + action toolbar, notification banners */
 .hvt-btn--secondary{box-shadow:inset 0 0 0 1px var(--outline)}
+/* text buttons: hover changes the fill only; an outlined (secondary) button keeps its 1px border */
+.hvt-btn:hover:not(:disabled){box-shadow:none}
+/* every close / remove X: on hover the X turns half a turn (180°), slowly, without bounce */
+.hvt-xspin{display:inline-flex;width:100%;height:100%;align-items:center;justify-content:center;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.hvt-xspin svg{display:block;width:100%;height:100%}
+:hover > .hvt-xspin{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.hvt-xspin{transition:none}}
+/* the X in the green header of the draggable filter panels hovers like the X of an added filter: white at 80%, no border */
+.hvt-panel-head .hvt-gbtn:not(.hvt-pdrag):hover{background:color-mix(in srgb,var(--page-background) 80%,transparent) !important;box-shadow:none !important}
+.hvt-btn--secondary:hover:not(:disabled){box-shadow:inset 0 0 0 1px var(--outline) !important}
 /* a button with an icon and a label hovers as one: the icon inside it has no hover of its own */
 .hvt-btn > .hvt-icon{pointer-events:none}
 .hvt-editrow{display:flex;flex-direction:column;background:var(--container-edit);border-radius:var(--component-containerradius)}
@@ -1239,7 +1249,7 @@ function FilterRow({ item, index, columns, logic, onLogic, onChange, onRemove })
 
   return (
     <div className="hvt-frow" role="group" aria-label={`Filter ${n}`}>
-      <button type="button" className="hvt-icon" aria-label={`Remove filter ${n}`} onClick={onRemove}>{Icons.Close}</button>
+      <button type="button" className="hvt-icon" aria-label={`Remove filter ${n}`} onClick={onRemove}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
       {index === 0 ? (
         <span className="hvt-where">Where</span>
       ) : (
@@ -1319,7 +1329,7 @@ function FilterPanel({
         </button>
         <span className="hvt-panel-name"><h4 className="hvt-panel-title">Filters</h4><span className="hvt-caption hvt-panel-count">{activeCount} active</span></span>
         <span className="hvt-grow" />
-        <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}>{Icons.Close}</button>
+        <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
       </div>
       <div className="hvt-panel-body">
         {model.items.length === 0 && (
@@ -1512,7 +1522,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
           <span className="hvt-gbtn hvt-pdrag" aria-hidden="true">{Icons.DragTitle}</span>
           <span className="hvt-panel-name"><h4 className="hvt-panel-title">Filters</h4><span className="hvt-caption hvt-panel-count">{activeCount} active</span></span>
           <span className="hvt-grow" />
-          <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}>{Icons.Close}</button>
+          <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
         </div>
       )}
       <div className="hvt-fg-body">
@@ -1559,7 +1569,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
                             items={OPERATORS[type].map(([val, text]) => ({ value: val, label: text }))} onSelect={(it) => setOp(item, it.value)} />
                 {editor(item, idx + 1)}
               </div>
-              <button type="button" className="hvt-gbtn" aria-label={`Remove condition ${idx + 1} of ${col.title}`} onClick={() => remove(item.id)}>{Icons.Close}</button>
+              <button type="button" className="hvt-gbtn" aria-label={`Remove condition ${idx + 1} of ${col.title}`} onClick={() => remove(item.id)}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
             </div>
           ))}
           {advanced && (
@@ -2127,7 +2137,7 @@ function Banner({ kind, text, action, onClose, closing }) {
           <span className="hvt-banner-icon" aria-hidden="true">{kind === "error" ? Icons.StatusNegative : Icons.Info}</span>
           <span className="hvt-banner-text">{text}</span>
           {action && <button type="button" className="hvt-btn hvt-btn--banner" onClick={action.run}>{action.label}</button>}
-          <button type="button" className="hvt-icon" aria-label="Dismiss message" onClick={close}>{Icons.Close}</button>
+          <button type="button" className="hvt-icon" aria-label="Dismiss message" onClick={close}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
         </div>
       </div>
     </div>
@@ -3406,7 +3416,7 @@ export function DataTable({
             <span className="hvt-chip" key={it.id}>
               <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
                       onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
-                {Icons.Close}
+                <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
               </button>
               <button type="button" className="hvt-chiptrigger" data-filter-trigger aria-label={`Edit filter ${label}`}
                       onClick={() => { if (panel && panel.field === it.field) closeFilterPanel(); else openPanel("bar", false, it.field); }}>
@@ -4339,7 +4349,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:18"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:24"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
