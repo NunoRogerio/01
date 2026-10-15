@@ -420,12 +420,12 @@ const CSS = `
 @keyframes hvtMenuDownOut{from{clip-path:inset(0 -32px -32px -32px)}to{clip-path:inset(0 -32px 100% -32px)}}
 @keyframes hvtMenuUpIn{from{clip-path:inset(100% -32px 0 -32px)}to{clip-path:inset(-32px -32px 0 -32px)}}
 @keyframes hvtMenuUpOut{from{clip-path:inset(-32px -32px 0 -32px)}to{clip-path:inset(100% -32px 0 -32px)}}
-.hvt-mpanel.is-down,.hvt-qfpanel{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button (or search field) */
+.hvt-mpanel.is-down,.hvt-qfpanel,.hvt-fg,.hvt-panel{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button (search field, Filters button) */
 .hvt-qfpanel.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
 .hvt-mpanel.is-up{animation:hvtMenuUpIn .18s cubic-bezier(.4,0,.2,1)}
 .hvt-mpanel.is-down.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none} /* folds back up into it */
 .hvt-mpanel.is-up.is-closing{animation:hvtMenuUpOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
-@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up,.hvt-qfpanel{animation:none}.hvt-mpanel.is-closing,.hvt-qfpanel.is-closing{display:none}}
+@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up,.hvt-qfpanel,.hvt-fg,.hvt-panel{animation:none}.hvt-mpanel.is-closing,.hvt-qfpanel.is-closing{display:none}}
 .hvt-mpanel{position:absolute;z-index:40;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto;
   padding:16px;background:var(--container-secondary-background);border:1px solid var(--outline);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
@@ -4360,7 +4360,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:09"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:11"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
