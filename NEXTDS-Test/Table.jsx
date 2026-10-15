@@ -554,6 +554,34 @@ const CSS = `
   background:var(--container-secondary-background);border:1px solid var(--outline);border-radius:0 var(--component-containerradius) var(--component-containerradius) var(--component-containerradius);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
 .hvt-fg.is-float{border-radius:var(--component-containerradius)}
+/* resizing the filter group panel by its edges and corners */
+.hvt-fg.is-sized .hvt-fg-body{flex:1;min-height:0;max-height:none}
+.hvt-fg.is-resizing{user-select:none}
+.hvt-fg-rz{position:absolute;z-index:3;touch-action:none}
+.hvt-fg-rz.is-l,.hvt-fg-rz.is-r{top:12px;bottom:12px;width:9px;cursor:ew-resize}
+.hvt-fg-rz.is-l{left:-5px}
+.hvt-fg-rz.is-r{right:-5px}
+.hvt-fg-rz.is-t,.hvt-fg-rz.is-b{left:12px;right:12px;height:9px;cursor:ns-resize}
+.hvt-fg-rz.is-t{top:-5px}
+.hvt-fg-rz.is-b{bottom:-5px}
+.hvt-fg-rz.is-bl,.hvt-fg-rz.is-br,.hvt-fg-rz.is-tl,.hvt-fg-rz.is-tr{width:16px;height:16px}
+.hvt-fg-rz.is-bl{left:-5px;bottom:-5px;cursor:nesw-resize}
+.hvt-fg-rz.is-br{right:-5px;bottom:-5px;cursor:nwse-resize}
+.hvt-fg-rz.is-tl{left:-5px;top:-5px;cursor:nwse-resize}
+.hvt-fg-rz.is-tr{right:-5px;top:-5px;cursor:nesw-resize}
+.hvt-fg-rz::before,.hvt-fg-rz::after{content:"";position:absolute;border-radius:999px;background:var(--cat1-100);opacity:0;transition:opacity .12s;pointer-events:none}
+.hvt-fg-rz:hover::before,.hvt-fg-rz:hover::after,.hvt-fg.is-resizing .hvt-fg-rz:active::before,.hvt-fg.is-resizing .hvt-fg-rz:active::after{opacity:1}
+/* an edge: a 4px bar, 40px long, centred on the border where the pointer is */
+.hvt-fg-rz.is-l::before,.hvt-fg-rz.is-r::before{left:50%;width:4px;margin-left:-2px;height:40px;top:clamp(0px,calc(var(--at,50%) - 20px),calc(100% - 40px))}
+.hvt-fg-rz.is-t::before,.hvt-fg-rz.is-b::before{top:50%;height:4px;margin-top:-2px;width:40px;left:clamp(0px,calc(var(--at,50%) - 20px),calc(100% - 40px))}
+.hvt-fg-rz.is-l::after,.hvt-fg-rz.is-r::after,.hvt-fg-rz.is-t::after,.hvt-fg-rz.is-b::after{display:none}
+/* a corner: an L of two 4px bars along the two borders */
+.hvt-fg-rz.is-bl::before,.hvt-fg-rz.is-br::before,.hvt-fg-rz.is-tl::before,.hvt-fg-rz.is-tr::before{width:20px;height:4px}
+.hvt-fg-rz.is-bl::after,.hvt-fg-rz.is-br::after,.hvt-fg-rz.is-tl::after,.hvt-fg-rz.is-tr::after{width:4px;height:20px}
+.hvt-fg-rz.is-bl::before{left:3px;bottom:3px}.hvt-fg-rz.is-bl::after{left:3px;bottom:3px}
+.hvt-fg-rz.is-br::before{right:3px;bottom:3px}.hvt-fg-rz.is-br::after{right:3px;bottom:3px}
+.hvt-fg-rz.is-tl::before{left:3px;top:3px}.hvt-fg-rz.is-tl::after{left:3px;top:3px}
+.hvt-fg-rz.is-tr::before{right:3px;top:3px}.hvt-fg-rz.is-tr::after{right:3px;top:3px}
 .hvt-fg-body{display:flex;min-height:240px;max-height:380px}
 .hvt-fg-fields{display:flex;flex-direction:column;gap:4px;flex:none;width:200px;overflow:auto;padding:16px 8px 16px 16px;border-right:1px solid var(--border-default)}
 .hvt-fg-field{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;background:transparent;color:inherit;cursor:pointer;
@@ -1564,7 +1592,44 @@ function CheckList({ options, value, onChange, label }) {
  * Same filter model and operators as the rows; edits are applied with the Apply button.
  * ------------------------------------------------------------------ */
 function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField,
-  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot, fieldNonce }) {
+  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot, fieldNonce, size = null, onSize }) {
+  /* resize by its edges and corners (the left and top ones once it floats; joined to the Filters button those stay put): over an edge a short bar shows where the pointer is, a corner
+     shows an L; both in the colour and weight of the column resize line */
+  const rzRef = useRef(null);
+  const [resizing, setResizing] = useState(false);
+  const rzDown = (e, side) => {
+    if (!onSize || (e.pointerType === "mouse" && e.button !== 0)) return;
+    e.stopPropagation(); e.preventDefault();
+    const r = panelRef.current.getBoundingClientRect();
+    rzRef.current = { id: e.pointerId, side, sx: e.clientX, sy: e.clientY, w: r.width, h: r.height, base: offset };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+    setResizing(true);
+  };
+  const rzMove = (e) => {
+    const el = e.currentTarget, rr = el.getBoundingClientRect(); // where the bar sits along the edge
+    el.style.setProperty("--at", `${el.classList.contains("is-b") || el.classList.contains("is-t") ? e.clientX - rr.left : e.clientY - rr.top}px`);
+    const d = rzRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    e.stopPropagation();
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy, sd = d.side;
+    const minW = 480, minH = 300, maxW = window.innerWidth - 16, maxH = window.innerHeight - 16;
+    let w = d.w, h = d.h;
+    if (sd.includes("r")) w = d.w + dx; else if (sd.includes("l")) w = d.w - dx;
+    if (sd.includes("b")) h = d.h + dy; else if (sd.includes("t")) h = d.h - dy;
+    w = Math.round(Math.min(Math.max(w, minW), maxW)); h = Math.round(Math.min(Math.max(h, minH), maxH));
+    onSize({ w, h });
+    if ((sd.includes("l") || sd.includes("t")) && onOffset) // the left or top edge moves: the panel shifts so the other edge stays put
+      onOffset({ x: d.base.x - (sd.includes("l") ? w - d.w : 0), y: d.base.y - (sd.includes("t") ? h - d.h : 0) });
+  };
+  const rzUp = (e) => {
+    const d = rzRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    e.stopPropagation();
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
+    rzRef.current = null;
+    setResizing(false);
+  };
+  const rzSides = floating || detached ? ["l", "r", "t", "b", "tl", "tr", "bl", "br"] : ["r", "b", "br"]; // joined to the Filters button, its left and top stay with the button
   /* drag the panel by any empty spot (or by its header once detached): it leaves the Filters button and gains the header;
      dropped back over the button, it snaps into place and loses the header */
   const dragRef = useRef(null);
@@ -1673,8 +1738,8 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   };
 
   return (
-    <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
-         style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging || following ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
+    <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}${size ? " is-sized" : ""}${resizing ? " is-resizing" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
+         style={{ ...style, ...(size ? { width: size.w, height: size.h, maxWidth: "none" } : null), transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging || following || resizing ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
          onPointerDown={onDragDown} onPointerMove={onDragMove} onPointerUp={onDragUp} onPointerCancel={onDragUp}>
       {detached && (
         <div className="hvt-panel-head">
@@ -1748,6 +1813,10 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         <button type="button" className="hvt-btn hvt-btn--secondary" onClick={onClose}>Cancel</button>
         <button type="button" className="hvt-btn hvt-btn--primary" onClick={apply}>Apply{totalComplete ? ` (${totalComplete})` : ""}</button>
       </div>
+      {onSize && rzSides.map((sd) => (
+        <div key={sd} className={`hvt-fg-rz is-${sd}`} aria-hidden="true"
+             onPointerDown={(e) => rzDown(e, sd)} onPointerMove={rzMove} onPointerUp={rzUp} onPointerCancel={rzUp} />
+      ))}
     </div>
   );
 }
@@ -2510,6 +2579,7 @@ export function DataTable({
   const [model, setModel] = useState(initialFilterModel);
   const [panel, setPanel] = useState(null); // null | { anchor: "bar" | "title" }
   const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to
+  const [fgSize, setFgSize] = useState(null); // the size the filter group panel was resized to (kept while the table lives)
   const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button
   useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
   /* closing a filter panel folds it back into the button that opened it */
@@ -4227,6 +4297,8 @@ export function DataTable({
           floating={panel.anchor !== "bar" || fgDetached}
           offset={fgPos}
           onOffset={setFgPos}
+          size={fgSize}
+          onSize={setFgSize}
           detached={fgDetached}
           onDetach={setFgDetached}
           activeCount={activeItems.length}
@@ -4869,7 +4941,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 05:28"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 05:45"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

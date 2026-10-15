@@ -640,7 +640,44 @@ function CheckList({ options, value, onChange, label }) {
  * Same filter model and operators as the rows; edits are applied with the Apply button.
  * ------------------------------------------------------------------ */
 function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, floating, optionsOf, advanced = false, onAdvancedChange, initialField,
-  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot, fieldNonce }) {
+  offset = { x: 0, y: 0 }, onOffset, detached = false, onDetach, activeCount = 0, getTrigger, following = false, onHot, fieldNonce, size = null, onSize }) {
+  /* resize by its edges and corners (the left and top ones once it floats; joined to the Filters button those stay put): over an edge a short bar shows where the pointer is, a corner
+     shows an L; both in the colour and weight of the column resize line */
+  const rzRef = useRef(null);
+  const [resizing, setResizing] = useState(false);
+  const rzDown = (e, side) => {
+    if (!onSize || (e.pointerType === "mouse" && e.button !== 0)) return;
+    e.stopPropagation(); e.preventDefault();
+    const r = panelRef.current.getBoundingClientRect();
+    rzRef.current = { id: e.pointerId, side, sx: e.clientX, sy: e.clientY, w: r.width, h: r.height, base: offset };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+    setResizing(true);
+  };
+  const rzMove = (e) => {
+    const el = e.currentTarget, rr = el.getBoundingClientRect(); // where the bar sits along the edge
+    el.style.setProperty("--at", `${el.classList.contains("is-b") || el.classList.contains("is-t") ? e.clientX - rr.left : e.clientY - rr.top}px`);
+    const d = rzRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    e.stopPropagation();
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy, sd = d.side;
+    const minW = 480, minH = 300, maxW = window.innerWidth - 16, maxH = window.innerHeight - 16;
+    let w = d.w, h = d.h;
+    if (sd.includes("r")) w = d.w + dx; else if (sd.includes("l")) w = d.w - dx;
+    if (sd.includes("b")) h = d.h + dy; else if (sd.includes("t")) h = d.h - dy;
+    w = Math.round(Math.min(Math.max(w, minW), maxW)); h = Math.round(Math.min(Math.max(h, minH), maxH));
+    onSize({ w, h });
+    if ((sd.includes("l") || sd.includes("t")) && onOffset) // the left or top edge moves: the panel shifts so the other edge stays put
+      onOffset({ x: d.base.x - (sd.includes("l") ? w - d.w : 0), y: d.base.y - (sd.includes("t") ? h - d.h : 0) });
+  };
+  const rzUp = (e) => {
+    const d = rzRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    e.stopPropagation();
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
+    rzRef.current = null;
+    setResizing(false);
+  };
+  const rzSides = floating || detached ? ["l", "r", "t", "b", "tl", "tr", "bl", "br"] : ["r", "b", "br"]; // joined to the Filters button, its left and top stay with the button
   /* drag the panel by any empty spot (or by its header once detached): it leaves the Filters button and gains the header;
      dropped back over the button, it snaps into place and loses the header */
   const dragRef = useRef(null);
@@ -749,8 +786,8 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   };
 
   return (
-    <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
-         style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging || following ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
+    <div className={`hvt-fg${floating ? " is-float" : ""}${detached ? " is-detached" : ""}${dragging ? " is-dragging" : ""}${size ? " is-sized" : ""}${resizing ? " is-resizing" : ""}`} ref={panelRef} role="dialog" aria-label="Filter group"
+         style={{ ...style, ...(size ? { width: size.w, height: size.h, maxWidth: "none" } : null), transform: `translate(${offset.x}px, ${offset.y}px)`, transition: dragging || following || resizing ? "none" : "transform .2s cubic-bezier(.4,0,.2,1)" }}
          onPointerDown={onDragDown} onPointerMove={onDragMove} onPointerUp={onDragUp} onPointerCancel={onDragUp}>
       {detached && (
         <div className="hvt-panel-head">
@@ -824,6 +861,10 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         <button type="button" className="hvt-btn hvt-btn--secondary" onClick={onClose}>Cancel</button>
         <button type="button" className="hvt-btn hvt-btn--primary" onClick={apply}>Apply{totalComplete ? ` (${totalComplete})` : ""}</button>
       </div>
+      {onSize && rzSides.map((sd) => (
+        <div key={sd} className={`hvt-fg-rz is-${sd}`} aria-hidden="true"
+             onPointerDown={(e) => rzDown(e, sd)} onPointerMove={rzMove} onPointerUp={rzUp} onPointerCancel={rzUp} />
+      ))}
     </div>
   );
 }
@@ -1586,6 +1627,7 @@ export function DataTable({
   const [model, setModel] = useState(initialFilterModel);
   const [panel, setPanel] = useState(null); // null | { anchor: "bar" | "title" }
   const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to
+  const [fgSize, setFgSize] = useState(null); // the size the filter group panel was resized to (kept while the table lives)
   const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button
   useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
   /* closing a filter panel folds it back into the button that opened it */
@@ -3302,6 +3344,8 @@ export function DataTable({
           floating={panel.anchor !== "bar" || fgDetached}
           offset={fgPos}
           onOffset={setFgPos}
+          size={fgSize}
+          onSize={setFgSize}
           detached={fgDetached}
           onDetach={setFgDetached}
           activeCount={activeItems.length}

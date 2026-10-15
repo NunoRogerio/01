@@ -8,6 +8,7 @@
 - Focus rings show only for keyboard focus (Tab); a click or tap shows none, in text fields too. Tooltips open on focus only for keyboard focus.
 - Filter bar: an added filter shows its label first and the X after it ("Health: 2 / 3 ×"); the Filters button has no outline on hover, only the fill; hovering a filter's X or its label outlines the whole filter (2px) in the hover colour; the X keeps no fill while the label is hovered.
 - Filter bar: removing a filter with its X slides it a little to the left and fades it out while its place closes; the filters after it move in. After the last one, "No filters applied" slides in from the left 0.2 s later.
+- Filter group panel: resizable by its edges and corners (right, bottom and their corner while joined to the Filters button; every edge once it floats). Over an edge a short bar shows where the pointer is, over a corner an L, in the colour and weight of the column resize line. The size is kept when the panel opens again.
 - Dropdowns: the select animation has no overshoot (no bounce) in any dropdown.
 - Menus inside the filter panels open over the page, not inside the panel's scroll area: every item shows, with no scroll inside a scroll (only a window too short scrolls the menu). The menu follows its button if the page scrolls. A menu as wide as its button joins it with square corners on both sides.
 - Text fields: hover changes the fill only (the 1px border stays, as in the search field); while typing the field is white, as the search field.
