@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792069825"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792070010"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1792067104"></script>
@@ -845,7 +845,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <!-- (Oct 14, 16:55) in the card's bottom-right corner, 4px from its right and bottom edges; its text a little smaller (14px) -->
               <li style="display: {{fe.ffwD}}; justify-content: flex-end; padding: 0 4px 4px; margin-top: -12px"><span aria-label="Civil camera. Forest Fire Watch" style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; background: rgba(115, 115, 118, 0.16); color: rgb(58, 58, 60); font-size: 14px; font-weight: 600; line-height: 18px">Civil</span></li>
             </ul>
-        <button type="button" class="mbtn" onClick="{{dockEv}}" aria-label="{{fe.dockAria}}" style="position: absolute; inset: 0; z-index: 2; padding: 0; border: 0; border-radius: 16px; background: transparent; cursor: pointer"></button>
+        <button type="button" class="mbtn" onClick="{{dockEv}}" onPointerDown="{{haloOff}}" aria-label="{{fe.dockAria}}" style="position: absolute; inset: 0; z-index: 2; padding: 0; border: 0; border-radius: 16px; background: transparent; cursor: pointer"></button>
       </div>
     </sc-for>
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
@@ -1660,13 +1660,14 @@ class Component extends DCLogic {
     /* (Oct 15, 13:13) detections that arrive while the screen is open float above it until tapped (one at a time, the oldest first); the ones there on entry are simply listed */
     const ES = this._evS && this._evS.id === c.id ? this._evS : (this._evS = { id: c.id, seen: null, float: [], dock: null });
     out.forEach((x) => { x.key = x.kind + ':' + x.at; x.lD = 'flex'; x.vis = 'visible'; x.dockAria = x.title + Lx('. New detection. Tap to add it to Detections', '. Nova deteção. Toque para a juntar às Deteções'); });
-    if (!ES.seen) ES.seen = new Set(out.map((x) => x.key)); else out.forEach((x) => { if (!ES.seen.has(x.key)) { ES.seen.add(x.key); ES.float.push(x.key); if (x.kind === 'captain' && droneStrong) setTimeout(() => { try { const W = (window.top && window.top.__wfHalo) ? window.top : window; if (W.__wfHalo) W.__wfHalo(); } catch (e) { if (window.__wfHalo) window.__wfHalo(); } }, 200); } });   /* (Oct 15, 14:04) the captain confirms the fire on scene: the screen's edge glows (red, orange, purple) */
+    if (!ES.seen) ES.seen = new Set(out.map((x) => x.key)); else out.forEach((x) => { if (!ES.seen.has(x.key)) { ES.seen.add(x.key); ES.float.push(x.key); if (x.kind === 'captain' && droneStrong) setTimeout(() => { try { const W = (window.top && window.top.__wfHalo) ? window.top : window; if (W.__wfHalo) W.__wfHalo(true); } catch (e) { if (window.__wfHalo) window.__wfHalo(true); } }, 200); } });   /* (Oct 15, 14:04) the captain confirms the fire on scene: the screen's edge glows (red, orange, purple) */
     ES.float = ES.float.filter((k) => out.some((x) => x.key === k));
     out.forEach((x) => { if (ES.float.indexOf(x.key) >= 0) { if (ES.dock === x.key) x.vis = 'hidden'; else x.lD = 'none'; } });   /* while it travels, its place in the list is kept (hidden) */
     const evF = ES.float.length ? out.find((x) => x.key === ES.float[0]) : null;
     return { evD: 'flex', evid: out.slice().reverse(),   /* (Oct 15, 13:25) shown newest first; the oldest keeps the 1st detection tag and leads the Summary */ evFloat: evF ? [Object.assign({}, evF, { lD: 'flex', vis: 'visible' })] : [], evCount: out.length === 1 ? '1 detection' : out.length + ' detections', evTtl: Lx('Detections', 'Deteções') + ' (' + out.length + ')', vf, vcams: cams, vpc: cams.length ? '0' : '16', vsz: cams.length ? '1' : '3',
       setEvFloat: this.setEvFloat || (this.setEvFloat = (el) => { if (!el) return; const place = () => { const b = document.querySelector('[data-wf-actbar]'), t = b ? b.getBoundingClientRect().top : innerHeight - 140; el.style.bottom = Math.max(16, innerHeight - t + 16) + 'px'; }; place(); requestAnimationFrame(place); }),   /* it floats 16px above the foot actions */
-      dockEv: this.dockEv || (this.dockEv = () => { const S = this._evS; if (!S || !S.float.length || S.dock) return; const k = S.float[0]; S.dock = k; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate();
+      haloOff: this.haloOff || (this.haloOff = () => { try { const W = window.top && window.top.__wfHaloOff ? window.top : window; if (W.__wfHaloOff) W.__wfHaloOff(); } catch (e) { if (window.__wfHaloOff) window.__wfHaloOff(); } }),
+      dockEv: this.dockEv || (this.dockEv = () => { if (this.haloOff) this.haloOff(); const S = this._evS; if (!S || !S.float.length || S.dock) return; const k = S.float[0]; S.dock = k; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.forceUpdate();
         const fin = () => { const fl = document.querySelector('[data-wf-evfloat]'); if (fl) { fl.style.transition = ''; fl.style.transform = ''; fl.style.boxShadow = ''; } S.float.shift(); S.dock = null; this.forceUpdate(); };
         setTimeout(() => { const el = document.querySelector('ul[data-wf-evk="' + k + '"]'), fl = document.querySelector('[data-wf-evfloat]'); if (!el || !fl) { fin(); return; }
           /* (Oct 15, 13:21) the page scrolls itself to the card's place, 40% slower than the browser's smooth scroll (800 ms), easing in and out; then the card lands */

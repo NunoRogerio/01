@@ -1367,11 +1367,13 @@ document.addEventListener('click', function (e) { if (Date.now() - (window.__wfK
 } catch (e) {} })();
 
 /* (Oct 15, 14:04) the confirmation halo: when a captain confirms a fire on scene, the screen's edge glows like Siri's, in red, orange and purple, turning slowly; it fades in, holds, fades out (about 4 s) and never takes a touch */
-window.__wfHalo=function(){try{var d=document;if(!d.getElementById('wf-halo-css')){var c=d.createElement('style');c.id='wf-halo-css';c.textContent='@property --wf-ha{syntax:"<angle>";inherits:false;initial-value:0deg}'+
+window.__wfHalo=function(hold){try{var d=document;if(!d.getElementById('wf-halo-css')){var c=d.createElement('style');c.id='wf-halo-css';c.textContent='@property --wf-ha{syntax:"<angle>";inherits:false;initial-value:0deg}'+
 '.wf-halo{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:0;transition:opacity .8s cubic-bezier(.45,0,.2,1)}.wf-halo.on{opacity:1}'+
 '.wf-halo i{position:absolute;inset:0;border-radius:44px;padding:4px;background:conic-gradient(from var(--wf-ha),#FF3B30,#FF9500,#AF52DE,#FF2D55,#FF6A00,#8E44EC,#FF3B30);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:wf-ha 3.2s linear infinite}'+
 '.wf-halo b{position:absolute;inset:0;filter:blur(14px);opacity:.9}.wf-halo b i{padding:16px}'+
 '@keyframes wf-ha{to{--wf-ha:360deg}}@media (prefers-reduced-motion: reduce){.wf-halo i{animation:none}}';(d.head||d.documentElement).appendChild(c);}
 var o=d.querySelector('.wf-halo');if(o)o.remove();var h=d.createElement('div');h.className='wf-halo';h.setAttribute('aria-hidden','true');h.innerHTML='<i></i><b><i></i></b>';d.body.appendChild(h);
-requestAnimationFrame(function(){requestAnimationFrame(function(){h.classList.add('on');});});setTimeout(function(){h.classList.remove('on');},3200);setTimeout(function(){h.remove();},4200);
+requestAnimationFrame(function(){requestAnimationFrame(function(){h.classList.add('on');});});if(!hold){setTimeout(function(){h.classList.remove('on');},3200);setTimeout(function(){h.remove();},4200);}
 try{if(navigator.vibrate)navigator.vibrate([12,60,12]);}catch(e){}}catch(e){}};
+/* (Oct 15, 14:13) a held halo stays until the captain's card is touched (tapped or dragged); then it fades out (0.8 s) */
+window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h)return;h.classList.remove('on');setTimeout(function(){if(h.parentNode)h.remove();},900);}catch(e){}};
