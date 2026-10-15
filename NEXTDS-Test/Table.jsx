@@ -3933,10 +3933,9 @@ const SCREEN_CSS = `
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
 .hvs-fopt{display:flex;align-items:center;justify-content:space-between;gap:8px;height:28px;padding:0 8px 0 12px;border:0;background:transparent;color:var(--cl-text);text-align:left;font-size:12px;line-height:18px;cursor:pointer}
 .hvs-ftype{position:relative;display:inline-flex}
-.hvs-ctl .hvs-seg .hvs-fpart.is-solo{border-radius:4px !important} /* a select on its own: all four corners round */
 .hvs-fopt .hvs-ftag{margin-left:8px;color:var(--cl-text-3);font-weight:400}
 .hvs-ctl .hvs-ftype > .hvs-fpop{min-width:100%;width:max-content}
-.hvs-ctl .hvs-ftype > .hvs-fpop{left:0;right:auto;top:calc(100% + 3px);margin-top:0;border-radius:0 0 7px 7px !important;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
+.hvs-ctl .hvs-ftype > .hvs-fpop{left:0;right:auto;top:calc(100% + 3px);margin-top:0;clip-path:inset(0 -24px -24px -24px)} /* no shadow on top: it hangs from the multibutton; shadow stays on the sides and below */ /* starts at the type block, hangs from the bottom of the multibutton, square on top */
 .hvs-fname{display:inline-grid} /* every type label sits in the same cell: the block keeps the width of the longest, so switching never resizes it */
 .hvs-fname > span{grid-area:1 / 1;text-align:left}
 .hvs-fcheck{display:inline-flex;width:13.4px;height:13.4px;color:var(--cl-text);opacity:.8} /* the chosen option: a check in the text colour */
@@ -3994,13 +3993,7 @@ const SCREEN_CSS = `
   --cl-track:#151515;--cl-raised:#3a3a3a;--cl-accent:#8c8c8c;--cl-accent-soft:rgba(176,176,176,.2);
   --cl-focus:rgba(200,200,200,.5);--cl-shadow:0 4px 16px rgba(0,0,0,.5)}
 .hvs-side,.hvs-side *,.hvs-ctl,.hvs-ctl *,.hvs-head,.hvs-head *{border-radius:0 !important}
-/* the control bar: options with 4px corners, their track concentric around them (4 + 3px padding);
-   "Filter:" + its type read as one option, so only its outer corners are round */
-.hvs-ctl .hvs-seg{border-radius:7px !important}
-.hvs-ctl .hvs-seg .hvs-segbtn,.hvs-ctl .hvs-input,.hvs-head .hvs-pagebtn,.hvs-ctl .hvs-fopt,.hvs-head .hvs-fopt{border-radius:4px !important}
-.hvs-ctl .hvs-fpop,.hvs-head .hvs-fpop{border-radius:7px !important}
-.hvs-ctl .hvs-seg .hvs-fpart.is-a{border-radius:4px 0 0 4px !important}
-.hvs-ctl .hvs-seg .hvs-fpart.is-b{border-radius:0 4px 4px 0 !important}
+/* the control bar keeps square corners on every element */
 .hvs-side,.hvs-side *,.hvs-ctl,.hvs-ctl *,.hvs-head,.hvs-head *{font-family:var(--cl-font) !important}
 .hvs-side .hvs-acc-btn,.hvs-side .hvs-acc-badge{font-weight:600}
 .hvs-side .hvs-acc.level-2 > .hvs-acc-h .hvs-acc-btn{font-weight:400}
@@ -4228,7 +4221,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:56"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:58"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
