@@ -243,7 +243,7 @@ const CSS = `
 .hvt-btn:hover:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
 .hvt-btn--icon-left{padding-left:0}
 .hvt-btn--primary{background:var(--content-primary);color:var(--container-secondary-background)}
-.hvt-btn--primary:hover:not(:disabled){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--content-primary);box-shadow:inset 0 0 0 2px var(--content-primary) !important} /* the primary button keeps a 2px border on hover */
+.hvt-btn--primary:hover:not(:disabled){background:linear-gradient(var(--container-hover-background),var(--container-hover-background)),var(--content-primary);box-shadow:none}
 :is(.hvt-root,.hvt-scope) :is(button,input,select):focus-visible{outline:var(--hvt-focus-w) solid var(--border-focus);outline-offset:1px}
 /* fields draw their own focus border (NEXT: 2px #4d4d4d), so they must not also get the generic outline */
 :is(.hvt-root,.hvt-scope) :is(.hvt-qf-input,.hvt-text,.hvt-select,.hvt-ms-btn,.hvt-cbi):focus-visible{outline:0}
@@ -4361,7 +4361,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:16"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
