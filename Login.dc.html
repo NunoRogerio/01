@@ -98,7 +98,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
 
     <!-- Log in has a fixed place: 24px under the chosen profile card (or under the hint before one is chosen), 48px above the text block -->
     <div aria-hidden="true" style="flex: 0 0 auto; height: 24px"></div>
-    <a href="Main.dc.html" class="go" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
+    <a href="Main.dc.html" class="go btn primary" onClick="{{login}}" style="display: {{goD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font-size: 17px; font-weight: 600; text-decoration: none">Log in</a>
     <button type="button" disabled aria-disabled="true" style="display: {{offD}}; align-items: center; justify-content: center; height: 48px; margin: 0; flex-shrink: 0; border: 0; border-radius: 999px; background: rgba(58, 58, 60, 0.5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: rgba(255, 255, 255, 0.45); -webkit-text-fill-color: rgba(255, 255, 255, 0.45); font-family: inherit; font-size: 17px; font-weight: 600; letter-spacing: normal; -webkit-font-smoothing: antialiased; cursor: default; pointer-events: none; box-sizing: border-box">Log in</button>
     <div aria-hidden="true" style="flex: 0 0 auto; height: 48px"></div>
     <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; margin: 0 16px; text-align: center; text-shadow: 0 0 8px rgba(0,0,0,0.6)">
@@ -117,7 +117,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
         <h2 id="pickTitle" style="margin: 0; font-size: 28px; font-weight: 700; line-height: 34px">Choose a demo profile</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">Demo users. Each role sets the areas and features</span>
       </span>
-      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; cursor: pointer; transform: rotate({{xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
+      <button type="button" onClick="{{toggle}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; cursor: pointer; transform: rotate({{xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
     </div>
@@ -173,7 +173,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
         <h2 id="cpTitle" style="margin: 0; font-size: 28px; font-weight: 700; line-height: 34px">{{cp.title}}</h2>
         <span style="font-size: 17px; line-height: 22px; color: #000000">Kept on this phone.</span>
       </span>
-      <button type="button" onClick="{{cp.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; cursor: pointer; transform: rotate({{cp.xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
+      <button type="button" onClick="{{cp.close}}" aria-label="Close" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: #3A3A3C; color: #FFFFFF; cursor: pointer; transform: rotate({{cp.xRot}}); transition: transform .6s cubic-bezier(.25,.1,.25,1)">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
       </button>
     </div>
@@ -201,8 +201,8 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
             <!-- The offer: polish this text? Yes rewrites it (Claude with a key saved in Chat settings, else a tidy of spelling and punctuation); Undo brings yours back -->
             <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: 12px; background: rgba(118, 118, 128, 0.14)">
               <span style="flex-grow: 1; min-width: 0; font-size: 16px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
-              <button type="button" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.14); color: #1C1C1E; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
-              <button type="button" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
+              <button type="button" class="btn wf-sec" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: rgb(99, 99, 102); color: rgb(255, 255, 255); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
+              <button type="button" class="btn primary" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
             </div>
           </div>
         </sc-for>
@@ -214,7 +214,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
         </label>
       </div>
       <!-- Editing: Remove (left) and Save (right) share one row, 24px apart; Remove asks first with the shared confirmation dialog (fit.js, __wfConfirm) -->
-      <div style="display: flex; gap: 24px; flex-shrink: 0; margin-top: -32px"><button type="button" class="wf-rm" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.10); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button><button type="button" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button></div>
+      <div style="display: flex; gap: 24px; flex-shrink: 0; margin-top: -32px"><button type="button" class="wf-rm" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.10); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button><button type="button" class="btn primary" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button></div>
       <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>
     </div>
   </div>

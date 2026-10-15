@@ -503,8 +503,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- (Oct 13, 09:04) the dispatch profiles' second tab, Initial attack (in place of Crews): before sending, the units the response plan
          proposes (the nearest available, each with its ETA), which Send initial attack orders; after, each unit's status as it rolls in -->
     <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -6; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
-      <span style="display: block; font-size: 26px; font-weight: 600; line-height: 32px; color: #000000">{{ia.ttl}}</span>
-      <span style="display: block; margin-top: 4px; font-size: 16px; line-height: 20px; color: #6E6E73">{{ia.sub}}</span>
+      <span style="display: block; font-size: 28px; font-weight: 700; line-height: 34px; color: #000000">{{ia.ttl}}</span>
+      <span style="display: block; margin-top: 8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{ia.sub}}</span>
       <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
         <sc-for list="{{ia.rows}}" as="u" hint-placeholder-count="5">
           <li style="display: flex; align-items: center; gap: 16px; padding: 16px; border-top: {{u.bt}}">
@@ -1891,7 +1891,7 @@ class Component extends DCLogic {
     const AIR = ((s.per && s.per.air) || REC.slice(2)).map((n, i) => Math.min(n, airCap[i]));
     const counts = [stL.reduce((a, d) => a + PER[d.id][0], 0), stL.reduce((a, d) => a + PER[d.id][1], 0)].concat(AIR);
     const KW = this.wfKinds(stC), words = [KW[0].w, KW[1].w, ['helicopter', 'helicopters'], ['air tanker', 'air tankers'], ['jet tanker', 'jet tankers'], ['drone swarm', 'drone swarms'], KW[6].w, KW[7].w, KW[8].w, KW[9].w];
-    const fmt = (c) => { const p = c.map((n, i) => n ? n + ' ' + words[i][n === 1 ? 0 : 1] : '').filter(Boolean); return p.length ? p.join(' · ') : 'No units selected'; };
+    const fmt = (c) => { const p = c.map((n, i) => n ? n + ' ' + words[i][n === 1 ? 0 : 1] : '').filter(Boolean); return p.length ? p.join(' · ') : 'Select resources'; };   /* (Oct 15) invites the action, not the empty state */
     const isRecCfg = !s.per;
     const meta = [
       { name: 'Ground crews', from: chosenList.map((d) => d.code).join(', ') + ' · ' + chosen.eta + ' min', icon: 'M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17 19.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z', eta: chosen.eta },
