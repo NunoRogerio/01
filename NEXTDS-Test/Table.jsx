@@ -4075,6 +4075,26 @@ const SCREEN_CSS = `
 .hvs-taggroups{display:flex;flex-direction:column;gap:24px}
 .hvs-searchroot{min-height:420px}
 .hvs-searchout{margin:24px 0 0}
+.hvs-pkgbtn{height:28px;margin-left:auto;padding:0 16px;border:0;background:#1f1f1f;color:#fff;font:inherit;font-size:12px;font-weight:600;line-height:18px;cursor:pointer}
+.hvs-pkgbtn:hover{background:#3a3a3a}
+.hvs-pkgbtn:focus-visible{outline:2px solid var(--cl-focus);outline-offset:2px}
+.hvs-pkg-scrim{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.32)}
+.hvs-pkg{width:min(560px,100%);display:flex;flex-direction:column;gap:16px;padding:24px;background:var(--cl-surface);color:var(--cl-text);box-shadow:var(--cl-shadow);font-family:var(--cl-font)}
+.hvs-pkg-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.hvs-pkg-head h2{margin:0;font-size:18px;font-weight:600;line-height:24px}
+.hvs-pkg-x{width:32px;height:32px;padding:4px;border:0;background:transparent;color:var(--cl-text);cursor:pointer}
+.hvs-pkg-x:hover{background:var(--cl-hover)}
+.hvs-pkg-p{margin:0;font-size:14px;line-height:21px;color:var(--cl-text-2)}
+.hvs-pkg-code{margin:0;padding:16px;overflow:auto;background:var(--cl-track);font:12px/18px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--cl-text);user-select:text}
+.hvs-pkg-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hvs-grow{flex:1}
+.hvs-pkg-link{font-size:13px;font-weight:600;color:var(--cl-text)}
+.hvs-pkg-btn{height:32px;padding:0 16px;border:0;background:#1f1f1f;color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.hvs-pkg-btn:hover:not(:disabled){background:#3a3a3a}
+.hvs-pkg-btn:disabled{opacity:.4;cursor:default}
+.hvs-pkg-btn.is-quiet{background:transparent;color:var(--cl-text)}
+.hvs-pkg-btn.is-quiet:hover{background:var(--cl-hover)}
+.hvs-pkg-msg{margin:0;min-height:18px;font-size:12px;line-height:18px;color:var(--cl-text-2)}
 .hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
 .hvs-cf > .hvs-cf-l{padding-left:0} /* control titles align left, with the edge of their control */
 .hvs-databar{row-gap:16px} /* 16px between two rows of controls */
@@ -4377,7 +4397,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:46"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4635,6 +4655,62 @@ function CtlSelect({ value, options, onPick, ariaLabel }) {
   );
 }
 
+/* "React Package": what a team needs to use the table in a React app (one file, React 18, no other dependency) */
+const PKG_URL = "https://github.com/NunoRogerio/01/blob/main/NEXTDS-Test/Table.jsx";
+const PKG_USAGE = `import { DataTable } from "./Table";
+
+<DataTable
+  title="Storage Systems"
+  columns={columns}   // [{ key, title, type, ... }]
+  rows={rows}         // [{ id, ...values }]
+/>`;
+function pkgSource() {
+  /* the running page carries the whole file; give it back in its package form */
+  const el = typeof document !== "undefined" && document.querySelector('script[type="text/babel"]');
+  if (!el) return "";
+  return el.textContent
+    .replace("const { useState, useMemo, useRef, useEffect, useLayoutEffect, Fragment } = React;", 'import { useState, useMemo, useRef, useEffect, useLayoutEffect, Fragment } from "react";')
+    .replace("\nfunction DataTable(", "\nexport function DataTable(")
+    .replace("\nfunction App(", "\nexport default function App(")
+    .replace(/\nReactDOM\.createRoot[^\n]*\n?$/, "\n")
+    .replace(/<\\\/script/g, "</script");
+}
+function PackageDialog({ onClose }) {
+  const [msg, setMsg] = useState("");
+  const src = useMemo(pkgSource, []);
+  const codeRef = useRef(null);
+  useEffect(() => {
+    const esc = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", esc);
+    return () => document.removeEventListener("keydown", esc);
+  }, [onClose]);
+  const copy = (text, what) => {
+    const done = () => setMsg(`${what} copied.`);
+    try {
+      navigator.clipboard.writeText(text).then(done, () => setMsg("Copy is blocked here. Select the text and copy it."));
+    } catch (err) { setMsg("Copy is blocked here. Select the text and copy it."); }
+  };
+  return (
+    <div className="hvs-pkg-scrim" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="hvs-pkg" role="dialog" aria-modal="true" aria-labelledby="hvs-pkg-t">
+        <div className="hvs-pkg-head">
+          <h2 id="hvs-pkg-t">React Package</h2>
+          <button type="button" className="hvs-pkg-x" aria-label="Close" onClick={onClose}><span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span></button>
+        </div>
+        <p className="hvs-pkg-p">The NEXT table as one React file: <b>Table.jsx</b>. It needs React 18 and nothing else. Themes Dawn and Wicked included.</p>
+        <pre className="hvs-pkg-code" ref={codeRef}>{PKG_USAGE}</pre>
+        <div className="hvs-pkg-foot">
+          <a className="hvs-pkg-link" href={PKG_URL} target="_blank" rel="noreferrer">Open on GitHub</a>
+          <span className="hvs-grow" />
+          <button type="button" className="hvs-pkg-btn is-quiet" onClick={() => copy(PKG_USAGE, "Usage")}>Copy usage</button>
+          <button type="button" className="hvs-pkg-btn" disabled={!src} onClick={() => copy(src, `Table.jsx (${Math.round(src.length / 1024)} KB)`)}>Copy Table.jsx</button>
+        </div>
+        <p className="hvs-pkg-msg" role="status">{msg}</p>
+      </div>
+    </div>
+  );
+}
+
 function Check({ label, checked, onChange, disabled }) {
   return (
     <label className="hvs-check">
@@ -4842,7 +4918,8 @@ function SearchBench({ theme, onTheme }) {
 
 export default function App() {
   const [cfg, setCfg] = useState(DEFAULT_CFG);
-  const [page, setPage] = useState("table"); // workbench page: table, tags or search
+  const [page, setPage] = useState("table");
+  const [pkgOpen, setPkgOpen] = useState(false); // workbench page: table, tags or search
   const [open, setOpen] = useState(DEFAULT_OPEN);
   const [resetKey, setResetKey] = useState(0);
   const [startModel, setStartModel] = useState(EMPTY_MODEL);
@@ -5235,6 +5312,8 @@ export default function App() {
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
               <button type="button" className="hvt-btn" onClick={reset}>Reset settings</button>
+              <button type="button" className="hvs-pkgbtn" onClick={() => setPkgOpen(true)}>React Package</button>
+              {pkgOpen && <PackageDialog onClose={() => setPkgOpen(false)} />}
             </div>
           </div>
           </section>
