@@ -236,16 +236,16 @@ const CSS = `
 .hvt-filterbar{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:0 8px 8px;
   background:var(--container-filter);border-radius:var(--component-containerradius)}
 .hvt-chips{flex:1;min-width:0;min-height:40px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 0}
-.hvt-chip{display:inline-flex;align-items:center;gap:2px;height:32px;padding:3px;overflow:hidden;
+.hvt-chip{display:inline-flex;align-items:stretch;gap:0;height:32px;padding:0;overflow:hidden;
   background:transparent;transition:background-color .15s ease;
   border:1px solid var(--outline);border-radius:var(--component-inputradius);
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
 /* an added filter has no fill, like the closed Filters button, and does not change on hover: only its X and its label show their own hover */
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
-.hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
+.hvt-chip .hvt-chipx{width:30px;height:auto;border-radius:0} /* the inner hovers fill the chip to its edges (no padding around them); the chip's rounded border clips them */
 .hvt-chip .hvt-chipx:hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 80%,transparent);box-shadow:none} /* on the green filter bar the hover is white at 80%: grey reads poorly there */
-.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 2px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
+.hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:auto;padding:0 11px 0 4px;border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
 .hvt-chiptrigger:hover{background:color-mix(in srgb,var(--page-background) 80%,transparent)}
 .hvt-chiplabel{pointer-events:none}
@@ -4585,7 +4585,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 18:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 18:50"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
