@@ -443,8 +443,9 @@ const CSS = `
 .hvt-panel-head .hvt-pdrag{width:10px;height:24px;padding:0}
 .hvt-panel-head .hvt-pdrag svg{width:10px;height:15px}
 .hvt-pdrag,.hvt-pdrag:hover{background:transparent !important;box-shadow:none !important} /* the drag icon only says the panel can be moved: no hover of its own */
-.hvt-panel-title{margin:0;font-size:16px;font-weight:700;line-height:24px}
-.hvt-panel-count{white-space:nowrap}
+.hvt-panel-title{margin:0;font-size:16px;font-weight:600;line-height:24px}
+.hvt-panel-name{display:flex;align-items:baseline;gap:8px;min-width:0}
+.hvt-panel-count{white-space:nowrap;font-size:16px;line-height:24px}
 .hvt-panel-body{padding:8px}
 .hvt-panel-body .hvt-frow:last-child{margin-bottom:0}
 .hvt-panel-foot{display:flex;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--hvt-divider)}
@@ -493,6 +494,8 @@ const CSS = `
   font:inherit;font-size:14px;line-height:21px;text-align:left}
 .hvt-fg-field:hover{background:var(--container-hover-background)}
 .hvt-fg-field[aria-current="true"]{background:var(--container-hover-background);font-weight:600}
+.hvt-fg-n{flex:none;padding-left:8px;font-variant-numeric:tabular-nums}
+.hvt-fg-n b{font-weight:600}
 .hvt-fg-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--content-primary)} /* a filter is applied to this column: a dot, no count */
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
@@ -1282,8 +1285,7 @@ function FilterPanel({
                 aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown Home" onKeyDown={onHandleKey}>
           {Icons.DragTitle}
         </button>
-        <h4 className="hvt-panel-title">Filters</h4>
-        <span className="hvt-caption hvt-panel-count">{activeCount} active</span>
+        <span className="hvt-panel-name"><h4 className="hvt-panel-title">Filters</h4><span className="hvt-caption hvt-panel-count">{activeCount} active</span></span>
         <span className="hvt-grow" />
         <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}>{Icons.Close}</button>
       </div>
@@ -1471,8 +1473,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
       {detached && (
         <div className="hvt-panel-head">
           <span className="hvt-gbtn hvt-pdrag" aria-hidden="true">{Icons.DragTitle}</span>
-          <h4 className="hvt-panel-title">Filters</h4>
-          <span className="hvt-caption hvt-panel-count">{activeCount} active</span>
+          <span className="hvt-panel-name"><h4 className="hvt-panel-title">Filters</h4><span className="hvt-caption hvt-panel-count">{activeCount} active</span></span>
           <span className="hvt-grow" />
           <button type="button" className="hvt-gbtn" aria-label="Close filters" onClick={onClose}>{Icons.Close}</button>
         </div>
@@ -1482,7 +1483,15 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
           {columns.map((c) => (
             <button key={c.key} type="button" role="option" aria-selected={c.key === field} aria-current={c.key === field} className="hvt-fg-field" onClick={() => setField(c.key)}>
               <span className="hvt-ditem-label">{c.filterLabel || c.title}</span>
-              {countOf(c.key) > 0 && <span className="hvt-fg-dot" role="img" aria-label="Filter applied" />}
+              {countOf(c.key) > 0 && (() => {
+                /* a filtered field shows how many of its values are selected ("2 / 8", the selected number in semibold);
+                   conditions that are not a choice of values show how many there are */
+                const list = draft.items.find((i) => i.field === c.key && i.operator === "isAnyOf" && Array.isArray(i.value) && i.value.length);
+                const total = (optionsOf ? optionsOf(c) : (c.options || [])).length;
+                return list && total
+                  ? <span className="hvt-caption hvt-fg-n" aria-label={`${list.value.length} of ${total} selected`}><b>{list.value.length}</b> / {total}</span>
+                  : <span className="hvt-caption hvt-fg-n" aria-label={`${countOf(c.key)} conditions`}><b>{countOf(c.key)}</b></span>;
+              })()}
             </button>
           ))}
         </div>
@@ -4219,7 +4228,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-14 22:29"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:17"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
