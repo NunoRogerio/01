@@ -216,6 +216,44 @@ function MenuButton({
 
   const closeMenu = () => { setOpen(false); if (btnRef.current) btnRef.current.focus(); };
   const back = () => setStack((st) => st.slice(0, -1));
+  /* pressing a single-choice item moves the selection to it straight away; releasing picks it */
+  const [pressed, setPressed] = useState(null);
+  const pressAnim = useRef(null);
+  useEffect(() => { if (!open) setPressed(null); }, [open, stack.length]);
+  const isChoice = (it) => isList || it.checked !== undefined;
+  const isSel = (it) => (pressed != null && isChoice(it) ? it.value === pressed : (isList && it.value === value) || it.checked);
+  useLayoutEffect(() => {
+    const p = pressAnim.current;
+    pressAnim.current = null;
+    if (!p) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !p.to.animate) return;
+    const lineOf = (el) => Math.min(1, 2 / Math.max(1, el.offsetHeight));
+    try {
+      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+        { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
+      if (p.from && p.from !== p.to) {
+        const old = p.from;
+        old.setAttribute("data-unpick", "");
+        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.3 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
+          { duration: 360, easing: "cubic-bezier(.8,0,.7,1)", pseudoElement: "::before", fill: "forwards" });
+        a.onfinish = a.oncancel = () => { old.removeAttribute("data-unpick"); a.cancel(); };
+      }
+    } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
+  }, [pressed]);
+  const pressItem = (e, it) => {
+    if (e.button !== 0 || !isChoice(it) || it.disabled || isSel(it)) return;
+    const from = listRef.current && listRef.current.querySelector(".hvt-ditem.is-selected");
+    e.currentTarget.setAttribute("data-press", "");
+    pressAnim.current = { from, to: e.currentTarget };
+    setPressed(it.value);
+  };
+  const unpressItem = (e, it) => {
+    e.currentTarget.removeAttribute("data-press");
+    if (pressed === it.value && e.buttons) { // left while still pressed: the selection goes back
+      setPressed(null);
+    }
+  };
   const choose = (it) => {
     if (it.submenu) { setStack((st) => [...st, { title: it.label, items: it.submenu }]); return; }
     if (it.render) { setStack((st) => [...st, { title: it.label, render: it.render, width: it.width, maxHeight: it.maxHeight }]); return; }
@@ -270,8 +308,9 @@ function MenuButton({
                       aria-selected={isList ? it.value === value : undefined}
                       aria-checked={radio ? it.checked : undefined}
                       aria-haspopup={nested ? "menu" : undefined} disabled={it.disabled}
-                      className={`hvt-ditem${(isList && it.value === value) || it.checked ? " is-selected" : ""}`}
-                      onClick={() => choose(it)}>
+                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}`}
+                      onPointerDown={(e) => pressItem(e, it)} onPointerLeave={(e) => unpressItem(e, it)}
+                      onClick={(e) => { e.currentTarget.removeAttribute("data-press"); choose(it); }}>
                 <span className="hvt-ditem-label">{it.label}</span>
                 {it.tag && <span className="hvt-ditem-tag">{it.tag}</span>}
                 {nested && <span className="hvt-ditem-chev" aria-hidden="true">{Icons.Next}</span>}

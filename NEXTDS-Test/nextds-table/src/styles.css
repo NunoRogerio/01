@@ -407,7 +407,12 @@
   background:transparent;color:inherit;cursor:pointer;text-align:left;white-space:nowrap;
   font:inherit;font-size:14px;font-weight:400;line-height:21px}
 .hvt-ditem:hover:not(:disabled),.hvt-ditem:focus-visible{background:var(--container-hover-background)}
-.hvt-ditem.is-selected{background:var(--container-hover-background);font-weight:600}
+.hvt-ditem.is-selected{font-weight:600}
+/* the chosen item's background is a layer under the label: pressing another item moves it there at once (it opens from a line
+   while the old one closes), as in the workbench controls; releasing picks the item */
+.hvt-ditem{position:relative;isolation:isolate}
+.hvt-ditem.is-selected::before,.hvt-ditem[data-unpick]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:var(--container-hover-background)}
+.hvt-ditem.is-selected:hover:not(:disabled),.hvt-ditem[data-press]:hover:not(:disabled){background:transparent}
 .hvt-ditem:disabled{color:var(--content-disabled);cursor:default}
 .hvt-ditem--check{padding-left:0}
 .hvt-ms-head{display:flex;align-items:center;justify-content:space-between;flex:none;padding:0 0 4px 8px}

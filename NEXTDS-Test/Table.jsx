@@ -419,7 +419,12 @@ const CSS = `
   background:transparent;color:inherit;cursor:pointer;text-align:left;white-space:nowrap;
   font:inherit;font-size:14px;font-weight:400;line-height:21px}
 .hvt-ditem:hover:not(:disabled),.hvt-ditem:focus-visible{background:var(--container-hover-background)}
-.hvt-ditem.is-selected{background:var(--container-hover-background);font-weight:600}
+.hvt-ditem.is-selected{font-weight:600}
+/* the chosen item's background is a layer under the label: pressing another item moves it there at once (it opens from a line
+   while the old one closes), as in the workbench controls; releasing picks the item */
+.hvt-ditem{position:relative;isolation:isolate}
+.hvt-ditem.is-selected::before,.hvt-ditem[data-unpick]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:var(--container-hover-background)}
+.hvt-ditem.is-selected:hover:not(:disabled),.hvt-ditem[data-press]:hover:not(:disabled){background:transparent}
 .hvt-ditem:disabled{color:var(--content-disabled);cursor:default}
 .hvt-ditem--check{padding-left:0}
 .hvt-ms-head{display:flex;align-items:center;justify-content:space-between;flex:none;padding:0 0 4px 8px}
@@ -1082,6 +1087,44 @@ function MenuButton({
 
   const closeMenu = () => { setOpen(false); if (btnRef.current) btnRef.current.focus(); };
   const back = () => setStack((st) => st.slice(0, -1));
+  /* pressing a single-choice item moves the selection to it straight away; releasing picks it */
+  const [pressed, setPressed] = useState(null);
+  const pressAnim = useRef(null);
+  useEffect(() => { if (!open) setPressed(null); }, [open, stack.length]);
+  const isChoice = (it) => isList || it.checked !== undefined;
+  const isSel = (it) => (pressed != null && isChoice(it) ? it.value === pressed : (isList && it.value === value) || it.checked);
+  useLayoutEffect(() => {
+    const p = pressAnim.current;
+    pressAnim.current = null;
+    if (!p) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !p.to.animate) return;
+    const lineOf = (el) => Math.min(1, 2 / Math.max(1, el.offsetHeight));
+    try {
+      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+        { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
+      if (p.from && p.from !== p.to) {
+        const old = p.from;
+        old.setAttribute("data-unpick", "");
+        const a = old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.3 }, { transform: `scaleY(${lineOf(old)})`, opacity: 0 }],
+          { duration: 360, easing: "cubic-bezier(.8,0,.7,1)", pseudoElement: "::before", fill: "forwards" });
+        a.onfinish = a.oncancel = () => { old.removeAttribute("data-unpick"); a.cancel(); };
+      }
+    } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
+  }, [pressed]);
+  const pressItem = (e, it) => {
+    if (e.button !== 0 || !isChoice(it) || it.disabled || isSel(it)) return;
+    const from = listRef.current && listRef.current.querySelector(".hvt-ditem.is-selected");
+    e.currentTarget.setAttribute("data-press", "");
+    pressAnim.current = { from, to: e.currentTarget };
+    setPressed(it.value);
+  };
+  const unpressItem = (e, it) => {
+    e.currentTarget.removeAttribute("data-press");
+    if (pressed === it.value && e.buttons) { // left while still pressed: the selection goes back
+      setPressed(null);
+    }
+  };
   const choose = (it) => {
     if (it.submenu) { setStack((st) => [...st, { title: it.label, items: it.submenu }]); return; }
     if (it.render) { setStack((st) => [...st, { title: it.label, render: it.render, width: it.width, maxHeight: it.maxHeight }]); return; }
@@ -1136,8 +1179,9 @@ function MenuButton({
                       aria-selected={isList ? it.value === value : undefined}
                       aria-checked={radio ? it.checked : undefined}
                       aria-haspopup={nested ? "menu" : undefined} disabled={it.disabled}
-                      className={`hvt-ditem${(isList && it.value === value) || it.checked ? " is-selected" : ""}`}
-                      onClick={() => choose(it)}>
+                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}`}
+                      onPointerDown={(e) => pressItem(e, it)} onPointerLeave={(e) => unpressItem(e, it)}
+                      onClick={(e) => { e.currentTarget.removeAttribute("data-press"); choose(it); }}>
                 <span className="hvt-ditem-label">{it.label}</span>
                 {it.tag && <span className="hvt-ditem-tag">{it.tag}</span>}
                 {nested && <span className="hvt-ditem-chev" aria-hidden="true">{Icons.Next}</span>}
@@ -4143,7 +4187,8 @@ const SCREEN_CSS = `
 .hvs-ctl .hvt-mpanel[class*="align-"]{border-radius:12px}
 .hvs-ctl .hvt-ditem{height:30px;border-radius:8px;color:var(--cl-text);font-family:var(--cl-font);font-weight:400}
 .hvs-ctl .hvt-ditem:hover:not(:disabled),.hvs-ctl .hvt-ditem:focus-visible{background:var(--cl-hover)}
-.hvs-ctl .hvt-ditem.is-selected{background:var(--cl-hover);font-weight:500}
+.hvs-ctl .hvt-ditem.is-selected{font-weight:500}
+.hvs-ctl .hvt-ditem.is-selected::before,.hvs-ctl .hvt-ditem[data-unpick]::before{background:var(--cl-hover)}
 .hvs-ctl .hvt-mgroup{color:var(--cl-text-3)}
 .hvs-dstatus{color:var(--cl-text-3);font-family:var(--cl-font)}
 .hvs-databar{align-items:flex-end}
@@ -4524,7 +4569,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 17:35"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 17:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
