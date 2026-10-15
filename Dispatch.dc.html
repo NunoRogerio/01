@@ -80,7 +80,8 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 .wf-ul .wf-ulu{position:absolute;left:64px;right:64px;top:8px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .wf-ul .wf-ulb.on{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;cursor:pointer;pointer-events:auto}
-.wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,opacity .3s ease}
+.wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,opacity .3s ease .35s}
+.wf-ul.full .wf-ulp{transition-delay:0s,0s,0s}
 /* (Oct 15, 15:22) the green Send rides with the pin: it waits just past the track's right end, 8px right of the pin, and the pin drags it in over the faded Send (supersedes the 15:15 reveal) */
 .wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
 .wf-ul.unl .wf-ulg{transform:none}
@@ -92,9 +93,13 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 .wf-ul::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 6px rgba(0,0,0,0.3)}
 .wf-ul.unl::before{display:none}
 .wf-ul .wf-ulb,.wf-ul .wf-ulu{transition:left .45s cubic-bezier(.45,0,.2,1),right .45s cubic-bezier(.45,0,.2,1),top .45s cubic-bezier(.45,0,.2,1),height .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,color .3s ease}
-.wf-ul.full .wf-ulb,.wf-ul.full .wf-ulu{left:0;right:0;top:0;height:64px}
+/* (Oct 15, 15:33) the sequence, a second after unlocking: the pin fades (0.3 s); from 0.2 s Send grows to fill the track (0.45 s); filled,
+   the track gives a small bounce (0.4 s). The inner shadow stays. Relocking runs it backwards: Send shrinks, then the pin fades back in */
+.wf-ul.full .wf-ulb,.wf-ul.full .wf-ulu{left:0;right:0;top:0;height:64px;transition-delay:.2s,.2s,.2s,.2s,0s,0s}
+.wf-ul.full{animation:wf-ulbn .4s cubic-bezier(.3,0,.3,1) .65s both}
+@keyframes wf-ulbn{0%{transform:scale(1)}40%{transform:scale(1.03)}75%{transform:scale(.995)}100%{transform:scale(1)}}
 .wf-ul.full .wf-ulp{opacity:0;pointer-events:none}
-.wf-ul.full::after{opacity:0}.wf-ul::after{transition:opacity .3s ease}
+
 /* (Oct 15, 15:25) locked, no faded Send: an instruction with an arrow in its place ("← Swipe to send"), dark grey on the
    darker stripes, from 16px to the pin; the pin drags the green Send in over it */
 .wf-ul:not(.unl) .wf-ulb,.wf-ul:not(.unl) .wf-ulu{display:none}
@@ -1849,7 +1854,7 @@ class Component extends DCLogic {
               const fin = (ok, slow) => { const T = me._ul; if (!T) return; me._ul = null; clearTimeout(me._ulLP); const th = T.el.querySelector('[data-wf-thumb]'), g = T.el.querySelector('.wf-ulg');
                 if (th) th.style.transition = ''; if (g) g.style.transition = ''; T.el.classList.remove('drag');
                 if (ok) { if (!slow) T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
-                  setTimeout(() => { T.el.classList.remove('snap'); T.el.classList.add('unl'); { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => { me.setState({ iaFull: false }); clearTimeout(me._ulT2); me._ulT2 = setTimeout(() => me.setState({ iaUnl: false }), 470); }, 10000); me.setState({ iaUnl: true });
+                  setTimeout(() => { T.el.classList.remove('snap'); T.el.classList.add('unl'); { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => { me.setState({ iaFull: false }); clearTimeout(me._ulT2); me._ulT2 = setTimeout(() => me.setState({ iaUnl: false }), 700);   /* Send shrinks (0.45 s), the pin fades back in (from 0.35 s), then both slide right */ }, 10000); me.setState({ iaUnl: true });
                     /* (Oct 15, 15:30) a second after unlocking, the green Send fills the whole track and the pin fades out; relocking (10 s) reverses it, then the pin slides back */ clearTimeout(me._ulF); me._ulF = setTimeout(() => { if (me.state && me.state.iaUnl) me.setState({ iaFull: true }); }, 1000); }, slow ? 470 : 130); }
                 else { if (th) th.style.transform = ''; { const g2 = T.el.querySelector('.wf-ulg'); if (g2) g2.style.transform = ''; } T.el.style.removeProperty('--wf-ulr'); me.forceUpdate(); } };
               /* (Oct 15, 15:27) a tap on the locked track: the pin nudges a little to the left and back (no overshoot), the green Send with it, showing the gesture */
