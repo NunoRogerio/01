@@ -4585,7 +4585,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 18:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:00"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4771,6 +4771,24 @@ const listModeOf = (c) => {
 const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
 /* the control dropdowns: the menu grows down when it opens and folds back up when it closes; pressing an option moves the
    white block to it at once (it opens from a line while the old one closes), releasing picks it and folds the menu */
+/* the select animation of the controls: the white block opens from a horizontal line through the middle, with a subtle overshoot */
+function playPick(el) {
+  if (!el || !el.animate) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const line = Math.min(1, 2 / Math.max(1, el.offsetHeight));
+  try {
+    el.animate([{ transform: `scaleY(${line})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+      { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
+  } catch (err) { /* no pseudo-element animation here */ }
+}
+/* a dropdown control whose value changes plays the select animation on its block */
+function usePickOnChange(value, ref) {
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    playPick(ref.current);
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+}
 function useFoldMenu() {
   const [open, setOpenRaw] = useState(false);
   const [pending, setPending] = useState(null);
@@ -4799,6 +4817,8 @@ function useFoldMenu() {
 }
 function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
   const { open, setOpen, ref, optProps } = useFoldMenu();
+  const typeRef = useRef(null);
+  usePickOnChange(type, typeRef);
   useEffect(() => {
     if (!open) return undefined;
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -4814,7 +4834,7 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
     <span className="hvs-fwrap" ref={ref}>
       <button type="button" className="hvs-segbtn hvs-fpart is-a" aria-pressed={on} onClick={() => (on ? onOff() : onOn())}>Filter:</button>
       <span className="hvs-ftype">
-      <button type="button" className="hvs-segbtn hvs-fpart is-b" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
+      <button type="button" ref={typeRef} className="hvs-segbtn hvs-fpart is-b" aria-pressed={on} aria-haspopup="menu" aria-expanded={open}
               aria-label={`Filter type: ${name}`} onClick={() => setOpen((o) => !o)}><span className="hvs-fname">{FILTER_TYPES.map(([v, t]) => (<span key={v} aria-hidden={v !== type} style={{ visibility: v === type ? "visible" : "hidden" }}>{t}</span>))}</span><span className="hvs-fcaret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M0 0h10L5 6z" fill="currentColor" /></svg></span></button>
       {open && (
         <span className="hvs-fpop" role="menu" aria-label="Filter type">
@@ -4832,6 +4852,8 @@ function FilterHeaderBtn({ on, type, onPick, onOff, onOn }) {
    its value plus a caret; the menu hangs from the track, aligned to the block, with a check on the current value */
 function CtlSelect({ value, options, onPick, ariaLabel }) {
   const { open, setOpen, ref, optProps } = useFoldMenu();
+  const blockRef = useRef(null);
+  usePickOnChange(value, blockRef);
   useEffect(() => {
     if (!open) return undefined;
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -4847,7 +4869,7 @@ function CtlSelect({ value, options, onPick, ariaLabel }) {
   return (
     <span className="hvs-seg hvs-selseg" ref={ref}>
       <span className="hvs-ftype">
-        <button type="button" className="hvs-segbtn hvs-fpart is-b is-solo" aria-pressed="true" aria-haspopup="menu" aria-expanded={open}
+        <button type="button" ref={blockRef} className="hvs-segbtn hvs-fpart is-b is-solo" aria-pressed="true" aria-haspopup="menu" aria-expanded={open}
                 aria-label={`${ariaLabel}: ${cur ? cur.label : "Custom"}`} onClick={() => setOpen((o) => !o)}>
           <span className="hvs-fname">{shown.map((o) => (<span key={String(o.value)} aria-hidden={o.value !== value} style={{ visibility: o.value === value ? "visible" : "hidden" }}>{o.label}</span>))}</span>
           <span className="hvs-fcaret" aria-hidden="true"><svg viewBox="0 0 10 6"><path d="M0 0h10L5 6z" fill="currentColor" /></svg></span>
