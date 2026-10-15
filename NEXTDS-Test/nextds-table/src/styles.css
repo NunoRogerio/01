@@ -147,7 +147,7 @@
 /* title bar */
 .hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
-.hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px}
+.hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:flex-end;gap:8px} /* the description sits on the bottom of the title */
 .hvt-titledesc{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400;line-height:21px;color:var(--content-placeholder)} /* the description, right of the title */
 .hvt-title{flex:0 1 auto;min-width:0;font-size:16px;font-weight:700;line-height:24px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
