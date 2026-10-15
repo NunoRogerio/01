@@ -171,6 +171,7 @@ function MenuButton({
 }) {
   const [open, setOpen] = useState(false);
   const [dir, setDir] = useState("down");
+  const [fixed, setFixed] = useState(null); // inside a panel that scrolls, the menu is placed over the page instead of inside the panel
   const [stack, setStack] = useState([]); // submenu pages: { title, items } or { title, render }
   const rootRef = useRef(null);
   const btnRef = useRef(null);
@@ -188,9 +189,45 @@ function MenuButton({
     const edge = box ? box.getBoundingClientRect() : null;
     const below = (edge ? Math.min(edge.bottom, window.innerHeight) : window.innerHeight) - r.bottom;
     const above = r.top - (edge ? edge.top : 0);
-    setDir(below < need && above > below ? "up" : "down");
+    const inPanel = !!btnRef.current.closest(".hvt-fg, .hvt-panel");
+    const full = items.length * 40 + 8; // over the page the menu shows every item, so it opens where they all fit
+    const d = inPanel ? (below - 8 < full && above > below ? "up" : "down") : below < need && above > below ? "up" : "down";
+    setDir(d);
+    /* in a filter panel the menu is not cut by the panel's scroll area: it opens over the page, as tall as its items need
+       (it scrolls only when the window itself is too short) */
+    setFixed(inPanel ? placeOver(d) : null);
     setOpen(true);
   };
+  const placeOver = (d) => {
+    const r = btnRef.current.getBoundingClientRect();
+    const room = (d === "down" ? window.innerHeight - r.bottom : r.top) - 8;
+    /* "fixed" is measured from the window, or from the nearest ancestor with a transform (the movable filter panel has one) */
+    let cb = { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    for (let e = rootRef.current.parentElement; e && e !== document.documentElement; e = e.parentElement) {
+      const c = getComputedStyle(e);
+      if (c.transform !== "none" || c.filter !== "none" || c.perspective !== "none" || (c.contain && c.contain !== "none" && /paint|layout|strict|content/.test(c.contain))) {
+        const b = e.getBoundingClientRect();
+        cb = { left: b.left + e.clientLeft, top: b.top + e.clientTop, width: e.clientWidth, height: e.clientHeight };
+        break;
+      }
+    }
+    return {
+      position: "fixed", margin: 0, boxSizing: "border-box",
+      top: d === "down" ? r.bottom - 1 - cb.top : undefined, bottom: d === "up" ? cb.top + cb.height - r.top - 1 : undefined,
+      left: align === "left" ? r.left - cb.left : undefined, right: align === "right" ? cb.left + cb.width - r.right : undefined,
+      maxHeight: Math.max(120, room),
+    };
+  };
+  useEffect(() => { // placed over the page, the menu follows its button when the panel or the page scrolls
+    if (!open || !fixed) return undefined;
+    const follow = (e) => {
+      if (e && e.target && e.target.nodeType === 1 && listRef.current && listRef.current.contains(e.target)) return;
+      if (btnRef.current) setFixed(placeOver(dir));
+    };
+    window.addEventListener("scroll", follow, true);
+    window.addEventListener("resize", follow);
+    return () => { window.removeEventListener("scroll", follow, true); window.removeEventListener("resize", follow); };
+  }, [open, !!fixed, dir]);
   useEffect(() => { if (!open) setStack([]); }, [open]);
   /* the panel grows down from the button when it opens and folds back up into it when it closes */
   const [closing, setClosing] = useState(false);
@@ -232,7 +269,7 @@ function MenuButton({
     if (reduce || !p.to.animate) return;
     const lineOf = (el) => Math.min(1, 2 / Math.max(1, el.offsetHeight));
     try {
-      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }], // no overshoot in dropdowns
         { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
       if (p.from && p.from !== p.to) {
         const old = p.from;
@@ -293,7 +330,7 @@ function MenuButton({
       {(open || closing) && (
         <div ref={listRef} role={role} aria-label={page ? page.title : ariaLabel} onKeyDown={onListKey} aria-hidden={!open || undefined}
              className={`hvt-mpanel is-${dir} align-${align}${open ? "" : " is-closing"}`}
-             style={{ minWidth: (page && page.width) || minWidth || (block ? "100%" : undefined), maxHeight: page && page.maxHeight }}>
+             style={{ ...(fixed || {}), minWidth: (page && page.width) || minWidth || (fixed && btnRef.current ? btnRef.current.offsetWidth : block ? "100%" : undefined), maxHeight: (page && page.maxHeight) || (fixed ? fixed.maxHeight : undefined) }}>
           {page && (
             <div className="hvt-mtitle">
               <button type="button" data-mi className="hvt-gbtn" aria-label="Back" onClick={back}>{Icons.Back}</button>
@@ -834,7 +871,7 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
     if (!el || !el.animate) return;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     try {
-      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }],
         { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" }); // the menus' select animation
     } catch (err) { /* no pseudo-element animation: it is just selected */ }
   }, [picked]);

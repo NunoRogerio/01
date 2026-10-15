@@ -177,7 +177,8 @@ const CSS = `
   transition:width .18s ease,background-color .18s ease,border-radius .18s ease}
 .hvt-qf.is-open{width:189px;background:var(--container-secondary-background);
   border-width:1px;border-radius:var(--component-inputradius)}
-.hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the border stays */
+.hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)}
+.hvt-qf.is-open:focus-within:not(.is-error):not(.is-disabled){background:var(--container-secondary-background)} /* typing: white */ /* hover changes the fill only, the border stays */
 /* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
 [data-hvt-kbd] .hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-panel,.hvt-qf.is-open.is-panel:hover,.hvt-qf.is-open.is-panel:focus-within{border-color:var(--outline);border-bottom-color:var(--border-default);
@@ -400,7 +401,7 @@ const CSS = `
 .hvt-root .hvt-pager-left .hvt-mbtn.is-open.is-down{border-bottom-left-radius:0;border-bottom-right-radius:0}
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
-.hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
+.hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:transparent;color:var(--content-disabled);cursor:default}
 .hvt-pagenum.is-error input,.hvt-pagenum.is-error input:hover,.hvt-pagenum.is-error input:focus{border-color:var(--semantic-negative);box-shadow:inset 0 0 0 1px var(--semantic-negative);background:var(--container-secondary-background)}
 .hvt-pn-err{position:absolute;left:4px;bottom:100%;z-index:5;display:block;width:24px;height:24px;margin-bottom:2px} /* the pager sits at the bottom edge, so the icon goes above the box */
 .hvt-pn-err svg{display:block;width:100%;height:100%}
@@ -533,7 +534,8 @@ const CSS = `
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23e6e6e6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E")}
 .hvt-text{padding:0 12px}
 .hvt-text::placeholder{color:var(--content-placeholder);opacity:1}
-.hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
+.hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the 1px border stays (as the search field) */
+:is(.hvt-select,.hvt-text,.hvt-ms-btn):focus:not(:disabled),:is(.hvt-select,.hvt-text,.hvt-ms-btn):focus:hover:not(:disabled){background:var(--container-secondary-background);box-shadow:none} /* typing: white, as the search field */
 [data-hvt-kbd] :is(.hvt-select,.hvt-text,.hvt-ms-btn):focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
 .hvt-grow{flex:1}
 .hvt-allrow{flex:none}
@@ -1090,6 +1092,7 @@ function MenuButton({
 }) {
   const [open, setOpen] = useState(false);
   const [dir, setDir] = useState("down");
+  const [fixed, setFixed] = useState(null); // inside a panel that scrolls, the menu is placed over the page instead of inside the panel
   const [stack, setStack] = useState([]); // submenu pages: { title, items } or { title, render }
   const rootRef = useRef(null);
   const btnRef = useRef(null);
@@ -1107,9 +1110,45 @@ function MenuButton({
     const edge = box ? box.getBoundingClientRect() : null;
     const below = (edge ? Math.min(edge.bottom, window.innerHeight) : window.innerHeight) - r.bottom;
     const above = r.top - (edge ? edge.top : 0);
-    setDir(below < need && above > below ? "up" : "down");
+    const inPanel = !!btnRef.current.closest(".hvt-fg, .hvt-panel");
+    const full = items.length * 40 + 8; // over the page the menu shows every item, so it opens where they all fit
+    const d = inPanel ? (below - 8 < full && above > below ? "up" : "down") : below < need && above > below ? "up" : "down";
+    setDir(d);
+    /* in a filter panel the menu is not cut by the panel's scroll area: it opens over the page, as tall as its items need
+       (it scrolls only when the window itself is too short) */
+    setFixed(inPanel ? placeOver(d) : null);
     setOpen(true);
   };
+  const placeOver = (d) => {
+    const r = btnRef.current.getBoundingClientRect();
+    const room = (d === "down" ? window.innerHeight - r.bottom : r.top) - 8;
+    /* "fixed" is measured from the window, or from the nearest ancestor with a transform (the movable filter panel has one) */
+    let cb = { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    for (let e = rootRef.current.parentElement; e && e !== document.documentElement; e = e.parentElement) {
+      const c = getComputedStyle(e);
+      if (c.transform !== "none" || c.filter !== "none" || c.perspective !== "none" || (c.contain && c.contain !== "none" && /paint|layout|strict|content/.test(c.contain))) {
+        const b = e.getBoundingClientRect();
+        cb = { left: b.left + e.clientLeft, top: b.top + e.clientTop, width: e.clientWidth, height: e.clientHeight };
+        break;
+      }
+    }
+    return {
+      position: "fixed", margin: 0, boxSizing: "border-box",
+      top: d === "down" ? r.bottom - 1 - cb.top : undefined, bottom: d === "up" ? cb.top + cb.height - r.top - 1 : undefined,
+      left: align === "left" ? r.left - cb.left : undefined, right: align === "right" ? cb.left + cb.width - r.right : undefined,
+      maxHeight: Math.max(120, room),
+    };
+  };
+  useEffect(() => { // placed over the page, the menu follows its button when the panel or the page scrolls
+    if (!open || !fixed) return undefined;
+    const follow = (e) => {
+      if (e && e.target && e.target.nodeType === 1 && listRef.current && listRef.current.contains(e.target)) return;
+      if (btnRef.current) setFixed(placeOver(dir));
+    };
+    window.addEventListener("scroll", follow, true);
+    window.addEventListener("resize", follow);
+    return () => { window.removeEventListener("scroll", follow, true); window.removeEventListener("resize", follow); };
+  }, [open, !!fixed, dir]);
   useEffect(() => { if (!open) setStack([]); }, [open]);
   /* the panel grows down from the button when it opens and folds back up into it when it closes */
   const [closing, setClosing] = useState(false);
@@ -1151,7 +1190,7 @@ function MenuButton({
     if (reduce || !p.to.animate) return;
     const lineOf = (el) => Math.min(1, 2 / Math.max(1, el.offsetHeight));
     try {
-      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+      p.to.animate([{ transform: `scaleY(${lineOf(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }], // no overshoot in dropdowns
         { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
       if (p.from && p.from !== p.to) {
         const old = p.from;
@@ -1212,7 +1251,7 @@ function MenuButton({
       {(open || closing) && (
         <div ref={listRef} role={role} aria-label={page ? page.title : ariaLabel} onKeyDown={onListKey} aria-hidden={!open || undefined}
              className={`hvt-mpanel is-${dir} align-${align}${open ? "" : " is-closing"}`}
-             style={{ minWidth: (page && page.width) || minWidth || (block ? "100%" : undefined), maxHeight: page && page.maxHeight }}>
+             style={{ ...(fixed || {}), minWidth: (page && page.width) || minWidth || (fixed && btnRef.current ? btnRef.current.offsetWidth : block ? "100%" : undefined), maxHeight: (page && page.maxHeight) || (fixed ? fixed.maxHeight : undefined) }}>
           {page && (
             <div className="hvt-mtitle">
               <button type="button" data-mi className="hvt-gbtn" aria-label="Back" onClick={back}>{Icons.Back}</button>
@@ -1753,7 +1792,7 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
     if (!el || !el.animate) return;
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     try {
-      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }],
         { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" }); // the menus' select animation
     } catch (err) { /* no pseudo-element animation: it is just selected */ }
   }, [picked]);
@@ -4286,6 +4325,7 @@ const SCREEN_CSS = `
 .hvs-stage{display:flex;flex-direction:column}
 .hvs-slot{position:relative}
 .hvs-stage > .hvs-slot.is-max{z-index:2000}
+.hvs-stage > .hvs-slot:has(.hvt-mpanel, .hvt-fg, .hvt-qfpanel):not(.is-max){z-index:9} /* an open menu or panel of the table may reach over the controls above it */
 .hvs-stage{position:relative;flex:none;margin:auto}
 .hvs-stage > :not(.hvs-grid-overlay){position:relative;z-index:1}
 .hvs-grid-overlay{position:absolute !important;z-index:0 !important;top:0;bottom:0;left:50%;transform:translateX(-50%);display:flex;gap:40px;padding:0 40px;pointer-events:none}
@@ -4788,7 +4828,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 04:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 04:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4974,13 +5014,13 @@ const listModeOf = (c) => {
 const FILTER_TYPES = [["group", "Group"], ["rows", "MUI"]];
 /* the control dropdowns: the menu grows down when it opens and folds back up when it closes; pressing an option moves the
    white block to it at once (it opens from a line while the old one closes), releasing picks it and folds the menu */
-/* the select animation of the controls: the white block opens from a horizontal line through the middle, with a subtle overshoot */
+/* the select animation of the dropdown controls: the white block opens from a horizontal line through the middle (no overshoot in dropdowns) */
 function playPick(el) {
   if (!el || !el.animate) return;
   if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const line = Math.min(1, 2 / Math.max(1, el.offsetHeight));
   try {
-    el.animate([{ transform: `scaleY(${line})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+    el.animate([{ transform: `scaleY(${line})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }], // dropdowns: no overshoot
       { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" });
   } catch (err) { /* no pseudo-element animation here */ }
 }
@@ -5519,7 +5559,10 @@ export default function App() {
           return;
         }
         try {
-          b.animate([
+          b.animate(b.classList.contains("hvs-fopt") ? [ // a dropdown option: no overshoot
+            { transform: `scaleY(${line})`, opacity: 0.6 },
+            { transform: "scaleY(1)", opacity: 1 },
+          ] : [ // a multibutton: the subtle overshoot
             { transform: `scaleY(${line})`, opacity: 0.6 },
             { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 },
             { transform: "scaleY(1)", opacity: 1 },
