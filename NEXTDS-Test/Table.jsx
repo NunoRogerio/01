@@ -566,30 +566,30 @@ const CSS = `
 .hvt-fg.is-sized .hvt-fg-body{flex:1;min-height:0;max-height:none}
 .hvt-fg.is-resizing{user-select:none}
 .hvt-fg-rz{position:absolute;z-index:3;touch-action:none}
-.hvt-fg-rz.is-l,.hvt-fg-rz.is-r{top:12px;bottom:12px;width:9px;cursor:ew-resize}
+.hvt-fg-rz.is-l,.hvt-fg-rz.is-r{top:20px;bottom:20px;width:9px;cursor:ew-resize}
 .hvt-fg-rz.is-l{left:-5px}
 .hvt-fg-rz.is-r{right:-5px}
-.hvt-fg-rz.is-t,.hvt-fg-rz.is-b{left:12px;right:12px;height:9px;cursor:ns-resize}
+.hvt-fg-rz.is-t,.hvt-fg-rz.is-b{left:20px;right:20px;height:9px;cursor:ns-resize}
 .hvt-fg-rz.is-t{top:-5px}
 .hvt-fg-rz.is-b{bottom:-5px}
-.hvt-fg-rz.is-bl,.hvt-fg-rz.is-br,.hvt-fg-rz.is-tl,.hvt-fg-rz.is-tr{width:16px;height:16px}
 .hvt-fg-rz.is-bl{left:-5px;bottom:-5px;cursor:nesw-resize}
 .hvt-fg-rz.is-br{right:-5px;bottom:-5px;cursor:nwse-resize}
 .hvt-fg-rz.is-tl{left:-5px;top:-5px;cursor:nwse-resize}
 .hvt-fg-rz.is-tr{right:-5px;top:-5px;cursor:nesw-resize}
 .hvt-fg-rz::before,.hvt-fg-rz::after{content:"";position:absolute;border-radius:999px;background:var(--cat1-100);opacity:0;transition:opacity .12s;pointer-events:none}
 .hvt-fg-rz:hover::before,.hvt-fg-rz:hover::after,.hvt-fg.is-resizing .hvt-fg-rz:active::before,.hvt-fg.is-resizing .hvt-fg-rz:active::after{opacity:1}
-/* an edge: a 4px bar, 40px long, centred on the border where the pointer is */
-.hvt-fg-rz.is-l::before,.hvt-fg-rz.is-r::before{left:50%;width:4px;margin-left:-2px;height:40px;top:clamp(0px,calc(var(--at,50%) - 20px),calc(100% - 40px))}
-.hvt-fg-rz.is-t::before,.hvt-fg-rz.is-b::before{top:50%;height:4px;margin-top:-2px;width:40px;left:clamp(0px,calc(var(--at,50%) - 20px),calc(100% - 40px))}
+/* an edge: a 7px bar, 64px long, centred on the border where the pointer is */
+.hvt-fg-rz.is-l::before,.hvt-fg-rz.is-r::before{left:50%;width:7px;margin-left:-3.5px;height:64px;top:clamp(0px,calc(var(--at,50%) - 32px),calc(100% - 64px))}
+.hvt-fg-rz.is-t::before,.hvt-fg-rz.is-b::before{top:50%;height:7px;margin-top:-3.5px;width:64px;left:clamp(0px,calc(var(--at,50%) - 32px),calc(100% - 64px))}
 .hvt-fg-rz.is-l::after,.hvt-fg-rz.is-r::after,.hvt-fg-rz.is-t::after,.hvt-fg-rz.is-b::after{display:none}
-/* a corner: an L of two 4px bars along the two borders */
-.hvt-fg-rz.is-bl::before,.hvt-fg-rz.is-br::before,.hvt-fg-rz.is-tl::before,.hvt-fg-rz.is-tr::before{width:20px;height:4px}
-.hvt-fg-rz.is-bl::after,.hvt-fg-rz.is-br::after,.hvt-fg-rz.is-tl::after,.hvt-fg-rz.is-tr::after{width:4px;height:20px}
-.hvt-fg-rz.is-bl::before{left:3px;bottom:3px}.hvt-fg-rz.is-bl::after{left:3px;bottom:3px}
-.hvt-fg-rz.is-br::before{right:3px;bottom:3px}.hvt-fg-rz.is-br::after{right:3px;bottom:3px}
-.hvt-fg-rz.is-tl::before{left:3px;top:3px}.hvt-fg-rz.is-tl::after{left:3px;top:3px}
-.hvt-fg-rz.is-tr::before{right:3px;top:3px}.hvt-fg-rz.is-tr::after{right:3px;top:3px}
+/* a corner: an L of two 7px bars, 32px long, along the two borders (centred on them like the edge bar) */
+.hvt-fg-rz.is-bl,.hvt-fg-rz.is-br,.hvt-fg-rz.is-tl,.hvt-fg-rz.is-tr{width:24px;height:24px}
+.hvt-fg-rz.is-bl::before,.hvt-fg-rz.is-br::before,.hvt-fg-rz.is-tl::before,.hvt-fg-rz.is-tr::before{width:32px;height:7px}
+.hvt-fg-rz.is-bl::after,.hvt-fg-rz.is-br::after,.hvt-fg-rz.is-tl::after,.hvt-fg-rz.is-tr::after{width:7px;height:32px}
+.hvt-fg-rz.is-bl::before{left:1.5px;bottom:1.5px}.hvt-fg-rz.is-bl::after{left:1.5px;bottom:1.5px}
+.hvt-fg-rz.is-br::before{right:1.5px;bottom:1.5px}.hvt-fg-rz.is-br::after{right:1.5px;bottom:1.5px}
+.hvt-fg-rz.is-tl::before{left:1.5px;top:1.5px}.hvt-fg-rz.is-tl::after{left:1.5px;top:1.5px}
+.hvt-fg-rz.is-tr::before{right:1.5px;top:1.5px}.hvt-fg-rz.is-tr::after{right:1.5px;top:1.5px}
 .hvt-fg-body{display:flex;min-height:240px;max-height:380px}
 .hvt-fg-fields{display:flex;flex-direction:column;gap:4px;flex:none;width:200px;overflow:auto;padding:16px 8px 16px 16px;border-right:1px solid var(--border-default)}
 .hvt-fg-field{display:flex;align-items:center;flex:none;height:32px;padding:0 8px;border:0;border-radius:4px;background:transparent;color:inherit;cursor:pointer;
@@ -4975,7 +4975,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 06:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 06:15"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
