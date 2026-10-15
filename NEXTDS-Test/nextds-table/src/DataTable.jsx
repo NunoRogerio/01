@@ -49,9 +49,9 @@ const Icons = {
   Pin: <Svg html={`<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16 19.25C16.2761 19.25 16.5 19.4738 16.5 19.75V24.75C16.5 25.0261 16.2761 25.25 16 25.25C15.7239 25.25 15.5 25.0261 15.5 24.75V19.75C15.5 19.4738 15.7239 19.25 16 19.25Z\" fill=\"currentColor\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.5 9.12496C10.5 8.84882 10.7239 8.62496 11 8.62496H21C21.2761 8.62496 21.5 8.84882 21.5 9.12496C21.5 9.4011 21.2761 9.62496 21 9.62496H11C10.7239 9.62496 10.5 9.4011 10.5 9.12496Z\" fill=\"currentColor\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.625 19.75C8.625 19.4738 8.84886 19.25 9.125 19.25H22.875C23.1511 19.25 23.375 19.4738 23.375 19.75C23.375 20.0261 23.1511 20.25 22.875 20.25H9.125C8.84886 20.25 8.625 20.0261 8.625 19.75Z\" fill=\"currentColor\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3369 8.63257C12.6088 8.68056 12.7904 8.93991 12.7424 9.21185L10.8674 19.8369C10.8194 20.1088 10.56 20.2903 10.2881 20.2424C10.0162 20.1944 9.83462 19.935 9.88261 19.6631L11.7576 9.03807C11.8056 8.76613 12.065 8.58458 12.3369 8.63257Z\" fill=\"currentColor\"/><path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.6631 8.63257C19.935 8.58458 20.1944 8.76613 20.2424 9.03807L22.1174 19.6631C22.1654 19.935 21.9838 20.1944 21.7119 20.2424C21.44 20.2903 21.1806 20.1088 21.1326 19.8369L19.2576 9.21185C19.2096 8.93991 19.3912 8.68056 19.6631 8.63257Z\" fill=\"currentColor\"/>`} />,
   PinSelected: <Svg html={`<path d=\"M22.7222 19.1647C22.7222 19.3219 22.6598 19.4726 22.5487 19.5837C22.4375 19.6949 22.2868 19.7573 22.1296 19.7573H16.2037V23.9055C16.2037 24.0626 16.1413 24.2133 16.0301 24.3245C15.919 24.4356 15.7683 24.498 15.6111 24.498C15.4539 24.498 15.3032 24.4356 15.1921 24.3245C15.081 24.2133 15.0185 24.0626 15.0185 23.9055V19.7573H9.09259C8.93543 19.7573 8.7847 19.6949 8.67357 19.5837C8.56243 19.4726 8.5 19.3219 8.5 19.1647C8.5 19.0075 8.56243 18.8568 8.67357 18.7457C8.7847 18.6346 8.93543 18.5721 9.09259 18.5721H9.78074L11.3489 9.68323H10.8704C10.7132 9.68323 10.5625 9.6208 10.4513 9.50967C10.3402 9.39853 10.2778 9.2478 10.2778 9.09064C10.2778 8.93347 10.3402 8.78275 10.4513 8.67161C10.5625 8.56048 10.7132 8.49805 10.8704 8.49805H20.3519C20.509 8.49805 20.6597 8.56048 20.7709 8.67161C20.882 8.78275 20.9444 8.93347 20.9444 9.09064C20.9444 9.2478 20.882 9.39853 20.7709 9.50967C20.6597 9.6208 20.509 9.68323 20.3519 9.68323H19.8733L21.4415 18.5721H22.1296C22.2868 18.5721 22.4375 18.6346 22.5487 18.7457C22.6598 18.8568 22.7222 19.0075 22.7222 19.1647Z\" fill=\"currentColor\"/>`} />,
   Lock: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M9.75 13.375C9.68096 13.375 9.625 13.431 9.625 13.5V22.25C9.625 22.319 9.68096 22.375 9.75 22.375H22.25C22.319 22.375 22.375 22.319 22.375 22.25V13.5C22.375 13.431 22.319 13.375 22.25 13.375H9.75ZM8.625 13.5C8.625 12.8787 9.12868 12.375 9.75 12.375H22.25C22.8713 12.375 23.375 12.8787 23.375 13.5V22.25C23.375 22.8713 22.8713 23.375 22.25 23.375H9.75C9.12868 23.375 8.625 22.8713 8.625 22.25V13.5Z" fill="currentColor"/><path d="M16 18.5C16.3452 18.5 16.625 18.2202 16.625 17.875C16.625 17.5298 16.3452 17.25 16 17.25C15.6548 17.25 15.375 17.5298 15.375 17.875C15.375 18.2202 15.6548 18.5 16 18.5Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 7.75C15.3038 7.75 14.6361 8.02656 14.1438 8.51884C13.6516 9.01113 13.375 9.67881 13.375 10.375V12.875C13.375 13.1511 13.1511 13.375 12.875 13.375C12.5989 13.375 12.375 13.1511 12.375 12.875V10.375C12.375 9.41359 12.7569 8.49156 13.4367 7.81174C14.1166 7.13192 15.0386 6.75 16 6.75C16.9614 6.75 17.8834 7.13192 18.5633 7.81174C19.2431 8.49156 19.625 9.41359 19.625 10.375V12.875C19.625 13.1511 19.4011 13.375 19.125 13.375C18.8489 13.375 18.625 13.1511 18.625 12.875V10.375C18.625 9.67881 18.3484 9.01113 17.8562 8.51884C17.3639 8.02656 16.6962 7.75 16 7.75Z" fill="currentColor"/>`} />,
-  StatusCritical: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.998C8 11.5798 11.5817 7.99805 16 7.99805C20.4183 7.99805 24 11.5798 24 15.998C24 20.4163 20.4183 23.998 16 23.998C11.5817 23.998 8 20.4163 8 15.998Z" style="fill:var(--semantic-negative)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 11.748C16.2761 11.748 16.5 11.9719 16.5 12.248V16.623C16.5 16.8992 16.2761 17.123 16 17.123C15.7239 17.123 15.5 16.8992 15.5 16.623V12.248C15.5 11.9719 15.7239 11.748 16 11.748Z" style="fill:var(--container-secondary-background)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 19.9355C16.2761 19.9355 16.5 19.7117 16.5 19.4355C16.5 19.1594 16.2761 18.9355 16 18.9355C15.7239 18.9355 15.5 19.1594 15.5 19.4355C15.5 19.7117 15.7239 19.9355 16 19.9355Z" style="fill:var(--container-secondary-background)"/>`} />,
-  StatusWarning: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M17.5591 8.89071C16.8746 7.70049 15.1255 7.70049 14.441 8.89073L7.60818 20.7556L7.60762 20.7565C6.92704 21.9445 7.81892 23.373 9.16725 23.373H22.8329C24.1812 23.373 25.0731 21.9445 24.3925 20.7565L24.3919 20.7556L17.5591 8.89071Z" style="fill:var(--semantic-warning)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M16 13.623C16.2761 13.623 16.5 13.8469 16.5 14.123V17.248C16.5 17.5242 16.2761 17.748 16 17.748C15.7239 17.748 15.5 17.5242 15.5 17.248V14.123C15.5 13.8469 15.7239 13.623 16 13.623Z" style="fill:var(--base-dark)"/><path d="M16 20.6855C16.3452 20.6855 16.625 20.4057 16.625 20.0605C16.625 19.7154 16.3452 19.4355 16 19.4355C15.6548 19.4355 15.375 19.7154 15.375 20.0605C15.375 20.4057 15.6548 20.6855 16 20.6855Z" style="fill:var(--base-dark)"/>`} />,
-  StatusGood: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.998C8 11.5798 11.5817 7.99805 16 7.99805C20.4183 7.99805 24 11.5798 24 15.998C24 20.4163 20.4183 23.998 16 23.998C11.5817 23.998 8 20.4163 8 15.998Z" style="fill:var(--semantic-positive)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.4786 13.7695C19.6738 13.9648 19.6738 14.2813 19.4786 14.4766L15.1036 18.8516C14.9083 19.0469 14.5917 19.0469 14.3964 18.8516L12.5214 16.9766C12.3262 16.7813 12.3262 16.4648 12.5214 16.2695C12.7167 16.0742 13.0333 16.0742 13.2286 16.2695L14.75 17.7909L18.7714 13.7695C18.9667 13.5742 19.2833 13.5742 19.4786 13.7695Z" style="fill:var(--container-secondary-background)"/>`} />,
+  StatusCritical: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.998C8 11.5798 11.5817 7.99805 16 7.99805C20.4183 7.99805 24 11.5798 24 15.998C24 20.4163 20.4183 23.998 16 23.998C11.5817 23.998 8 20.4163 8 15.998Z" style="fill:var(--semantic-negative)"/><rect x="15.2" y="11.55" width="1.6" height="5.75" rx=".8" style="fill:var(--container-secondary-background)"/><circle cx="16" cy="19.55" r="1" style="fill:var(--container-secondary-background)"/>`} />,
+  StatusWarning: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M17.5591 8.89071C16.8746 7.70049 15.1255 7.70049 14.441 8.89073L7.60818 20.7556L7.60762 20.7565C6.92704 21.9445 7.81892 23.373 9.16725 23.373H22.8329C24.1812 23.373 25.0731 21.9445 24.3925 20.7565L24.3919 20.7556L17.5591 8.89071Z" style="fill:var(--semantic-warning)"/><rect x="15.2" y="13.45" width="1.6" height="4.55" rx=".8" style="fill:var(--base-dark)"/><circle cx="16" cy="20.15" r="1" style="fill:var(--base-dark)"/>`} />,
+  StatusGood: <Svg html={`<path fill-rule="evenodd" clip-rule="evenodd" d="M8 15.998C8 11.5798 11.5817 7.99805 16 7.99805C20.4183 7.99805 24 11.5798 24 15.998C24 20.4163 20.4183 23.998 16 23.998C11.5817 23.998 8 20.4163 8 15.998Z" style="fill:var(--semantic-positive)"/><path d="M12.8 16.55l1.95 1.95 4.45-4.45" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--container-secondary-background)"/>`} />,
   Saucer: <svg viewBox="0 0 112 112" fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: `<path d="M55.957 77.6306C57.3376 77.6308 58.4569 78.7501 58.457 80.1306V92.9998C58.457 94.3804 57.3376 95.4996 55.957 95.4998C54.5763 95.4998 53.457 94.3805 53.457 92.9998V80.1306C53.4571 78.75 54.5764 77.6306 55.957 77.6306Z" fill="currentColor"/><path d="M37.4971 79.3396C37.9339 78.0303 39.3496 77.3222 40.6592 77.7586C41.9689 78.1952 42.6767 79.6119 42.2402 80.9216L39.0234 90.573C38.5868 91.8828 37.1702 92.5906 35.8604 92.1541C34.5508 91.7173 33.8427 90.3017 34.2793 88.992L37.4971 79.3396Z" fill="currentColor"/><path d="M71.252 77.7586C72.5616 77.322 73.9782 78.0301 74.415 79.3396L77.6318 88.992C78.0685 90.3018 77.3606 91.7174 76.0508 92.1541C74.741 92.5906 73.3253 91.8828 72.8887 90.573L69.6709 80.9216C69.2345 79.612 69.9425 78.1953 71.252 77.7586Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M55.624 16.5027C58.9374 16.4589 62.2269 17.0736 65.3008 18.3113C68.3747 19.5491 71.1727 21.3849 73.5312 23.7127C74.9546 25.1175 76.1994 26.6859 77.2451 28.3797C84.4869 29.9932 90.7607 32.4307 95.3486 35.5115C100.101 38.7025 103.5 42.9195 103.5 47.9597C103.5 51.4703 101.829 54.6064 99.2393 57.2302C96.6605 59.8431 93.0524 62.082 88.792 63.908C80.2617 67.5637 68.6511 69.7644 55.957 69.7644C43.2626 69.7644 31.6514 67.5639 23.1211 63.908C18.8605 62.0819 15.2526 59.8433 12.6738 57.2302C10.0845 54.6064 8.41417 51.4703 8.41406 47.9597C8.41416 42.9152 11.8336 38.688 16.6074 35.491C21.2168 32.4043 27.5206 29.9613 34.7969 28.3523C39.1544 21.3621 46.7956 16.6178 55.624 16.5027ZM32.1172 34.1716C26.9206 35.62 22.5851 37.5054 19.3896 39.6453C15.195 42.4544 13.4142 45.3635 13.4141 47.9597C13.4142 49.7797 14.2646 51.7226 16.2334 53.7175C18.2129 55.7234 21.2008 57.645 25.0908 59.3123C32.8623 62.643 43.7735 64.7644 55.957 64.7644C68.1404 64.7644 79.0518 62.6429 86.8232 59.3123C90.7131 57.6451 93.7012 55.7232 95.6807 53.7175C97.6493 51.7226 98.4999 49.7796 98.5 47.9597C98.4999 45.3589 96.7284 42.46 92.5615 39.6619C89.3797 37.5253 85.0605 35.643 79.8799 34.1931C80.606 36.5641 80.9767 39.0345 80.9766 41.5232V43.1013C80.9689 45.1115 80.2834 47.061 79.0312 48.6336C77.7788 50.2062 76.0318 51.3099 74.0742 51.7673C74.0642 51.7697 74.054 51.7729 74.0439 51.7752C68.47 53.0035 62.7826 53.6397 57.0771 53.6756H54.833C49.1249 53.6398 43.4351 53.0036 37.8584 51.7752C37.8496 51.7732 37.8408 51.7704 37.832 51.7683C35.8714 51.3138 34.1217 50.2089 32.8691 48.6336C31.6169 47.0583 30.9346 45.1049 30.9336 43.0925V41.8572C30.9336 39.1888 31.3488 36.6048 32.1172 34.1716ZM55.6904 21.5017C48.3753 21.597 42.0258 25.7074 38.6104 31.7166C38.5902 31.7553 38.567 31.7922 38.5449 31.8298C36.8821 34.7993 35.9337 38.2259 35.9336 41.8572V43.0906L35.9473 43.4197C36.0123 44.185 36.3022 44.9172 36.7832 45.5222C37.3287 46.2083 38.089 46.6901 38.9414 46.8923C44.5215 48.121 50.2219 48.72 55.9355 48.6756H55.9746C61.6833 48.7199 67.3788 48.1209 72.9541 46.8933C73.809 46.6894 74.5724 46.2061 75.1201 45.5183C75.6694 44.8283 75.9711 43.9733 75.9766 43.0916V41.5232C75.9767 38.8718 75.4503 36.2459 74.4277 33.7996C73.4051 31.3533 71.9066 29.1338 70.0195 27.2713C68.1323 25.4087 65.8933 23.9394 63.4336 22.949C60.9739 21.9585 58.3418 21.4667 55.6904 21.5017Z" fill="currentColor"/>` }} />,
 };
 /* drag icon of the column titles: the library vector at its own size (10 x 15) */
@@ -277,7 +277,7 @@ function MenuButton({
   const iconOnly = !!icon && text === "";
 
   return (
-    <div className={`hvt-mb hvt-mb--${variant}${block ? " is-block" : ""}`} ref={rootRef} title={title}
+    <div className={`hvt-mb hvt-mb--${variant}${block ? " is-block" : ""}`} ref={rootRef} data-tip={title}
          onKeyDown={(e) => { if (open && e.key === "Escape" && !e.defaultPrevented) { e.preventDefault(); closeMenu(); } }}>
       <button ref={btnRef} type="button" disabled={disabled}
               className={`hvt-mbtn${iconOnly ? " is-icon" : ""}${open ? ` is-open is-${dir}` : ""}`}
@@ -1096,7 +1096,7 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
             </label>
             {hScroll && ( /* fixing a column only matters when the table scrolls sideways */
               <button type="button" className="hvt-cl-pin" aria-pressed={pinned} aria-label={`${pinned ? "Unpin" : "Pin"} ${titleOf(k)}`}
-                      title={pinned ? "Unpin" : "Pin to the left"} onClick={() => togglePin(k)}>{pinned ? Icons.PinSelected : Icons.Pin}</button>
+                      data-tip={pinned ? "Unpin" : "Pin to the left"} onClick={() => togglePin(k)}>{pinned ? Icons.PinSelected : Icons.Pin}</button>
             )}
           </div>
         );
@@ -1359,11 +1359,76 @@ function Banner({ kind, text, action, onClose, closing }) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Tooltips (NEXT Design System tooltip): any element with data-tip shows its text in a small raised panel,
+ * 0.5 s after the pointer rests on it or at once on keyboard focus; above the element, or below when there is no room.
+ * ------------------------------------------------------------------ */
+function useTips(ref, scope) {
+  const [tip, setTip] = useState(null);
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return undefined;
+    let timer = 0, cur = null;
+    const mine = (el) => el && root.contains(el) && el.closest(scope) === root; // a nested table shows its own tooltips
+    const show = (el) => {
+      const text = el.getAttribute("data-tip");
+      if (!text) return;
+      const r = el.getBoundingClientRect();
+      setTip({ text, x: r.left + r.width / 2, top: r.top, bottom: r.bottom });
+    };
+    const hide = () => { clearTimeout(timer); cur = null; setTip(null); };
+    const at = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest("[data-tip]") : null; };
+    const move = (e) => { // follows the pointer by position, so disabled buttons (no events of their own) show their tooltip too
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      const el = at(e.clientX, e.clientY);
+      const t = mine(el) ? el : null;
+      if (t === cur) return;
+      clearTimeout(timer); setTip(null); cur = t;
+      if (t) timer = setTimeout(() => show(t), 500);
+    };
+    const focus = (e) => {
+      const el = e.target.closest && e.target.closest("[data-tip]");
+      if (mine(el) && e.target.matches && e.target.matches(":focus-visible")) { cur = el; show(el); }
+    };
+    document.addEventListener("pointermove", move);
+    root.addEventListener("pointerdown", hide, true);
+    root.addEventListener("focusin", focus);
+    root.addEventListener("focusout", hide);
+    window.addEventListener("scroll", hide, true);
+    window.addEventListener("blur", hide);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("pointermove", move);
+      root.removeEventListener("pointerdown", hide, true);
+      root.removeEventListener("focusin", focus);
+      root.removeEventListener("focusout", hide);
+      window.removeEventListener("scroll", hide, true);
+      window.removeEventListener("blur", hide);
+    };
+  }, [ref, scope]);
+  return tip;
+}
+function TipBubble({ tip }) {
+  const ref = useRef(null);
+  const [pos, setPos] = useState(null);
+  useLayoutEffect(() => {
+    if (!tip || !ref.current) { setPos(null); return; }
+    const w = ref.current.offsetWidth, h = ref.current.offsetHeight;
+    let top = tip.top - h - 8;
+    if (top < 8) top = tip.bottom + 8;
+    const left = Math.min(Math.max(8, tip.x - w / 2), window.innerWidth - w - 8);
+    setPos({ left, top });
+  }, [tip]);
+  if (!tip) return null;
+  return (<div ref={ref} role="tooltip" className={`hvt-tip${pos ? " is-in" : ""}`} style={pos ? { left: pos.left, top: pos.top } : { left: -9999, top: 0 }}>{tip.text}</div>);
+}
+
+/* ------------------------------------------------------------------ *
  * DataTable
  * ------------------------------------------------------------------ */
 export function DataTable({
   title = "Table Title",
   description = null, // optional text shown at the right of the title
+  info = null, // optional: an information icon after the title that shows this text as a tooltip
   columns: columnsProp = NO_ROWS,
   rows = NO_ROWS,
   showTitle = true,
@@ -1841,7 +1906,7 @@ export function DataTable({
     "--component-containerradius": `${containerRadius}px`,
     "--hvt-row-gap": `${rowGap}px`,
     "--hvt-row-h": density === "compact" ? "28px" : density === "balanced" ? "40px" : "48px",
-    "--hvt-head-h": density === "compact" ? "32px" : "56px", // Compact: the column titles bar about 40% lower
+    "--hvt-head-h": density === "compact" ? "40px" : "56px", // Compact: a 40px column titles row
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
     "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),
@@ -1869,7 +1934,8 @@ export function DataTable({
     ? (viewBtn ? (r) => onView && onView(r) : expandable ? (r) => toggleOpen(r.id) : selectable ? (r) => toggleRow(r.id) : null)
     : null;
   /* the header bar shows while any of its items is on; the title is only one of them */
-  const hasHeader = showTitle || searchEnabled || showFilterButton || (editable && showAdd) || showMaximize || showMoreOptions;
+  const tip = useTips(rootRef, ".hvt-root");
+  const hasHeader = showTitle || !!description || !!info || searchEnabled || showFilterButton || (editable && showAdd) || showMaximize || showMoreOptions;
   const rootClass = `hvt-root${hasHeader ? "" : " no-header"}${expandable || selectable ? " has-lead" : ""}${hasActions ? " has-actions" : ""}${joined ? " is-joined" : ""}${density === "compact" ? " is-compact" : ""}${columnReorder ? " can-reorder" : ""}${columnResize ? " can-resize" : ""}${scrollbarHorizontal ? " has-hscroll" : ""}${scrollbarVertical ? " has-vscroll" : ""} ${hoverMode}${resizing ? " is-resizing" : ""}${maximized ? " is-max" : ""}${dragView ? " is-colDragging" : ""}`;
 
   /* the panels opened from the filter bar follow the real position of the bar and of its Filters button,
@@ -3018,13 +3084,15 @@ export function DataTable({
     <div ref={rootRef} className={rootClass} data-theme={theme} role={maximized ? "dialog" : "region"} aria-modal={maximized ? true : undefined}
          aria-label={title} style={rootStyle}>
       <div className="hvt-sr" aria-live="polite">{announce}</div>
+      <TipBubble tip={tip} />
 
       {hasHeader && (
         <div className="hvt-titlebar">
-          {(showTitle || description) && (
+          {(showTitle || description || info) && (
             <div className="hvt-titlewrap">
               {showTitle && <h3 className="hvt-title">{title}</h3>}
               {description && <span className="hvt-titledesc">{description}</span>}
+              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.5" /><path d="M8 7.2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="4.9" r=".9" fill="currentColor" /></svg></button>}
             </div>
           )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}
@@ -3050,7 +3118,7 @@ export function DataTable({
                 {showFilterButton && (
                   <span className="hvt-iconwrap">
                     <button type="button" className="hvt-gbtn" data-filter-trigger aria-label="Filters"
-                            aria-pressed={fbOpen} title={fbOpen ? "Hide the filter bar" : "Show the filter bar"}
+                            aria-pressed={fbOpen} data-tip={fbOpen ? "Hide the filter bar" : "Show the filter bar"}
                             onClick={toggleFilterBar}>
                       {Icons.Filter}
                     </button>
@@ -3070,7 +3138,7 @@ export function DataTable({
                 {showMaximize && (
                   <button type="button" className="hvt-gbtn" aria-pressed={maximized}
                           aria-label={maximized ? "Restore table size" : "Maximize table"}
-                          title={maximized ? "Restore" : "Maximize"} onClick={toggleMax}>
+                          data-tip={maximized ? "Restore" : "Maximize"} onClick={toggleMax}>
                     {maximized ? Icons.Restore : Icons.Maximize}
                   </button>
                 )}

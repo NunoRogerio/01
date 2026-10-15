@@ -148,6 +148,14 @@
 .hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
 .hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:flex-end;gap:8px} /* the description sits on the bottom of the title */
+.hvt-infobtn{width:24px;height:24px;flex:none;border-radius:4px;color:var(--content-placeholder)}
+.hvt-infobtn svg{width:16px;height:16px}
+.hvt-infobtn:hover{color:var(--content-primary)}
+/* NEXT tooltip: a small raised panel in the dropdown colours and elevation, 14px text, 8px 12px padding */
+.hvt-tip{position:fixed;z-index:3000;max-width:320px;padding:8px 12px;border-radius:var(--component-inputradius);
+  background:var(--container-secondary-background);color:var(--content-primary);box-shadow:0 0 8px rgba(0,0,0,.12),0 2px 12px rgba(0,0,0,.08);
+  font-family:inherit;font-size:14px;font-weight:400;line-height:21px;white-space:normal;pointer-events:none;opacity:0;transition:opacity .15s ease}
+.hvt-tip.is-in{opacity:1}
 .hvt-titledesc{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:400;line-height:21px;color:var(--content-placeholder)} /* the description, right of the title */
 .hvt-title{flex:0 1 auto;min-width:0;font-size:16px;font-weight:700;line-height:24px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0}
@@ -340,6 +348,7 @@
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
 /* Compact: the pager is compact too: every element at the caption's 12px text, 24px controls */
 .hvt-root.is-compact .hvt-pager,.hvt-root.is-compact .hvt-pager-left{height:24px}
+.hvt-root.is-compact .hvt-pager{box-sizing:content-box;padding-top:0;padding-bottom:0} /* a 24px pagination bar (plus its 1px divider) */
 .hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
 .hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
 .hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}

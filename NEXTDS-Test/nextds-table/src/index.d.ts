@@ -87,6 +87,8 @@ export interface EmptyState {
   title?: string;
   /** Text at the right of the title (e.g. a count or a short note). */
   description?: ReactNode;
+  /** An information icon after the title; its text shows as a tooltip. */
+  info?: string;
   message?: string;
   actions?: Array<{ label: string; onClick: () => void }>;
 }

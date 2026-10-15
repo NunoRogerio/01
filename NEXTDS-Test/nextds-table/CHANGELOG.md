@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.7 — 2026-10-15
+
+- Tooltips: every tooltip of the table is the NEXT tooltip (a small raised panel, 14px text), shown 0.5 s after the pointer rests on the element or at once on keyboard focus. Disabled buttons show theirs too.
+- `info`: an information icon after the title, with its text as a tooltip.
+- Status tags: the ! and the check are a little heavier, easier to read.
+- Compact density: column titles row 40px, pagination bar 24px.
+
 ## 0.4.6 — 2026-10-15
 
 - `description`: optional text at the right of the title.
