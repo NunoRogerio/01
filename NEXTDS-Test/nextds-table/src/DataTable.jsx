@@ -3092,7 +3092,7 @@ export function DataTable({
             <div className="hvt-titlewrap">
               {showTitle && <h3 className="hvt-title">{title}</h3>}
               {description && <span className="hvt-titledesc">{description}</span>}
-              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.5" /><path d="M8 7.2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="4.9" r=".9" fill="currentColor" /></svg></button>}
+              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 15.5C12.1421 15.5 15.5 12.1421 15.5 8C15.5 3.85786 12.1421 0.5 8 0.5C3.85786 0.5 0.5 3.85786 0.5 8C0.5 12.1421 3.85786 15.5 8 15.5Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 8.625V4.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 10.875C8.31066 10.875 8.5625 11.1268 8.5625 11.4375C8.5625 11.7482 8.31066 12 8 12C7.68934 12 7.4375 11.7482 7.4375 11.4375C7.4375 11.1268 7.68934 10.875 8 10.875Z" fill="currentColor" stroke="currentColor" strokeWidth="0.125" /></svg></button>}
             </div>
           )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}

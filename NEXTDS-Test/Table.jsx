@@ -161,7 +161,7 @@ const CSS = `
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
 .hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:flex-end;gap:8px} /* the description sits on the bottom of the title */
 .hvt-titlewrap .hvt-infobtn{width:24px;height:24px;flex:none;border-radius:4px;color:var(--content-placeholder)}
-.hvt-titlewrap .hvt-infobtn svg{width:12px;height:12px} /* the XS info icon (12px) in a 24px press area */
+.hvt-titlewrap .hvt-infobtn svg{width:16px;height:16px} /* the library's Info icon, at its own 16px, in a 24px press area */
 .hvt-titlewrap .hvt-infobtn:hover{color:var(--content-primary)}
 /* NEXT tooltip: a small raised panel in the dropdown colours and elevation, 14px text, 8px 12px padding */
 .hvt-tip{position:fixed;z-index:3000;max-width:320px;padding:8px 12px;border-radius:var(--component-inputradius);
@@ -3985,7 +3985,7 @@ export function DataTable({
             <div className="hvt-titlewrap">
               {showTitle && <h3 className="hvt-title">{title}</h3>}
               {description && <span className="hvt-titledesc">{description}</span>}
-              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.5" /><path d="M8 7.2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="8" cy="4.9" r=".9" fill="currentColor" /></svg></button>}
+              {info && <button type="button" className="hvt-icon hvt-infobtn" aria-label={info} data-tip={info}><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 15.5C12.1421 15.5 15.5 12.1421 15.5 8C15.5 3.85786 12.1421 0.5 8 0.5C3.85786 0.5 0.5 3.85786 0.5 8C0.5 12.1421 3.85786 15.5 8 15.5Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 8.625V4.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 10.875C8.31066 10.875 8.5625 11.1268 8.5625 11.4375C8.5625 11.7482 8.31066 12 8 12C7.68934 12 7.4375 11.7482 7.4375 11.4375C7.4375 11.1268 7.68934 10.875 8 10.875Z" fill="currentColor" stroke="currentColor" strokeWidth="0.125" /></svg></button>}
             </div>
           )}
           {/* Figma TITLE > Actions (anchored right, 32px between groups): [Search][Filter]  [text button][Maximize][More options] */}
@@ -4732,7 +4732,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
