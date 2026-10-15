@@ -377,8 +377,11 @@ const CSS = `
 .hvt-pagenum:not(.is-error) input:not(:disabled):not(:focus){background:var(--hvt-input-hover-bg);border-color:transparent} /* at rest: the hover fill, no border */
 .hvt-pagenum:not(.is-error) input:hover:not(:disabled):not(:focus){border-color:var(--outline)} /* on hover the border shows */
 /* rows per page: the same filled field as the page number, no caret: "[5] rows per page" */
-.hvt-pager-left{gap:4px;left:8px} /* the field lines up with the tags of the first column (8px in) */
-.hvt-root.is-compact .hvt-pager-left{left:16px} /* Compact tags have no box: their icon starts 16px in */
+/* the field sits as far from its container's left edge as from its bottom edge:
+   Balanced 12px (12px below), Compact 8px (8px below), Comfortable 12px from the table's edge (the pager starts 16px in) */
+.hvt-pager-left{gap:4px;left:12px}
+.hvt-root.is-compact .hvt-pager-left{left:8px}
+.hvt-root.is-comfortable .hvt-pager-left{left:-4px}
 .hvt-pager-left .hvt-mchev{display:none}
 .hvt-root .hvt-pager-left .hvt-mb--ghost .hvt-mbtn:not(.is-icon){min-width:24px;padding:0 8px;justify-content:center;background:var(--hvt-input-hover-bg);border-radius:var(--component-inputradius)}
 .hvt-root .hvt-pager-left .hvt-mbtn:hover:not(:disabled):not(.is-open){outline:1px solid var(--outline);outline-offset:-1px} /* on hover the border shows, like the page number */
@@ -4745,7 +4748,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 01:45"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 01:52"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
