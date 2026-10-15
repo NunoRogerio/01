@@ -4219,9 +4219,20 @@ const SCREEN_CSS = `
 .hvs-head{margin:-24px -24px 0;padding:16px 24px 8px;background:var(--hvs-bar)}
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
 .hvs-ctl .hvs-databar{margin-bottom:0}
-.hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 4.16px,transparent 4.16px 8.32px);box-shadow:inset 0 1px 4px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (4.16px bands and gaps), and a soft inner shadow */
+.hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 3.74px,transparent 3.74px 7.49px);box-shadow:inset 0 1px 4px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (3.74px bands and gaps), and a soft inner shadow */
 /* (16:24) no stripe band at the foot of the control bar */
 .hvs-sec{margin-bottom:0}
+.hvs-h1{display:flex;align-items:center;gap:4px}
+.hvs-paneltgl{display:inline-flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;margin:0 4px 0 -6px;padding:0;border:0;border-radius:8px;
+  background:transparent;color:var(--cl-text-2);cursor:pointer}
+.hvs-paneltgl:hover{background:var(--cl-hover);color:var(--cl-text)}
+.hvs-paneltgl:focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
+.hvs-paneltgl svg{width:16px;height:16px}
+.hvs-paneltgl-chev{transform-origin:8px 9.5px;transition:transform .32s cubic-bezier(.4,0,.2,1)}
+.hvs.is-ctl-closed .hvs-paneltgl-chev,.hvs.is-ctl-folding .hvs-paneltgl-chev{transform:rotate(180deg)} /* close panel: the chevron points up; open panel: it turns to point down */
+.hvs.is-ctl-closed .hvs-ctl{display:none}
+.hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
+.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px} /* closed, the bar is just the title row */
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
@@ -4521,7 +4532,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:45"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 16:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5087,6 +5098,43 @@ function SearchBench({ theme, onTheme }) {
 function App() {
   const [cfg, setCfg] = useState(DEFAULT_CFG);
   const [page, setPage] = useState("table");
+  /* the control panel folds up into the top bar and opens again from it; only the open-panel icon and the title stay */
+  const [ctlOpen, setCtlOpen] = useState(true);
+  const benchRef = useRef(null);
+  const ctlBusy = useRef(false);
+  const ctlOpening = useRef(null);
+  useLayoutEffect(() => {
+    const o = ctlOpening.current;
+    if (!ctlOpen || !o) return;
+    ctlOpening.current = null;
+    const e2 = benchRef.current && benchRef.current.querySelector(".hvs-ctl");
+    if (!e2) { ctlBusy.current = false; return; }
+    const c2 = getComputedStyle(e2);
+    const to = { height: `${e2.offsetHeight}px`, paddingTop: c2.paddingTop, paddingBottom: c2.paddingBottom, marginBottom: c2.marginBottom, opacity: 1 };
+    e2.style.overflow = "hidden";
+    const a = e2.animate([o.none, to], o.ease);
+    a.onfinish = a.oncancel = () => { e2.style.overflow = ""; ctlBusy.current = false; };
+  }, [ctlOpen]);
+  const toggleCtl = () => {
+    if (ctlBusy.current) return;
+    const root = benchRef.current, el = root && root.querySelector(".hvs-ctl");
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || !el.animate || reduce) { setCtlOpen((o) => !o); return; }
+    const ease = { duration: 320, easing: "cubic-bezier(.4,0,.2,1)" };
+    const cs = getComputedStyle(el);
+    const full = { height: `${el.offsetHeight}px`, paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom, marginBottom: cs.marginBottom, opacity: 1 };
+    const none = { height: "0px", paddingTop: "0px", paddingBottom: "0px", marginBottom: "0px", opacity: 0 }; // the title row takes over the bottom padding and the gap at the same time
+    ctlBusy.current = true;
+    if (ctlOpen) {
+      el.style.overflow = "hidden";
+      root.classList.add("is-ctl-folding");
+      const a = el.animate([full, none], { ...ease, fill: "forwards" });
+      a.onfinish = () => { root.classList.add("is-ctl-closed"); a.cancel(); root.classList.remove("is-ctl-folding"); el.style.overflow = ""; setCtlOpen(false); ctlBusy.current = false; }; // hidden before the fill is released: no frame at full height
+    } else {
+      ctlOpening.current = { none, ease };
+      setCtlOpen(true); // the layout effect below starts the growth before the first frame is painted
+    }
+  };
   const [pkgOpen, setPkgOpen] = useState(false); // workbench page: table, tags or search
   const [open, setOpen] = useState(DEFAULT_OPEN);
   const [resetKey, setResetKey] = useState(0);
@@ -5384,11 +5432,18 @@ function App() {
   };
 
   return (
-    <div className="hvs hvt-scope" data-theme={cfg.theme}>
+    <div className={`hvs hvt-scope${ctlOpen ? "" : " is-ctl-closed"}`} data-theme={cfg.theme} ref={benchRef}>
       <style>{SCREEN_CSS}</style>
 
       <div className="hvs-head">
-        <h1 className="hvs-h1">Workbench: <PageSwitch page={page} onPick={setPage} /></h1>
+        <h1 className="hvs-h1">
+          <button type="button" className="hvs-paneltgl" aria-expanded={ctlOpen} aria-label={ctlOpen ? "Close the control panel" : "Open the control panel"}
+                  title={ctlOpen ? "Close the control panel" : "Open the control panel"} onClick={toggleCtl}>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.75" y="1.75" width="12.5" height="12.5" rx="2.25" stroke="currentColor" strokeWidth="1.5" /><path d="M1.75 6h12.5" stroke="currentColor" strokeWidth="1.5" />
+              <path className="hvs-paneltgl-chev" d="M5.75 10.5 8 8.5l2.25 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          Workbench: <PageSwitch page={page} onPick={setPage} />
+        </h1>
       </div>
 
       {page === "table" ? (<>
