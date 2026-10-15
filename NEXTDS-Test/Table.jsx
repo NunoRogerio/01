@@ -358,14 +358,14 @@ const CSS = `
 .hvt-pager-nav{flex:1;display:flex;align-items:center;justify-content:center}
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
-/* Compact: the pager is compact too: every element at the caption's 12px text, 24px controls */
-.hvt-root.is-compact .hvt-pager,.hvt-root.is-compact .hvt-pager-left{height:24px}
-.hvt-root.is-compact .hvt-pager{box-sizing:content-box;height:40px;padding-top:0;padding-bottom:0} /* a 40px pagination bar (plus its 1px divider), 24px controls centred */
-.hvt-root.is-compact .hvt-pager .hvt-mlabel,.hvt-root.is-compact .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
-.hvt-root.is-compact .hvt-pager .hvt-mbtn{height:24px}
-.hvt-root.is-compact .hvt-pager .hvt-icon{width:24px;height:24px}
-.hvt-root.is-compact .hvt-pager .hvt-icon svg{flex:none;width:32px;height:32px} /* the arrows keep their Comfortable size inside the 24px buttons */
-.hvt-root.is-compact .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
+/* the pager is compact in every density: every element at the caption's 12px text, 24px controls, a 40px bar */
+.hvt-root .hvt-pager,.hvt-root .hvt-pager-left{height:24px}
+.hvt-root .hvt-pager{box-sizing:content-box;height:40px;padding-top:0;padding-bottom:0} /* a 40px pagination bar (plus its 1px divider), 24px controls centred */
+.hvt-root .hvt-pager .hvt-mlabel,.hvt-root .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
+.hvt-root .hvt-pager .hvt-mbtn{height:24px}
+.hvt-root .hvt-pager .hvt-icon{width:24px;height:24px}
+.hvt-root .hvt-pager .hvt-icon svg{flex:none;width:32px;height:32px} /* the arrows keep their Comfortable size inside the 24px buttons */
+.hvt-root .hvt-pagenum input{width:24px;height:24px;font-size:12px;line-height:18px}
 .hvt-pagenum{position:relative}
 .hvt-pagenum input{width:32px;height:32px;padding:0;text-align:center;color:var(--content-placeholder);background:var(--container-secondary-background);
   border:1px solid var(--outline);border-radius:var(--component-inputradius);box-sizing:border-box;
@@ -627,7 +627,7 @@ const CSS = `
 .hvt-card .hvt-group.is-selected{background:var(--page-background);box-shadow:none}
 .hvt-card .hvt-row--body{padding:0 var(--hvt-rowpad)}
 .hvt-card .hvt-detail{padding-left:calc(var(--hvt-lead) + 8px)}
-.hvt-card .hvt-pager{height:49px;padding:8px 4px;border-top:1px solid var(--hvt-divider)}
+.hvt-card .hvt-pager{border-top:1px solid var(--hvt-divider)} /* its height and padding: the compact pager rules above */
 .hvt-root.is-compact .hvt-row--body .hvt-cell{min-height:0;padding-top:0;padding-bottom:0}
 .hvt-root.is-compact .hvt-actions .hvt-icon{width:24px;height:24px}
 .hvt-root.is-compact .hvt-actions .hvt-btn{height:24px}
@@ -4733,7 +4733,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:25"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
