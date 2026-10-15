@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 21:50"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 21:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4870,6 +4870,10 @@ function JellyHover({ rootRef }) {
     const move = (e) => {
       if (e.pointerType && e.pointerType !== "mouse") return;
       const seg = e.target.closest && e.target.closest(".hvs-ctl .hvs-seg");
+      if (st.exploded) { // after a click it stays gone until the mouse really moves
+        if (Math.hypot(e.clientX - st.ex, e.clientY - st.ey) < 6) return;
+        st.exploded = false; st.born = false;
+      }
       st.px = e.clientX; st.py = e.clientY; st.last = performance.now();
       st.inside = !!seg; st.el = seg;
       const o = seg && e.target.closest(OPT);
@@ -4881,6 +4885,16 @@ function JellyHover({ rootRef }) {
       if (!st.raf) st.raf = requestAnimationFrame(tick);
     };
     const leave = () => { st.inside = false; st.opt = null; };
+    const press = (e) => { // a click on a target: the blob bursts into drops and disappears
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      if (!st.inside || st.alpha < 0.1 || st.exploded) return;
+      pts.forEach((p) => {
+        const dx = p.x - st.cx, dy = p.y - st.cy, d = Math.hypot(dx, dy) || 1, sp = 2.5 + Math.random() * 4.5;
+        if (Math.random() < 0.6) drop(p.x, p.y, (dx / d) * sp + p.vx, (dy / d) * sp + p.vy - 1, 1.5 + Math.random() * 4);
+      });
+      st.exploded = true; st.ex = e.clientX; st.ey = e.clientY; st.alpha = 0; st.inside = false; st.opt = null;
+      if (!st.raf) st.raf = requestAnimationFrame(tick);
+    };
     const drop = (x, y, vx, vy, r) => st.drops.push({ x, y, vx, vy, r, life: 1 });
     const colour = (t, a) => { // vivid lime <-> fluorescent magenta
       const s = (Math.sin(t * 0.0009) + 1) / 2, k = s * s * (3 - 2 * s);
@@ -4944,7 +4958,7 @@ function JellyHover({ rootRef }) {
         p.vx += (dx / d) * 3; p.vy += (dy / d) * 3;
         drop(p.x, p.y, (dx / d) * 2.5, (dy / d) * 2.5 - 1, 3 + Math.random() * 3);
       }
-      const a = st.alpha * 0.42;
+      const a = st.exploded ? 0 : st.alpha * 0.42;
       if (a > 0.004) {
         ctx.fillStyle = colour(now - st.t0, a);
         ctx.beginPath();
@@ -4955,6 +4969,7 @@ function JellyHover({ rootRef }) {
       }
       const born = [];
       st.drops = st.drops.filter((d) => d.life > 0.02);
+      if (st.drops.length > 400) st.drops.splice(0, st.drops.length - 400);
       st.drops.forEach((d) => {
         ctx.fillStyle = colour(now - st.t0, 0.42 * d.life);
         if (d.kind === "fall") { // a falling drop: stretches with speed, splashes on the header
@@ -4983,12 +4998,14 @@ function JellyHover({ rootRef }) {
       st.raf = requestAnimationFrame(tick);
     }
     document.addEventListener("pointermove", move);
+    document.addEventListener("pointerdown", press, true);
     document.addEventListener("pointerleave", leave);
     window.addEventListener("blur", leave);
     window.addEventListener("resize", fit);
     return () => {
       cancelAnimationFrame(st.raf);
       document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerdown", press, true);
       document.removeEventListener("pointerleave", leave);
       window.removeEventListener("blur", leave);
       window.removeEventListener("resize", fit);
