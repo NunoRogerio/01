@@ -4230,7 +4230,10 @@ const SCREEN_CSS = `
 .hvs-pkgbtn:focus-visible{outline:2px solid var(--cl-focus);outline-offset:2px}
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
-.hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:28px;padding:0 12px} /* the last item of the controls, on the right: lines up with React Package above */
+.hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:28px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
+.hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.hvs-resetbtn:hover .hvs-resetico{transform:rotate(-360deg)} /* on hover the reset arrow turns once, backwards */
+@media (prefers-reduced-motion:reduce){.hvs-resetico{transition:none}} /* the last item of the controls, on the right: lines up with React Package above */
 .hvs-headacts .hvt-btn:hover:not(:disabled){background:var(--cl-hover)}
 .hvs-pkgtext{display:inline-flex;align-items:center;gap:8px}
 .hvs-pkgdl{width:14px;height:14px;flex:none;overflow:visible} /* the download arrow: the button downloads the package */
@@ -4625,7 +4628,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:15"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5771,7 +5774,7 @@ export default function App() {
               {cfg.tableState === "error" && !errorShown && errorLeft > 0 && (
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
-              <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset}>Reset settings</button>
+              <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset}><span className="hvs-pkgtext">Reset settings<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
           </section>
