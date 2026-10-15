@@ -4628,7 +4628,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4831,6 +4831,13 @@ function usePickOnChange(value, ref) {
     if (first.current) { first.current = false; return; }
     playPick(ref.current);
   }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+}
+/* the icons of Reset settings and React Package also animate on mouse press (as on hover): a backwards turn, or the arrow's drop */
+function playIcon(el, kind) {
+  if (!el || !el.animate) return;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (kind === "reset") el.animate([{ transform: "rotate(0deg)" }, { transform: "rotate(-360deg)" }], { duration: 500, easing: "cubic-bezier(.4,0,.2,1)", composite: "add" });
+  else el.animate([{ transform: "translateY(0)" }, { transform: "translateY(2.5px)", offset: 0.35 }, { transform: "translateY(-1px)", offset: 0.65 }, { transform: "translateY(0)" }], { duration: 600, easing: "cubic-bezier(.3,0,.2,1)" });
 }
 function useFoldMenu() {
   const [open, setOpenRaw] = useState(false);
@@ -5676,7 +5683,7 @@ export default function App() {
         </h1>
         {page === "table" && (
           <div className="hvs-headacts">
-            <button type="button" className="hvs-pkgbtn" disabled={pkgOpen} aria-label="Download the React Package" onClick={async () => {
+            <button type="button" className="hvs-pkgbtn" disabled={pkgOpen} aria-label="Download the React Package" onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-pkgarrow"), "drop")} onClick={async () => {
               const src = pkgSource();
               if (!src) { setLast("React Package: open the page to download it"); return; }
               setPkgOpen(true);
@@ -5774,7 +5781,7 @@ export default function App() {
               {cfg.tableState === "error" && !errorShown && errorLeft > 0 && (
                 <span className="hvs-dstatus" role="status">Error banner in {errorLeft} s, or click the table</span>
               )}
-              <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset}><span className="hvs-pkgtext">Reset settings<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
+              <button type="button" className="hvt-btn hvs-resetbtn" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset settings<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
           </section>
