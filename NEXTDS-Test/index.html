@@ -562,7 +562,7 @@ const CSS = `
 .hvt-fgnum > i,.hvt-fgnum::after{grid-area:1 / 1;font-style:normal}
 .hvt-fgnum::after{content:attr(data-n);font-weight:600;visibility:hidden}
 .hvt-fgnum.is-on > i{font-weight:600}
-.hvt-fgbtn .hvt-mlabel{padding:0 8px 0 0;font-weight:600} /* "Filters" in semibold, the count stays regular */
+.hvt-fgbtn .hvt-mlabel{padding:0;font-weight:600} /* "Filters" in semibold, the count stays regular */
 .hvt-fgcount{font-size:14px;font-weight:400;color:var(--content-primary);padding-left:8px;border-left:1px solid var(--border-default)}
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button keeps only its outline */
 
@@ -727,6 +727,10 @@ const CSS = `
 .hvt-cl-check .hvt-cbi:focus-visible + .hvt-cbicon{outline:var(--hvt-focus-w,2px) solid var(--border-focus);outline-offset:-2px}
 .hvt-cl-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;line-height:21px}
 .hvt-cl-title.is-off{color:var(--content-disabled)}
+.hvt-cl-row{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.hvt-cl-row.is-drag,.hvt-cl-row.is-drag *{cursor:grabbing}
+.hvt-cl-row .hvt-cl-check{cursor:inherit}
+.hvt-cl-row:hover .hvt-cl-grip{color:var(--content-primary)} /* the whole line is the handle: hovering it darkens the drag icon */
 .hvt-cl-pin{flex:none;display:flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;background:transparent;color:var(--content-primary);opacity:.45;cursor:pointer}
 .hvt-cl-pin svg{display:block;width:100%;height:100%}
 .hvt-cl-pin:hover{opacity:.8}
@@ -981,12 +985,13 @@ const applyItem = (row, item, col) => {
 };
 
 /* Chip text follows the Figma examples: “Online Status: Online”, “IP Location: 3 / 20” */
-const chipLabel = (item, col) => {
+const chipLabel = (item, col, total) => {
   const op = item.operator, v = item.value, title = col.filterLabel || col.title;
   if (MULTI_OPS.has(op)) {
     const not = op === "isNoneOf" ? "not " : "";
     if (v.length === 1) return `${title}: ${not}${v[0]}`;
-    return col.options ? `${title}: ${not}${v.length} / ${col.options.length}` : `${title}: ${not}${v.length} selected`;
+    const all = total || (col.options ? col.options.length : 0);
+    return all ? `${title}: ${not}${v.length} / ${all}` : `${title}: ${not}${v.length}`; // always the counter, never "selected"
   }
   if (op === "is" || op === "equals" || op === "=") return `${title}: ${v}`;
   if (NO_VALUE.has(op)) return `${title} ${opLabel(typeOf(col), op)}`;
@@ -1819,14 +1824,31 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
 
   // drag a title: it can move inside its own block (the pinned ones, or the others)
   const place = (el, d, y) => { el.style.transform = `translateY(${y - d.startY - (el.offsetTop - d.startTop)}px)`; };
-  const onGripDown = (e, k) => {
+  /* the whole line responds to drag: a press anywhere on it becomes a drag once the pointer moves 4px;
+     a press that does not move stays a click (check box, pin) */
+  const pendRef = useRef(null);
+  const dragged = useRef(false);
+  const onRowDown = (e, k) => {
     if (e.button !== undefined && e.button !== 0) return;
-    e.preventDefault();
+    pendRef.current = { key: k, id: e.pointerId, x: e.clientX, y: e.clientY, row: e.currentTarget };
+    dragged.current = false;
+  };
+  const startDrag = (e, k) => {
     const el = rowEls.current[k];
-    dragRef.current = { key: k, id: e.pointerId, startY: e.clientY, startTop: el.offsetTop, y: e.clientY, wasPin: pins.includes(k) };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+    dragRef.current = { key: k, id: e.pointerId, startY: pendRef.current.y, startTop: el.offsetTop, y: e.clientY, wasPin: pins.includes(k) };
+    try { pendRef.current.row.setPointerCapture(e.pointerId); } catch (err) { /* not captured */ }
+    dragged.current = true;
     setDragKey(k);
   };
+  const onRowMove = (e) => {
+    const pd = pendRef.current;
+    if (pd && !dragRef.current && pd.id === e.pointerId) {
+      if (Math.abs(e.clientX - pd.x) + Math.abs(e.clientY - pd.y) < 4) return;
+      startDrag(e, pd.key);
+    }
+    onGripMove(e);
+  };
+  const onRowUp = (e) => { pendRef.current = null; onGripUp(e); };
   const onGripMove = (e) => {
     const d = dragRef.current;
     if (!d || d.id !== e.pointerId) return;
@@ -1861,6 +1883,7 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
   const onGripUp = (e) => {
     const d = dragRef.current;
     if (!d || d.id !== e.pointerId) return;
+    try { if (e.currentTarget && e.currentTarget.releasePointerCapture) e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* released */ }
     const el = rowEls.current[d.key];
     const cur = el ? el.style.transform : "";
     dragRef.current = null;
@@ -1889,23 +1912,26 @@ function ColumnsList({ defs, keys, fixed, hidden, defaultKeys, defaultFixed, onC
 
   return (
     <div className="hvt-cl" role="group" aria-label="Columns">
-      <p className="hvt-cl-note">Check to show a column. Pin to fix it on the left. Drag to reorder.{hScroll ? "" : " Fixed columns stay in place when the table scrolls sideways."}</p>
+      <p className="hvt-cl-note">{hScroll ? "Check to show a column. Drag to reorder. Pin to fix it on the left, in place when the table scrolls sideways." : "Check to show a column. Drag to reorder."}</p>
       {list.map((k, i) => {
         const pinned = pins.includes(k);
         const off = hid.includes(k);
         return (
           <div key={k} ref={(el) => { rowEls.current[k] = el; }} data-k={k}
-               className={`hvt-cl-row${pinned ? " is-pinned" : ""}${pinned && i === pins.length - 1 ? " is-pin-last" : ""}${dragKey === k ? " is-drag" : ""}`}>
+               className={`hvt-cl-row${pinned ? " is-pinned" : ""}${pinned && i === pins.length - 1 ? " is-pin-last" : ""}${dragKey === k ? " is-drag" : ""}`}
+               onPointerDown={(e) => onRowDown(e, k)} onPointerMove={onRowMove} onPointerUp={onRowUp} onPointerCancel={onRowUp}
+               onClickCapture={(e) => { if (dragged.current) { e.preventDefault(); e.stopPropagation(); dragged.current = false; } }}>
             <button type="button" className="hvt-cl-grip" aria-label={`Reorder ${titleOf(k)}. Alt and arrow keys move it.`}
-                    onPointerDown={(e) => onGripDown(e, k)} onPointerMove={onGripMove} onPointerUp={onGripUp} onPointerCancel={onGripUp}
                     onKeyDown={(e) => onGripKey(e, k)}>{Icons.DragTitle}</button>
             <label className="hvt-cl-check">
               <input type="checkbox" className="hvt-cbi" checked={!off} onChange={() => toggleShown(k)} aria-label={`Show ${titleOf(k)}`} />
               <span className="hvt-cbicon" aria-hidden="true">{off ? Icons.Checkbox : Icons.CheckboxSelected}</span>
               <span className={`hvt-cl-title${off ? " is-off" : ""}`}>{titleOf(k)}</span>
             </label>
-            <button type="button" className="hvt-cl-pin" aria-pressed={pinned} aria-label={`${pinned ? "Unpin" : "Pin"} ${titleOf(k)}`}
-                    title={pinned ? "Unpin" : "Pin to the left"} onClick={() => togglePin(k)}>{pinned ? Icons.PinSelected : Icons.Pin}</button>
+            {hScroll && ( /* fixing a column only matters when the table scrolls sideways */
+              <button type="button" className="hvt-cl-pin" aria-pressed={pinned} aria-label={`${pinned ? "Unpin" : "Pin"} ${titleOf(k)}`}
+                      title={pinned ? "Unpin" : "Pin to the left"} onClick={() => togglePin(k)}>{pinned ? Icons.PinSelected : Icons.Pin}</button>
+            )}
           </div>
         );
       })}
@@ -3420,7 +3446,6 @@ function DataTable({
                   onClick={() => { if (trigSuppress.current) { trigSuppress.current = false; return; } if (panel) closeFilterPanel(); else openPanel("bar", false); }}>
             <span className="hvt-mico" aria-hidden="true">{Icons.Filter}</span>
             <span className="hvt-mlabel">Filters</span>
-            <span className="hvt-fgcount"><span className={`hvt-fgnum${activeItems.length ? " is-on" : ""}`} data-n={activeItems.length}><i>{activeItems.length}</i></span> / {filterCols.length}</span>
           </button>
         </div>
       ) : (
@@ -3433,7 +3458,7 @@ function DataTable({
       <div className="hvt-chips">
         {activeItems.length === 0 && <span className="hvt-muted">No filters applied</span>}
         {activeItems.map((it) => {
-          const label = chipLabel(it, colByKey[it.field]);
+          const label = chipLabel(it, colByKey[it.field], optionsOf(colByKey[it.field]).length);
           return (
             <span className="hvt-chip" key={it.id}>
               <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
@@ -4371,7 +4396,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 10:24"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 10:37"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4910,22 +4935,31 @@ function App() {
   /* on the layout grid the table starts on a column edge: centred when the free columns split evenly,
      otherwise one more free column on the right (never half a column off) */
   const gridCol = (cfg.gridCanvas - 2 * GRID.margin - (GRID.columns - 1) * GRID.gutter) / GRID.columns;
-  const gridStart = Math.floor((GRID.columns - spanNow) / 2);
+  /* the table starts where it was placed (a side handle grows it only towards that side); until then it sits centred */
+  const gridStart = cfg.gridStart != null ? Math.max(0, Math.min(cfg.gridStart, GRID.columns - spanNow)) : Math.floor((GRID.columns - spanNow) / 2);
   const gridPlace = cfg.widthMode === "grid"
     ? { marginLeft: `calc(50% - ${cfg.gridCanvas / 2}px + ${Math.round(GRID.margin + gridStart * (gridCol + GRID.gutter))}px)`, marginRight: "auto" }
     : {};
   const rzDown = (e) => {
     e.preventDefault();
-    const r = stageRef.current.getBoundingClientRect();
-    rzRef.current = { id: e.pointerId, cx: (r.left + r.right) / 2 };
+    const side = e.currentTarget.classList.contains("is-l") ? "l" : "r";
+    const par = stageRef.current.parentElement.getBoundingClientRect();
+    const canvasLeft = par.left + par.width / 2 - cfg.gridCanvas / 2;
+    rzRef.current = { id: e.pointerId, side, canvasLeft, start: gridStart, end: gridStart + spanNow };
     e.currentTarget.setPointerCapture(e.pointerId);
     setRzActive(true);
   };
   const rzMove = (e) => {
     const d = rzRef.current;
     if (!d || d.id !== e.pointerId) return;
-    const n = spanFor(2 * Math.abs(e.clientX - d.cx));
-    if (cfg.widthMode !== "grid" || cfg.gridSpan !== n) set({ widthMode: "grid", gridSpan: n });
+    /* the dragged side snaps to the nearest column edge of the layout grid; the other side stays where it is */
+    const step = gridCol + GRID.gutter;
+    const x = e.clientX - d.canvasLeft - GRID.margin;
+    let start = d.start, end = d.end;
+    if (d.side === "r") end = Math.max(start + MIN_SPAN, Math.min(GRID.columns, Math.round((x + GRID.gutter) / step)));
+    else start = Math.min(end - MIN_SPAN, Math.max(0, Math.round(x / step)));
+    const n = end - start;
+    if (cfg.widthMode !== "grid" || cfg.gridSpan !== n || cfg.gridStart !== start) set({ widthMode: "grid", gridSpan: n, gridStart: start });
   };
   const rzUp = (e) => {
     const d = rzRef.current;
