@@ -212,7 +212,7 @@ const CSS = `
 @media (prefers-reduced-motion:reduce){.hvt-qf{transition:none}}
 .hvt-iconwrap{position:relative;display:inline-flex;flex:none}
 .hvt-actions-bar{display:flex;align-items:center;justify-content:flex-end;gap:32px;flex:none;min-width:0;margin-left:auto}
-.hvt-sf,.hvt-btns{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:none}
+.hvt-sf,.hvt-btns{display:flex;align-items:center;justify-content:flex-end;gap:32px;flex:none} /* every header tool 32px from the next, like the groups */
 .hvt-fbadge{position:absolute;top:0;right:0;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
   background:var(--content-primary);color:var(--page-background);font-size:11px;font-weight:600;line-height:16px;
   text-align:center;pointer-events:none}
@@ -4749,7 +4749,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 02:15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 02:22"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
