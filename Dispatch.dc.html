@@ -1611,7 +1611,7 @@ class Component extends DCLogic {
     /* (Oct 14, 17:20) a smoke check first (its time kept as id^), then perhaps the initial attack the captain asks for: the engine on scene is the check's */
     const isChk = VD0[c.id] === 'check', wasChk = !!VD0[c.id + '^'], sentAt = VD0[c.id] === 'sent' || isChk ? (VD0[c.id + '^'] || VD0[c.id + '@'] || 1) : 0, onScene = sentAt && Date.now() - sentAt >= 20000;
     const iaAt = VD0[c.id] === 'sent' ? (VD0[c.id + '@'] || 0) : 0;
-    if (isLive && sentAt && !onScene) lines.push(isChk ? Lx('Smoke check sent: one engine. Awaiting its size-up on scene.', 'Reconhecimento enviado: um veículo. A aguardar o ponto de situação no local.') : Lx('Initial attack sent. Awaiting the first unit\'s size-up on scene.', 'Ataque inicial enviado. A aguardar o ponto de situação da primeira equipa no local.'));
+    if (isLive && sentAt && !onScene) lines.push(isChk ? ((u) => u ? Lx('Smoke check sent: ' + u.name + '. Awaiting its size-up on scene.', 'Reconhecimento enviado: ' + u.name + '. A aguardar o ponto de situação no local.') : Lx('Smoke check sent: one engine. Awaiting its size-up on scene.', 'Reconhecimento enviado: um veículo. A aguardar o ponto de situação no local.'))((this._chkU || {})[c.id]) : Lx('Initial attack sent. Awaiting the first unit\'s size-up on scene.', 'Ataque inicial enviado. A aguardar o ponto de situação da primeira equipa no local.'));
     if (sentAt && !onScene) { clearTimeout(this._capT); const nx = Date.now() - sentAt < 5000 ? sentAt + 5000 : sentAt + 20000; this._capT = setTimeout(() => this.forceUpdate(), Math.max(200, nx - Date.now())); }
     let capOk = false;
     if (isLive && onScene) { const tr = 9 + (h >>> 7) % 6, ca = V + tr, CN = ['Ramirez', 'Nguyen', 'Walsh', 'Ortega', 'Brooks', 'Silva'][(h >>> 4) % 6], ac = 1 + (h >>> 9) % 4;
@@ -1654,7 +1654,8 @@ class Component extends DCLogic {
     /* (Oct 14, 08:22) every decision at the foot asks first (a missed tap must not send or dismiss): the app's confirmation dialog, over the whole screen even inside the chat's map view */
     const ask = (k, fn) => () => { const W = (() => { try { return window.parent !== window && window.parent.__wfConfirm ? window.parent : window; } catch (e) { return window; } })(); if (!W.__wfConfirm) { fn(); return; }
       const pl = (c.place || '').trim(), T = { sent: [Lx('Send the initial attack?', 'Enviar o ataque inicial?'), Lx('The response plan\'s units go to ' + pl + '.', 'Os meios do plano de resposta seguem para ' + pl + '.'), Lx('Send', 'Enviar')],
-        check: [Lx('Send a smoke check?', 'Enviar um reconhecimento?'), Lx('One engine goes to ' + pl + ' to look. Its size-up confirms or cancels.', 'Um veículo vai a ' + pl + ' ver. O ponto de situação confirma ou cancela.'), Lx('Send', 'Enviar')],
+        check: (() => { const u = (this._chkU || {})[c.id], w = u ? String(u.where).replace(/\.+$/, '') : '';   /* (Oct 15, 15:10) names the crew that goes: the response plan's first engine */
+          return [Lx('Send a smoke check?', 'Enviar um reconhecimento?'), u ? Lx(u.name + ' from ' + w + ' goes to ' + pl + ' to look, ' + u.eta + ' min away. Its size-up confirms or cancels.', u.name + ' (' + w + ') vai a ' + pl + ' ver, a ' + u.eta + ' min. O ponto de situação confirma ou cancela.') : Lx('One engine goes to ' + pl + ' to look. Its size-up confirms or cancels.', 'Um veículo vai a ' + pl + ' ver. O ponto de situação confirma ou cancela.'), Lx('Send', 'Enviar')]; })(),
         dismissed: [Lx('Dismiss ' + pl + '?', 'Descartar ' + pl + '?'), Lx('It leaves the lists and maps and goes to Resolved.', 'Sai das listas e dos mapas e passa para Resolvidos.'), Lx('Dismiss', 'Descartar')] }[k];
       W.__wfConfirm({ title: T[0], body: T[1], cancel: Lx('Cancel', 'Cancelar'), ok: T[2], onOk: fn }); };
     const done = VD[c.id], chkAsk = done === 'check' && isLive && onScene && droneStrong, decide = (k) => () => {   /* chkAsk: the captain of the smoke check asks for the initial attack: the foot offers it alone */ try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; D[c.id + '@'] = Date.now(); if (k === 'check') D[c.id + '^'] = Date.now(); try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate(); try { if (window.__wfChat && window.__wfChat.dspGo) window.__wfChat.dspGo(c.id, k); } catch (e) {}   /* (Oct 13, 16:54) the team's story starts with the decision */
@@ -1787,7 +1788,7 @@ class Component extends DCLogic {
           if (sentAt) o.ia.sub = (PTl ? 'Enviado às ' : 'Sent at ') + new Date(sentAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. ' + UU.length + (PTl ? ' meios.' : ' units.');
           else if (cfgOn) o.ia.sub = PTl ? 'Escolha os meios a enviar.' : 'Choose the units to send.';
           o.ia.rows = UU.map((u, i) => { const k = !sentAt ? 'av' : fa && Date.now() >= capAt ? 'rl' : el >= u.arr * 1000 || (i === 0 && chkOn) ? 'os' : 'er';   /* after a smoke check its engine is already on scene */ if (sentAt && el < u.arr * 1000) nx = Math.min(nx, u.arr * 1000 - el); const on = off.indexOf(u.name) < 0;
-              return { ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + ' min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0',
+              return { ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0',
                 tagD: cfgOn ? 'none' : 'block', swD: cfgOn ? 'block' : 'none', onStr: on ? 'true' : 'false', toggle: tog(u.name), swBg: on ? '#3A3A3C' : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px' }; });
           /* (Oct 14, 17:25) the blade: the units (switches before sending, their status after), Send initial attack at its foot; once sent, the
              choice alone in the past tense. After sending, the units' status also shows on the page, first under the map */
@@ -1807,7 +1808,15 @@ class Component extends DCLogic {
                 ulUp: () => { const T = me._ul; if (!T) return; const ok = T.d >= T.max * 0.92; T.el.style.setProperty('--wf-ulw', T.el.getBoundingClientRect().width + 'px'); fin(ok); },
                 sendDis: UL && nOn ? 'false' : 'true', sendCls: UL && nOn ? 'on' : 'wf-sec', send: UL && nOn && go ? () => { clearTimeout(me._ulT); me.setState({ iaUnl: false }); go(); } : () => {} });
               if (!opn && st.iaUnl) setTimeout(() => this.setState({ iaUnl: false }), 0); }
-            o.ia = Object.assign({}, o.ia, { d: sentAt ? 'flex' : 'none' }); }
+            o.ia = Object.assign({}, o.ia, { d: sentAt ? 'flex' : 'none' });
+            /* (Oct 15, 15:10) a smoke check also shows the crew going there: the response plan's first engine (the nearest station's), under the map
+               like the initial attack's units, En route then On scene (its size-up 20 s after sending), Released when it finds no fire.
+               The same engine is named in the Send a smoke check? dialog and stays first, already on scene, if the initial attack follows */
+            this._chkU = this._chkU || {}; if (U[0]) this._chkU[cid] = U[0];
+            const chkAt = VD[cid] === 'check' ? (VD[cid + '^'] || VD[cid + '@'] || 0) : 0;
+            if (chkAt && U[0]) { const u = U[0], ce = Date.now() - chkAt, k = ce >= 20000 ? (fa ? 'rl' : 'os') : 'er'; if (ce < 20000) nx = Math.min(nx, 20000 - ce);
+              o.ia = Object.assign({}, o.ia, { d: 'flex', ttl: PTl ? 'Reconhecimento' : 'Smoke check', sub: (PTl ? 'Enviado às ' : 'Sent at ') + new Date(chkAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + (PTl ? '. 1 meio.' : '. 1 unit.'),
+                rows: [{ ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: '0', tagD: 'block', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '#3A3A3C', swX: '24px' }] }); } }
           if (isFinite(nx)) { clearTimeout(this._iaT); this._iaT = setTimeout(() => this.forceUpdate(), Math.max(200, nx + 50)); } } } }
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
