@@ -4631,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 22:00"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 22:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4908,7 +4908,7 @@ function JellyHover({ rootRef }) {
       const rested = st.opt && now - st.last > 700;
       const dripping = rested && now - st.last > 2700; // resting on the shape for 2 s: it starts to drip
       // the belly: while dripping it fills with the next drop and bends down; when the drop falls it springs back up and bounces
-      if (dripping) { if (!st.nextR) st.nextR = 2 + Math.pow(Math.random(), 2) * 8; st.load = Math.min(st.load + 0.08, 3 + st.nextR * 1.4); }
+      if (dripping) { if (!st.nextR) { st.nextR = 2.5 + Math.random() * 2.5; st.dropU = Math.random(); } st.load = Math.min(st.load + 0.08, 3 + st.nextR * 1.4); }
       else st.load = 0;
       st.sagV = (st.sagV + (st.load - st.sag) * 0.07) * 0.88;
       st.sag += st.sagV;
@@ -4930,7 +4930,8 @@ function JellyHover({ rootRef }) {
         if (rect) { // the option's shape: a rectangle with 8px corners, 2px larger all around
           const q = roundRectPoint(Math.cos(a), Math.sin(a), rect.width / 2 + 2, rect.height / 2 + 2, 8);
           gx = st.cx + q.x;
-          gy = st.cy + q.y + (q.y > 0 ? sag * Math.pow(q.y / (rect.height / 2 + 2), 4) : 0); // dripping: the bottom sags
+          const bx = rect.left + 8 + (st.dropU != null ? st.dropU : 0.5) * (rect.width - 16), wx = Math.exp(-Math.pow((st.cx + q.x - bx) / Math.max(10, rect.width * 0.22), 2));
+          gy = st.cy + q.y + (q.y > 0 ? sag * Math.pow(q.y / (rect.height / 2 + 2), 4) * (0.25 + 0.75 * wx) : 0); // dripping: the bottom sags most where the next drop forms
         } else {
           const rx = R * (1 + stretch), ry = R / (1 + stretch * 0.5), lx = Math.cos(a) * rx, ly = Math.sin(a) * ry;
           gx = st.cx + lx * Math.cos(ang) - ly * Math.sin(ang); gy = st.cy + lx * Math.sin(ang) + ly * Math.cos(ang);
@@ -4948,14 +4949,14 @@ function JellyHover({ rootRef }) {
       // dripping: drops gather under the shape and fall onto the top of the table header, where they splash
       if (dripping && rect && now > st.nextDrip) {
         st.nextDrip = now + 800 + Math.random() * 1400;
-        const r = st.nextR || 3; // random sizes: mostly small, now and then a big one
-        st.nextR = 2 + Math.pow(Math.random(), 2) * 8;
+        const r = st.nextR || 3; // random sizes in a narrow range
+        const x = rect.left + 8 + (st.dropU != null ? st.dropU : 0.5) * (rect.width - 16); // from anywhere along the bottom edge
+        st.nextR = 2.5 + Math.random() * 2.5; st.dropU = Math.random();
         st.sagV -= st.load * 0.55; st.load = 2; // the drop leaves: the belly springs up
-        const head = document.querySelector(".hvt-root .hvt-row--head");
-        const hr = head && head.getBoundingClientRect();
-        const x = st.cx + (Math.random() - 0.5) * rect.width * 0.6;
-        // it splashes on the table header when it falls onto it; elsewhere it falls off the screen
-        const floor = hr && hr.top > rect.bottom + 8 && x >= hr.left && x <= hr.right ? hr.top : Infinity;
+        // it lands at random on the table header or one of the first three rows, when it falls onto the table; elsewhere off the screen
+        const surfaces = [document.querySelector(".hvt-root .hvt-row--head"), ...Array.from(document.querySelectorAll(".hvt-root .hvt-group")).slice(0, 3)]
+          .filter(Boolean).map((el) => el.getBoundingClientRect()).filter((r2) => r2.top > rect.bottom + 8 && x >= r2.left && x <= r2.right);
+        const floor = surfaces.length ? surfaces[Math.floor(Math.random() * surfaces.length)].top : Infinity;
         st.drops.push({ kind: "fall", x, y: rect.bottom + 2 + sag, vx: 0, vy: 0.4, r, life: 1, floor, lime: true });
       }
       // now and then a bubble pops off
