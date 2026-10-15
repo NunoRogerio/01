@@ -823,6 +823,21 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
     const t = setTimeout(() => setPanelClosing(false), 180);
     return () => clearTimeout(t);
   }, [showPanel]);
+  /* pressing a recent search or a suggestion selects it like a menu item (its background opens from a line);
+     releasing picks it and the list folds away showing the choice */
+  const [picked, setPicked] = useState(null);
+  const pickAnim = useRef(null);
+  useEffect(() => { if (showPanel) setPicked(null); }, [showPanel]);
+  useLayoutEffect(() => {
+    const el = pickAnim.current;
+    pickAnim.current = null;
+    if (!el || !el.animate) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    try {
+      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+        { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" }); // the menus' select animation
+    } catch (err) { /* no pseudo-element animation: it is just selected */ }
+  }, [picked]);
 
   useEffect(() => {
     if (!persistent && expanded && inputRef.current) inputRef.current.focus();
@@ -904,8 +919,10 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
         <div className={`hvt-qfpanel${showPanel ? "" : " is-closing"}`} id="hvt-qf-list" role="listbox" aria-label={pq ? "Suggestions" : "Recent searches"} aria-hidden={!showPanel || undefined} onMouseDown={keepFocus}>
           {!pq && <div className="hvt-qfhead">Recents</div>}
           {pitems.map((t, i) => (
-            <div key={t} role="option" aria-selected={showPanel && i === active} className={`hvt-qfopt${showPanel && i === active ? " is-active" : ""}`}
-                 onClick={() => pick(t)}>{pq ? highlight(t) : t}</div>
+            <div key={t} role="option" aria-selected={showPanel && i === active} className={`hvt-qfopt${showPanel && i === active ? " is-active" : ""}${picked === t ? " is-selected" : ""}`}
+                 onPointerDown={(e) => { if (e.button !== 0 || !showPanel || picked === t) return; pickAnim.current = e.currentTarget; setPicked(t); }}
+                 onPointerLeave={(e) => { if (e.buttons && picked === t && showPanel) setPicked(null); }}
+                 onClick={() => { if (showPanel) pick(t); }}>{pq ? highlight(t) : t}</div>
           ))}
           {pq && (
             <button type="button" className={`hvt-qfmore${showPanel && moreIndex === active ? " is-active" : ""}`} onClick={viewAll}>View All Results</button>
@@ -1362,8 +1379,19 @@ function Banner({ kind, text, action, onClose, closing }) {
  * Tooltips (NEXT Design System tooltip): any element with data-tip shows its text in a small raised panel,
  * 0.5 s after the pointer rests on it or at once on keyboard focus; above the element, or below when there is no room.
  * ------------------------------------------------------------------ */
+/* focus rings show only when the keyboard moves the focus (Tab): the Tab key marks the page, any pointer press clears it */
+let kbdTracking = false;
+function trackKeyboardFocus() {
+  if (kbdTracking || typeof document === "undefined") return;
+  kbdTracking = true;
+  const html = document.documentElement;
+  document.addEventListener("keydown", (e) => { if (e.key === "Tab") html.setAttribute("data-hvt-kbd", ""); }, true);
+  document.addEventListener("pointerdown", () => html.removeAttribute("data-hvt-kbd"), true);
+}
+
 function useTips(ref, scope) {
   const [tip, setTip] = useState(null);
+  useEffect(trackKeyboardFocus, []);
   useEffect(() => {
     const root = ref.current;
     if (!root) return undefined;
@@ -1387,7 +1415,7 @@ function useTips(ref, scope) {
     };
     const focus = (e) => {
       const el = e.target.closest && e.target.closest("[data-tip]");
-      if (mine(el) && e.target.matches && e.target.matches(":focus-visible")) { cur = el; show(el); }
+      if (mine(el) && document.documentElement.hasAttribute("data-hvt-kbd")) { cur = el; show(el); } // a tooltip on focus only for keyboard focus
     };
     document.addEventListener("pointermove", move);
     root.addEventListener("pointerdown", hide, true);

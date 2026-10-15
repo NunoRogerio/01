@@ -4,6 +4,8 @@
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
 - Comfortable and Balanced: the column titles row is 48px tall (was 56px); Compact keeps 40px.
+- Search list: pressing a recent search or a suggestion selects it with the menus' select animation (its background opens from a line); releasing picks it.
+- Focus rings show only for keyboard focus (Tab); a click or tap shows none, in text fields too. Tooltips open on focus only for keyboard focus.
 - Header: every tool (search, filter, button, maximize, more options) 16px from the next.
 - Balanced and Compact: the card sits 16px from the bottom edge, like the left and right (was 24px).
 - Pagination: 4px between the arrows and the page field; the chosen values (rows per page, current page) are semibold in the text colour; "1 of 8" instead of "1 / 8".

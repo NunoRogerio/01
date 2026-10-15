@@ -167,7 +167,7 @@
   border-width:1px;border-radius:var(--component-inputradius)}
 .hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the border stays */
 /* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
-.hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
+[data-hvt-kbd] .hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-panel,.hvt-qf.is-open.is-panel:hover,.hvt-qf.is-open.is-panel:focus-within{border-color:var(--outline);border-bottom-color:var(--border-default);
   border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:none;background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-error,.hvt-qf.is-open.is-error:hover,.hvt-qf.is-open.is-error:focus-within{border-color:var(--semantic-negative);box-shadow:inset 0 0 0 1px var(--semantic-negative);background:var(--container-secondary-background)}
@@ -181,6 +181,10 @@
 .hvt-qfopt{display:flex;flex:none;align-items:center;height:32px;padding:0 8px;border-radius:4px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
 .hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
 .hvt-qfopt b{font-weight:600}
+.hvt-qfopt{position:relative;isolation:isolate}
+.hvt-qfopt.is-selected{font-weight:600}
+.hvt-qfopt.is-selected::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:var(--container-hover-background)} /* the chosen item's layer, as in the menus */
+.hvt-qfopt.is-selected:hover,.hvt-qfopt.is-selected.is-active{background:transparent}
 .hvt-qfmore{display:block;flex:none;width:100%;height:32px;margin-top:4px;border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear{flex:none;height:26px;margin:2px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear:hover{background:var(--container-hover-background)}
@@ -223,6 +227,10 @@
 :is(.hvt-root,.hvt-scope) :is(button,input,select):focus-visible{outline:var(--hvt-focus-w) solid var(--border-focus);outline-offset:1px}
 /* fields draw their own focus border (NEXT: 2px #4d4d4d), so they must not also get the generic outline */
 :is(.hvt-root,.hvt-scope) :is(.hvt-qf-input,.hvt-text,.hvt-select,.hvt-ms-btn,.hvt-cbi):focus-visible{outline:0}
+/* focus rings only for keyboard focus (Tab); a click or tap shows none */
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope,.hvs) :focus-visible{outline:none !important}
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-selbox:has(.hvt-cbi:focus-visible)::after{box-shadow:none}
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-switch input:focus-visible + .hvt-switch-track,:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-cl-check .hvt-cbi:focus-visible + .hvt-cbicon{outline:none}
 .hvt-muted{color:var(--content-placeholder);font-size:14px;line-height:24px}
 
 /* layout */
@@ -513,7 +521,7 @@
 .hvt-text{padding:0 12px}
 .hvt-text::placeholder{color:var(--content-placeholder);opacity:1}
 .hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
-.hvt-select:focus,.hvt-text:focus,.hvt-ms-btn:focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
+[data-hvt-kbd] :is(.hvt-select,.hvt-text,.hvt-ms-btn):focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
 .hvt-grow{flex:1}
 .hvt-allrow{flex:none}
 .hvt-ditem--check{cursor:pointer}

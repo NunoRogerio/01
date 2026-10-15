@@ -179,7 +179,7 @@ const CSS = `
   border-width:1px;border-radius:var(--component-inputradius)}
 .hvt-qf.is-open:hover{background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the border stays */
 /* SEARCH states (library): Enabled 1px outline, Hover 2px + fill, Focus 3px ring outside, Disabled, Error 2px red + message, Active (list) */
-.hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
+[data-hvt-kbd] .hvt-qf.is-open:focus-within:not(.is-panel):not(.is-error){border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-panel,.hvt-qf.is-open.is-panel:hover,.hvt-qf.is-open.is-panel:focus-within{border-color:var(--outline);border-bottom-color:var(--border-default);
   border-bottom-left-radius:0;border-bottom-right-radius:0;box-shadow:none;background:var(--container-secondary-background)}
 .hvt-qf.is-open.is-error,.hvt-qf.is-open.is-error:hover,.hvt-qf.is-open.is-error:focus-within{border-color:var(--semantic-negative);box-shadow:inset 0 0 0 1px var(--semantic-negative);background:var(--container-secondary-background)}
@@ -193,6 +193,10 @@ const CSS = `
 .hvt-qfopt{display:flex;flex:none;align-items:center;height:32px;padding:0 8px;border-radius:4px;overflow:hidden;font-size:14px;line-height:21px;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
 .hvt-qfopt:hover,.hvt-qfopt.is-active,.hvt-qfmore:hover,.hvt-qfmore.is-active{background:var(--container-hover-background)}
 .hvt-qfopt b{font-weight:600}
+.hvt-qfopt{position:relative;isolation:isolate}
+.hvt-qfopt.is-selected{font-weight:600}
+.hvt-qfopt.is-selected::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:var(--container-hover-background)} /* the chosen item's layer, as in the menus */
+.hvt-qfopt.is-selected:hover,.hvt-qfopt.is-selected.is-active{background:transparent}
 .hvt-qfmore{display:block;flex:none;width:100%;height:32px;margin-top:4px;border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear{flex:none;height:26px;margin:2px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .hvt-qf-clear:hover{background:var(--container-hover-background)}
@@ -235,6 +239,10 @@ const CSS = `
 :is(.hvt-root,.hvt-scope) :is(button,input,select):focus-visible{outline:var(--hvt-focus-w) solid var(--border-focus);outline-offset:1px}
 /* fields draw their own focus border (NEXT: 2px #4d4d4d), so they must not also get the generic outline */
 :is(.hvt-root,.hvt-scope) :is(.hvt-qf-input,.hvt-text,.hvt-select,.hvt-ms-btn,.hvt-cbi):focus-visible{outline:0}
+/* focus rings only for keyboard focus (Tab); a click or tap shows none */
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope,.hvs) :focus-visible{outline:none !important}
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-selbox:has(.hvt-cbi:focus-visible)::after{box-shadow:none}
+:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-switch input:focus-visible + .hvt-switch-track,:root:not([data-hvt-kbd]) :is(.hvt-root,.hvt-scope) .hvt-cl-check .hvt-cbi:focus-visible + .hvt-cbicon{outline:none}
 .hvt-muted{color:var(--content-placeholder);font-size:14px;line-height:24px}
 
 /* layout */
@@ -525,7 +533,7 @@ const CSS = `
 .hvt-text{padding:0 12px}
 .hvt-text::placeholder{color:var(--content-placeholder);opacity:1}
 .hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected);background:var(--hvt-input-hover-bg)}
-.hvt-select:focus,.hvt-text:focus,.hvt-ms-btn:focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
+[data-hvt-kbd] :is(.hvt-select,.hvt-text,.hvt-ms-btn):focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
 .hvt-grow{flex:1}
 .hvt-allrow{flex:none}
 .hvt-ditem--check{cursor:pointer}
@@ -1731,6 +1739,21 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
     const t = setTimeout(() => setPanelClosing(false), 180);
     return () => clearTimeout(t);
   }, [showPanel]);
+  /* pressing a recent search or a suggestion selects it like a menu item (its background opens from a line);
+     releasing picks it and the list folds away showing the choice */
+  const [picked, setPicked] = useState(null);
+  const pickAnim = useRef(null);
+  useEffect(() => { if (showPanel) setPicked(null); }, [showPanel]);
+  useLayoutEffect(() => {
+    const el = pickAnim.current;
+    pickAnim.current = null;
+    if (!el || !el.animate) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    try {
+      el.animate([{ transform: `scaleY(${Math.min(1, 2 / Math.max(1, el.offsetHeight))})`, opacity: 0.6 }, { transform: "scaleY(1.08)", opacity: 1, offset: 0.7 }, { transform: "scaleY(1)", opacity: 1 }],
+        { duration: 360, easing: "cubic-bezier(.3,0,.2,1)", pseudoElement: "::before" }); // the menus' select animation
+    } catch (err) { /* no pseudo-element animation: it is just selected */ }
+  }, [picked]);
 
   useEffect(() => {
     if (!persistent && expanded && inputRef.current) inputRef.current.focus();
@@ -1812,8 +1835,10 @@ function QuickFilter({ value, onChange, onSubmit, mode, expanded, onExpandedChan
         <div className={`hvt-qfpanel${showPanel ? "" : " is-closing"}`} id="hvt-qf-list" role="listbox" aria-label={pq ? "Suggestions" : "Recent searches"} aria-hidden={!showPanel || undefined} onMouseDown={keepFocus}>
           {!pq && <div className="hvt-qfhead">Recents</div>}
           {pitems.map((t, i) => (
-            <div key={t} role="option" aria-selected={showPanel && i === active} className={`hvt-qfopt${showPanel && i === active ? " is-active" : ""}`}
-                 onClick={() => pick(t)}>{pq ? highlight(t) : t}</div>
+            <div key={t} role="option" aria-selected={showPanel && i === active} className={`hvt-qfopt${showPanel && i === active ? " is-active" : ""}${picked === t ? " is-selected" : ""}`}
+                 onPointerDown={(e) => { if (e.button !== 0 || !showPanel || picked === t) return; pickAnim.current = e.currentTarget; setPicked(t); }}
+                 onPointerLeave={(e) => { if (e.buttons && picked === t && showPanel) setPicked(null); }}
+                 onClick={() => { if (showPanel) pick(t); }}>{pq ? highlight(t) : t}</div>
           ))}
           {pq && (
             <button type="button" className={`hvt-qfmore${showPanel && moreIndex === active ? " is-active" : ""}`} onClick={viewAll}>View All Results</button>
@@ -2270,8 +2295,19 @@ function Banner({ kind, text, action, onClose, closing }) {
  * Tooltips (NEXT Design System tooltip): any element with data-tip shows its text in a small raised panel,
  * 0.5 s after the pointer rests on it or at once on keyboard focus; above the element, or below when there is no room.
  * ------------------------------------------------------------------ */
+/* focus rings show only when the keyboard moves the focus (Tab): the Tab key marks the page, any pointer press clears it */
+let kbdTracking = false;
+function trackKeyboardFocus() {
+  if (kbdTracking || typeof document === "undefined") return;
+  kbdTracking = true;
+  const html = document.documentElement;
+  document.addEventListener("keydown", (e) => { if (e.key === "Tab") html.setAttribute("data-hvt-kbd", ""); }, true);
+  document.addEventListener("pointerdown", () => html.removeAttribute("data-hvt-kbd"), true);
+}
+
 function useTips(ref, scope) {
   const [tip, setTip] = useState(null);
+  useEffect(trackKeyboardFocus, []);
   useEffect(() => {
     const root = ref.current;
     if (!root) return undefined;
@@ -2295,7 +2331,7 @@ function useTips(ref, scope) {
     };
     const focus = (e) => {
       const el = e.target.closest && e.target.closest("[data-tip]");
-      if (mine(el) && e.target.matches && e.target.matches(":focus-visible")) { cur = el; show(el); }
+      if (mine(el) && document.documentElement.hasAttribute("data-hvt-kbd")) { cur = el; show(el); } // a tooltip on focus only for keyboard focus
     };
     document.addEventListener("pointermove", move);
     root.addEventListener("pointerdown", hide, true);
@@ -4447,7 +4483,7 @@ const SCREEN_CSS = `
 .hvs-side .hvt-select,.hvs-side .hvt-text{height:34px;border:1px solid var(--cl-border);border-radius:8px;background-color:var(--cl-surface);color:var(--cl-text);
   font-family:var(--cl-font);font-size:14px;line-height:20px;box-shadow:none}
 .hvs-side .hvt-select:hover:not(:disabled),.hvs-side .hvt-text:hover:not(:disabled){border-color:var(--cl-border-strong)}
-.hvs-side .hvt-select:focus-visible,.hvs-side .hvt-text:focus-visible{outline:none;border-color:var(--cl-border-strong);box-shadow:0 0 0 3px var(--cl-focus)}
+[data-hvt-kbd] .hvs-side :is(.hvt-select,.hvt-text):focus-visible{outline:none;border-color:var(--cl-border-strong);box-shadow:0 0 0 3px var(--cl-focus)}
 .hvs-side .hvt-text::placeholder{color:var(--cl-text-3)}
 .hvs-field > label,.hvs-lbl{color:var(--cl-text-2);font-size:13px;font-weight:500;line-height:18px}
 .hvs-side .hvs-note,.hvs-side .hvs-tok-use,.hvs-side .hvs-tok-code{color:var(--cl-text-3)}
@@ -4749,7 +4785,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 02:46"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 03:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
