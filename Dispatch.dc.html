@@ -522,7 +522,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
         <sc-for list="{{ia.rows}}" as="u" hint-placeholder-count="5">
           <li style="display: flex; align-items: center; gap: 16px; padding: 16px; border-top: {{u.bt}}">
-            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{u.ic}}"></path></svg></span>
+            <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C; overflow: hidden"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{u.icD}}"><path d="{{u.ic}}"></path></svg><img src="{{u.img}}" alt="" style="display: {{u.imgD}}; width: 48px; height: 48px; object-fit: cover"></span>
             <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0">
               <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px"><span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000">{{u.name}}</span><span style="display: {{u.tagD}}; flex-shrink: 0; min-width: 88px; box-sizing: border-box; padding: 2px 8px; border-radius: 8px; background: {{u.tagBg}}; color: {{u.tagFg}}; font-size: 15px; font-weight: 600; line-height: 20px; text-align: center">{{u.tag}}</span><button type="button" role="switch" class="wf-tog" aria-checked="{{u.onStr}}" aria-label="{{u.name}}" onClick="{{u.toggle}}" style="display: {{u.swD}}; position: relative; flex-shrink: 0; width: 64px; height: 25px; padding: 0; border: 0; border-radius: 999px; background: {{u.swBg}}; cursor: pointer; transition: background-color .3s ease"><span class="sw26k wf-thumb" aria-hidden="true" style="position: absolute; top: 4px; left: 4px; width: 32px; height: 17px; border-radius: 999px; background: #FFFFFF; box-shadow: none; transform: translateX({{u.swX}}); transition: transform .38s cubic-bezier(.2,.8,.2,1)"></span></button></span>
               <span style="font-size: 16px; line-height: 20px; color: #6E6E73">{{u.sub}}</span>
@@ -952,6 +952,22 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"alerts":{"editor":"int","default":6,"min":0,"max":6},"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
+  /* (Oct 15, 15:20) the crew on the smoke check's engine: California a Type 3 engine's Captain, Engineer and Firefighter; Portugal a
+     VFCI team, its crew chief and four firefighters. The captain carries the surname the Detections' captain report uses (the same hash),
+     names are simulated, and each keeps one photo for the incident (kept on this phone for the session) */
+  wfChkCrew(cid, pt, u) { if (!cid) return []; const hs = (x) => { let h = 7; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, h = hs(cid);
+    const CN = ['Ramirez', 'Nguyen', 'Walsh', 'Ortega', 'Brooks', 'Silva'][(h >>> 4) % 6];
+    const US = { m: ['Luis', 'Kevin', 'Tom', 'Marco', 'Derek', 'Sam', 'Jake', 'Andre'], f: ['Erin', 'Maria', 'Kayla', 'Jenna'], sn: ['Patel', 'Hughes', 'Delgado', 'Kim', 'Foster', 'Reyes', 'Lopez', 'Carter'] };
+    const PT = { m: ['João', 'Miguel', 'Tiago', 'Rui', 'Bruno', 'Pedro', 'Hugo', 'André'], f: ['Ana', 'Inês', 'Sofia', 'Marta'], sn: ['Ferreira', 'Costa', 'Pereira', 'Sousa', 'Almeida', 'Lopes', 'Martins', 'Rocha'] };
+    const L = pt ? PT : US, ranks = pt ? ['Chefe de equipa', 'Bombeiro', 'Bombeiro', 'Bombeiro', 'Bombeiro'] : ['Captain', 'Engineer', 'Firefighter'];
+    const fem = (i) => i > 0 && ((h >>> (6 + i)) % 4 === 0);
+    const used = {}, ppl = ranks.map((rk, i) => { const g = fem(i) ? 'f' : 'm', F = L[g]; let fn = F[(h >>> (3 + i * 3)) % F.length], j = 0; while (used[fn] && j < F.length) { fn = F[((h >>> (3 + i * 3)) + ++j) % F.length]; } used[fn] = 1;
+      const sn = i === 0 ? CN : L.sn[((h >>> (5 + i * 2)) + i) % L.sn.length]; return { name: fn + ' ' + sn, g, rank: pt && rk === 'Bombeiro' && g === 'f' ? 'Bombeira' : rk }; });
+    let FM = {}; try { FM = JSON.parse(sessionStorage.getItem('wf-chk-face') || '{}') || {}; } catch (e) {} const F0 = FM[cid] || {}, team = pt ? 'pt' : 'us';
+    let me = ''; try { const P0 = window.__wfPrefs && window.__wfPrefs.person; me = (P0 && window.__wfDemoFace && window.__wfDemoFace(P0.name)) || ''; } catch (e) {}
+    let ch = false; ppl.forEach((p) => { if (!F0[p.name] && window.__wfFacePick) { const taken = Object.keys(F0).map((k) => F0[k]).concat(me ? [me] : []); F0[p.name] = window.__wfFacePick(team, p.g, taken, false); ch = true; } p.img = F0[p.name] && window.__wfFaceUrl ? window.__wfFaceUrl(F0[p.name]) : ''; });
+    if (ch) { FM[cid] = F0; try { sessionStorage.setItem('wf-chk-face', JSON.stringify(FM)); } catch (e) {} }
+    return ppl; }
   wfHandle(key, dir, close) {
     const self = this;
     return {
@@ -1796,7 +1812,7 @@ class Component extends DCLogic {
           if (sentAt) o.ia.sub = (PTl ? 'Enviado às ' : 'Sent at ') + new Date(sentAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + '. ' + UU.length + (PTl ? ' meios.' : ' units.');
           else if (cfgOn) o.ia.sub = PTl ? 'Escolha os meios a enviar.' : 'Choose the units to send.';
           o.ia.rows = UU.map((u, i) => { const k = !sentAt ? 'av' : fa && Date.now() >= capAt ? 'rl' : el >= u.arr * 1000 || (i === 0 && chkOn) ? 'os' : 'er';   /* after a smoke check its engine is already on scene */ if (sentAt && el < u.arr * 1000) nx = Math.min(nx, u.arr * 1000 - el); const on = off.indexOf(u.name) < 0;
-              return { ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0',
+              return { ic: u.ic, icD: 'block', imgD: 'none', img: '', name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: i ? '1px solid rgba(60,60,67,0.12)' : '0',
                 tagD: cfgOn ? 'none' : 'block', swD: cfgOn ? 'block' : 'none', onStr: on ? 'true' : 'false', toggle: tog(u.name), swBg: on ? '#3A3A3C' : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px' }; });
           /* (Oct 14, 17:25) the blade: the units (switches before sending, their status after), Send initial attack at its foot; once sent, the
              choice alone in the past tense. After sending, the units' status also shows on the page, first under the map */
@@ -1830,7 +1846,9 @@ class Component extends DCLogic {
             const chkAt = VD[cid] === 'check' ? (VD[cid + '^'] || VD[cid + '@'] || 0) : 0;
             if (chkAt && U[0]) { const u = U[0], ce = Date.now() - chkAt, k = ce >= 20000 ? (fa ? 'rl' : 'os') : 'er'; if (ce < 20000) nx = Math.min(nx, 20000 - ce);
               o.ia = Object.assign({}, o.ia, { d: 'flex', ttl: PTl ? 'Reconhecimento' : 'Smoke check', sub: (PTl ? 'Enviado às ' : 'Sent at ') + new Date(chkAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) + (PTl ? '. 1 meio.' : '. 1 unit.'),
-                rows: [{ ic: u.ic, name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: '0', tagD: 'block', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '#3A3A3C', swX: '24px' }] }); } }
+                rows: [{ ic: u.ic, icD: 'block', imgD: 'none', img: '', name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: '0', tagD: 'block', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '#3A3A3C', swX: '24px' }]
+                  .concat(this.wfChkCrew(cid, ptc, u).map((p) => ({ ic: '', icD: 'none', imgD: p.img ? 'block' : 'none', img: p.img, name: p.name, sub: p.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: '1px solid rgba(60,60,67,0.12)', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px' }))) });
+              o.ia.sub = o.ia.sub.replace(/\.$/, '') + '. ' + (o.ia.rows.length - 1) + (PTl ? ' pessoas.' : ' people.'); o.ia.note = NR.loading ? o.ia.note : (PTl ? 'Tempos estimados. Números dos meios e nomes simulados.' : 'Estimated times. Unit numbers and names simulated.'); } }
           if (isFinite(nx)) { clearTimeout(this._iaT); this._iaT = setTimeout(() => this.forceUpdate(), Math.max(200, nx + 50)); } } } }
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
