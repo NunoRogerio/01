@@ -4198,7 +4198,7 @@ const SCREEN_CSS = `
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
 .hvs-ctl .hvs-databar{margin-bottom:0}
 .hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp) 0 8.49px,transparent 8.49px 16.97px)} /* the stripes inside the darker grey of the multibuttons and dropdowns */
-.hvs-ctl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:min(96px,100%);z-index:-1;pointer-events:none;
+.hvs-ctl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:min(48px,50%);z-index:-1;pointer-events:none;
   background:repeating-linear-gradient(-60deg,var(--hvs-sp) 0 8.49px,transparent 8.49px 16.97px);
   -webkit-mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.016) 38.75%,rgba(0,0,0,.0625) 47.5%,rgba(0,0,0,.14) 56.25%,rgba(0,0,0,.25) 65%,rgba(0,0,0,.39) 73.75%,rgba(0,0,0,.56) 82.5%,rgba(0,0,0,.77) 91.25%,#000 100%);
   mask-image:linear-gradient(to bottom,transparent 0,transparent 30%,rgba(0,0,0,.016) 38.75%,rgba(0,0,0,.0625) 47.5%,rgba(0,0,0,.14) 56.25%,rgba(0,0,0,.25) 65%,rgba(0,0,0,.39) 73.75%,rgba(0,0,0,.56) 82.5%,rgba(0,0,0,.77) 91.25%,#000 100%)} /* the firefighter stripes of the other apps: -60deg, 8.49px bands, black 7% (white 9% in Wicked), rising to full at the foot */
@@ -4502,7 +4502,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 16:20"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 16:25"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
