@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 — 2026-10-15
+
+- The source is in the package: `src/` (component, styles, types, sample), `build.mjs`, the Workbench file `source/Table.jsx` and `tools/extract.mjs`. `npm run build` and `npm run extract`.
+- Table changes since 0.2.1: the filter bar's height and chips animate; the filter panel folds into the Filters button as it grows back; the dragged column is square and full height, with side lines and a soft inner shadow; single-choice menus (Table Density) move the selection when pressed.
+
 ## 0.2.1 — 2026-10-15
 
 - A number column moved to the first place aligns left, like text and tags.

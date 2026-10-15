@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.2.1.tgz
+npm install ./vendor/nextds-table-0.3.0.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -200,6 +200,31 @@ The table uses the **Hitachi Sans** font (regular, semibold, bold). The font is 
 | `density`, `theme`, `tokens` | `"comfortable"`, `"dawn"` | Look. |
 
 The full list, with types, is in `dist/index.d.ts`.
+
+## Source and build
+
+The package carries its source, so your team can change the table or use it as an exact reference.
+
+| Path | What it is |
+| --- | --- |
+| `src/DataTable.jsx` | The table component (the file to edit). |
+| `src/styles.css` | Its styles: NEXT tokens (Dawn and Wicked), the table, Hitachi Sans embedded. |
+| `src/index.d.ts`, `src/sample.d.ts` | The TypeScript types. |
+| `src/sample.js` | The sample data and the in-memory server. |
+| `build.mjs` | Builds `dist/` from `src/`. |
+| `source/Table.jsx` | The Table Workbench file the package was cut from: the table plus the workbench screen. Exact reference for every behaviour. |
+| `tools/extract.mjs` | Cuts `src/DataTable.jsx` and `src/styles.css` out of a Workbench `Table.jsx`. |
+
+To rebuild after a change in `src/`:
+
+```bash
+npm install        # installs TypeScript, used only to compile
+npm run build      # writes dist/
+```
+
+To take a newer Workbench file: replace `source/Table.jsx` (from GitHub, NunoRogerio/01, `NEXTDS-Test/Table.jsx`), then `npm run extract` and `npm run build`. The extract overwrites `src/DataTable.jsx` and `src/styles.css`, so keep your own changes in a branch, or make them in the Workbench file instead.
+
+The build compiles JSX with TypeScript's transpiler (ES2019, ES modules and CommonJS) and adds `"use client"`; it does not bundle or minify. Your app's bundler takes it from there.
 
 ## Next.js
 
