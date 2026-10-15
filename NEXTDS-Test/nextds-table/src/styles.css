@@ -843,6 +843,8 @@
 .hvt-tag-ghost{display:flex;align-items:center;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
 .hvt-root.is-compact .hvt-tag-ghost{display:none}
 .hvt-root.is-compact .hvt-tag-body{justify-self:start}
+/* Delete, wherever it is offered (row menu, bulk bar), in the Critical red of the status tag */
+.hvt-ditem.is-danger:not(:disabled),.hvt-btn.is-danger:not(:disabled){color:var(--semantic-negative)}
 .hvt-tag.is-negative{--tag-fill:var(--semantic-negative-20);--tag-stroke:var(--semantic-negative);--tag-text:var(--semantic-negative)}
 .hvt-tag.is-warning{--tag-fill:var(--semantic-warning-20);--tag-stroke:var(--semantic-warning);--tag-text:var(--semantic-warning-text)}
 .hvt-tag.is-positive{--tag-fill:var(--semantic-positive-20);--tag-stroke:var(--semantic-positive);--tag-text:var(--semantic-positive)}

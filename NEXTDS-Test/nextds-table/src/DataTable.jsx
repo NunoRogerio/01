@@ -377,7 +377,7 @@ function MenuButton({
                       aria-selected={isList ? it.value === value : undefined}
                       aria-checked={radio ? it.checked : undefined}
                       aria-haspopup={nested ? "menu" : undefined} disabled={it.disabled}
-                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}`}
+                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}${it.danger ? " is-danger" : ""}`}
                       onPointerDown={(e) => pressItem(e, it)} onPointerLeave={(e) => unpressItem(e, it)}
                       onClick={(e) => { e.currentTarget.removeAttribute("data-press"); choose(it); }}>
                 <span className="hvt-ditem-label">{it.label}</span>
@@ -3009,7 +3009,7 @@ export function DataTable({
                 onClick={() => onBulkAction && onBulkAction("edit", selectedIds)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Edit}</span>Edit
         </button>
-        <button type="button" className="hvt-btn hvt-bulk-btn" disabled={selCount === 0}
+        <button type="button" className="hvt-btn hvt-bulk-btn is-danger" disabled={selCount === 0}
                 onClick={() => onBulkAction && onBulkAction("delete", selectedIds)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Delete}</span>Delete
         </button>
@@ -3099,7 +3099,7 @@ export function DataTable({
             {viewBtn && <button type="button" className="hvt-btn" onClick={() => onView && onView(r)}>View</button>}
             {rowMenu && (editable || viewInMenu ? (
               <MenuButton variant="ghost" icon={Icons.Kebab} ariaLabel={`Row actions for ${label}`} role="menu" align="right"
-                          minWidth={140} items={[...(viewInMenu ? [{ value: "view", label: "View" }] : []), ...(editable ? [{ value: "edit", label: "Edit" }, { value: "delete", label: "Delete" }] : [])]}
+                          minWidth={140} items={[...(viewInMenu ? [{ value: "view", label: "View" }] : []), ...(editable ? [{ value: "edit", label: "Edit" }, { value: "delete", label: "Delete", danger: true }] : [])]}
                           onSelect={(it) => rowAction(it.value, r)} />
             ) : (
               <button type="button" className="hvt-icon" aria-label="More options" onClick={() => onMore && onMore(r)}>

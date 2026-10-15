@@ -855,6 +855,8 @@ const CSS = `
 .hvt-tag-ghost{display:flex;align-items:center;height:0;overflow:hidden;visibility:hidden;pointer-events:none}
 .hvt-root.is-compact .hvt-tag-ghost{display:none}
 .hvt-root.is-compact .hvt-tag-body{justify-self:start}
+/* Delete, wherever it is offered (row menu, bulk bar), in the Critical red of the status tag */
+.hvt-ditem.is-danger:not(:disabled),.hvt-btn.is-danger:not(:disabled){color:var(--semantic-negative)}
 .hvt-tag.is-negative{--tag-fill:var(--semantic-negative-20);--tag-stroke:var(--semantic-negative);--tag-text:var(--semantic-negative)}
 .hvt-tag.is-warning{--tag-fill:var(--semantic-warning-20);--tag-stroke:var(--semantic-warning);--tag-text:var(--semantic-warning-text)}
 .hvt-tag.is-positive{--tag-fill:var(--semantic-positive-20);--tag-stroke:var(--semantic-positive);--tag-text:var(--semantic-positive)}
@@ -1339,7 +1341,7 @@ function MenuButton({
                       aria-selected={isList ? it.value === value : undefined}
                       aria-checked={radio ? it.checked : undefined}
                       aria-haspopup={nested ? "menu" : undefined} disabled={it.disabled}
-                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}`}
+                      className={`hvt-ditem${isSel(it) ? " is-selected" : ""}${it.danger ? " is-danger" : ""}`}
                       onPointerDown={(e) => pressItem(e, it)} onPointerLeave={(e) => unpressItem(e, it)}
                       onClick={(e) => { e.currentTarget.removeAttribute("data-press"); choose(it); }}>
                 <span className="hvt-ditem-label">{it.label}</span>
@@ -3971,7 +3973,7 @@ export function DataTable({
                 onClick={() => onBulkAction && onBulkAction("edit", selectedIds)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Edit}</span>Edit
         </button>
-        <button type="button" className="hvt-btn hvt-bulk-btn" disabled={selCount === 0}
+        <button type="button" className="hvt-btn hvt-bulk-btn is-danger" disabled={selCount === 0}
                 onClick={() => onBulkAction && onBulkAction("delete", selectedIds)}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Delete}</span>Delete
         </button>
@@ -4061,7 +4063,7 @@ export function DataTable({
             {viewBtn && <button type="button" className="hvt-btn" onClick={() => onView && onView(r)}>View</button>}
             {rowMenu && (editable || viewInMenu ? (
               <MenuButton variant="ghost" icon={Icons.Kebab} ariaLabel={`Row actions for ${label}`} role="menu" align="right"
-                          minWidth={140} items={[...(viewInMenu ? [{ value: "view", label: "View" }] : []), ...(editable ? [{ value: "edit", label: "Edit" }, { value: "delete", label: "Delete" }] : [])]}
+                          minWidth={140} items={[...(viewInMenu ? [{ value: "view", label: "View" }] : []), ...(editable ? [{ value: "edit", label: "Edit" }, { value: "delete", label: "Delete", danger: true }] : [])]}
                           onSelect={(it) => rowAction(it.value, r)} />
             ) : (
               <button type="button" className="hvt-icon" aria-label="More options" onClick={() => onMore && onMore(r)}>
@@ -5010,7 +5012,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 07:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 07:48"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
