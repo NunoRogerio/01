@@ -2102,7 +2102,7 @@ export function DataTable({
   scrollbarHorizontal = false,
   scrollbarVertical = false,
   pageSizeOptions = STEP5,
-  columnConfig = "legacy", // "legacy": Fixed / Visible / Hidden lists with Apply; "latest": one list with check boxes and pins
+  columnConfig = "latest", // "legacy": Fixed / Visible / Hidden lists with Apply; "latest": one list with check boxes and pins
   columnLayout = "auto", // "auto": the columns follow the width of the table; "equal": equal columns
   onPageSizeChange,
   initialPageSize = 5,
@@ -4271,7 +4271,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:33"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:34"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4426,7 +4426,7 @@ const DEFAULT_CFG = {
   searchEnabled: true, searchDisabled: false, searchError: false, searchErrorText: "Error message.", searchMode: "persistent", searchPlaceholder: "Search...", searchDebounceMs: 150,
   rowView: true, rowMenu: true, editable: true, filterUi: "group", showAddButton: true, showFilterButton: true, columnReorder: true, columnResize: true, fixedCount: 0,
   scrollbarHorizontal: false, columnMinWidth: 160, scrollbarVertical: false, visibleRows: 4,
-  dataset: INITIAL_DS, tableState: "default", columnConfig: "legacy", rowCount: 40, widthMode: "grid", gridCanvas: 1440, gridSpan: 8, showGrid: false, heightMode: "auto", heightRows: 8, added: [],
+  dataset: INITIAL_DS, tableState: "default", columnConfig: "latest", rowCount: 40, widthMode: "grid", gridCanvas: 1440, gridSpan: 8, showGrid: false, heightMode: "auto", heightRows: 8, added: [],
   cols: initCols(dsById(INITIAL_DS)),
   tokens: { dawn: {}, wicked: {} },
 };
