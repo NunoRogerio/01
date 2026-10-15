@@ -265,8 +265,10 @@ const CSS = `
 .hvt-rows{display:flex;flex-direction:column;gap:var(--hvt-row-gap)}
 .hvt-group{background:var(--container-secondary-background);border-radius:var(--component-containerradius)}
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
+/* experiment: every button inside the table body hovers with its fill only, no outline */
+.hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
-.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background);box-shadow:inset 0 0 0 var(--hvt-hover-w) var(--border-hover-selected)}
+.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
 .hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 2px var(--border-hover-selected)}
 .hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
 .hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
@@ -4224,7 +4226,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:16"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:18"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
