@@ -370,6 +370,8 @@
 .hvt-root .hvt-pager-left .hvt-mb--ghost .hvt-mbtn:not(.is-icon){min-width:24px;padding:0 8px;justify-content:center;background:var(--hvt-input-hover-bg);border-radius:var(--component-inputradius)}
 .hvt-root .hvt-pager-left .hvt-mbtn:hover:not(:disabled):not(.is-open){outline:1px solid var(--outline);outline-offset:-1px} /* on hover the border shows, like the page number */
 .hvt-root .hvt-pager-left .hvt-mbtn.is-open{background:var(--container-secondary-background);box-shadow:inset 0 0 0 1px var(--outline)}
+.hvt-root .hvt-pager-left .hvt-mbtn.is-open.is-up{border-top-left-radius:0;border-top-right-radius:0} /* open: joined to its menu, like every dropdown */
+.hvt-root .hvt-pager-left .hvt-mbtn.is-open.is-down{border-bottom-left-radius:0;border-bottom-right-radius:0}
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
 .hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}

@@ -382,6 +382,8 @@ const CSS = `
 .hvt-root .hvt-pager-left .hvt-mb--ghost .hvt-mbtn:not(.is-icon){min-width:24px;padding:0 8px;justify-content:center;background:var(--hvt-input-hover-bg);border-radius:var(--component-inputradius)}
 .hvt-root .hvt-pager-left .hvt-mbtn:hover:not(:disabled):not(.is-open){outline:1px solid var(--outline);outline-offset:-1px} /* on hover the border shows, like the page number */
 .hvt-root .hvt-pager-left .hvt-mbtn.is-open{background:var(--container-secondary-background);box-shadow:inset 0 0 0 1px var(--outline)}
+.hvt-root .hvt-pager-left .hvt-mbtn.is-open.is-up{border-top-left-radius:0;border-top-right-radius:0} /* open: joined to its menu, like every dropdown */
+.hvt-root .hvt-pager-left .hvt-mbtn.is-open.is-down{border-bottom-left-radius:0;border-bottom-right-radius:0}
 .hvt-pagenum input:focus{border-color:var(--outline);box-shadow:none;background:var(--container-secondary-background);outline:0}
 .hvt-pagenum input::selection{background:var(--container-hover-background);color:inherit}
 .hvt-pagenum input:disabled{background:var(--container-disabled-background);border-color:var(--content-disabled);color:var(--content-disabled);cursor:default}
@@ -4742,7 +4744,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 01:28"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 01:35"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
