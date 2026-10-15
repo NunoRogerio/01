@@ -2009,3 +2009,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 15, 13:20) Detection cards from passive civil cameras: no "(civil)" after the title; the corner tag reads "Civil" (was FFW).
 - (Oct 15, 13:21) Landing a floating detection: the page scrolls itself to the card's place in 800 ms (40% slower than the browser's smooth scroll), easing in and out, so the place sits in the free space above the floating card; then the card travels there in 0.75 s, its shadow settling as it lands.
 - (Oct 15, 13:24) The candidate's % is called "confidence" everywhere ("64% confidence", PT "64% de confiança"), the term of NASA FIRMS and of the AI camera networks dispatchers use; "likelihood" is retired.
+- (Oct 15, 13:25) Detections listed newest first (the oldest, at the bottom, keeps the 1st detection tag); a floating card lands at the top of the list.
