@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4 — 2026-10-15
+
+- The dragged column has 8px corners, a 3px outline all around and a subtle drop shadow.
+
 ## 0.4.3 — 2026-10-15
 
 - With sideways scroll, the divider before the row actions looks like the titles' divider (1px, half the row height, centred) and always shows in the rows.
