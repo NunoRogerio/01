@@ -4370,6 +4370,40 @@ const SCREEN_CSS = `
 .hvs-side .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]{font-weight:600}
 .hvs-side .hvt-btn,.hvs-ctl .hvt-btn,.hvs-headacts .hvt-btn,.hvs-ctl .hvt-mbtn{font-weight:600}
 
+/* ================================================================== *
+ * Control panel palette: the workbench's own colours for the top bar and its controls, one value per theme.
+ * Not NEXT tokens: the table and the design system tokens are untouched. Wicked mirrors Dawn's relations:
+ * the bar sits one step off the page, the control tracks sit a step darker than the bar (striped, inset),
+ * the chosen block is the brightest surface with a fine outline, the primary button inverts.
+ *
+ *   token               Dawn                     Wicked
+ *   --ctl-bar           page + 5% text (#f3f3f3)  #232323
+ *   --ctl-track         #e0e0e0                  #121212
+ *   --ctl-raised        #ffffff                  #4a4a4a
+ *   --ctl-text          #222222                  #ececec
+ *   --ctl-text-2        #5c5c5c                  #b4b4b4
+ *   --ctl-text-3        #8a8a8a                  #8c8c8c
+ *   --ctl-border        black 18%                white 18%
+ *   --ctl-hover         black 6%                 white 8%
+ *   --ctl-stripe        black 5.88%              white 6%
+ *   --ctl-inset         black 24%                black 70%
+ *   --ctl-primary       #1f1f1f                  #ececec
+ *   --ctl-primary-hover #3a3a3a                  #ffffff
+ *   --ctl-on-primary    #ffffff                  #141414
+ * ================================================================== */
+.hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-raised:#ffffff;
+  --ctl-text:#222222;--ctl-text-2:#5c5c5c;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
+  --ctl-stripe:rgba(0,0,0,.0588);--ctl-inset:rgba(0,0,0,.24);--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
+.hvs[data-theme="wicked"]{--ctl-bar:#232323;--ctl-track:#121212;--ctl-raised:#4a4a4a;
+  --ctl-text:#ececec;--ctl-text-2:#b4b4b4;--ctl-text-3:#8c8c8c;--ctl-border:rgba(255,255,255,.18);--ctl-hover:rgba(255,255,255,.08);
+  --ctl-stripe:rgba(255,255,255,.06);--ctl-inset:rgba(0,0,0,.7);--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.14)}
+.hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
+  --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
+.hvs-pkgbtn{background:var(--ctl-primary);color:var(--ctl-on-primary)}
+.hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-primary-hover)}
+.hvs-pkglabel[data-busy]::after{color:var(--ctl-on-primary)}
+.hvs-fpop{outline:1px solid var(--ctl-pop-border);outline-offset:-1px} /* dark menus get a fine edge: their shadow does not show on a dark page */
+
 `;
 
 /* Figma placeholder content: "Column Title", "Cell content", "123 456" */
@@ -4589,7 +4623,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 19:20"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 19:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
