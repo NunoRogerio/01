@@ -267,6 +267,12 @@ const CSS = `
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
 /* experiment: every button inside the table body hovers with its fill only, no outline */
 .hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
+/* a row menu (…) once opened: white with its outline; the outline stays while it is open, hover only changes the fill */
+.hvt-group .hvt-mbtn.is-open,.hvt-group .hvt-mbtn.is-open:hover{box-shadow:inset 0 0 0 1px var(--outline) !important}
+.hvt-group .hvt-mbtn.is-open{background:var(--page-background) !important}
+.hvt-group .hvt-mbtn.is-open:hover,.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn.is-open{background:var(--container-hover-background) !important}
+/* hovering a row turns its background white (the page background) */
+.hvt-root .hvt-group:not(.is-selected):hover{background:var(--page-background);--hvt-row-bg:var(--page-background)}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
 .hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open,.in-menu-zone)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
 .hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn{background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
@@ -4239,7 +4245,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:21"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:25"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
