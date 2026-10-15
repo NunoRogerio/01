@@ -3921,8 +3921,8 @@ const SCREEN_CSS = `
 .hvs-input:focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
 .hvs-benchstage{display:flex;justify-content:center;margin-top:32px}
 .hvs-benchstage > .hvt-root{width:min(720px,100%)}
-.hvs-tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:16px;border-radius:var(--component-containerradius);background:var(--container-secondary-background)}
-.hvs-taggroups{display:flex;flex-direction:column;gap:12px}
+.hvs-tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px} /* only the tags, no container behind them */
+.hvs-taggroups{display:flex;flex-direction:column;gap:24px}
 .hvs-searchroot{min-height:420px}
 .hvs-searchout{margin:24px 0 0}
 .hvs-cf{display:flex;flex-direction:column;gap:2px} /* 2px between a control label and its control */
@@ -4205,7 +4205,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 08:19"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 08:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
