@@ -581,6 +581,7 @@
 .hvt-filterbar .hvt-fgbtn:not(:hover):not(.is-open){background:transparent} /* on the filter bar the Filters button has no fill */
 .hvt-filterbar .hvt-fgbtn:not(.is-open):not(.is-hot),.hvt-filterbar .hvt-mb--secondary .hvt-fgbtn:hover:not(.is-open):not(.is-hot){box-shadow:none !important} /* no outline at rest or on hover: the hover is the fill only */ /* and no outline: Filters and the added filters show only their hover */
 .hvt-filterbar .hvt-chip{border-color:transparent}
+.hvt-filterbar .hvt-chip:has(.hvt-chipx:hover:not(:disabled)){border-color:color-mix(in srgb,var(--page-background) 72%,transparent)} /* hovering the x outlines the whole filter in the x's hover colour: the x removes all of it */
 
 /* selection checkbox, expand button, bulk actions bar, detail panel */
 .hvt-cbi{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
