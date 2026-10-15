@@ -4309,7 +4309,7 @@ const SCREEN_CSS = `
 .hvs-pagechev{display:inline-flex;width:20px;height:20px}
 .hvs-pagechev svg{display:block;width:100%;height:100%}
 .hvs-head .hvs-fpop{left:0;right:auto}
-.hvs-input{box-sizing:border-box;height:28px;min-width:160px;padding:0 8px;border:1px solid var(--cl-border);background:var(--cl-surface);color:var(--cl-text);font-size:12px;line-height:18px}
+.hvs-input{box-sizing:border-box;height:32px;min-width:160px;padding:0 8px;border:1px solid var(--cl-border);background:var(--cl-surface);color:var(--cl-text);font-size:12px;line-height:18px}
 .hvs-input:hover{border-color:var(--cl-border-strong)}
 .hvs-input:focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
 .hvs-benchstage{display:flex;justify-content:center;margin-top:32px}
@@ -4330,7 +4330,7 @@ const SCREEN_CSS = `
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
 .hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
-.hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:28px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
+.hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:32px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
 .hvs-resetbtn:hover .hvs-resetico{transform:rotate(-360deg)} /* on hover the reset arrow turns once, backwards */
 @media (prefers-reduced-motion:reduce){.hvs-resetico{transition:none}} /* the last item of the controls, on the right: lines up with React Package above */
@@ -4371,6 +4371,7 @@ const SCREEN_CSS = `
 .hvs::before{content:"";position:absolute;left:0;right:0;top:0;height:var(--hvs-top-h,0px);background:var(--hvs-bar);pointer-events:none;z-index:0;transition:opacity .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed::before,.hvs.is-ctl-folding::before{opacity:0} /* folded: the grey container fades away */
 .hvs-ctl .hvs-databar{margin-bottom:0}
+.hvs-ctl .hvs-seg{padding:4px} /* every multibutton and dropdown: 24px options in a 4px frame, 32px tall like the Reset button and the text fields */
 .hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 3.74px,transparent 3.74px 7.49px);box-shadow:inset 0 1px 4px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (3.74px bands and gaps), and a soft inner shadow */
 /* (16:24) no stripe band at the foot of the control bar */
 .hvs-sec{margin-bottom:0}
@@ -4734,7 +4735,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:35"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
