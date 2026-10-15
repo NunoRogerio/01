@@ -2654,13 +2654,16 @@ export function DataTable({
     </div>
   ) : null;
 
+  // numbers align right, except in the first column: there they align left, like text and tags
+  const alignRight = (c) => c.align === "right" && c.key !== (columns[0] && columns[0].key);
+
   const headerEl = (
     <div className={`hvt-row hvt-row--head${dragView ? " is-dragging" : ""}`} role="row">
       {expandable && <span className={`hvt-icon hvt-expand${leadClass}`} style={{ visibility: "hidden", ...leadStyle("expand") }} aria-hidden="true" />}
       {selectable && <span className={`hvt-selbox${leadClass}`} style={{ visibility: "hidden", ...leadStyle("select") }} aria-hidden="true" />}
       {columns.map((c) => (
         <div key={c.key} role="columnheader" data-hcol={c.key} aria-sort={c.sortable !== false ? ariaSort(c.key) : undefined}
-             className={`hvt-cell hvt-head ${c.align === "right" ? "hvt-cell--right" : ""}${colClass(c.key)}${pinClass(c.key)}`}
+             className={`hvt-cell hvt-head ${alignRight(c) ? "hvt-cell--right" : ""}${colClass(c.key)}${pinClass(c.key)}`}
              style={{ ...colSize(c.key), ...colStyle(c.key), ...pinStyle(c.key) }}>
           <button type="button" className="hvt-hgrab" data-hgrab={c.key}
                   aria-label={c.sortable !== false ? `Sort by ${c.title}` : c.title}
@@ -2724,7 +2727,7 @@ export function DataTable({
           )}
           {columns.map((c) => (
             <div key={c.key} role="cell" data-col={c.key} style={{ ...colSize(c.key), ...colStyle(c.key), ...pinStyle(c.key) }}
-                 className={`hvt-cell ${c.align === "right" ? "hvt-cell--right" : ""}${colClass(c.key)}${pinClass(c.key)}`}>
+                 className={`hvt-cell ${alignRight(c) ? "hvt-cell--right" : ""}${colClass(c.key)}${pinClass(c.key)}`}>
               <span>{renderCell(r, c)}</span>
             </div>
           ))}
@@ -2796,7 +2799,7 @@ export function DataTable({
               {expandable && <span className="hvt-icon hvt-expand" />}
               {selectable && <span className="hvt-selbox" />}
               {columns.map((c) => (
-                <div key={c.key} className={`hvt-cell ${c.align === "right" ? "hvt-cell--right" : ""}`} style={colSize(c.key)}>
+                <div key={c.key} className={`hvt-cell ${alignRight(c) ? "hvt-cell--right" : ""}`} style={colSize(c.key)}>
                   <span className={`hvt-skel${(i + c.key.length) % 3 === 0 ? " is-short" : ""}`} />
                 </div>
               ))}

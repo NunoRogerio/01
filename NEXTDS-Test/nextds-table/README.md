@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.2.0.tgz
+npm install ./vendor/nextds-table-0.2.1.tgz
 ```
 
 To update, replace the file and run the same command with the new version.

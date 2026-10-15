@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 2026-10-15
+
+- A number column moved to the first place aligns left, like text and tags.
+
 ## 0.2.0 — 2026-10-15
 
 - Hitachi Sans embedded in `styles.css`.
