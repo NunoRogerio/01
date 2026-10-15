@@ -380,6 +380,15 @@ const CSS = `
 .hvt-mb--secondary .hvt-mchev{margin-left:0}
 .hvt-mlabel{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hvt-mb--secondary .hvt-mlabel{flex:1}
+@keyframes hvtMenuDownIn{from{clip-path:inset(0 -32px 100% -32px)}to{clip-path:inset(0 -32px -32px -32px)}}
+@keyframes hvtMenuDownOut{from{clip-path:inset(0 -32px -32px -32px)}to{clip-path:inset(0 -32px 100% -32px)}}
+@keyframes hvtMenuUpIn{from{clip-path:inset(100% -32px 0 -32px)}to{clip-path:inset(-32px -32px 0 -32px)}}
+@keyframes hvtMenuUpOut{from{clip-path:inset(-32px -32px 0 -32px)}to{clip-path:inset(100% -32px 0 -32px)}}
+.hvt-mpanel.is-down{animation:hvtMenuDownIn .18s cubic-bezier(.4,0,.2,1)} /* grows down from its button */
+.hvt-mpanel.is-up{animation:hvtMenuUpIn .18s cubic-bezier(.4,0,.2,1)}
+.hvt-mpanel.is-down.is-closing{animation:hvtMenuDownOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none} /* folds back up into it */
+.hvt-mpanel.is-up.is-closing{animation:hvtMenuUpOut .18s cubic-bezier(.4,0,.2,1) forwards;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.hvt-mpanel.is-down,.hvt-mpanel.is-up{animation:none}.hvt-mpanel.is-closing{display:none}}
 .hvt-mpanel{position:absolute;z-index:40;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto;
   padding:16px;background:var(--container-secondary-background);border:1px solid var(--outline);
   box-shadow:0 0 8px rgba(0,0,0,.12)}
@@ -1006,6 +1015,17 @@ function MenuButton({
     setOpen(true);
   };
   useEffect(() => { if (!open) setStack([]); }, [open]);
+  /* the panel grows down from the button when it opens and folds back up into it when it closes */
+  const [closing, setClosing] = useState(false);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (open) { wasOpen.current = true; setClosing(false); return undefined; }
+    if (!wasOpen.current) return undefined;
+    wasOpen.current = false;
+    setClosing(true);
+    const t = setTimeout(() => setClosing(false), 180);
+    return () => clearTimeout(t);
+  }, [open]);
   useEffect(() => {
     if (!open || !listRef.current) return;
     const target = listRef.current.querySelector('[aria-selected="true"]:not(:disabled)') ||
@@ -1053,9 +1073,9 @@ function MenuButton({
         {!iconOnly && <span className="hvt-mlabel">{text}</span>}
         {!iconOnly && <span className="hvt-mchev" aria-hidden="true">{Icons.ChevronDown}</span>}
       </button>
-      {open && (
-        <div ref={listRef} role={role} aria-label={page ? page.title : ariaLabel} onKeyDown={onListKey}
-             className={`hvt-mpanel is-${dir} align-${align}`}
+      {(open || closing) && (
+        <div ref={listRef} role={role} aria-label={page ? page.title : ariaLabel} onKeyDown={onListKey} aria-hidden={!open || undefined}
+             className={`hvt-mpanel is-${dir} align-${align}${open ? "" : " is-closing"}`}
              style={{ minWidth: (page && page.width) || minWidth || (block ? "100%" : undefined), maxHeight: page && page.maxHeight }}>
           {page && (
             <div className="hvt-mtitle">
@@ -4251,7 +4271,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:33"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
