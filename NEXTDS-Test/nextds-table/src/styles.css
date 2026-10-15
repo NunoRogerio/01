@@ -146,7 +146,6 @@
 
 /* title bar */
 .hvt-titlebar{display:flex;align-items:center;gap:8px;height:56px;padding:0 var(--hvt-tablepad) 0 8px}
-.hvt-root:not(.is-compact) .hvt-titlebar{height:48px} /* Comfortable and Balanced: a 48px title bar; Compact 56px */
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
 .hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:flex-end;gap:8px} /* the description sits on the bottom of the title */
 .hvt-titlewrap .hvt-infobtn{width:24px;height:24px;flex:none;border-radius:4px;color:var(--content-placeholder)}

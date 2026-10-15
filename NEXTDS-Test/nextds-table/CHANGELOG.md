@@ -3,7 +3,6 @@
 ## 0.4.8 — 2026-10-15
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
-- Comfortable and Balanced: the title bar is 48px tall (was 56px); Compact keeps 56px.
 - Header: every tool (search, filter, button, maximize, more options) 16px from the next.
 - Balanced and Compact: the card sits 16px from the bottom edge, like the left and right (was 24px).
 - Pagination: 4px between the arrows and the page field; the chosen values (rows per page, current page) are semibold in the text colour; "1 of 8" instead of "1 / 8".
