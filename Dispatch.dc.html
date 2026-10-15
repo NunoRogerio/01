@@ -76,11 +76,16 @@
 /* (Oct 15, 15:05) the safety pin and Send share one striped track: the stripe pattern over its full height, a subtle inner shadow (blur only) */
 .wf-ul{background-color:rgba(118,118,128,0.12);background-image:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px);box-shadow:inset 0 0 6px rgba(0,0,0,0.16)}
 html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px);box-shadow:inset 0 0 6px rgba(0,0,0,0.5)}
-.wf-ul .wf-ulb{position:absolute;left:60px;right:60px;top:4px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
-.wf-ul .wf-ulu{position:absolute;left:60px;right:60px;top:4px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
+.wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
+.wf-ul .wf-ulu{position:absolute;left:64px;right:64px;top:8px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .wf-ul .wf-ulb.on{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;cursor:pointer;pointer-events:auto}
 .wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease}
+/* (Oct 15, 15:15) while the pin is dragged, Send turns green from its right end up to the pin; still faded between the pin and the left end */
+.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 var(--wf-ulc,100%));transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
+:root .wf-iadone,:root .wf-iadone:hover{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:transparent!important;cursor:pointer}   /* the sent attack, green, back to the map */
+.wf-ul .wf-ulg>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.wf-ul.snap .wf-ulp,.wf-ul.snap .wf-ulg{transition-duration:.12s;transition-timing-function:cubic-bezier(.2,0,0,1)}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
 a{color:#006A91}a:hover{color:#006A91}
 @keyframes wf-hflip{from{transform:perspective(600px) rotateX(-90deg);opacity:.3}to{transform:none;opacity:1}}@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -870,6 +875,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <button type="button" class="btn wf-sec" onClick="{{vf.cfg}}" style="display: {{vf.cfgD}}; order: 0; flex: 1 1 auto; height: 48px; padding: 0 16px; font-size: 17px; font-weight: 600; white-space: nowrap">{{vf.cfgLbl}}</button>
       <button type="button" class="btn wf-sec" onClick="{{vf.dismiss}}" style="display: {{vf.othD}}; order: 2; flex: 1 1 100%; height: 48px; padding: 0 16px; font-size: 17px; font-weight: 600; white-space: nowrap">{{vf.dismissLbl}}</button>
     </div>
+      <a href="Main.dc.html" data-wf-back="1" class="btn wf-iadone" onClick="{{navMap}}" style="display: {{vf.sentD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; flex: 1 1 100%; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{vf.doneTxt}}</a>
       <div class="btn primary" role="status" style="display: {{vf.doneD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; flex: 1 1 100%; font-size: 17px; font-weight: 600; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{vf.doneTxt}}</div>
     <!-- Choosing resources on the Crews tab: Cancel and Send order stay fixed at the foot, the chosen stations scroll above them -->
     <div style="display: {{pl.resActD}}; flex: 1 1 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
@@ -932,12 +938,14 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding-top: 24px">
       <!-- (Oct 15, 15:05) the safety pin and Send initial attack in one striped track: the pin rests on the right, Send sits disabled in the centre.
            Swipe the pin to the left end: the pin and Send turn green and Send works. Let go early, the pin glides back; unlocked, it locks again after 10 s unpressed -->
-      <div class="wf-ul" data-wf-unlock="1" role="group" aria-label="{{iab.ulAria}}" onPointerDown="{{iab.ulDown}}" onPointerMove="{{iab.ulMove}}" onPointerUp="{{iab.ulUp}}" onPointerCancel="{{iab.ulUp}}" style="display: {{iab.sendD}}; position: relative; flex: none; height: 56px; border-radius: 999px; touch-action: none; -webkit-user-select: none; user-select: none">
+      <div class="wf-ul" data-wf-unlock="1" role="group" aria-label="{{iab.ulAria}}" onPointerDown="{{iab.ulDown}}" onPointerMove="{{iab.ulMove}}" onPointerUp="{{iab.ulUp}}" onPointerCancel="{{iab.ulUp}}" style="display: {{iab.sendD}}; position: relative; flex: none; height: 64px; border-radius: 999px; touch-action: none; -webkit-user-select: none; user-select: none">
         <span class="wf-ulu" aria-hidden="true"></span>
         <button type="button" class="btn wf-ulb {{iab.sendCls}}" onClick="{{iab.send}}" aria-disabled="{{iab.sendDis}}"><span>{{iab.sendLbl}}</span></button>
-        <span class="wf-ulp" data-wf-thumb="1" role="slider" aria-label="{{iab.ulTxt}}" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{{iab.ulNow}}" style="position: absolute; right: 4px; top: 4px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: {{iab.ulPin}}; color: rgb(255, 255, 255); transform: translateX({{iab.ulX}}); cursor: grab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{iab.ulIc}}"></path></svg></span>
+        <span class="wf-ulg" aria-hidden="true"><span>{{iab.sendLbl}}</span></span>
+        <span class="wf-ulp" data-wf-thumb="1" role="slider" aria-label="{{iab.ulTxt}}" aria-valuemin="0" aria-valuemax="1" aria-valuenow="{{iab.ulNow}}" style="position: absolute; right: 8px; top: 8px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: {{iab.ulPin}}; color: rgb(255, 255, 255); transform: translateX({{iab.ulX}}); cursor: grab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{iab.ulIc}}"></path></svg></span>
       </div>
-      <div class="btn primary" role="status" style="display: {{iab.doneD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; flex: none; font-size: 17px; font-weight: 600; pointer-events: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{iab.doneTxt}}</div>
+      <!-- (Oct 15, 15:12) Initial attack sent: green like the unlocked Send; tapped, it returns to the map, where the candidate is now a confirmed fire -->
+      <a href="Main.dc.html" data-wf-back="1" class="btn wf-iadone" onClick="{{navMap}}" style="display: {{iab.doneD}}; align-items: center; justify-content: center; gap: 8px; height: 48px; flex: none; font-size: 17px; font-weight: 600; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{iab.doneTxt}}</a>
     </div>
   </section>
 </div>
@@ -1519,7 +1527,7 @@ class Component extends DCLogic {
      is real (NASA GIBS image of that day, the detection's facts); the drone scan, cameras and 911 call are simulated and say so. */
   wfEv(o) { const t = Date.now(); if (this._evT && t - this._evT < 400) return; this._evT = t; const F = window.__wfCamFeed; if (F && F.open) F.open(Object.assign({ title: o.label }, o)); }
   wfEvid(frow) {
-    const c = frow && frow.cand; if (!c) return { evD: 'none', evid: [], evCount: '', evTtl: '', vf: { d: 'none', title: '', lines: [], decD: 'none', doneD: 'none' }, vcams: [], vpc: '16', vsz: '3' };
+    const c = frow && frow.cand; if (!c) return { evD: 'none', evid: [], evCount: '', evTtl: '', vf: { d: 'none', title: '', lines: [], decD: 'none', doneD: 'none', sentD: 'none' }, vcams: [], vpc: '16', vsz: '3' };
     const L = c.live || {}, tMs = L.t ? Date.parse(L.t) : null, d = tMs ? new Date(tMs) : null;
     const time = d ? d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) : '', day = d ? d.toLocaleDateString([], { month: 'short', day: 'numeric' }) : '';
     const reasons = [['Heat detected by ' + (L.sat || 'VIIRS') + (time ? ' at ' + time + (day ? ', ' + day : '') : ''), true],
@@ -1663,7 +1671,7 @@ class Component extends DCLogic {
       /* (Oct 13, 10:30) Dismiss: the candidate leaves the lists and maps and goes to Resolved as Dismissed */
       if (k === 'dismissed') setTimeout(() => { const d = this.wfDismissed(); if (!d[c.id]) { d[c.id] = Date.now(); this.wfSave(d); } }, 1200);
       if (k === 'sent' && !frow.wasCand) setTimeout(() => { this.wfConfirm(c.id); const v = { id: 'F-' + c.id, place: c.place, note: 'Confirmed from ' + c.id, x: c.x, y: c.y, t: Date.now() }; try { sessionStorage.setItem('wf-fire-cur', JSON.stringify(v)); } catch (e) {} this.setState({ fv: v }); }, 1200); };
-    const vf = { d: 'flex', title: vfTitle, time: out.length ? hm(Math.max(...out.map((x) => x.at || 0))) : '', ic: onScene && isLive ? (capOk ? 'M5 12.5 10 17.5 19 7' : 'M7 7l10 10M17 7 7 17') : 'M12 5c-4.5 0-8 4-9.5 7 1.5 3 5 7 9.5 7s8-4 9.5-7c-1.5-3-5-7-9.5-7ZM12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z', lines: lines.map((t) => ({ t })), decD: DSP && (!done || chkAsk) ? 'flex' : 'none', doneD: DSP && done && !chkAsk ? 'flex' : 'none',
+    const vf = { d: 'flex', title: vfTitle, time: out.length ? hm(Math.max(...out.map((x) => x.at || 0))) : '', ic: onScene && isLive ? (capOk ? 'M5 12.5 10 17.5 19 7' : 'M7 7l10 10M17 7 7 17') : 'M12 5c-4.5 0-8 4-9.5 7 1.5 3 5 7 9.5 7s8-4 9.5-7c-1.5-3-5-7-9.5-7ZM12 9.2a2.8 2.8 0 1 0 0 5.6a2.8 2.8 0 1 0 0-5.6Z', lines: lines.map((t) => ({ t })), decD: DSP && (!done || chkAsk) ? 'flex' : 'none', doneD: DSP && done && !chkAsk && done !== 'sent' ? 'flex' : 'none', sentD: DSP && done === 'sent' ? 'flex' : 'none',
       doneTxt: done === 'sent' ? Lx('Initial attack sent', 'Ataque inicial enviado') : done === 'check' ? (onScene && !droneStrong ? Lx('No fire found', 'Sem fogo no local') : Lx('Smoke check sent', 'Reconhecimento enviado')) : Lx('Dismissed', 'Descartado'),
       dismissLbl: Lx('Dismiss', 'Descartar'), sendLbl: Lx('Initial attack', 'Ataque inicial'), dismiss: ask('dismissed', decide('dismissed')), send: ask('sent', decide('sent')), send0: ask('sent', decide('sent')), sendNow: decide('sent'), check: ask('check', decide('check')), checkLbl: Lx('Smoke check', 'Reconhecimento'), othD: chkAsk ? 'none' : 'block', cfgD: 'none', cfgLbl: '', cfg: null, sendDis: 'false', sendOp: '1', sendCls: 'primary', ttl: Lx('Verification', 'Verificação'), sum: Lx('Summary', 'Resumo') };
     /* (Oct 15, 13:13) detections that arrive while the screen is open float above it until tapped (one at a time, the oldest first); the ones there on entry are simply listed */
@@ -1798,14 +1806,20 @@ class Component extends DCLogic {
               sendDis: nOn ? 'false' : 'true', sendOp: nOn ? '1' : '0.4', sendCls: nOn ? 'primary' : 'wf-sec', send: nOn && snd ? snd : () => {} });
             /* (Oct 15, 14:09) the safety catch replaces the confirmation dialog: Send stays disabled (the faded secondary) until the thumb is swiped to the end */
             { const UL = !!st.iaUnl && opn && !sentAt, go = o.vf && o.vf.sendNow, me = this;
-              const fin = (ok) => { const T = me._ul; if (!T) return; me._ul = null; const th = T.el.querySelector('[data-wf-thumb]'); if (th) { th.style.transition = ''; th.style.transform = ''; }
-                if (ok) { try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {} clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); } else me.forceUpdate(); };
+              /* the pin's travel: the track's width less 8px padding at each end and the 48px pin; the green reaches the pin's centre */
+              const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; T.el.style.setProperty('--wf-ulc', Math.max(0, T.w - 96 - T.d) + 'px'); };
+              const fin = (ok) => { const T = me._ul; if (!T) return; me._ul = null; const th = T.el.querySelector('[data-wf-thumb]'), g = T.el.querySelector('.wf-ulg');
+                if (th) th.style.transition = ''; if (g) g.style.transition = '';
+                if (ok) { T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
+                  setTimeout(() => { T.el.classList.remove('snap'); T.el.style.removeProperty('--wf-ulc'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
+                else { if (th) th.style.transform = ''; T.el.style.removeProperty('--wf-ulc'); me.forceUpdate(); } };
               Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
                 ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para desbloquear o envio' : 'Swipe left to unlock sending'),
-                ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'm15 6-6 6 6 6', ulX: UL ? 'calc(56px - var(--wf-ulw, 342px))' : '0px',
-                ulDown: (e) => { if (UL || !nOn) return; const th0 = e.target && e.target.closest && e.target.closest('[data-wf-thumb]'); if (!th0) return; const el = th0.closest('[data-wf-unlock]'); if (!el) return; const r = el.getBoundingClientRect(); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {} th0.style.transition = 'none'; me._ul = { el, x0: e.clientX, max: r.width - 56, d: 0 }; },
-                ulMove: (e) => { const T = me._ul; if (!T) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; },
-                ulUp: () => { const T = me._ul; if (!T) return; const ok = T.d >= T.max * 0.92; T.el.style.setProperty('--wf-ulw', T.el.getBoundingClientRect().width + 'px'); fin(ok); },
+                ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'm15 6-6 6 6 6', ulX: UL ? 'calc(64px - var(--wf-ulw, 358px))' : '0px',
+                ulDown: (e) => { if (UL || !nOn) return; const th0 = e.target && e.target.closest && e.target.closest('[data-wf-thumb]'); if (!th0) return; const el = th0.closest('[data-wf-unlock]'); if (!el) return; const r = el.getBoundingClientRect(), g = el.querySelector('.wf-ulg'); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {} th0.style.transition = 'none'; if (g) g.style.transition = 'none'; me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0 }; paint(me._ul); },
+                /* (Oct 15, 15:15) a strong snap: once the pin is within 70% of its diameter (33.6px) of the left end, it jumps there and unlocks */
+                ulMove: (e) => { const T = me._ul; if (!T) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); if (T.max - T.d <= 48 * 0.7) { fin(true); return; } paint(T); },
+                ulUp: () => { const T = me._ul; if (!T) return; fin(T.max - T.d <= 48 * 0.7); },
                 sendDis: UL && nOn ? 'false' : 'true', sendCls: UL && nOn ? 'on' : 'wf-sec', send: UL && nOn && go ? () => { clearTimeout(me._ulT); me.setState({ iaUnl: false }); go(); } : () => {} });
               if (!opn && st.iaUnl) setTimeout(() => this.setState({ iaUnl: false }), 0); }
             o.ia = Object.assign({}, o.ia, { d: sentAt ? 'flex' : 'none' });
