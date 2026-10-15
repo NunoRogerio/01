@@ -4261,7 +4261,7 @@ const SCREEN_CSS = `
    The title row and the controls row share one background, so they read as one bar. */
 .hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.24)}
 .hvs[data-theme="wicked"]{--hvs-sp:rgba(255,255,255,.09);--hvs-sp2:rgba(255,255,255,.0756);--hvs-insh:rgba(0,0,0,.65)} /* sp2: inside the multibuttons and dropdowns, 16% fainter */
-.hvs-head{margin:-24px -24px 0;padding:16px 24px 8px;background:var(--hvs-bar)}
+.hvs-head{margin:-24px -24px 0;padding:24px 24px 8px;background:var(--hvs-bar)}
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:var(--hvs-bar);isolation:isolate}
 .hvs-ctl .hvs-databar{margin-bottom:0}
 .hvs-ctl .hvs-seg{background-image:repeating-linear-gradient(-60deg,var(--hvs-sp2) 0 3.74px,transparent 3.74px 7.49px);box-shadow:inset 0 1px 4px var(--hvs-insh)} /* the stripes inside the darker grey of the multibuttons and dropdowns (3.74px bands and gaps), and a soft inner shadow */
@@ -4625,7 +4625,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 20:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 20:10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
