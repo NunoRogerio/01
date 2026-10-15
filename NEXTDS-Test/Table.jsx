@@ -361,7 +361,8 @@ const CSS = `
 /* the pager is compact in every density: every element at the caption's 12px text, 24px controls, a 40px bar */
 .hvt-root .hvt-pager,.hvt-root .hvt-pager-left{height:24px}
 .hvt-root .hvt-pager{box-sizing:content-box;height:48px;padding-top:0;padding-bottom:0}
-.hvt-root.is-compact .hvt-pager{height:40px} /* the bar: 48px in Comfortable and Balanced, 40px in Compact */ /* a 40px pagination bar (plus its 1px divider), 24px controls centred */
+.hvt-root.is-compact .hvt-pager{height:40px}
+.hvt-root.is-comfortable .hvt-pager{height:32px} /* the bar: 32px in Comfortable (its 32px arrows fill it), 48px in Balanced, 40px in Compact */ /* a 40px pagination bar (plus its 1px divider), 24px controls centred */
 .hvt-root .hvt-pager .hvt-mlabel,.hvt-root .hvt-pager .hvt-caption{font-size:12px;line-height:18px}
 .hvt-root .hvt-pager .hvt-mbtn{height:24px}
 .hvt-root .hvt-pager .hvt-icon{width:24px;height:24px}
@@ -2830,7 +2831,7 @@ export function DataTable({
   /* the header bar shows while any of its items is on; the title is only one of them */
   const tip = useTips(rootRef, ".hvt-root");
   const hasHeader = showTitle || !!description || !!info || searchEnabled || showFilterButton || (editable && showAdd) || showMaximize || showMoreOptions;
-  const rootClass = `hvt-root${hasHeader ? "" : " no-header"}${expandable || selectable ? " has-lead" : ""}${hasActions ? " has-actions" : ""}${joined ? " is-joined" : ""}${density === "compact" ? " is-compact" : ""}${columnReorder ? " can-reorder" : ""}${columnResize ? " can-resize" : ""}${scrollbarHorizontal ? " has-hscroll" : ""}${scrollbarVertical ? " has-vscroll" : ""} ${hoverMode}${resizing ? " is-resizing" : ""}${maximized ? " is-max" : ""}${dragView ? " is-colDragging" : ""}`;
+  const rootClass = `hvt-root${hasHeader ? "" : " no-header"}${expandable || selectable ? " has-lead" : ""}${hasActions ? " has-actions" : ""}${joined ? " is-joined" : ""}${density === "compact" ? " is-compact" : density === "comfortable" ? " is-comfortable" : ""}${columnReorder ? " can-reorder" : ""}${columnResize ? " can-resize" : ""}${scrollbarHorizontal ? " has-hscroll" : ""}${scrollbarVertical ? " has-vscroll" : ""} ${hoverMode}${resizing ? " is-resizing" : ""}${maximized ? " is-max" : ""}${dragView ? " is-colDragging" : ""}`;
 
   /* the panels opened from the filter bar follow the real position of the bar and of its Filters button,
      so they stay attached when the chips wrap to more rows (or the bar changes height for any reason) */
@@ -4735,7 +4736,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 00:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 00:55"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

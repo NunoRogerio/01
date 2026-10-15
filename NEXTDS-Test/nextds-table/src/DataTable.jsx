@@ -1936,7 +1936,7 @@ export function DataTable({
   /* the header bar shows while any of its items is on; the title is only one of them */
   const tip = useTips(rootRef, ".hvt-root");
   const hasHeader = showTitle || !!description || !!info || searchEnabled || showFilterButton || (editable && showAdd) || showMaximize || showMoreOptions;
-  const rootClass = `hvt-root${hasHeader ? "" : " no-header"}${expandable || selectable ? " has-lead" : ""}${hasActions ? " has-actions" : ""}${joined ? " is-joined" : ""}${density === "compact" ? " is-compact" : ""}${columnReorder ? " can-reorder" : ""}${columnResize ? " can-resize" : ""}${scrollbarHorizontal ? " has-hscroll" : ""}${scrollbarVertical ? " has-vscroll" : ""} ${hoverMode}${resizing ? " is-resizing" : ""}${maximized ? " is-max" : ""}${dragView ? " is-colDragging" : ""}`;
+  const rootClass = `hvt-root${hasHeader ? "" : " no-header"}${expandable || selectable ? " has-lead" : ""}${hasActions ? " has-actions" : ""}${joined ? " is-joined" : ""}${density === "compact" ? " is-compact" : density === "comfortable" ? " is-comfortable" : ""}${columnReorder ? " can-reorder" : ""}${columnResize ? " can-resize" : ""}${scrollbarHorizontal ? " has-hscroll" : ""}${scrollbarVertical ? " has-vscroll" : ""} ${hoverMode}${resizing ? " is-resizing" : ""}${maximized ? " is-max" : ""}${dragView ? " is-colDragging" : ""}`;
 
   /* the panels opened from the filter bar follow the real position of the bar and of its Filters button,
      so they stay attached when the chips wrap to more rows (or the bar changes height for any reason) */

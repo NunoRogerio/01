@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.8 — 2026-10-15
+
+- Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
+
 ## 0.4.7 — 2026-10-15
 
 - Tooltips: every tooltip of the table is the NEXT tooltip (a small raised panel, 14px text), shown 0.5 s after the pointer rests on the element or at once on keyboard focus. Disabled buttons show theirs too.
