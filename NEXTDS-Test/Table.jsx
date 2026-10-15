@@ -268,7 +268,8 @@ const CSS = `
 /* experiment: every button inside the table body hovers with its fill only, no outline */
 .hvt-body :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-group :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover,.hvt-row--head :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
 /* rows never change colour on hover: the hover shows only on the actions; when one action is the whole row's, hovering the row hovers that button */
-.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
+.hvt-root.hover-row .hvt-group.is-clickable:hover:not(:has(.hvt-mbtn:hover,.hvt-mbtn.is-open,.in-menu-zone)) .hvt-actions .hvt-btn:not(:disabled){background:var(--container-hover-background)}
+.hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn{background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
 .hvt-group.is-selected{background:var(--page-background);box-shadow:inset 0 0 0 2px var(--border-hover-selected)}
 .hvt-cell{flex:1 1 0;min-width:0;min-height:32px;display:flex;align-items:center;padding:1px var(--hvt-cellpad) 2px}
 .hvt-cell.is-fit{padding-left:var(--hvt-cellpad);padding-right:var(--hvt-cellpad)}
@@ -2501,6 +2502,12 @@ export function DataTable({
   const actionCount = (viewBtn || rowMenu ? 1 : 0) + (expandable ? 1 : 0) + (selectable ? 1 : 0); // View and its row menu (…) count as one action
   const hoverMode = actionCount === 1 ? "hover-row" : actionCount > 1 ? "hover-buttons" : "hover-none";
   const hasActions = viewBtn || rowMenu;
+  /* the part of a row to the right of the View button belongs to the row menu (…): returns that menu's button when the pointer is there */
+  const menuZone = (e) => {
+    const act = e.currentTarget.querySelector(".hvt-actions");
+    const view = act && act.querySelector(".hvt-btn"), menu = act && act.querySelector(".hvt-mbtn");
+    return view && menu && e.clientX > view.getBoundingClientRect().right ? menu : null;
+  };
   const singleAction = actionCount === 1
     ? (viewBtn ? (r) => onView && onView(r) : expandable ? (r) => toggleOpen(r.id) : selectable ? (r) => toggleRow(r.id) : null)
     : null;
@@ -3388,7 +3395,13 @@ export function DataTable({
            className={`hvt-group${singleAction ? " is-clickable" : ""}${isSel ? " is-selected" : ""}${notice && notice.rowId === r.id ? " is-delete-target" : ""}${removing && removing.id === r.id ? " is-removing" : ""}${editClass ? ` ${editClass}` : ""}`}
            style={removing && removing.id === r.id ? { "--h": `${removing.h}px` } : editClass ? { "--h": `${editing.h}px` } : undefined}>
         <div className="hvt-row hvt-row--body" role="row" aria-selected={selectable ? isSel : undefined}
-             onClick={singleAction ? (e) => { if (e.target.closest && e.target.closest("button, input, label, .hvt-mbtn")) return; singleAction(r); } : undefined}>
+             onMouseMove={singleAction ? (e) => { const z = menuZone(e); e.currentTarget.classList.toggle("in-menu-zone", !!z); } : undefined}
+             onMouseLeave={singleAction ? (e) => e.currentTarget.classList.remove("in-menu-zone") : undefined}
+             onClick={singleAction ? (e) => {
+               if (e.target.closest && e.target.closest("button, input, label, .hvt-mbtn")) return;
+               const z = menuZone(e); if (z) { z.click(); return; } // right of View: only the More options menu
+               singleAction(r);
+             } : undefined}>
           {expandable && (
             <button type="button" className={`hvt-icon hvt-expand${leadClass}`} style={leadStyle("expand")} aria-expanded={isOpen}
                     aria-controls={isOpen ? `hvt-detail-${r.id}` : undefined}
@@ -4226,7 +4239,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:18"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:21"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
