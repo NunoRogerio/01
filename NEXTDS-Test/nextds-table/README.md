@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.1.0.tgz
+npm install ./vendor/nextds-table-0.2.0.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -38,6 +38,77 @@ export function Systems({ rows }) {
 ```
 
 Every row needs a unique `id`.
+
+## Try it with the sample data
+
+`@nextds/table/sample` has 48 made-up VSP storage systems (the same data as the Table Workbench) and a small in-memory server.
+
+```tsx
+import { DataTable } from "@nextds/table";
+import { storageSystems } from "@nextds/table/sample";
+import "@nextds/table/styles.css";
+
+export default function Demo() {
+  return <DataTable {...storageSystems} />;
+}
+```
+
+Server mode against the in-memory server (it answers after 400 ms, like an API):
+
+```tsx
+import { useState } from "react";
+import { DataTable } from "@nextds/table";
+import { storageSystemsColumns, fetchSample } from "@nextds/table/sample";
+
+export default function ServerDemo() {
+  const [data, setData] = useState({ rows: [], total: 0 });
+  const [loading, setLoading] = useState(true);
+  return (
+    <DataTable
+      title="Storage Systems"
+      columns={storageSystemsColumns}
+      dataMode="server"
+      rows={data.rows}
+      rowCount={data.total}
+      loading={loading}
+      onQueryChange={async (q) => { setLoading(true); setData(await fetchSample(q)); setLoading(false); }}
+    />
+  );
+}
+```
+
+## Every feature, switched on
+
+All the features of the Table Workbench are in the package. The Workbench controls are props: turn on what the screen needs.
+
+```tsx
+<DataTable
+  {...storageSystems}
+  selectable            // check boxes and the selection bar (Edit, Delete)
+  expandable            // rows open to show their details
+  editable              // Add, edit and delete rows (with the add button in the header)
+  showFilterBar         // the filter bar with the added filters
+  showMaximize          // maximize button
+  showMoreOptions       // export, Configure Columns, density, advanced options
+  scrollbarHorizontal   // sideways scroll, fixed columns
+  pinnedColumns={["health"]}
+  filterUi="group"      // or "rows" (MUI style)
+  density="comfortable" // "balanced", "compact"
+  theme="dawn"          // "wicked"
+/>
+```
+
+| Workbench control | Prop |
+| --- | --- |
+| Theme | `theme` |
+| Header: Title, Search, Filter, Filter bar, Button, Maximize, More options | `showTitle`, `searchEnabled`, `showFilterButton` + `filterUi`, `showFilterBar`, `editable` + `showAdd`, `showMaximize`, `showMoreOptions` |
+| Density | `density` |
+| Row: Selectable, Expandable, Action, More Actions | `selectable`, `expandable`, `rowView`, `rowMenu` |
+| Column Config | `columnConfig` |
+| Pagination | `showPagination`, `scrollbarHorizontal`, `scrollbarVertical`, `visibleRows` |
+| State: Loading, Empty state, Error | `loading`, `rows={[]}` + `emptyState`, `error` |
+
+Only the Workbench itself stays out: its control bar, the layout grid and the width and height handles (in an app the table takes the width of its container), and the Tags and Search pages.
 
 ## Data from your API (server mode)
 
@@ -104,7 +175,7 @@ The query the table sends:
 <DataTable theme="wicked" tokens={{ "--component-containerradius": "4px" }} … />
 ```
 
-The table uses the **Hitachi Sans** font and falls back to the system font when the app does not load it. The font files are not in the package: load them in the app as you do today.
+The table uses the **Hitachi Sans** font (regular, semibold, bold). The font is embedded in `styles.css`, so nothing else is needed. If the app already loads Hitachi Sans, the browser uses the same family name for both.
 
 ## Main props
 

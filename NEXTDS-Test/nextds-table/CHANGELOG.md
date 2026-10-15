@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 — 2026-10-15
+
+- Hitachi Sans embedded in `styles.css`.
+- `@nextds/table/sample`: 48 storage systems, `querySample` and `fetchSample` to try server mode without a backend.
+- README: every feature switched on, and the Workbench controls with their props.
+
 ## 0.1.0 — 2026-10-15
 
 First package of the table from the Table Workbench.

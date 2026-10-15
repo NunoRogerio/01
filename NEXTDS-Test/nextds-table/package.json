@@ -1,6 +1,6 @@
 {
   "name": "@nextds/table",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The NEXT Design System table for React: filters, search, sorting, column reorder, resize and pinning, selection, expandable rows, pagination, themes Dawn and Wicked.",
   "license": "UNLICENSED",
   "private": true,
@@ -14,6 +14,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./sample": {
+      "types": "./dist/sample.d.ts",
+      "import": "./dist/sample.js",
+      "require": "./dist/sample.cjs"
     },
     "./styles.css": "./dist/styles.css",
     "./package.json": "./package.json"
