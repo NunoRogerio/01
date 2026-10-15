@@ -266,10 +266,10 @@ const CSS = `
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
-.hvt-chip .hvt-chipx:hover:not(:disabled){background:var(--container-hover-background);box-shadow:none}
+.hvt-chip .hvt-chipx:hover:not(:disabled){background:var(--page-background);box-shadow:none} /* on the green filter bar the hover is white: grey reads poorly there */
 .hvt-chiptrigger{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 2px;border:0;border-radius:6px;background:transparent;color:inherit;cursor:pointer;
   font:inherit;font-size:14px;font-weight:600;line-height:21px}
-.hvt-chiptrigger:hover{background:var(--container-hover-background)}
+.hvt-chiptrigger:hover{background:var(--page-background)}
 .hvt-chiplabel{pointer-events:none}
 .hvt-chipchev{display:inline-flex;flex:none;width:20px;height:20px;pointer-events:none}
 .hvt-chipchev svg{display:block;width:100%;height:100%}
@@ -306,6 +306,7 @@ const CSS = `
 .hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
 .hvt-mb--secondary .hvt-mbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:var(--container-secondary-background) !important}
 .hvt-filterbar .hvt-fgbtn[data-hoveroff]:not(.is-open):not(.is-hot){background:transparent !important}
+.hvt-filterbar .hvt-fgbtn:hover:not(.is-open):not(.is-hot):not([data-hoveroff]),.hvt-filterbar .hvt-btn:hover:not(:disabled){background:var(--page-background) !important} /* white hover on the green bar */
 .hvt-mbtn[data-hoveroff]:focus-visible{outline:none !important} /* a mouse click shows no focus ring */
 .hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn:not(.is-open){background:var(--container-hover-background)} /* right of View: the row menu takes the hover */
 .hvt-root.hover-row .hvt-group.is-clickable .in-menu-zone .hvt-actions .hvt-mbtn[data-hoveroff]:not(.is-open){background:transparent !important}
@@ -586,6 +587,7 @@ const CSS = `
 .hvt-bulk-count{display:flex;align-items:center;gap:4px;white-space:nowrap}
 .hvt-bulk-count b{font-weight:600;line-height:21px}
 .hvt-bulk-btn{padding:0 16px 0 8px}
+.hvt-bulk :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-selbox):hover:not(:disabled){background:var(--page-background) !important;box-shadow:none !important} /* on the blue selection bar the hover is white, like on the green filter bar */
 .hvt-btn:disabled{color:var(--content-disabled);cursor:default}
 .hvt-btn:disabled:hover{background:transparent}
 
@@ -4340,7 +4342,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:59"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
