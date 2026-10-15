@@ -74,8 +74,8 @@
 /* .wf-qual.solo: shared, in prefs.js */
 .wf-unit+.wf-unit{border-top: 0}
 /* (Oct 15, 15:05) the safety pin and Send share one striped track: the stripe pattern over its full height, a subtle inner shadow (blur only) */
-.wf-ul{background-color:rgba(118,118,128,0.12);background-image:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px);box-shadow:inset 0 0 6px rgba(0,0,0,0.16)}
-html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px);box-shadow:inset 0 0 6px rgba(0,0,0,0.5)}
+.wf-ul{background-color:rgba(118,118,128,0.12);background-image:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px)}
+html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px)}
 .wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
 .wf-ul .wf-ulu{position:absolute;left:64px;right:64px;top:8px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -84,6 +84,14 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 /* (Oct 15, 15:15) while the pin is dragged, Send turns green from its right end up to the pin; still faded between the pin and the left end */
 .wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;clip-path:inset(0 0 0 var(--wf-ulc,100%));transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
 :root .wf-iadone,:root .wf-iadone:hover{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:transparent!important;cursor:pointer}   /* the sent attack, green, back to the map */
+/* (Oct 15, 15:16) locked, the track wears hazard stripes (safety yellow and dark grey, like a safety sign); as the pin slides left, the
+   track right of the pin turns to the grey stripe pattern, as Send turns green; unlocked, all grey */
+.wf-ul{isolation:isolate}
+.wf-ul::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(-60deg,#F5C400 0 8.49px,#3A3A3C 8.49px 16.97px);clip-path:inset(0 var(--wf-ulr,0px) 0 0);transition:clip-path .45s cubic-bezier(.45,0,.2,1)}
+.wf-ul::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 6px rgba(0,0,0,0.3)}
+.wf-ul.unl::before{display:none}
+.wf-ul.drag::before{transition:none}
+.wf-ul.snap::before{transition-duration:.12s;transition-timing-function:cubic-bezier(.2,0,0,1)}
 .wf-ul .wf-ulg>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .wf-ul.snap .wf-ulp,.wf-ul.snap .wf-ulg{transition-duration:.12s;transition-timing-function:cubic-bezier(.2,0,0,1)}
 body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:#000000;-webkit-font-smoothing:antialiased}
@@ -938,7 +946,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding-top: 24px">
       <!-- (Oct 15, 15:05) the safety pin and Send initial attack in one striped track: the pin rests on the right, Send sits disabled in the centre.
            Swipe the pin to the left end: the pin and Send turn green and Send works. Let go early, the pin glides back; unlocked, it locks again after 10 s unpressed -->
-      <div class="wf-ul" data-wf-unlock="1" role="group" aria-label="{{iab.ulAria}}" onPointerDown="{{iab.ulDown}}" onPointerMove="{{iab.ulMove}}" onPointerUp="{{iab.ulUp}}" onPointerCancel="{{iab.ulUp}}" style="display: {{iab.sendD}}; position: relative; flex: none; height: 64px; border-radius: 999px; touch-action: none; -webkit-user-select: none; user-select: none">
+      <div class="wf-ul {{iab.ulCls}}" data-wf-unlock="1" role="group" aria-label="{{iab.ulAria}}" onPointerDown="{{iab.ulDown}}" onPointerMove="{{iab.ulMove}}" onPointerUp="{{iab.ulUp}}" onPointerCancel="{{iab.ulUp}}" style="display: {{iab.sendD}}; position: relative; flex: none; height: 64px; border-radius: 999px; touch-action: none; -webkit-user-select: none; user-select: none">
         <span class="wf-ulu" aria-hidden="true"></span>
         <button type="button" class="btn wf-ulb {{iab.sendCls}}" onClick="{{iab.send}}" aria-disabled="{{iab.sendDis}}"><span>{{iab.sendLbl}}</span></button>
         <span class="wf-ulg" aria-hidden="true"><span>{{iab.sendLbl}}</span></span>
@@ -1823,16 +1831,16 @@ class Component extends DCLogic {
             /* (Oct 15, 14:09) the safety catch replaces the confirmation dialog: Send stays disabled (the faded secondary) until the thumb is swiped to the end */
             { const UL = !!st.iaUnl && opn && !sentAt, go = o.vf && o.vf.sendNow, me = this;
               /* the pin's travel: the track's width less 8px padding at each end and the 48px pin; the green reaches the pin's centre */
-              const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; T.el.style.setProperty('--wf-ulc', Math.max(0, T.w - 96 - T.d) + 'px'); };
+              const paint = (T) => { const th = T.el.querySelector('[data-wf-thumb]'); if (th) th.style.transform = 'translateX(' + (-T.d) + 'px)'; T.el.style.setProperty('--wf-ulc', Math.max(0, T.w - 96 - T.d) + 'px'); T.el.style.setProperty('--wf-ulr', (32 + T.d) + 'px'); };
               const fin = (ok) => { const T = me._ul; if (!T) return; me._ul = null; const th = T.el.querySelector('[data-wf-thumb]'), g = T.el.querySelector('.wf-ulg');
-                if (th) th.style.transition = ''; if (g) g.style.transition = '';
+                if (th) th.style.transition = ''; if (g) g.style.transition = ''; T.el.classList.remove('drag');
                 if (ok) { T.el.classList.add('snap'); T.d = T.max; paint(T); try { if (navigator.vibrate) navigator.vibrate([10, 40, 10]); } catch (e) {}
-                  setTimeout(() => { T.el.classList.remove('snap'); T.el.style.removeProperty('--wf-ulc'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
-                else { if (th) th.style.transform = ''; T.el.style.removeProperty('--wf-ulc'); me.forceUpdate(); } };
-              Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
+                  setTimeout(() => { T.el.classList.remove('snap'); T.el.style.removeProperty('--wf-ulc'); T.el.style.removeProperty('--wf-ulr'); clearTimeout(me._ulT); me._ulT = setTimeout(() => me.setState({ iaUnl: false }), 10000); me.setState({ iaUnl: true }); }, 130); }
+                else { if (th) th.style.transform = ''; T.el.style.removeProperty('--wf-ulc'); T.el.style.removeProperty('--wf-ulr'); me.forceUpdate(); } };
+              Object.assign(o.iab, { ulNow: UL ? '1' : '0', ulCls: UL ? 'unl' : '', ulAria: PTl ? 'Pino de segurança e envio' : 'Safety pin and send',
                 ulTxt: UL ? (PTl ? 'Desbloqueado' : 'Unlocked') : (PTl ? 'Deslize para a esquerda para desbloquear o envio' : 'Swipe left to unlock sending'),
                 ulPin: UL ? 'rgb(36, 138, 61)' : 'rgb(58, 58, 60)', ulIc: UL ? 'M7 11V8a5 5 0 0 1 9.6-2M5 11h14v10H5Z' : 'm15 6-6 6 6 6', ulX: UL ? 'calc(64px - var(--wf-ulw, 358px))' : '0px',
-                ulDown: (e) => { if (UL || !nOn) return; const th0 = e.target && e.target.closest && e.target.closest('[data-wf-thumb]'); if (!th0) return; const el = th0.closest('[data-wf-unlock]'); if (!el) return; const r = el.getBoundingClientRect(), g = el.querySelector('.wf-ulg'); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {} th0.style.transition = 'none'; if (g) g.style.transition = 'none'; me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0 }; paint(me._ul); },
+                ulDown: (e) => { if (UL || !nOn) return; const th0 = e.target && e.target.closest && e.target.closest('[data-wf-thumb]'); if (!th0) return; const el = th0.closest('[data-wf-unlock]'); if (!el) return; const r = el.getBoundingClientRect(), g = el.querySelector('.wf-ulg'); el.style.setProperty('--wf-ulw', r.width + 'px'); try { el.setPointerCapture(e.pointerId); } catch (x) {} th0.style.transition = 'none'; if (g) g.style.transition = 'none'; el.classList.add('drag'); me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0 }; paint(me._ul); },
                 /* (Oct 15, 15:15) a strong snap: once the pin is within 70% of its diameter (33.6px) of the left end, it jumps there and unlocks */
                 ulMove: (e) => { const T = me._ul; if (!T) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); if (T.max - T.d <= 48 * 0.7) { fin(true); return; } paint(T); },
                 ulUp: () => { const T = me._ul; if (!T) return; fin(T.max - T.d <= 48 * 0.7); },
