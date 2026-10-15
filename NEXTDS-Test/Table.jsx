@@ -4405,6 +4405,7 @@ const SCREEN_CSS = `
   --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
+.hvs-jelly{position:fixed;inset:0;width:100vw;height:100vh;z-index:9;pointer-events:none} /* the jelly hover experiment draws here, over the controls */
 .hvs-cf-l{color:var(--ctl-label)} /* the control titles, a step darker than the hint text so they read easily */
 .hvs-pkgbtn{padding:0 12px;background:transparent;color:var(--ctl-text);font-weight:400} /* React Package: no background, normal text, like a plain text button; the download arrow and its hover drop stay */
 .hvs-pkgbtn:hover:not(:disabled){background:var(--ctl-hover)}
@@ -4630,7 +4631,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 21:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 21:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -4834,6 +4835,123 @@ function usePickOnChange(value, ref) {
     playPick(ref.current);
   }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
 }
+/* ------------------------------------------------------------------ *
+ * Jelly hover (experiment): a translucent lime-to-magenta blob over the control backgrounds.
+ * It follows the mouse like a soft gummy, stretches with speed, sheds drops when shaken too hard,
+ * pops a bubble now and then, and 0.7 s after the mouse rests on an option it takes that option's shape
+ * with a quick bounce. Workbench only; off when the system asks for reduced motion.
+ * ------------------------------------------------------------------ */
+function JellyHover({ rootRef }) {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const root = rootRef.current, cv = canvasRef.current;
+    if (!root || !cv) return undefined;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    const ctx = cv.getContext("2d");
+    const N = 36, R = 15;
+    const pts = Array.from({ length: N }, () => ({ x: 0, y: 0, vx: 0, vy: 0 }));
+    const st = { px: 0, py: 0, cx: 0, cy: 0, cvx: 0, cvy: 0, inside: false, el: null, opt: null, last: 0, alpha: 0, born: false, drops: [], raf: 0, t0: performance.now(), nextPop: performance.now() + 2500 };
+    const fit = () => { const d = window.devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+    fit();
+    const OPT = ".hvs-segbtn, .hvs-fpart";
+    const move = (e) => {
+      if (e.pointerType && e.pointerType !== "mouse") return;
+      const seg = e.target.closest && e.target.closest(".hvs-ctl .hvs-seg");
+      st.px = e.clientX; st.py = e.clientY; st.last = performance.now();
+      st.inside = !!seg; st.el = seg;
+      const o = seg && e.target.closest(OPT);
+      st.opt = o && !o.disabled ? o : null;
+      if (seg && !st.born) { // a new blob starts where the mouse enters
+        st.born = true; st.cx = st.px; st.cy = st.py; st.cvx = st.cvy = 0;
+        pts.forEach((p, i) => { const a = (i / N) * Math.PI * 2; p.x = st.px + Math.cos(a) * 2; p.y = st.py + Math.sin(a) * 2; p.vx = p.vy = 0; });
+      }
+      if (!st.raf) st.raf = requestAnimationFrame(tick);
+    };
+    const leave = () => { st.inside = false; st.opt = null; };
+    const drop = (x, y, vx, vy, r) => st.drops.push({ x, y, vx, vy, r, life: 1 });
+    const colour = (t, a) => { // vivid lime <-> fluorescent magenta
+      const s = (Math.sin(t * 0.0009) + 1) / 2, k = s * s * (3 - 2 * s);
+      const r = Math.round(170 + (255 - 170) * k), g = Math.round(255 * (1 - k)), b = Math.round(0 + 230 * k);
+      return `rgba(${r},${g},${b},${a})`;
+    };
+    function tick(now) {
+      st.raf = 0;
+      const W = innerWidth, H = innerHeight;
+      ctx.clearRect(0, 0, W, H);
+      const rested = st.opt && now - st.last > 700;
+      // the centre follows the mouse (or the rested option) with a soft delay
+      let tx = st.px, ty = st.py, rect = null;
+      if (rested) { rect = st.opt.getBoundingClientRect(); tx = rect.left + rect.width / 2; ty = rect.top + rect.height / 2; }
+      st.cvx = (st.cvx + (tx - st.cx) * (rested ? 0.2 : 0.07)) * (rested ? 0.7 : 0.8);
+      st.cvy = (st.cvy + (ty - st.cy) * (rested ? 0.2 : 0.07)) * (rested ? 0.7 : 0.8);
+      st.cx += st.cvx; st.cy += st.cvy;
+      const speed = Math.hypot(st.cvx, st.cvy);
+      st.alpha += ((st.inside ? 1 : 0) - st.alpha) * 0.12;
+      // target shape: a stretched drop while moving, the option's rounded rectangle once rested
+      const ang = Math.atan2(st.cvy, st.cvx), stretch = Math.min(speed * 0.06, 1.2);
+      const k = rested ? 0.24 : 0.1, damp = rested ? 0.74 : 0.8; // rested: stiffer and livelier, a quick bounce
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2, p = pts[i];
+        let gx, gy;
+        if (rect) {
+          const c = Math.cos(a), s = Math.sin(a), n = 0.25; // superellipse: a rectangle with soft corners
+          gx = st.cx + (rect.width / 2 + 2) * Math.sign(c) * Math.pow(Math.abs(c), n);
+          gy = st.cy + (rect.height / 2 + 2) * Math.sign(s) * Math.pow(Math.abs(s), n);
+        } else {
+          const rx = R * (1 + stretch), ry = R / (1 + stretch * 0.5), lx = Math.cos(a) * rx, ly = Math.sin(a) * ry;
+          gx = st.cx + lx * Math.cos(ang) - ly * Math.sin(ang); gy = st.cy + lx * Math.sin(ang) + ly * Math.cos(ang);
+        }
+        const prev = pts[(i + N - 1) % N], next = pts[(i + 1) % N];
+        p.vx = (p.vx + (gx - p.x) * k + ((prev.x + next.x) / 2 - p.x) * 0.08) * damp;
+        p.vy = (p.vy + (gy - p.y) * k + ((prev.y + next.y) / 2 - p.y) * 0.08) * damp;
+        p.x += p.vx; p.y += p.vy;
+      }
+      // shaken too hard: bits at the back tear off
+      if (st.inside && speed > 14 && Math.random() < Math.min(0.9, (speed - 14) / 20)) {
+        const back = pts[Math.floor(((ang + Math.PI) / (Math.PI * 2)) * N + N) % N];
+        drop(back.x, back.y, -st.cvx * 0.25 + (Math.random() - 0.5) * 3, -st.cvy * 0.25 + (Math.random() - 0.5) * 3, 2 + Math.random() * 5);
+      }
+      // now and then a bubble pops off
+      if (st.inside && now > st.nextPop) {
+        st.nextPop = now + 1800 + Math.random() * 3500;
+        const p = pts[Math.floor(Math.random() * N)];
+        const dx = p.x - st.cx, dy = p.y - st.cy, d = Math.hypot(dx, dy) || 1;
+        p.vx += (dx / d) * 6; p.vy += (dy / d) * 6;
+        drop(p.x, p.y, (dx / d) * 2.5, (dy / d) * 2.5 - 1, 3 + Math.random() * 3);
+      }
+      const a = st.alpha * 0.42;
+      if (a > 0.004) {
+        ctx.fillStyle = colour(now - st.t0, a);
+        ctx.beginPath();
+        const m = (i) => ({ x: (pts[i].x + pts[(i + 1) % N].x) / 2, y: (pts[i].y + pts[(i + 1) % N].y) / 2 });
+        const s0 = m(N - 1); ctx.moveTo(s0.x, s0.y);
+        for (let i = 0; i < N; i++) { const q = m(i); ctx.quadraticCurveTo(pts[i].x, pts[i].y, q.x, q.y); }
+        ctx.closePath(); ctx.fill();
+      }
+      st.drops = st.drops.filter((d) => d.life > 0.02);
+      st.drops.forEach((d) => {
+        d.x += d.vx; d.y += d.vy; d.vx *= 0.94; d.vy = d.vy * 0.94 + 0.15; d.life *= 0.93;
+        ctx.fillStyle = colour(now - st.t0, 0.42 * d.life);
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r * (0.4 + 0.6 * d.life), 0, Math.PI * 2); ctx.fill();
+      });
+      if (!st.inside && st.alpha < 0.01 && !st.drops.length) { st.born = false; ctx.clearRect(0, 0, W, H); return; }
+      st.raf = requestAnimationFrame(tick);
+    }
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerleave", leave);
+    window.addEventListener("blur", leave);
+    window.addEventListener("resize", fit);
+    return () => {
+      cancelAnimationFrame(st.raf);
+      document.removeEventListener("pointermove", move);
+      document.removeEventListener("pointerleave", leave);
+      window.removeEventListener("blur", leave);
+      window.removeEventListener("resize", fit);
+    };
+  }, [rootRef]);
+  return <canvas ref={canvasRef} className="hvs-jelly" aria-hidden="true" />;
+}
+
 /* the icons of Reset settings and React Package also animate on mouse press (as on hover): a backwards turn, or the arrow's drop */
 function playIcon(el, kind) {
   if (!el || !el.animate) return;
@@ -5673,6 +5791,7 @@ export default function App() {
   return (
     <div className={`hvs hvt-scope${ctlOpen ? "" : " is-ctl-closed"}`} data-theme={cfg.theme} ref={benchRef}>
       <style>{SCREEN_CSS}</style>
+      <JellyHover rootRef={benchRef} />
 
       <div className="hvs-head">
         <h1 className="hvs-h1">
