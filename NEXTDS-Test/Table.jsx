@@ -240,7 +240,7 @@ const CSS = `
   background:transparent;transition:background-color .15s ease;
   border:1px solid var(--outline);border-radius:var(--component-inputradius);
   font-size:14px;font-weight:600;line-height:21px;white-space:nowrap}
-.hvt-chip:hover{background:var(--container-secondary-background);border-color:var(--border-hover-selected);box-shadow:inset 0 0 0 1px var(--border-hover-selected)} /* 1px border at rest, 2px on hover (nothing moves) */ /* an added filter has no fill, like the closed Filters button; on hover it turns white */
+.hvt-chip:hover{background:var(--container-secondary-background)} /* hover turns it white; the 1px border stays as it is */ /* an added filter has no fill, like the closed Filters button; on hover it turns white */
 .hvt-chip .hvt-icon{width:24px;height:24px}
 /* the x is its own square button; the label and the chevron are one trigger that hovers as one object (background only, 8px corners) */
 .hvt-chip .hvt-chipx{width:24px;height:24px;border-radius:6px} /* inner hovers keep 2px from the chip edge all around */
@@ -267,6 +267,7 @@ const CSS = `
 .hvt-root.hover-row .hvt-group.is-clickable{cursor:pointer}
 /* header (title bar and filter bar): buttons hover with their fill only, no outline */
 .hvt-titlebar :is(.hvt-btn,.hvt-mbtn,.hvt-gbtn,.hvt-icon,.hvt-qf-trigger):not(.is-open):hover,.hvt-filterbar :is(.hvt-btn,.hvt-gbtn,.hvt-icon):hover{box-shadow:none !important}
+.hvt-filterbar .hvt-fgbtn:not(.is-hot):hover{box-shadow:none !important}
 /* pagination: buttons and inputs hover with their fill only, no outline */
 .hvt-pager :is(button,.hvt-mbtn,.hvt-icon):hover{box-shadow:none !important}
 /* experiment: every button inside the table body hovers with its fill only, no outline */
@@ -1430,8 +1431,13 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
   const col = columns.find((c) => c.key === field) || columns[0];
   const type = typeOf(col);
   const mine = draft.items.filter((i) => i.field === field);
-  const countOf = (key) => draft.items.filter((i) => i.field === key && itemIsComplete(i, columns.find((c) => c.key === key))).length;
-  const totalComplete = draft.items.filter((i) => { const c = columns.find((x) => x.key === i.field); return c && itemIsComplete(i, c); }).length;
+  const takesAll = (i) => { // every value of the field chosen: not a filter
+    if (i.operator !== "isAnyOf" || !Array.isArray(i.value) || !optionsOf) return false;
+    const c = columns.find((x) => x.key === i.field); const opts = c ? optionsOf(c) : [];
+    return opts.length > 0 && opts.every((o) => i.value.includes(o));
+  };
+  const countOf = (key) => draft.items.filter((i) => i.field === key && itemIsComplete(i, columns.find((c) => c.key === key)) && !takesAll(i)).length;
+  const totalComplete = draft.items.filter((i) => { const c = columns.find((x) => x.key === i.field); return c && itemIsComplete(i, c) && !takesAll(i); }).length;
 
   const blank = (key) => {
     const c = columns.find((x) => x.key === key);
@@ -2327,9 +2333,17 @@ export function DataTable({
     return columns.map((c) => (count[c.title] > 1 ? { ...c, filterLabel: `${c.title} ${pos[c.key]}` } : c));
   }, [columns, columnsProp]);
   const colByKey = useMemo(() => Object.fromEntries(filterCols.map((c) => [c.key, c])), [filterCols]);
+  /* a choice of values that takes every value (or none) filters nothing: it is not shown or counted as a filter */
+  const coversAll = (i) => {
+    if (i.operator !== "isAnyOf" || !Array.isArray(i.value)) return false;
+    const c = colByKey[i.field];
+    if (!c) return false;
+    const opts = c.options && c.options.length ? c.options : [...new Set(localRows.map((r) => r[c.key]).filter((v) => v !== undefined && v !== null && v !== ""))];
+    return opts.length > 0 && opts.every((o) => i.value.includes(o));
+  };
   const activeItems = useMemo(
-    () => model.items.filter((i) => colByKey[i.field] && itemIsComplete(i, colByKey[i.field])),
-    [model, colByKey]
+    () => model.items.filter((i) => colByKey[i.field] && itemIsComplete(i, colByKey[i.field]) && !coversAll(i)),
+    [model, colByKey, localRows] // eslint-disable-line
   );
 
   const updateModel = (next) => {
@@ -4296,7 +4310,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 09:45"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 09:49"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
