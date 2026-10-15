@@ -2276,26 +2276,33 @@ export function DataTable({
     const t = root && (root.querySelector(".hvt-filterbar [data-filter-trigger]") || root.querySelector(".hvt-titlebar [data-filter-trigger]"));
     const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!el || !t || reduce || !el.animate) { setPanel(null); return; }
+    closingRef.current = true;
+    // measured on the next frame, after Apply or Clear All have changed the filter bar, so the panel folds into where the button ends up
+    requestAnimationFrame(() => {
+    if (!el.isConnected || !t.isConnected) { closingRef.current = false; setPanel(null); return; }
     const pr = el.getBoundingClientRect();
     let tr = t.getBoundingClientRect();
-    const mb = t.closest(".hvt-filterbar") && t.parentElement;
+    const bar = t.closest(".hvt-filterbar"), mb = bar && t.parentElement;
+    let shift = 0;
     if (mb) { // on the filter bar the button grows back to the bar's height while the panel folds: fold into the size it is growing to
       const r = mb.getBoundingClientRect(), top = r.top + (parseFloat(getComputedStyle(mb).paddingTop) || 0);
-      tr = { left: tr.left, width: tr.width, top, height: Math.max(r.bottom - top, tr.height) };
+      const grow = barH.current != null ? barH.current - bar.getBoundingClientRect().height : 0; // the bar may still be growing or shrinking
+      tr = { left: tr.left, width: tr.width, top, height: Math.max(r.bottom + grow - top, 32) };
+      shift = grow; // the panel sits in the flow below the bar (absolute, no top), so it rides up and down with it
     }
     const cur = getComputedStyle(el).transform;
     const base = cur && cur !== "none" ? cur : "";
-    closingRef.current = true;
     setFolding(true);
     el.style.transformOrigin = "0 0";
     el.style.pointerEvents = "none";
     const a = el.animate([
       { transform: base || "none", opacity: 1 },
-      { transform: `${base} translate(${tr.left - pr.left}px, ${tr.top - pr.top}px) scale(${tr.width / pr.width}, ${tr.height / pr.height})`, opacity: 0 },
+      { transform: `${base} translate(${tr.left - pr.left}px, ${tr.top - pr.top - shift}px) scale(${tr.width / pr.width}, ${tr.height / pr.height})`, opacity: 0 },
     ], { duration: 260, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
     const done = () => { closingRef.current = false; setPanel(null); setFolding(false); };
     a.onfinish = done;
     a.oncancel = done;
+    });
   };
   /* drag or long press on the Filters button: the panel opens detached and follows the pointer */
   const trigRef = useRef(null);
@@ -3457,9 +3464,43 @@ export function DataTable({
   };
   const rowAction = (value, r) => { if (value === "view") { if (onView) onView(r); } else if (value === "edit") startEdit(r); else if (value === "delete") requestDelete(r); };
 
+  /* the filter bar never jumps: its height and its chips' places animate when filters are added, removed or cleared */
+  const barRef = useRef(null);
+  const barKey = JSON.stringify([fbMounted, filterUi, activeItems]);
+  const barH = useRef(null); // the bar's height once settled
+  const barAnim = useRef(null);
+  const chipPos = useRef({});
+  useLayoutEffect(() => {
+    const bar = barRef.current;
+    if (!bar) { barH.current = null; chipPos.current = {}; return; }
+    const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ease = { duration: 260, easing: "cubic-bezier(.4,0,.2,1)" };
+    const running = barAnim.current && barAnim.current.playState === "running" ? barAnim.current : null;
+    const from = running ? bar.getBoundingClientRect().height : barH.current;
+    if (running) running.cancel();
+    const to = bar.getBoundingClientRect().height;
+    if (from != null && Math.abs(from - to) > 0.5 && !reduce && bar.animate) {
+      const a = bar.animate([{ height: `${from}px`, overflow: "hidden" }, { height: `${to}px`, overflow: "hidden" }], ease);
+      barAnim.current = a;
+    }
+    barH.current = to;
+    const base = bar.getBoundingClientRect();
+    const next = {};
+    bar.querySelectorAll("[data-chip]").forEach((c) => {
+      const r = c.getBoundingClientRect(), id = c.getAttribute("data-chip");
+      next[id] = { x: r.left - base.left, y: r.top - base.top };
+      const p = chipPos.current[id];
+      if (reduce || !c.animate) return;
+      if (!p) { if (Object.keys(chipPos.current).length) c.animate([{ opacity: 0 }, { opacity: 1 }], ease); return; } // a new chip fades in
+      const dx = p.x - next[id].x, dy = p.y - next[id].y;
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) c.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], ease); // a chip that moves glides to its new place
+    });
+    chipPos.current = next;
+  }, [barKey]); // only when the chips change: other renders (hover, the panel folding) leave a running animation alone
+
   const filterBarEl = fbMounted ? (
     <Reveal open={fbOpen} instant={fbFirst.current} flat>
-    <div className="hvt-filterbar">
+    <div className="hvt-filterbar" ref={barRef}>
       {filterUi === "group" ? (
         <div className="hvt-mb hvt-mb--secondary">
           <button type="button" className={`hvt-mbtn hvt-fgbtn${panel ? " is-open is-down" : ""}${panel && fgDetached ? " is-detached" : ""}${trigHot ? " is-hot" : ""}${folding ? " is-folding" : ""}`} data-filter-trigger aria-haspopup="dialog"
@@ -3484,7 +3525,7 @@ export function DataTable({
         {activeItems.map((it) => {
           const label = chipLabel(it, colByKey[it.field], optionsOf(colByKey[it.field]).length);
           return (
-            <span className="hvt-chip" key={it.id}>
+            <span className="hvt-chip" key={it.id} data-chip={it.id}>
               <button type="button" className="hvt-icon hvt-chipx" aria-label={`Remove filter ${label}`}
                       onClick={() => updateModel({ ...model, items: model.items.filter((x) => x.id !== it.id) })}>
                 <span className="hvt-xspin" aria-hidden="true">{Icons.Close}</span>
@@ -4448,7 +4489,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-15 12:45"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-15 13:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
