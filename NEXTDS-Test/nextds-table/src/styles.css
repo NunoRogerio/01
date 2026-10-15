@@ -149,7 +149,7 @@
 .hvt-root.has-vscroll .hvt-gutter{width:max(16px,var(--hvt-tablepad))}
 .hvt-titlewrap{flex:1;min-width:0;display:flex;align-items:flex-end;gap:8px} /* the description sits on the bottom of the title */
 .hvt-infobtn{width:24px;height:24px;flex:none;border-radius:4px;color:var(--content-placeholder)}
-.hvt-infobtn svg{width:16px;height:16px}
+.hvt-infobtn svg{width:12px;height:12px} /* the XS info icon (12px) in a 24px press area */
 .hvt-infobtn:hover{color:var(--content-primary)}
 /* NEXT tooltip: a small raised panel in the dropdown colours and elevation, 14px text, 8px 12px padding */
 .hvt-tip{position:fixed;z-index:3000;max-width:320px;padding:8px 12px;border-radius:var(--component-inputradius);
