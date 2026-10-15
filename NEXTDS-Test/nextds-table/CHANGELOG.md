@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3 — 2026-10-15
+
+- With sideways scroll, the divider before the row actions looks like the titles' divider (1px, half the row height, centred) and always shows in the rows.
+
 ## 0.4.2 — 2026-10-15
 
 - Single-choice menus (Table Density): when another item is pressed, the old selection closes with the same timing as the new one opens.
