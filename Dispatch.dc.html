@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792138652"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792146973"></script>
+<script src="prefs.js?v=1792147062"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792136318"></script>
@@ -895,7 +895,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
     </sc-for>
     <!-- Actions: side by side on one row for a viewed fire (saves a row), stacked otherwise -->
-    <div data-wf-actbar="1" style="position: relative; display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 32px 16px 0">
+    <div data-wf-actbar="1" data-wf-float="{{vf.decD}}" style="--wf-actb: {{sbPadB}}; position: relative; display: flex; flex-direction: {{actDir}}; gap: {{actGap}}; flex-shrink: 0; padding: 32px 16px 0">
     <!-- (Oct 16) the fixed foot strip carries the stripe pattern along its top edge (16px band, the header's pattern), so it reads apart from the page scrolling above -->
     <span aria-hidden="true" class="wf-stripes" data-wf-sp="1" style="--wf-y: rgba(0, 0, 0, 0.035); background: repeating-linear-gradient(-60deg, var(--wf-y) 0 8.49px, transparent 8.49px 16.97px); position: absolute; left: 0; right: 0; top: 0; height: 16px; pointer-events: none"></span>
     <!-- A fire confirmed here with no resources yet: a floating glass pill (no outline, the content behind it slightly darkened) says so in the red of the Crews tab dot, and takes you to the Crews tab -->
