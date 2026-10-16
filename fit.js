@@ -490,7 +490,7 @@ window.__wfBlink=function(path,dur){
     var r=t.getBoundingClientRect();if(r.width<1||r.height<1)return;
     var cs=getComputedStyle(t),k=r.width/(t.offsetWidth||r.width);
     box=document.createElement('div');box.id='wf-fx';
-    box.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;border-radius:'+(parseFloat(cs.borderTopLeftRadius)||0)*k+'px';
+    box.style.cssText='left:'+r.left+'px;top:'+r.top+'px;width:'+r.width+'px;height:'+r.height+'px;border-radius:'+(/%$/.test(cs.borderTopLeftRadius)?cs.borderTopLeftRadius:((parseFloat(cs.borderTopLeftRadius)||0)*k+'px'))+(Math.abs(r.width-r.height)<2&&parseFloat(cs.borderTopLeftRadius)>=r.height/2/k-1?';border-radius:50%':'');
     var x=e.clientX-r.left,y=e.clientY-r.top,R=Math.hypot(Math.max(x,r.width-x),Math.max(y,r.height-y));
     dot=document.createElement('i');dot.style.cssText='left:'+(x-R)+'px;top:'+(y-R)+'px;width:'+2*R+'px;height:'+2*R+'px;transform:scale('+Math.min(1,24/Math.max(R,1))+')';   // starts as a 48px circle under the finger, then grows to cover the element
     box.appendChild(dot);document.body.appendChild(box);sx=e.clientX;sy=e.clientY;live=true;
