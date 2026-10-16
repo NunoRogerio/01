@@ -729,6 +729,8 @@
 .hvt-editcell > *{min-width:0}
 .hvt-editcell > input{width:100%}
 .hvt-edittools{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--border-default)}
+.hvt-editslot{display:block;width:100%;height:32px;border-radius:var(--component-inputradius);background:color-mix(in srgb,var(--cat1-140) 18%,transparent)} /* a field nobody fills: a shape of its size, a darker blue than the panel */
+.hvt-root[data-theme="wicked"] .hvt-editslot,.hvt-scope[data-theme="wicked"] .hvt-editslot{background:rgba(0,0,0,.24)}
 .hvt-editnote{margin-right:auto;padding-left:8px;font-size:12px;line-height:18px;color:var(--content-placeholder)} /* adding: every field is needed, said once at the bottom left */
 .hvt-card .hvt-editfields{padding:8px 0}
 .hvt-card .hvt-editrow{margin-bottom:5px}

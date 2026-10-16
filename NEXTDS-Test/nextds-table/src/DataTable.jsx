@@ -1402,10 +1402,10 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         {columns.map((c) => {
           const type = typeOf(c);
           let control = null;
-          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding
+          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding: a shape holds their place
             control = mode === "edit" && !c.viz ? (
               <input className="hvt-text" disabled aria-label={c.title} value={c.format ? c.format(draft[c.key]) : (draft[c.key] ?? "")} readOnly />
-            ) : null;
+            ) : <span className="hvt-editslot" aria-hidden="true" />;
           } else if (type === "singleSelect") {
             control = (
               <MenuButton variant="secondary" block role="listbox" ariaLabel={c.title} placeholder={`Choose ${c.title}…`}

@@ -741,6 +741,8 @@ const CSS = `
 .hvt-editcell > *{min-width:0}
 .hvt-editcell > input{width:100%}
 .hvt-edittools{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--border-default)}
+.hvt-editslot{display:block;width:100%;height:32px;border-radius:var(--component-inputradius);background:color-mix(in srgb,var(--cat1-140) 18%,transparent)} /* a field nobody fills: a shape of its size, a darker blue than the panel */
+.hvt-root[data-theme="wicked"] .hvt-editslot,.hvt-scope[data-theme="wicked"] .hvt-editslot{background:rgba(0,0,0,.24)}
 .hvt-editnote{margin-right:auto;padding-left:8px;font-size:12px;line-height:18px;color:var(--content-placeholder)} /* adding: every field is needed, said once at the bottom left */
 .hvt-card .hvt-editfields{padding:8px 0}
 .hvt-card .hvt-editrow{margin-bottom:5px}
@@ -2369,10 +2371,10 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         {columns.map((c) => {
           const type = typeOf(c);
           let control = null;
-          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding
+          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding: a shape holds their place
             control = mode === "edit" && !c.viz ? (
               <input className="hvt-text" disabled aria-label={c.title} value={c.format ? c.format(draft[c.key]) : (draft[c.key] ?? "")} readOnly />
-            ) : null;
+            ) : <span className="hvt-editslot" aria-hidden="true" />;
           } else if (type === "singleSelect") {
             control = (
               <MenuButton variant="secondary" block role="listbox" ariaLabel={c.title} placeholder={`Choose ${c.title}…`}
@@ -5017,7 +5019,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 11:30"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 11:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
