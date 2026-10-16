@@ -266,7 +266,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     'html.wf-dark .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)!important}html.wf-dark .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)!important}html.wf-dark .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)!important}' +
     /* (Oct 16, 11:55) the projection switcher over a map wears the decisions' glass: the white frosted track, dark options; the chosen one stays the dark grey thumb, as glass too */
     '.wf-seg.wf-seg-glass{background:rgba(255, 255, 255, 0.62)!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important}' +
-    '.wf-seg.wf-seg-glass>.segthumb>.segblob{background:rgba(58, 58, 60, 0.78)!important;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}' +
+    '.wf-seg.wf-seg-glass>.segthumb>.segblob{background:var(--wf-pri-bg)!important;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}' +
     '.wf-seg.wf-seg-glass .segopt[aria-selected=false]{color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}.wf-seg.wf-seg-glass .segopt[aria-selected=true]{color:rgb(255, 255, 255)!important;-webkit-text-fill-color:rgb(255, 255, 255)!important}' +
     'html.wf-dark .wf-seg.wf-seg-glass{background:rgba(44, 44, 46, 0.62)!important}html.wf-dark .wf-seg.wf-seg-glass .segopt[aria-selected=false]{color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
     /* (Oct 16, 12:46, trial) the incident header's back and team buttons: white glass, dark grey icon and text, the tooltips' shadow */

@@ -1351,20 +1351,25 @@ window.__wfKpiDrag = function (self, key, grp, onTap, SK) {
           d.slots = L.map((c) => { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2) / d.k, (r.top + r.height / 2) / d.k]; });
           try { d.el.setPointerCapture(d.pid); } catch (x) {} try { if (navigator.vibrate) navigator.vibrate(12); } catch (x) {}
           const kc = d.el.querySelector('[data-wf-kpicard]'); if (kc) kc.style.boxShadow = '0 0 24px rgba(0,0,0,0.16)';
-          d.el.style.zIndex = '3'; d.el.style.transition = 'none'; d.el.style.transform = 'scale(1.04)'; window.__wfKpiLift = true; }, 250); },
+          d.el.style.zIndex = '3'; d.el.style.transition = 'transform .22s cubic-bezier(.34,1.4,.5,1)'; d.el.style.transform = 'scale(1.04)'; window.__wfKpiLift = true; cards().forEach((c) => { if (c !== d.el) c.style.transition = 'transform .42s cubic-bezier(.34,1.3,.5,1)'; }); }, 250); },   /* (Oct 16, 21:42) a soft lift; the others glide to their new places with a gentle settle */
       move: (e) => { const d = self._kd; if (!d || d.key !== key) return;
         if (!d.lifted) { if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) > 8) { clearTimeout(self._kpT); self._kd = null; } return; }
         const dx = (e.clientX - d.x0) / d.k, dy = (e.clientY - d.y0) / d.k, L = cards(), me = d.slots[d.idx], px = me[0] + dx, py = me[1] + dy;
         let best = d.idx, bd = 1e9; d.slots.forEach((q, j) => { const dd = Math.hypot(q[0] - px, q[1] - py); if (dd < bd) { bd = dd; best = j; } }); d.to = best;
         e.preventDefault && e.preventDefault();
-        d.el.style.transform = 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(1.04)';
+        if (!d.mv) { d.mv = 1; d.el.style.transition = 'none'; } d.el.style.transform = 'translate(' + dx.toFixed(1) + 'px, ' + dy.toFixed(1) + 'px) scale(1.04)';
         const order = L.map((_, j) => j); order.splice(d.idx, 1); order.splice(d.to, 0, d.idx);
         order.forEach((j, pos) => { if (j === d.idx) return; const c = L[j], a = d.slots[j], b = d.slots[pos]; c.style.transform = pos !== j ? 'translate(' + (b[0] - a[0]).toFixed(1) + 'px, ' + (b[1] - a[1]).toFixed(1) + 'px)' : ''; }); },
       up: () => { clearTimeout(self._kpT); window.__wfKpiLift = false; const d = self._kd; self._kd = null; if (d && !d.lifted && d.key === key && typeof onTap === 'function') { onTap(); return; } if (!d || !d.lifted) return; try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(10); }))(); } catch (x) {}
         const L = cards().map((c) => c.getAttribute('data-wf-kpi')), from = d.idx, to = d.to; if (to !== from) { const [x] = L.splice(from, 1); L.splice(to, 0, x); }
         let all = null; try { all = JSON.parse(localStorage.getItem(SK) || 'null'); } catch (x) {} all = Array.isArray(all) ? all : []; const rest = all.filter((q) => L.indexOf(q) < 0);
         try { localStorage.setItem(SK, JSON.stringify(L.concat(rest))); } catch (x) {}
-        window.__wfKpiDrop = Date.now(); reset(); self.forceUpdate(); }
+        window.__wfKpiDrop = Date.now();
+        /* (Oct 16, 21:42) the drop lands softly: each card glides from where it shows to its new place and settles with a gentle bounce (FLIP), the lifted one included */
+        const B0 = {}; cards().forEach((c) => { const r = c.getBoundingClientRect(); B0[c.getAttribute('data-wf-kpi')] = [r.left, r.top]; });
+        reset(); cards().forEach((c) => { c.style.transition = 'none'; }); self.forceUpdate();
+        requestAnimationFrame(() => requestAnimationFrame(() => { cards().forEach((c) => { c.style.transition = ''; const b = B0[c.getAttribute('data-wf-kpi')]; if (!b) return; const r = c.getBoundingClientRect(), dx = (b[0] - r.left) / d.k, dy = (b[1] - r.top) / d.k; if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+          try { c.style.zIndex = c.getAttribute('data-wf-kpi') === d.key ? '3' : ''; const an = c.animate([{ transform: 'translate(' + dx + 'px, ' + dy + 'px)' }, { transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.34,1.3,.5,1)' }); an.onfinish = () => { c.style.zIndex = ''; }; } catch (x) {} }); })); }
     };
 };
 /* a card that was just moved is not also tapped (a unit switch or link inside it) */
