@@ -583,7 +583,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     if (!ov) { ov = document.createElement('div'); ov.__wfOv = true; ov.__wfOwn = el; OVS.push(ov); ov.setAttribute('aria-hidden', 'true'); ov.style.cssText = 'position:absolute;pointer-events:none;z-index:2;transition:opacity .2s ease'; el[key] = ov; }
     if (ov.parentElement !== par) { if (getComputedStyle(par).position === 'static') par.style.position = 'relative'; par.appendChild(ov); }
     var r = el.getBoundingClientRect(), pr = par.getBoundingClientRect(), k = pr.width / (par.offsetWidth || pr.width) || 1, cs = getComputedStyle(el);
-    var clear = col.replace(/^rgb\(([^)]+)\)$/, 'rgba($1, 0)'), topY = Math.floor((r.top - pr.top) / k) + (parseFloat(cs.borderTopWidth) || 0), bot = Math.ceil((r.bottom - pr.top) / k) - (parseFloat(cs.borderBottomWidth) || 0);
+    var clear = col.replace(/^rgb\(([^)]+)\)$/, 'rgba($1, 0)').replace(/^rgba\(([^,]+),([^,]+),([^,]+),[^)]*\)$/, 'rgba($1,$2,$3, 0)'), topY = Math.floor((r.top - pr.top) / k) + (parseFloat(cs.borderTopWidth) || 0), bot = Math.ceil((r.bottom - pr.top) / k) - (parseFloat(cs.borderBottomWidth) || 0);
     ov.style.left = Math.floor((r.left - pr.left) / k) + 'px'; ov.style.width = Math.ceil(r.width / k) + 'px'; ov.style.height = hh + 'px'; ov.style.top = (side === 'top' ? topY : bot - hh) + 'px';
     ov.style.borderRadius = side === 'top' ? cs.borderTopLeftRadius + ' ' + cs.borderTopRightRadius + ' 0 0' : '0 0 ' + cs.borderBottomRightRadius + ' ' + cs.borderBottomLeftRadius;
     ov.style.background = 'linear-gradient(to ' + (side === 'top' ? 'top' : 'bottom') + ', ' + clear + ' 0, ' + col + ' 100%)'; ov.style.opacity = '1';
@@ -597,6 +597,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     var th = document.documentElement.classList.contains('wf-dark') + '|' + (document.documentElement.getAttribute('style') || '').length;
     if ((less || more) && (el.__wfBcTh !== th || el.__wfBc === undefined)) { el.__wfBc = behindCol(el); el.__wfBcTh = th; }
     var col = (less || more) ? el.__wfBc : null;
+    /* (Oct 16, 20:28) a panel may name its own fade colour (data-wf-fadecol): the incident page's fade is the cards' drop-shadow tint, not white */
+    if (col && el.getAttribute && el.getAttribute('data-wf-fadecol')) col = el.getAttribute('data-wf-fadecol');
     if (col && el.parentElement && el.parentElement.closest('[data-wf-sb="panel"], [data-wf-sb="edge"]')) col = null;   /* (Oct 11, 21:45) over a stripe band: fade the content itself (mask), never paint the surface colour over the band */
     if (col) {
       if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; el.__wfM = ''; }
