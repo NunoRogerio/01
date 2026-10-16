@@ -2083,3 +2083,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 12:26) "Dismiss" becomes "No action" (pt "Sem ação"), the CAD disposition for a report closed with no units sent, with a slashed circle icon (the X read as closing a panel); its past tense "No action. Closed" (pt "Sem ação. Encerrado").
 - (Oct 16, 12:26) Fix: Dispatch in the panel was always disabled: the retired safety pin still held Send locked until a swipe; the panel's button now depends only on at least one unit being switched on.
 - (Oct 16, 12:28, every map) Map tooltip panels wear the decisions' glass: rgba(255, 255, 255, 0.62) (civil detections the civil blue at 0.62), blur 16px, saturate 180%, no border; their even 24px shadow stays.
+- (Oct 16, 12:30, trial) The square decisions get the map tooltips' drop shadow (0 0 24px rgba(0, 0, 0, 0.16), even all round) to stand out a little more.
