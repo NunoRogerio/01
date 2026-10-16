@@ -1016,13 +1016,13 @@ class Component extends DCLogic {
       this._scK = key; this._scF = f3; this._srBox = BX.length ? [Math.min(...BX.map((b) => b[0])), Math.min(...BX.map((b) => b[1])), Math.max(...BX.map((b) => b[2])), Math.max(...BX.map((b) => b[3]))] : null; return f3; }
     /* (Oct 11, 21:00) a Cal OES region: in scope when inside any of its counties */
     if (RC) { const F = RC.map((n) => { const save = this.props; this.props = Object.assign({}, save, { scopeCo: n }); this._scK = null; let g = null; try { g = this.inScopeFn(); } finally { this.props = save; } return g; }).filter(Boolean);
-      const f2 = F.length ? (x, y) => F.some((g) => g(x, y)) : null; this._scK = key; this._scF = f2; return f2; }
+      const f2 = F.length ? (x, y) => F.some((g) => g(x, y)) : null; if (f2 && F.length === RC.length) { this._scK = key; this._scF = f2; } return f2; }
     const reg = p.scopeCo ? G.counties[p.scopeSt + '|' + p.scopeCo] : G.states[p.scopeSt];
     let f = null;
     if (reg) {
       const c0 = reg.c || [(reg.box[0] + reg.box[2]) / 2, (reg.box[1] + reg.box[3]) / 2];
       const la0 = 34.19 - (c0[1] - 662) / 2829, lo0 = (c0[0] - 518) / 2345 - 118.13;
-      const a = G.P(la0, lo0), b = G.P(la0 + 0.108, lo0), BUF = Math.abs(b[1] - a[1]) || 250;   // ~12 km in map units
+      const BUF = 0;   /* (Oct 16, 19:30) strictly the selected area's stations (the ~12 km band over the border is gone) */
       const poly = reg.pts && reg.pts.length > 2 ? reg.pts : null, bx = reg.box;
       const segD = (x, y, A, B) => { const dx = B[0] - A[0], dy = B[1] - A[1], L = dx * dx + dy * dy; let u = L ? ((x - A[0]) * dx + (y - A[1]) * dy) / L : 0; u = Math.max(0, Math.min(1, u)); const qx = A[0] + u * dx - x, qy = A[1] + u * dy - y; return Math.sqrt(qx * qx + qy * qy); };
       f = poly ? (x, y) => {
@@ -1033,8 +1033,11 @@ class Component extends DCLogic {
         return false;
       } : (x, y) => x >= bx[0] - BUF && x <= bx[2] + BUF && y >= bx[1] - BUF && y <= bx[3] + BUF;
     }
-    this._scK = key; this._scF = f; return f;
+    if (f) { this._scK = key; this._scF = f; }   /* (Oct 16, 19:30) not cached until the area's outline is in: an early empty answer showed every station of the country */
+    return f;
   }
+  /* the main map's area needs its filter (a state, county, unit or Portuguese area): until it can be built, no stations rather than all of them */
+  scopeWants() { const p = this.props; return !!(p.scopeSt && p.scopeSt !== 'US' && p.mode !== 'pin' && p.mode !== 'spread'); }
   // Road route from a suggested station to the fire or ignition point (OpenStreetMap roads via the OSRM router):
   // real distance, drive time and the path the crews would drive. Null while loading; { fail: true } if unavailable.
   routeOf(q) {
@@ -1541,11 +1544,15 @@ class Component extends DCLogic {
       return [withTip(at(st.x, st.y + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st }), st.name, (BS[String(st.id)] ? BS[String(st.id)].tag + '. ' : '') + (PTL ? 'O seu quartel.' : 'Your station.'))].concat(bat); })();
     const fileStations = SF ? (() => {
       const G = this.geo(), V = [];
-      const zr = s / Math.max(1e-9, this.zMin()), SK = this.thinKeep('st', SF.pts, (q) => q, (i, j) => SF.rows[i][0] < SF.rows[j][0], zr < 2 ? 140 : zr < 4 ? 100 : zr < 8 ? 80 : 64, s);   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
+      /* (Oct 16, 19:30) thinned among the selected area's stations only (thinning all of the country first left the area almost empty) */
+      const inSc0 = this.recMode() ? null : this.inScopeFn(), scK = inSc0 ? (p.scopeSt || '') + '|' + (p.scopeCo || '') : '';
+      if (SF._scK !== scK) { SF._scK = scK; SF._idx = inSc0 ? SF.pts.map((q, i) => (inSc0(q[0], q[1]) ? i : -1)).filter((i) => i >= 0) : null; SF._ipts = SF._idx ? SF._idx.map((i) => SF.pts[i]) : SF.pts; }
+      const zr = s / Math.max(1e-9, this.zMin()), SK0 = this.thinKeep('st' + scK, SF._ipts, (q) => q, (i, j) => (SF._idx ? SF.rows[SF._idx[i]][0] < SF.rows[SF._idx[j]][0] : SF.rows[i][0] < SF.rows[j][0]), zr < 2 ? 140 : zr < 4 ? 100 : zr < 8 ? 80 : 64, s), SK = SF._idx ? new Set([...SK0].map((i) => SF._idx[i])) : SK0;   // fewer when zoomed out: lighter and clearer   // fixed per zoom step: no popping while panning
       // On a fire or candidate only the recommended stations show (see nearSt), labelled with their distance;
       // who is actually committed is not published.
       const NEAR = new Map(this.nearSt().map((q) => [q.i, q.km])), onlyRec = this.recMode();
       const inSc = onlyRec ? null : this.inScopeFn();
+      if (!onlyRec && !inSc && this.scopeWants()) return [];   /* (Oct 16, 19:30) only the selected area's stations: none until its outline is known */
       for (let i = 0; i < SF.rows.length; i++) { const q = SF.pts[i]; if ((onlyRec ? NEAR.has(i) : (SK.has(i) || NEAR.has(i))) && vis(q[0], q[1]) && (!inSc || NEAR.has(i) || inSc(q[0], q[1]))) V.push(i); }
       const k = 1;   /* (Oct 4) no stride: it depended on how many were in view, so stations blinked while panning. The map-fixed grid already bounds the count */
       const out = [];
@@ -1572,7 +1579,7 @@ class Component extends DCLogic {
       const st = { id, type: ty || 'node', name: nm || t.official_name || '', lat: la, lon: lo, tags: t, x: xy[0], y: xy[1], kmX, kmY };
       return withTip(at(xy[0], xy[1] + 4, { label: '', icon: 'M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z', fill: 'rgba(64,156,255,0.6)', bg: 'transparent', bd: 'transparent', fg: '#F2F2F7', ic: '#FFFFFF', op: 1, _st: st,
         pick: () => { window.__wfMem = Object.assign(window.__wfMem || {}, { station: st }); try { window.sessionStorage.setItem('wf-station', JSON.stringify(st)); } catch (e) {} } }), nm || 'Fire station', td);
-    }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); return !f || !o._st || f(o._st.x, o._st.y); }) : [];
+    }).filter(onScreen).filter((o) => { const f = this.inScopeFn(); if (!f) return !this.scopeWants(); return !o._st || f(o._st.x, o._st.y); }) : [];
     const selSt = ST.find((q) => q[0] === selId) || ST[1];
     const FX = Number(p.fireX) || 610, FY = Number(p.fireY) || 290;
     const qx = (selSt[2] + FX) / 2 + (selSt[3] - FY) * 0.18, qy = (selSt[3] + FY) / 2 - (selSt[2] - FX) * 0.18;
