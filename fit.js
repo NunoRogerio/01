@@ -1463,9 +1463,13 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 // whenever the value changes (up or down), easing in and out over 0.9s. Under 10 it keeps one decimal (a comma in Portuguese).
 (function(){
   var fmt=function(v){var pt=window.__wfLang==='pt';if(v<10){var t=(Math.round(v*10)/10).toFixed(1).replace(/\.0$/,'');return pt?t.replace('.',','):t;}return Math.round(v).toLocaleString(pt?'pt-PT':'en-US');};
+  /* (Oct 16, 19:09) a projected area takes the colour of its fire size class (NWCG, by acres) as it counts: grey up to class B, then
+     amber (C, 10 ac), orange (D, 100 ac), red orange (E, 300 ac), red from class F (1,000 ac), the fifth level */
+  var SZ=[[1000,'rgb(215, 0, 21)'],[300,'rgb(196, 46, 15)'],[100,'rgb(181, 74, 0)'],[10,'rgb(138, 97, 0)'],[0,'rgb(72, 72, 74)']];
+  var tint=function(el,v){var h=el.closest&&el.closest('[data-wf-sizecls]');if(!h)return;var ac=v*(parseFloat(h.getAttribute('data-wf-sizecls'))||1),c=SZ[SZ.length-1][1];for(var i=0;i<SZ.length;i++){if(ac>=SZ[i][0]){c=SZ[i][1];break;}}if(h.style.color!==c)h.style.color=c;};
   var run=function(el){var to=parseFloat(el.getAttribute('data-wf-count'));if(!isFinite(to))return;var from=el.__wfCv;el.__wfCv=to;
-    if(from==null||from===to){el.textContent=fmt(to);return;}cancelAnimationFrame(el.__wfCr||0);var T0=performance.now(),D=900;
-    (function step(t){var k=Math.min(1,(t-T0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;el.textContent=fmt(from+(to-from)*e);if(k<1)el.__wfCr=requestAnimationFrame(step);})(T0);};
+    if(from==null||from===to){el.textContent=fmt(to);tint(el,to);return;}cancelAnimationFrame(el.__wfCr||0);var T0=performance.now(),D=900;
+    (function step(t){var k=Math.min(1,(t-T0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,cur=from+(to-from)*e;el.textContent=fmt(cur);tint(el,cur);if(k<1)el.__wfCr=requestAnimationFrame(step);})(T0);};
   var scan=function(){try{document.querySelectorAll('[data-wf-count]').forEach(function(el){var v=parseFloat(el.getAttribute('data-wf-count'));if(el.__wfCv!==v)run(el);});}catch(x){}};
   var start=function(){try{new MutationObserver(function(M){for(var i=0;i<M.length;i++){var m=M[i];if(m.type==='attributes'&&m.attributeName==='data-wf-count'){run(m.target);}else if(m.type==='childList'){scan();return;}}}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['data-wf-count']});}catch(x){}scan();};
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
