@@ -1886,9 +1886,9 @@ class Component extends DCLogic {
                   if (onPin) { if (th0) th0.style.transition = 'none'; if (g) g.style.transition = 'none'; { const lb = el.querySelector('.wf-ull'); if (lb) lb.style.transition = 'none'; } el.classList.add('drag'); }
                   me._ul = { el, x0: e.clientX, w: r.width, max: r.width - 64, d: 0, pin: onPin, mv: 0, t0: Date.now() }; if (onPin) paint(me._ul);
                   clearTimeout(me._ulLP); me._ulLP = setTimeout(() => { const T = me._ul; if (T && T.mv < 6) fin(true, true); }, 3000);   /* (Oct 15, 15:40) 3 s (was 5) */ },
-                /* (Oct 15, 15:31) a strong snap: once the pin is within 1.5x its diameter (72px) of the left end, it jumps there and unlocks (was 70%) */
-                ulMove: (e) => { const T = me._ul; if (!T) return; T.mv = Math.max(T.mv, Math.abs(e.clientX - T.x0)); if (T.mv >= 6) clearTimeout(me._ulLP); if (!T.pin) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); if (T.max - T.d <= 48 * 1.5) { fin(true); return; } paint(T); },
-                ulUp: () => { const T = me._ul; if (!T) return; clearTimeout(me._ulLP); const tap = T.mv < 6 && Date.now() - T.t0 < 600; fin(T.pin && T.max - T.d <= 48 * 1.5); if (tap) setTimeout(() => nudge(T.el), 20); },
+                /* (Oct 16, 09:00) the snap: once the pin has travelled 60% of its track (right to left), it jumps to the left end and unlocks, on the move or on release (was 72px from the end) */
+                ulMove: (e) => { const T = me._ul; if (!T) return; T.mv = Math.max(T.mv, Math.abs(e.clientX - T.x0)); if (T.mv >= 6) clearTimeout(me._ulLP); if (!T.pin) return; T.d = Math.max(0, Math.min(T.max, T.x0 - e.clientX)); if (T.d >= T.max * 0.6) { fin(true); return; } paint(T); },
+                ulUp: () => { const T = me._ul; if (!T) return; clearTimeout(me._ulLP); const tap = T.mv < 6 && Date.now() - T.t0 < 600; fin(T.pin && T.d >= T.max * 0.6); if (tap) setTimeout(() => nudge(T.el), 20); },
                 sendDis: UL && nOn ? 'false' : 'true', sendCls: UL && nOn ? 'on' : 'wf-sec', send: UL && nOn && go ? () => { clearTimeout(me._ulT); clearTimeout(me._ulT2); clearTimeout(me._ulF); me.setState({ iaUnl: false, iaFull: false }); go(); } : () => {} });
               if (!opn && st.iaUnl) { clearTimeout(this._ulT); clearTimeout(this._ulT2); clearTimeout(this._ulF); setTimeout(() => this.setState({ iaUnl: false, iaFull: false }), 0); } }
             o.ia = Object.assign({}, o.ia, { d: sentAt ? 'flex' : 'none' });

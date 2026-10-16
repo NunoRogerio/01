@@ -2054,3 +2054,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 08:53, every incident map) Full screen always lets you zoom out at least to the incident's state (or its country region), whatever its framing (projection included); small maps stay locked.
 - (Oct 16, 08:57) Incident foot decisions: label 13px semibold (18px line, was 15px), icon 28px (was 24px, 1.8 stroke), so the buttons breathe.
 - (Oct 16, 08:59, every map) An open map tooltip (incident, detection, station) closes on any tap on the map itself: a touch that moves 12px or less, however long it lasts. A drag or a pinch keeps it open.
+- (Oct 16, 09:00; supersedes the 72px snap) Safety pin: once dragged 60% of its track from right to left, it snaps to the left end and unlocks (while dragging or on release); no need to travel the whole way.
