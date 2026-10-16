@@ -1,7 +1,7 @@
 # Forest Fire Watch
 
 A phone web app prototype for spotting forest-fire ignitions and following active fires, using live
-open data for Portugal, the United States, British Columbia, Brazil (including Amazônia Legal) and
+open data for Portugal, the United States, British Columbia and
 satellite hotspots across Europe and the Americas.
 
 Open the site on a phone and use **Add to Home Screen** for a full-screen app.

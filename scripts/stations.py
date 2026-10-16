@@ -9,7 +9,7 @@ Each row: [osm id, 'n' or 'w', lat, lon, name, operator]. Full details are read 
 import json, sys, time, urllib.parse, urllib.request
 
 EP = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
-AREAS = {'pt': 'PT', 'us': 'US', 'br': 'BR', 'ca': 'CA', 'es': 'ES', 'fr': 'FR', 'it': 'IT', 'gr': 'GR'}
+AREAS = {'pt': 'PT', 'us': 'US', 'ca': 'CA', 'es': 'ES', 'fr': 'FR', 'it': 'IT', 'gr': 'GR'}
 BBOX = {'pt': ['36.8,-9.6,42.2,-6.1', '32.3,-17.4,33.2,-16.2', '36.8,-31.4,39.8,-24.9']}   # mainland, Madeira, Azores
 
 

@@ -7,8 +7,8 @@
 // Replaces the design's sample fires, and the sample ignition candidates once satellite data exists.
 window.__wfLiveMap = true;
 // Regions with live data. Everything else is paused (no fires, no candidates, not in the area picker) until it is
-// added back here: Portugal, the United States and Brazil (with its Amazônia Legal area).
-window.__wfOnly = { PT: 1, BRA: 1, AMZ: 1 };
+// added back here: Portugal and the United States (Oct 16, 18:52: Brazil dropped, California and Portugal are enough).
+window.__wfOnly = { PT: 1 };
 // Every US state (and DC): the same NIFC fires, FIRMS candidates and OSM stations already loaded for California
 'AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY'.split(' ').forEach(function (k) { window.__wfOnly[k] = 1; });
 // The level above a place, for the line under an item's name: county and state in the US, district in Portugal,
@@ -565,11 +565,6 @@ window.__wfRegionUp = function (st, co) {
         .catch(function(){return fetch(PT_URL).then(jsonOk);})
         .then(buildPT).then(function(rows){publishPart('PT',rows);})
         .catch(function(e){console.warn('[live fires] Portugal feed failed',e);}));
-    }
-    idbGet(KEY+'|br').then(function(g){if(g&&!window.__wfBRGeo){window.__wfBRGeo=g;}});
-    if(!fresh('tBR')&&(!ONLY||ONLY.BRA||ONLY.AMZ)){
-      P.push(fetch('data/br-fires.json?t='+tick).then(jsonOk).then(buildBR).then(function(rows){publishPart('BR',rows);})
-        .catch(function(e){console.warn('[live fires] Brazil feed failed',e);}));
     }
     if(!fresh('tCF')&&(!ONLY||ONLY.CA)){
       P.push(fetch('data/calfire.json?t='+tick).then(jsonOk).then(buildCF).then(function(rows){publishPart('CF',rows);})
