@@ -167,6 +167,15 @@ window.__wfRegionUp = function (st, co) {
   window.__wfConfNow=function(id,conf){try{var D=JSON.parse(sessionStorage.getItem('wf-verify')||'{}')||{},k=D[id],o=window.__wfConf0[id]!=null?window.__wfConf0[id]:conf;if((k==='check'||k==='sent')&&+o>=50&&Date.now()-(D[id+'^']||D[id+'@']||1)>=20000)return 100;}catch(e){}return conf;};
   window.__wfConfFix=function(){[window.__wfLiveCandsAll,window.__wfLiveCands].forEach(function(A){(A||[]).forEach(function(r){if(!r||r[2]==null)return;var id=r[2],o=window.__wfConf0[id]!=null?window.__wfConf0[id]:r[4],n=window.__wfConfNow(id,o);if(n!==r[4]){if(window.__wfConf0[id]==null)window.__wfConf0[id]=r[4];r[4]=n;if(r[9]&&typeof r[9]==='object')r[9].conf=n;}});});};
 
+  /* (Oct 16) a captain on scene who confirms the fire after a smoke check (the likelihood at 100%) turns the candidate into a fire at once:
+     on every map it is a fire marker, no longer a candidate; the dispatcher still confirms the initial attack he asks for (kept apart
+     from wf-confirmed, which hands the incident over: the candidate page and its waiting request stay until the dispatcher sends it) */
+  window.__wfCapFire=function(){try{var D=JSON.parse(sessionStorage.getItem('wf-verify')||'{}')||{},C=JSON.parse(sessionStorage.getItem('wf-capfire')||'{}')||{},X=JSON.parse(sessionStorage.getItem('wf-dismissed')||'{}')||{},add=false;
+    [].concat(window.__wfLiveCandsAll||[],window.__wfLiveCands||[]).forEach(function(r){if(!r||r[2]==null)return;var id=r[2];if(D[id]!=='check'||C[id]||X[id])return;var o=window.__wfConf0[id]!=null?window.__wfConf0[id]:r[4];
+      if(window.__wfConfNow(id,o)===100){C[id]=(D[id+'^']||D[id+'@']||Date.now())+20000;add=true;}});
+    if(add){sessionStorage.setItem('wf-capfire',JSON.stringify(C));try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}}catch(e){}};
+  window.__wfCapFires=function(){try{var C=JSON.parse(sessionStorage.getItem('wf-capfire')||'{}')||{},D=JSON.parse(sessionStorage.getItem('wf-verify')||'{}')||{},o={};Object.keys(C).forEach(function(k){if(D[k]==='check')o[k]=C[k];});return o;}catch(e){return {};}};
+  if(!window.__wfCapFireT)window.__wfCapFireT=setInterval(function(){window.__wfCapFire();},2000);
   function dsApply(sync){setTimeout(function(){window.__wfConfFix&&window.__wfConfFix();},0);
     var on=function(r){return !ONLY||!!ONLY[r[0]];};
     if(window.__wfLiveFiresAll){var L=window.__wfLiveFiresAll.filter(function(r){return !DSOFF[srcOf(r)]&&on(r);});

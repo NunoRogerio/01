@@ -14,12 +14,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792132274"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792136318"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1791878728"></script>
+<script src="prefs.js?v=1792136318"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
-<script src="live.js?v=1792066597"></script>
+<script src="live.js?v=1792136318"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -225,11 +225,12 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 14, 11:50) the detection markers ride the moving map layer, so they stay locked to their place while it pans or zooms (outside it they stood still until the next redraw) -->
-    <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
+    <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; --wf-gk: 1">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
-      <!-- (Oct 14, 17:40) no backdrop-filter on these markers: they move exactly with the map -->
-      <span class="tipwrap" tabindex="0" role="button" aria-label="{{cm.label}}" onClick="{{cm.sel}}" onPointerDown="{{stop}}" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; cursor: pointer; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; box-sizing: border-box; border-radius: 999px; background: {{cm.bg}}; border: {{cm.bd}}; font-size: 14px; font-weight: 600; color: #000000; white-space: nowrap; transition: {{mv}}">
-        <!-- (Oct 13, 21:26) icon only, larger: one marker per detection in the list, around the incident --><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0079A6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{cm.icon}}"></path></svg>
+      <!-- (Oct 16) each detection is a small round dot (no icon): blue for civil cameras, black for the firefighters' own systems; a 32px tap area around it.
+           It keeps its on-screen size while a pinch scales the moving layer (--wf-gk, set with the layer's transform) -->
+      <span class="tipwrap" tabindex="0" role="button" aria-label="{{cm.label}}" onClick="{{cm.sel}}" onPointerDown="{{stop}}" style="position: absolute; left: {{cm.left}}px; top: {{cm.top}}px; cursor: pointer; transform: translate(-50%, -50%) scale(var(--wf-gk, 1)); display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; box-sizing: border-box; border-radius: 999px; background: transparent; transition: {{mv}}">
+        <span aria-hidden="true" style="display: block; width: 14px; height: 14px; box-sizing: border-box; border-radius: 999px; background: {{cm.bg}}; border: 2px solid rgb(255, 255, 255); box-shadow: {{cm.bd}}; transition: box-shadow .3s"></span>
         <span class="{{cm.tip}}" role="tooltip"><b>{{cm.tt}}</b>{{cm.td}}</span>
       </span>
     </sc-for>
@@ -674,7 +675,7 @@ class Component extends DCLogic {
     }
     this.unitTick();
     const p = this.props;
-    const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
+    const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, q.pinGrow, q.growTap, (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
     const selfPick = this._selfPick && Date.now() < this._selfPick.until && this._selfPick.k === (p.scopeSt || '') + '|' + (p.scopeCo || '');
     if (sig(prev) !== sig(p) && !selfPick) {
       this._animUntil = Date.now() + 700;
@@ -901,7 +902,17 @@ class Component extends DCLogic {
     let spanC = null;
     const NSs = this.nearSt(), PC = Number(p.pinClose);
     const LIFT = Math.max(0, Number(p.pinLift) || 0);   // the pin sits that much higher, clear of something laid over the map's foot (the projection switcher)
-    if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c - LIFT; }   // close on the ignition, centred in the visible map
+    /* (Oct 16) a candidate's projection (+1 / +3 / +6 h): the map zooms into the incident so the projected shape fills 80% of the
+       map's free space (under the title in full screen, above the projection switcher), centred in it; Now keeps the detections' framing */
+    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), PGH) : null;
+    if (PG && PG.xy && PG.xy.length > 2) {
+      const w1 = this.win(), FULL = p.isFull === true || p.isFull === 'true', xs = PG.xy.map((q) => q[0]).concat(Number(p.pinX)), ys = PG.xy.map((q) => q[1]).concat(Number(p.pinY));
+      const top = w1.t + (FULL ? 150 : 16), bot = w1.b - (FULL ? 96 : 2 * LIFT + 8), cw = this.W() - w1.l - w1.r - 32;
+      const bw = Math.max(1, Math.max(...xs) - Math.min(...xs)), bh = Math.max(1, Math.max(...ys) - Math.min(...ys));
+      s0 = Math.min(40, 0.8 * cw / bw, 0.8 * (bot - top) / bh);
+      fx = (Math.max(...xs) + Math.min(...xs)) / 2; fy = (Math.max(...ys) + Math.min(...ys)) / 2; spanC = (top + bot) / 2;
+    }
+    else if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c - LIFT; }   // close on the ignition, centred in the visible map
     // A candidate's projection (+1 / +3 / +6 h) keeps the zoom locked: the shape fills the map band as it grows; the full-screen map is where to zoom out
     else if (NSs.length && p.mode === 'pin') {   // fire maps frame the perimeter and projection instead (set by the screen)
       const w1 = this.win(), top = Math.max(52, w1.t) + 14 + 88 + 36, bot = w1.b - 40 - 2 * LIFT, left = w1.l + 56, right = this.W() - w1.r - 84;   // below the title box (with its legend) plus a distance label; above the credit   // clear of the legend, the map credit and the full-screen button
@@ -923,7 +934,7 @@ class Component extends DCLogic {
   view() {
     const st = Object.assign({}, this.state || {}, this._pv || {});
     const b = this.base();
-    const z0 = this.pinCloseOn() ? 1 : (Number(this.props.startZoom) || 1);   // a page can open the map closer than its framing (e.g. 300% on the candidate)
+    const z0 = this.pinCloseOn() || (this.props.mode === 'pin' && Number(this.props.pinGrow) > 0) ? 1 : (Number(this.props.startZoom) || 1);   // a page can open the map closer than its framing (e.g. 300% on the candidate)
     // zooming in keeps the pin where the framing put it on screen (its offset from the centre shrinks with the zoom)
     const px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
     const cx0 = hasPin ? px - (px - b.cx) / z0 : b.cx, cy0 = hasPin ? py - (py - b.cy) / z0 : b.cy;
@@ -1390,7 +1401,7 @@ class Component extends DCLogic {
     const R = this._rv; if (!this.el || !R) return false;
     const L = this.el.querySelectorAll('[data-wf-gl]'); if (!L.length) return false;
     const k = n.s / R.s, dx = (R.cx - n.cx) * n.s, dy = (R.cy - n.cy) * n.s, T = 'translate(' + dx.toFixed(2) + 'px, ' + dy.toFixed(2) + 'px) scale(' + k.toFixed(5) + ')';
-    for (const e of L) e.style.transform = T;
+    for (const e of L) { e.style.transform = T; e.style.setProperty('--wf-gk', (1 / k).toFixed(5)); }   /* (Oct 16) the detection dots keep their size while the layer scales */
     return true;
   }
   // The gesture ends: draw the final view for real (the picture transform is reset by the redraw)
@@ -1398,7 +1409,7 @@ class Component extends DCLogic {
   // A found place (Main's search): frame its box (lat/lon, at least ~4 km across) in the clear part of the map, then let the
   // area follow the map as it does after a pan
   // The page's own framing of this map (the place, pin or station it was opened on), before any pan or zoom
-  homeView() { const b = this.base(), z0 = this.pinCloseOn() ? 1 : (Number(this.props.startZoom) || 1), px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
+  homeView() { const b = this.base(), z0 = this.pinCloseOn() || (this.props.mode === 'pin' && Number(this.props.pinGrow) > 0) ? 1 : (Number(this.props.startZoom) || 1), px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
     return this.clampView(hasPin ? px - (px - b.cx) / z0 : b.cx, hasPin ? py - (py - b.cy) / z0 : b.cy, b.s * z0); }
   goHome() { this._homeAt = Date.now(); this._tap = null; this._moved = false; const v = this.homeView(); try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} this.stopGlide(); this._animUntil = Date.now() + 700; this._pv = Object.assign({}, this._pv || {}, v); this.setState({ ...v }); }
   flyTo(lat, lon, bb) {
@@ -1425,8 +1436,9 @@ class Component extends DCLogic {
   /* (Oct 13, 21:26) detection markers never cover the incident or each other: at least 40px from the pin and 36px apart (pushed out along their bearing, then turned around the pin) */
   /* (Oct 14, 08:39) the spread is worked out once per incident, at the scale it first shows, and kept: the markers are fixed to the map, never moving while it pans or zooms (a pan's rounding used to flip them to another angle) */
   wfSpreadCams(cams, PX, PY, k) { const L = Array.isArray(cams) ? cams : [], sig = PX + ',' + PY + '|' + L.map((c) => c.x + ',' + c.y + ',' + c.label).join(';');
-    this._spr = this._spr || {}; const P0 = this._spr[sig]; if (P0) return L.map((c0, i) => Object.assign({}, c0, P0[i]));   /* positions kept, the rest (texts) current */
-    const sc = k > 0 ? k : 1, R = 40 / sc, D = 36 / sc, out = [];
+    /* (Oct 16) one spread per incident for every map that shows it (the band and its full screen share it), so going full screen or panning never moves a dot */
+    const SPR = window.__wfSprC || (window.__wfSprC = {}); this._spr = SPR; const P0 = SPR[sig]; if (P0) return L.map((c0, i) => Object.assign({}, c0, P0[i]));   /* positions kept, the rest (texts) current */
+    const sc = k > 0 ? k : 1, R = 30 / sc, D = 22 / sc, out = [];   /* (Oct 16) small dots: 30px from the pin, 22px apart */
     L.forEach((c0) => { let dx = c0.x - PX, dy = c0.y - PY, d = Math.hypot(dx, dy); if (d < 1e-6) { dx = 0; dy = -1; d = 1; } let r = Math.max(d, R), a = Math.atan2(dy, dx);
       for (let t = 0; t < 14; t++) { const x = PX + Math.cos(a) * r, y = PY + Math.sin(a) * r; if (out.every((o) => Math.hypot(o.x - x, o.y - y) >= D)) break; a += (t % 2 ? -1 : 1) * (t + 1) * 0.35; if (t === 13) r += D; }
       out.push(Object.assign({}, c0, { x: +(PX + Math.cos(a) * r).toFixed(1), y: +(PY + Math.sin(a) * r).toFixed(1) })); });
@@ -1626,8 +1638,9 @@ class Component extends DCLogic {
       lw: ((k) => ({ w12: +(1.2 * k).toFixed(5), w13: +(1.3 * k).toFixed(5), w16: +(1.6 * k).toFixed(5), w25: +(2.5 * k).toFixed(5), w35: +(3.5 * k).toFixed(5), w50: +(5 * k).toFixed(5), w70: +(7 * k).toFixed(5), o12: +(12 * k).toFixed(5) + ';0',
         d36: +(3 * k).toFixed(5) + ' ' + +(6 * k).toFixed(5), d27: +(2 * k).toFixed(5) + ' ' + +(7 * k).toFixed(5), d75: +(7 * k).toFixed(5) + ' ' + +(5 * k).toFixed(5), o18: +(18 * k).toFixed(5) + ';0' }))(1 / s),
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
-      camLines: isPin ? this.wfSpreadCams(p.cams, PX, PY, s).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
-      camMarks: isPin ? this.wfSpreadCams(p.cams, PX, PY, s).map((c) => withTip(at(c.x, c.y, { info: c.info || null, label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Detection source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
+      /* (Oct 16) at +1 / +3 / +6 h the map is only the projection: the detection dots and their lines go */
+      camLines: isPin && !(Number(p.pinGrow) > 0) ? this.wfSpreadCams(p.cams, PX, PY, s).filter((c) => c.los !== false).map((c) => ({ d: 'M' + c.x + ' ' + c.y + ' L' + PX + ' ' + PY })) : [],
+      camMarks: isPin && !(Number(p.pinGrow) > 0) ? this.wfSpreadCams(p.cams, PX, PY, s).map((c) => withTip(at(c.x, c.y, { info: c.info || null, label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Detection source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
       hasFull: typeof p.onFull === 'function' && (window.__wfDesk || window.innerWidth <= window.innerHeight),   // phone in landscape: no maximize / minimize button; turning the phone upright is the way back
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
@@ -2030,7 +2043,7 @@ class Component extends DCLogic {
       OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.selF = o ? 'url(#wfSelRing)' : 'none'; m.bdC = 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     /* (Oct 14, 08:41) a detection's marker: the civil (FFW) ones on the civil green, as their cards and tooltip panel; selected, its outline dark grey and 2px */
-    (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(239, 246, 255)' : 'rgb(255, 255, 255)';   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '2px solid rgb(58, 58, 60)' : '1px solid rgba(0, 121, 166, 0.45)'; });
+    (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(0, 122, 255)' : 'rgb(28, 28, 30)';   /* (Oct 16) dots: civil blue, firefighter systems black */   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '0 0 0 4px rgb(255, 255, 255), 0 0 24px rgba(0, 0, 0, 0.16)' : '0 0 2px rgba(0, 0, 0, 0.25)';   /* selected: the white 4px ring and the tooltip's shadow, as every selected marker */ });
     /* (Oct 15, 06:01) a tap on a map tooltip panel closes it, every kind (detections, candidates, fires, stations); its buttons keep their own action */
     OUT.popTap = (e) => { const t = e && e.target; if (t && t.closest && t.closest('a, button')) return; if (e && e.stopPropagation) e.stopPropagation();   /* (Oct 16, 07:17) the whole tooltip opens its incident (or station): a tap anywhere on it acts as its foot button; a tooltip with nothing to open (a detection) still closes */
       const pe = t && t.closest ? t.closest('[data-wf-pop]') : null, go = pe ? pe.querySelector('a[data-wf-split]') : null; if (go && go.offsetParent) { go.click(); return; } closePop(); };
