@@ -374,13 +374,14 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   // Each palette is three surfaces (page, surface, fill) and three inks (text, strong grey, secondary grey), all checked
   // for contrast (secondary text 4.5:1 or more on every surface). Markers, fire colours, photos and maps are untouched,
   // and every primary colour works on every palette because labels on the primary stay dark.
+  /* (Oct 16, 12:36) every screen and blade background is white: each palette's page is its own surface (Snow pure white) */
   var PALS = {
-    snow: { name: ['Snow', 'Neve'], page: '#F2F2F7', surface: '#FFFFFF', fill: '#E5E5EA', ink: '#000000', ink2: '#3A3A3C', sec: '#6E6E73' },
-    moonstone: { name: ['Moonstone', 'Pedra da lua'], page: '#ECEEF4', surface: '#FBFCFE', fill: '#DEE2EC', ink: '#171A22', ink2: '#343A48', sec: '#5B6273' },
-    bone: { name: ['Bone', 'Osso'], page: '#F3F0EA', surface: '#FDFBF7', fill: '#E6E1D7', ink: '#1B1915', ink2: '#3A3630', sec: '#67615A' },
-    cork: { name: ['Cork oak', 'Sobreiro'], page: '#E8DAC4', surface: '#F6EEE1', fill: '#D9C6AA', ink: '#000000', ink2: '#2E2418', sec: '#5A4A36' },
-    lichen: { name: ['Lichen', 'Líquen'], page: '#E2EADC', surface: '#F4F8F1', fill: '#D1DDC9', ink: '#0F170D', ink2: '#283423', sec: '#4C5A46' },
-    glacier: { name: ['Glacier', 'Glaciar'], page: '#DDE8F1', surface: '#F3F8FC', fill: '#CADAE7', ink: '#0B1520', ink2: '#22334A', sec: '#475A6C' }
+    snow: { name: ['Snow', 'Neve'], page: '#FFFFFF', surface: '#FFFFFF', fill: '#E5E5EA', ink: '#000000', ink2: '#3A3A3C', sec: '#6E6E73' },
+    moonstone: { name: ['Moonstone', 'Pedra da lua'], page: '#FBFCFE', surface: '#FBFCFE', fill: '#DEE2EC', ink: '#171A22', ink2: '#343A48', sec: '#5B6273' },
+    bone: { name: ['Bone', 'Osso'], page: '#FDFBF7', surface: '#FDFBF7', fill: '#E6E1D7', ink: '#1B1915', ink2: '#3A3630', sec: '#67615A' },
+    cork: { name: ['Cork oak', 'Sobreiro'], page: '#F6EEE1', surface: '#F6EEE1', fill: '#D9C6AA', ink: '#000000', ink2: '#2E2418', sec: '#5A4A36' },
+    lichen: { name: ['Lichen', 'Líquen'], page: '#F4F8F1', surface: '#F4F8F1', fill: '#D1DDC9', ink: '#0F170D', ink2: '#283423', sec: '#4C5A46' },
+    glacier: { name: ['Glacier', 'Glaciar'], page: '#F3F8FC', surface: '#F3F8FC', fill: '#CADAE7', ink: '#0B1520', ink2: '#22334A', sec: '#475A6C' }
   };
   function rgbOf(h) { h = h.replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)].join(','); }
   function palId() { var v = ''; try { v = localStorage.getItem('wf-palette') || ''; } catch (e) {} return PALS[v] ? v : 'snow'; }
@@ -417,7 +418,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
     var pal = theme === 'dark' ? 'snow' : palId();
-    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + '\n' + palVars(PALS[pal]) + (pal !== 'snow' ? '\n' + palCss(PALS[pal]) : '');
+    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + '\n' + palVars(PALS[pal]) + ('\n' + palCss(PALS[pal]));
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
