@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792174682"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792163685"></script>
+<script src="prefs.js?v=1792178165"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792173262"></script>
@@ -83,7 +83,7 @@
 /* (Oct 16, 15:27) a decision dialog open: no overlay; the map goes quiet as it does under the cards, and the cards fade away */
 [data-wf-cards],[data-wf-page]>.wf-ftseg{transition:opacity .35s cubic-bezier(.4,0,.2,1)}
 :root:has([data-wf-iascrim][style*="pointer-events: auto"]) [data-wf-cards],:root:has([data-wf-iascrim][style*="pointer-events: auto"]) [data-wf-page]>.wf-ftseg{opacity:0!important;pointer-events:none!important}
-:root:has([data-wf-iascrim][style*="pointer-events: auto"]) [data-wf-band] [data-wf-maproot]{filter:brightness(.84) saturate(.8) blur(4px)}
+:root:has([data-wf-iascrim][style*="pointer-events: auto"]) [data-wf-band] [data-wf-maproot]::after{opacity:1}
 :root:has([data-wf-iascrim][style*="pointer-events: auto"]) [data-wf-band] [data-wf-ovl]{opacity:0.001!important;pointer-events:none!important}
 /* (Oct 16, 15:26) cards under the floating decision buttons sit at 50%: fully there once more than half of them shows above the buttons */
 [data-wf-under]{transition:opacity .25s ease}[data-wf-under="1"]{opacity:.5!important}
