@@ -912,12 +912,12 @@ class Component extends DCLogic {
     const LIFT = Math.max(0, Number(p.pinLift) || 0);   // the pin sits that much higher, clear of something laid over the map's foot (the projection switcher)
     /* (Oct 16) a candidate's projection (+1 / +3 / +6 h): the map zooms into the incident so the +1 h shape fills 80% of the
        map's free space (under the title in full screen, above the projection switcher), centred in it; Now keeps the detections' framing */
-    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), 1) : null;   /* (Oct 16, 08:49) one zoom for every horizon: framed on +1 h; +3 / +6 h only grow the shape */
+    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), 6) : null;   /* (Oct 16, 09:11) one zoom for every horizon, framed on the +6 h shape (the largest, so +1 h is always in view too); +1 / +3 / +6 h only grow the shape */
     if (PG && PG.xy && PG.xy.length > 2) {
       const w1 = this.win(), FULL = p.isFull === true || p.isFull === 'true', xs = PG.xy.map((q) => q[0]).concat(Number(p.pinX)), ys = PG.xy.map((q) => q[1]).concat(Number(p.pinY));
       const top = w1.t + (FULL ? 150 : 16), bot = w1.b - (FULL ? 96 : 2 * LIFT + 8), cw = this.W() - w1.l - w1.r - 32;
       const bw = Math.max(1, Math.max(...xs) - Math.min(...xs)), bh = Math.max(1, Math.max(...ys) - Math.min(...ys));
-      s0 = Math.min(40, 0.8 * cw / bw, 0.8 * (bot - top) / bh);
+      s0 = Math.min(40, 0.9 * cw / bw, 0.9 * (bot - top) / bh);   /* the +6 h shape at 90% of the free space */
       fx = (Math.max(...xs) + Math.min(...xs)) / 2; fy = (Math.max(...ys) + Math.min(...ys)) / 2; spanC = (top + bot) / 2;
     }
     else if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c - LIFT; }   // close on the ignition, centred in the visible map
