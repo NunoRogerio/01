@@ -2084,3 +2084,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 12:26) Fix: Dispatch in the panel was always disabled: the retired safety pin still held Send locked until a swipe; the panel's button now depends only on at least one unit being switched on.
 - (Oct 16, 12:28, every map) Map tooltip panels wear the decisions' glass: rgba(255, 255, 255, 0.62) (civil detections the civil blue at 0.62), blur 16px, saturate 180%, no border; their even 24px shadow stays.
 - (Oct 16, 12:30, trial) The square decisions get the map tooltips' drop shadow (0 0 24px rgba(0, 0, 0, 0.16), even all round) to stand out a little more.
+- (Oct 16, 12:34, app-wide) One bullet: the Summary card's small text bullet (• in an 8px column, 8px gap) on every bulleted line, detection cards included (the 6px round dots retired). Detection cards lose their 2px outline (glass only).
