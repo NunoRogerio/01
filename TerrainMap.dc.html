@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792151768"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792152428"></script>
+<script src="prefs.js?v=1792152567"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792136318"></script>
@@ -99,7 +99,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roadCase}}" stroke-width="{{geo.roadCaseW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
       <path d="{{geo.roads}}" fill="none" stroke="{{pal.roads}}" stroke-width="{{geo.roadW}}" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
     </g></svg>
-    <svg width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none"><g transform="translate({{tx}} {{ty}}) scale({{s}})">
+    <svg data-wf-ovl="1" width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none"><g transform="translate({{tx}} {{ty}}) scale({{s}})">
       <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
 <path d="{{batAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
             <path d="{{stAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
@@ -229,7 +229,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 14, 11:50) the detection markers ride the moving map layer, so they stay locked to their place while it pans or zooms (outside it they stood still until the next redraw) -->
-    <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; --wf-gk: 1">
+    <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; --wf-gk: 1">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
       <!-- (Oct 16) each detection is a small round dot (no icon): blue for civil cameras, black for the firefighters' own systems; a 32px tap area around it.
            It keeps its on-screen size while a pinch scales the moving layer (--wf-gk, set with the layer's transform) -->
@@ -282,7 +282,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </div>
   </sc-if>
 
-  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 2"><!-- (Oct 13, 16:46) the markers above the upright map credit -->
+  <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 2"><!-- (Oct 13, 16:46) the markers above the upright map credit -->
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
       <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="filter: {{fm.selF}}; border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="{{fm.sbg}}" style="fill-opacity: 1"></circle><circle cx="14" cy="14" r="17" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle><g transform="translate(6 6) scale(0.6667)"><path d="{{fm.sic}}" fill="none" stroke="{{fm.sfg}}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></g></svg><!-- (Oct 11, 01:18) a fire: its stage icon in a 32px round of its stage colour --></button>
@@ -369,7 +369,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
   </div>
 
   <sc-if value="{{legOn}}" hint-placeholder-val="{{ false }}">
-  <div role="group" data-wf-leg="1" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 8px + {{safeT}}); width: {{legW}}; box-sizing: border-box; padding: 8px 8px 16px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
+  <div role="group" data-wf-leg="1" data-wf-ovl="1" aria-label="Map legend. Tap a layer to show or hide it" onPointerDown="{{legDown}}" onPointerMove="{{legMove}}" onPointerUp="{{legUp}}" onPointerCancel="{{legUp}}" onClickCapture="{{legClick}}" style="position: absolute; z-index: 51; left: {{legLeftCss}}; right: {{legRightCss}}; top: calc({{legTopC}}px - 8px + {{safeT}}); width: {{legW}}; box-sizing: border-box; padding: 8px 8px 16px; display: flex; flex-direction: {{legDir}}; align-items: {{legAlign}}; gap: {{legGap}}; overflow-x: {{legOvx}}; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; scrollbar-width: none">
     <sc-for list="{{legend}}" as="lg" hint-placeholder-count="3">
       <button type="button" class="mbtn" data-round aria-pressed="{{lg.pressed}}" aria-label="{{lg.aria}}" onClick="{{lg.toggle}}" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; height: 32px; padding: {{legPad}}; border: 0; border-radius: 999px; background: {{lg.bg}}; box-shadow: {{legSh}}; -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); color: {{lg.fg}}; font: inherit; font-size: 16px; line-height: 32px; white-space: nowrap; cursor: pointer">
         <svg width="{{lg.w}}" height="14" viewBox="{{lg.vb}}" aria-hidden="true" style="flex-shrink: 0; scale: 1.1; margin: 0 1px"><path d="{{lg.glowD}}" fill="none" stroke="#E8590C" stroke-opacity="0.35" stroke-width="3" stroke-linecap="round" style="filter: blur(0.9px)"></path><path d="{{lg.d}}" fill="{{lg.fill}}" stroke="{{lg.stroke}}" stroke-width="{{lg.sw}}" stroke-linejoin="round"></path><path d="{{lg.d2}}" fill="{{lg.f2}}" stroke="{{lg.s2c}}" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{lg.d3}}" fill="{{lg.f3}}" stroke="{{lg.stroke}}" stroke-width="1.1" stroke-linejoin="round"></path></svg>{{lg.label}}<span style="display: {{lg.nD}}; margin-left: auto; padding-left: 8px; font-weight: 600; color: #3A3A3C; font-variant-numeric: tabular-nums">{{lg.n}}</span>
@@ -388,7 +388,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </sc-for>
   </div>
   </sc-if>
-  <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
+  <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- (Oct 9, 15:54) structures at risk: its own tag above the tooltip, 8px from it and as wide as it, in the normal tag size (as the stage tag) -->
   <span class="wf-ctag wf-risk-tag {{popCls}}" role="status" style="display: {{pop.riskD}}; position: absolute; z-index: 60; left: {{pop.left}}px; top: calc({{pop.top}}px - 36px); --wf-dy: {{pop.dy}}; width: {{pop.wR}}px; gap: 8px; color: rgb(190, 0, 18); background: linear-gradient(rgba(215, 0, 21, 0.1), rgba(215, 0, 21, 0.1)) rgb(255, 255, 255); box-shadow: 0 0 24px rgba(0,0,0,0.16); pointer-events: none"><svg width="18" height="16" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
@@ -456,7 +456,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     <span style="font-size: 15px; line-height: 20px; color: #6E6E73"><span>{{ld.txt}}</span><span aria-hidden="true">…</span></span>
   </div>
   <!-- Map controls, one order everywhere: Find a place (main maps only), Re-centre (dimmed while the map is centred), then Send drone and full screen. A column on the map in the page; a row along the bottom on full screen -->
-  <div onPointerDown="{{stop}}" data-wf-keepsp="1" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: {{ctrlDir}}; align-items: flex-end; gap: 16px">   <!-- (Oct 3, 21:41) round buttons 16px apart, in a column or a row -->
+  <div onPointerDown="{{stop}}" data-wf-keepsp="1" data-wf-ovl="1" style="position: absolute; z-index: 51; right: {{ctrlR}}px; bottom: {{ctrlB}}px; transition: bottom .5s cubic-bezier(.2,.8,.2,1); display: flex; flex-direction: {{ctrlDir}}; align-items: flex-end; gap: 16px">   <!-- (Oct 3, 21:41) round buttons 16px apart, in a column or a row -->
     <!-- Find a place: the map's search sits above the full-screen button, same size and look (both are map controls) -->
     <!-- Statistics (Oct 5): the main map's dashboard of charts for the area; the first control of the column, above Find a place -->
     <button type="button" class="mbtn" aria-label="Metrics" onClick="{{statsClick}}" style="display: {{statsD}}; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; box-sizing: border-box; color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20V10M20 20V15"></path></svg></button>
@@ -485,7 +485,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 
   <!-- (Oct 13, 13:26) Refresh, bottom left, level with the right-hand controls: the same dark round button; beside it, in normal text,
        when the data last came in ("Updated 3 min ago"), the map credit under it so neither covers the other. The app also refreshes by itself every 5 minutes -->
-  <div onPointerDown="{{stop}}" data-wf-keepsp="1" style="position: absolute; z-index: 51; left: {{ctrlL}}px; bottom: {{ctrlB}}px; display: {{rf.d}}; align-items: center; gap: 8px; transition: bottom .5s cubic-bezier(.2,.8,.2,1)">
+  <div onPointerDown="{{stop}}" data-wf-keepsp="1" data-wf-ovl="1" style="position: absolute; z-index: 51; left: {{ctrlL}}px; bottom: {{ctrlB}}px; display: {{rf.d}}; align-items: center; gap: 8px; transition: bottom .5s cubic-bezier(.2,.8,.2,1)">
     <button type="button" class="mbtn" aria-label="{{rf.aria}}" aria-busy="{{rf.busyStr}}" onClick="{{rf.go}}" style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; box-sizing: border-box; color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{rf.rot}}deg); transition: transform 1.2s cubic-bezier(.37,0,.63,1)"><path d="M20 12a8 8 0 1 1-2.34-5.66"></path><path d="M20 4v4.5h-4.5"></path></svg></button>
     <span style="display: flex; flex-direction: column; gap: 0; min-width: 0; pointer-events: none; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF">
       <span role="status" style="font-size: 15px; line-height: 20px; color: #000000; white-space: nowrap">{{rf.txt}}</span>
