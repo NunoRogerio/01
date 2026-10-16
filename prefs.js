@@ -260,8 +260,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
        each with its muted tint: Dismiss the neutral glass, (Oct 16, 11:49) all labels white: Dismiss a grey glass, Smoke check a muted orange glass, Initial attack a muted red glass */
     ':root .btn.wf-ibtn.wf-ibtn{transition:none!important;animation:none!important;transform:translateZ(0);-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important;border:0!important;outline:none!important;background-clip:padding-box}' +
     /* (Oct 16, 11:50) all three white glass with a dark label; the icon carries the decision's colour: Dismiss grey, Smoke check muted orange, Initial attack muted red */
-    ':root .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(255, 255, 255, 0.62)!important;color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}' +
-    ':root .btn.wf-ibtn.wf-sec > svg{color:rgb(99, 99, 102)}:root .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(196, 106, 36)}:root .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(188, 64, 52)}' +
+    ':root .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(44, 44, 46, 0.72)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
+    ':root .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)!important}:root .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)!important}:root .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)!important}' +
     'html.wf-dark .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(44, 44, 46, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
     'html.wf-dark .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)!important}html.wf-dark .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)!important}html.wf-dark .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)!important}' +
     /* (Oct 16, 11:55) the projection switcher over a map wears the decisions' glass: the white frosted track, dark options; the chosen one stays the dark grey thumb, as glass too */
