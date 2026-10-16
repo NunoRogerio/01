@@ -2121,3 +2121,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 14:07; supersedes the 8px line) Incident cards change at the stage tag's foot (the band with the confidence): scrolling up, a card shrinks 20% and darkens 8% when its top reaches that line, then fades out until its top reaches the screen's top; scrolling down it grows back as soon as its (shrunk) top touches the line again.
 - (Oct 16, 14:07) The quiet map dims 16% and loses 20% saturation (was 10% and 10%).
 - (Oct 16, 14:11, trial) The quiet map also blurs (4px) with its dimming and desaturation, in the same 0.7 s ease.
+- (Oct 16, 15:26) Incident cards under the floating decision buttons (No action and the two beside it) show at 50% opacity; a card is fully opaque once more than half of it is visible above the buttons (0.25 s ease).
+- (Oct 16, 15:27) Decision dialogs (Smoke check, Initial attack, No action) open with no overlay: the map goes quiet as under the cards (dimmed, desaturated, blurred, its layers faded) and the page's cards fade out, so the dialog enters over a clean space. A tap outside still closes it; the cards return as it folds back.
