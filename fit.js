@@ -950,7 +950,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
         /* (Oct 13, 21:24) the panel rises with the next screen already drawn, frames inside it included (the incident page inside the chat): never an empty panel; the button's Loading… covers the wait */
         var poll=function(){try{var d=f.contentDocument;if(!loaded&&drawn(d)){var ok=true;[].forEach.call(d.querySelectorAll('iframe'),function(x){try{if(!x.offsetWidth||!x.getAttribute('src')||/^(about|data|javascript):/i.test(x.getAttribute('src')))return;   /* (Oct 14, 18:10) an empty helper frame (about:blank) is not a page to wait for: it held the panel 6 s and it rose blank */var cd=x.contentDocument;if(cd&&cd.location.href!=='about:blank'&&!drawn(cd))ok=false;else if(!cd||cd.location.href==='about:blank')ok=false;}catch(y){}});if(ok){loaded=true;fade();}}}catch(x){}
           if(!rose&&loaded&&Date.now()-T0>250)rise();   /* (Oct 5, 02:52) the panel rises only with the next screen drawn on it: never a blank panel */if(Date.now()-T0>6000&&!loaded){rise();return;}if(!gone)setTimeout(poll,70);};
-        f.src=href;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
+        f.src=href;if(window.__wfShared&&window.__wfShared(a,w,f,dim,navigate,drawn))return;setTimeout(poll,100);}catch(x){navigate();}},0);},true);
   addEventListener('pageshow',function(){try{document.documentElement.classList.remove('wf-pushing');document.documentElement.classList.remove('wf-popstill');document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.style.removeProperty('visibility');});}catch(x){}try{document.querySelectorAll('a[data-wf-split]').forEach(function(n){n.__wfPu=0;if(n.__wfLb){if(typeof n.__wfLb==='object'){n.innerHTML=n.__wfLb.h;n.setAttribute('style',n.__wfLb.s);}else n.textContent=n.__wfLb;n.__wfLb=null;}n.removeAttribute('aria-busy');});document.documentElement.classList.add('wf-back');try{dispatchEvent(new Event('wf-popclose'));}catch(x){}document.querySelectorAll('[data-wf-pushup]').forEach(function(n){n.remove();});document.documentElement.style.background='';document.body.style.background='';}catch(x){}});   /* coming back from the phone's cache: the screen whole again */
   // (Oct 4, 21:50) The push-up arrival: the last picture of the risen screen stays over the real page until it has drawn itself
   // (the live page, held invisible above it, waits for its plain loading surface to go), then appears in a short 0.2s dissolve between two identical pictures, so no blank flash.
@@ -1450,4 +1450,89 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
         MEM[k] = { st: 'done', res: res }; try { localStorage.setItem(LK + k, JSON.stringify(res)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
       }).catch(function () { MEM[k] = { st: 'fail' }; setTimeout(function () { if (MEM[k] && MEM[k].st === 'fail') delete MEM[k]; }, 60000); });
     return null; };
+})();
+
+// (Oct 16, 15:58) Counting numbers: an element with data-wf-count shows its number counting from the last value to the new one
+// whenever the value changes (up or down), easing in and out over 0.9s. Under 10 it keeps one decimal (a comma in Portuguese).
+(function(){
+  var fmt=function(v){var pt=window.__wfLang==='pt';if(v<10){var t=(Math.round(v*10)/10).toFixed(1).replace(/\.0$/,'');return pt?t.replace('.',','):t;}return Math.round(v).toLocaleString(pt?'pt-PT':'en-US');};
+  var run=function(el){var to=parseFloat(el.getAttribute('data-wf-count'));if(!isFinite(to))return;var from=el.__wfCv;el.__wfCv=to;
+    if(from==null||from===to){el.textContent=fmt(to);return;}cancelAnimationFrame(el.__wfCr||0);var T0=performance.now(),D=900;
+    (function step(t){var k=Math.min(1,(t-T0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;el.textContent=fmt(from+(to-from)*e);if(k<1)el.__wfCr=requestAnimationFrame(step);})(T0);};
+  var scan=function(){try{document.querySelectorAll('[data-wf-count]').forEach(function(el){var v=parseFloat(el.getAttribute('data-wf-count'));if(el.__wfCv!==v)run(el);});}catch(x){}};
+  var start=function(){try{new MutationObserver(function(M){for(var i=0;i<M.length;i++){var m=M[i];if(m.type==='attributes'&&m.attributeName==='data-wf-count'){run(m.target);}else if(m.type==='childList'){scan();return;}}}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['data-wf-count']});}catch(x){}scan();};
+  if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();
+
+// (Oct 16, 15:49) Shared map, main screen -> incident: no panel rising. The tapped tooltip fades, everything over the main map leaves
+// (what sits in the top half slides up, the rest slides down, the header too) and the map itself flies to where the incident screen
+// will show it, while that screen loads unseen. When it is ready the map lands on its exact framing, the incident's map takes over
+// (a short dissolve between two identical pictures) and its own surfaces come in over it: the header slides down from the top,
+// everything from the lower half slides up from below. Then the real page opens in its place (the still picture covers the hand-over).
+(function(){
+  var EASE='cubic-bezier(.37,0,.63,1)',SLIDE=530,EST='wf-shared-est';
+  var ez=function(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;};
+  // the frame chain up to the top window: an element's rect in top-window pixels
+  var topRect=function(el){var r=el.getBoundingClientRect(),x=r.left,y=r.top,w=r.width,h=r.height,win=el.ownerDocument.defaultView;
+    while(win&&win!==window.top&&win.frameElement){var fe=win.frameElement,fr=fe.getBoundingClientRect(),k=fr.width/(win.innerWidth||fr.width||1);x=fr.left+x*k;y=fr.top+y*k;w*=k;h*=k;win=fe.ownerDocument.defaultView;}
+    return {left:x,top:y,width:w,height:h,right:x+w,bottom:y+h};};
+  var shown=function(el){if(!el||!el.getBoundingClientRect)return false;var r=el.getBoundingClientRect();if(!(r.width>1&&r.height>1))return false;var cs=el.ownerDocument.defaultView.getComputedStyle(el);return cs.visibility!=='hidden'&&cs.display!=='none'&&parseFloat(cs.opacity)>0.01;};
+  // the surfaces over a map: every visible element off the path from the page's body to the map (and the map's own controls),
+  // each with the way it travels (up for the top half of the screen, down for the rest)
+  var paints=function(el){try{var W0=el.ownerDocument.defaultView,cs=W0.getComputedStyle(el),bg=cs.backgroundColor;if(bg&&!/rgba\([^)]*,\s*0\)|transparent/.test(bg))return true;if(cs.backgroundImage!=='none'||(cs.backdropFilter&&cs.backdropFilter!=='none')||(cs.webkitBackdropFilter&&cs.webkitBackdropFilter!=='none')||cs.boxShadow!=='none')return true;
+    for(var i=0;i<2;i++){var ps=W0.getComputedStyle(el,i?'::after':'::before');if(ps.content&&ps.content!=='none'&&(ps.backgroundImage!=='none'||!/rgba\([^)]*,\s*0\)|transparent/.test(ps.backgroundColor)))return true;}}catch(x){}return false;};   /* a holder that draws something itself (a sheet's glass, its stripes) travels whole */
+  var collector=function(out){var SH=(window.top.innerHeight||844),mid=SH/2;
+    var add=function(el,dp){dp=dp||0;if(!shown(el))return;var cs=el.ownerDocument.defaultView.getComputedStyle(el);if(cs.pointerEvents==='none'&&!el.children.length&&!el.textContent.trim())return;   /* a plain veil (the map's vignette) stays */
+      var r=topRect(el);if(r.bottom<=0||r.top>=SH||r.right<=0||r.left>=(window.top.innerWidth||390))return;   /* off screen: nothing to see travel */
+      if(r.height>SH*0.6&&el.children.length&&dp<5&&!paints(el)){[].forEach.call(el.children,function(c){if(c.tagName!=='SCRIPT'&&c.tagName!=='STYLE')add(c,dp+1);});return;}   /* a screen-high holder (the panels column): its pieces travel each their own way */
+      var lr=el.getBoundingClientRect(),k=r.height/(lr.height||r.height||1)||1,up=(r.top+r.bottom)/2<mid;out.push({el:el,dy:up?-(r.bottom+32)/k:(SH-r.top+32)/k});};
+    return add;};
+  var peel=function(target,out){var add=collector(out),e=target;while(e&&e.parentElement&&e!==e.ownerDocument.body){var par=e.parentElement;[].forEach.call(par.children,function(c){if(c!==e&&c.tagName!=='SCRIPT'&&c.tagName!=='STYLE')add(c);});e=par;}return out;};
+  var mapPeel=function(root,out){var add=collector(out);[].forEach.call(root.children,function(c){if(!c.hasAttribute('data-wf-gl'))add(c);});return out;};
+  var slide=function(L,dir){return L.map(function(q){var a0='0 0',a1='0 '+q.dy.toFixed(1)+'px';try{return q.el.animate(dir==='out'?[{translate:a0},{translate:a1}]:[{translate:a1},{translate:a0}],{duration:SLIDE,easing:EASE,fill:'both'});}catch(x){return null;}}).filter(Boolean);};
+  // the incident screen's map: the largest visible map in the frame and the frames inside it
+  var findMap=function(doc,depth){var best=null,area=0;try{[].forEach.call(doc.querySelectorAll('[data-wf-maproot]'),function(m){if(!m.__wfMap||!shown(m))return;var lr=m.getBoundingClientRect(),hit=null;try{hit=doc.elementFromPoint(lr.left+lr.width/2,Math.max(lr.top,0)+Math.min(lr.height,doc.defaultView.innerHeight)*0.3);}catch(x){}if(!hit||!m.contains(hit))return;   /* the map really on show there, not one waiting under it */var r=topRect(m),a=r.width*r.height;if(a>area){area=a;best=m;}});
+      if(depth<3)[].forEach.call(doc.querySelectorAll('iframe'),function(fr){try{var cd=fr.contentDocument;if(cd&&shown(fr)){var b=findMap(cd,depth+1);if(b){var r=topRect(b),a=r.width*r.height;if(a>area){area=a;best=b;}}}}catch(x){}});}catch(x){}return best;};
+  window.__wfShared=function(a,w,f,dim,navigate,drawn){
+    try{if(!/\/Main\.dc\.html$/.test(location.pathname)||window.top!==window)return false;var pop=a.closest('[data-wf-pop]');if(!pop)return false;
+      var MR=pop.closest('[data-wf-maproot]')||document.querySelector('[data-wf-maproot]'),MI=MR&&MR.__wfMap;if(!MI||!MI.view)return false;
+      var st=MI.state||{},sel=st.selId,L0=[].concat(MI.props.ignitions||[],MI.props.fires||[]),it=L0.filter(function(g){return g&&g.id===sel;})[0];if(!it||!isFinite(it.x)||!isFinite(it.y))return false;
+    }catch(x){return false;}
+    var PX=Number(it.x),PY=Number(it.y),v0=MI.view(),W=MI.W(),H=MI.H(),done=false,T0=Date.now();
+    w.style.transform='none';w.style.background='transparent';w.style.boxShadow='none';w.style.opacity='0';dim.style.display='none';
+    var mapR=function(){return topRect(MR);};
+    // the main map's view that puts the marker at local point (lx, ly) at scale s
+    var viewAt=function(lx,ly,s){return {cx:PX-(lx-W/2)/s,cy:PY-(ly-H/2)/s,s:s};};
+    var localOf=function(v){return {x:(PX-v.cx)*v.s+W/2,y:(PY-v.cy)*v.s+H/2};};
+    var fl=null;   /* the flight: from the current view to a target, the marker gliding straight, the zoom in log steps */
+    var fly=function(to,ms,cb){var from=MI.view(),p0=localOf(from),p1=localOf(to),l0=Math.log(from.s),l1=Math.log(to.s),t0=performance.now(),me={};fl=me;MI._gest=true;if(MI.stopGlide)try{MI.stopGlide();}catch(x){}
+      (function step(t){if(fl!==me)return;var k=Math.min(1,(t-t0)/ms),e=ez(k),s=Math.exp(l0+(l1-l0)*e),v=viewAt(p0.x+(p1.x-p0.x)*e,p0.y+(p1.y-p0.y)*e,s);try{MI.setView(v.cx,v.cy,v.s);}catch(x){}
+        if(k<1)requestAnimationFrame(step);else{fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(x){}if(cb)cb();}})(t0);};
+    // 1. the tooltip fades, the main screen's surfaces leave, the map heads for the incident's framing (last time's, or a fair guess)
+    try{document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.animate([{opacity:1},{opacity:0}],{duration:200,easing:'ease-out',fill:'forwards'});});}catch(x){}
+    var outL=[];try{peel(MR,outL);mapPeel(MR,outL);}catch(x){}var outA=slide(outL,'out');
+    var R0=mapR(),kM=R0.width/W||1,est=null;try{est=JSON.parse(sessionStorage.getItem(EST)||'null');}catch(x){}
+    var g=est&&est.q>0?est:{x:(window.top.innerWidth||390)/2,y:(window.top.innerHeight||844)*0.35,q:Math.min(24,v0.s*6)*kM};   /* q: screen pixels per world unit */
+    fly(viewAt((g.x-R0.left)/kM,(g.y-R0.top)/kM,g.q/kM),900);
+    try{window.__wfSharedUndo=function(){try{fl=null;MI._gest=false;outA.forEach(function(an){an.cancel();});document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.getAnimations().forEach(function(an){an.cancel();});});MI._pv=Object.assign({},MI._pv||{},v0);MI.setState({cx:v0.cx,cy:v0.cy,s:v0.s});}catch(x){}};}catch(x){}
+    // 2. the incident screen ready: land exactly on its map's framing, then hand over
+    var drawn2=function(d){var r=d&&d.readyState!=='loading'&&d.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.textContent.trim().length>20&&!d.getElementById('wf-load')&&!d.documentElement.classList.contains('wf-hold')&&d.defaultView.__wfVP&&Math.abs(r.getBoundingClientRect().width-d.defaultView.innerWidth)<3);};   /* drawn and fitted to its frame, its map tiles may still be arriving (the map underneath has them) */
+    var ready=function(){try{var d=f.contentDocument;if(!drawn2(d))return false;var ok=true;[].forEach.call(d.querySelectorAll('iframe'),function(x){try{if(!x.offsetWidth||!x.getAttribute('src')||/^(about|data|javascript):/i.test(x.getAttribute('src')))return;var cd=x.contentDocument;if(!cd||cd.location.href==='about:blank'||!drawn2(cd))ok=false;}catch(y){}});return ok&&!!findMap(d,0);}catch(x){return false;}};
+    var land=function(){if(done)return;done=true;var DM=findMap(f.contentDocument,0),DI=DM&&DM.__wfMap;
+      if(!DI){finish(null);return;}
+      var rD=topRect(DM),kD=rD.width/(DI.W()||1),vD=DI.view(),Q=kD*vD.s,rM=mapR(),kM2=rM.width/W||1,sM=Q/kM2;
+      var cx=vD.cx+((rM.left+kM2*W/2)-(rD.left+kD*DI.W()/2))/Q,cy=vD.cy+((rM.top+kM2*H/2)-(rD.top+kD*DI.H()/2))/Q;
+      try{var mp=localOf({cx:cx,cy:cy,s:sM});sessionStorage.setItem(EST,JSON.stringify({x:rM.left+mp.x*kM2,y:rM.top+mp.y*kM2,q:Q}));}catch(x){}
+      fly({cx:cx,cy:cy,s:sM},fl?520:420,function(){finish(DM);});};
+    // 3. the incident's map takes over; its header slides down, its lower surfaces slide up
+    var finish=function(DM){var inL=[];try{if(DM){peel(DM,inL);mapPeel(DM,inL);var e=DM.ownerDocument.defaultView.frameElement;while(e&&e!==f){peel(e,inL);e=e.ownerDocument.defaultView.frameElement;}}}catch(x){}
+      var inA=slide(inL,'in');inA.forEach(function(an){try{an.pause();an.currentTime=0;}catch(x){}});
+      w.style.opacity='1';f.style.opacity='1';try{f.getAnimations().forEach(function(an){an.cancel();});}catch(x){}
+      var fd=w.animate([{opacity:0},{opacity:1}],{duration:220,easing:'ease-out',fill:'forwards'});
+      inA.forEach(function(an){try{an.play();}catch(x){}});
+      setTimeout(function(){inA.forEach(function(an){try{an.cancel();}catch(x){}});fd.cancel();w.style.opacity='1';navigate();},SLIDE+40);};
+    var poll=function(){if(done)return;if(ready()&&Date.now()-T0>250){if(fl)setTimeout(land,0);else land();return;}if(Date.now()-T0>8000){done=true;finish(findMap(f.contentDocument,0));return;}setTimeout(poll,70);};
+    setTimeout(poll,100);
+    return true;};
+  addEventListener('pageshow',function(e){try{if(window.__wfSharedUndo){window.__wfSharedUndo();window.__wfSharedUndo=null;}}catch(x){}});
 })();
