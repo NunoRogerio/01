@@ -96,6 +96,9 @@
 .wf-iadark ul[style*="background: rgb(255, 255, 255)"]{background:rgba(255, 255, 255, 0.1)!important}
 .wf-iadark li{border-color:rgba(255, 255, 255, 0.12)!important}
 .wf-iadark li span[style*="color: rgb(58, 58, 60)"]{background:rgba(255, 255, 255, 0.12)!important;color:rgb(235, 235, 245)!important}
+.wf-iapanel.wf-iadark .wf-note{color:rgba(235, 235, 245, 0.62)!important;font-size:16px!important;line-height:20px!important}   /* (Oct 16, 22:24) the footnote as the units' own second line, light on the dark glass */
+.wf-iadark li > span:first-child,.wf-iadark li > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li > span:nth-child(2) > span:last-child{transition:opacity .2s ease}
+.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:last-child{opacity:.4}   /* (Oct 16, 22:24) a unit switched off dims: its icon (and its circle), name and line */
 .wf-iadark .wf-tog[aria-checked=true]{background:rgb(52, 199, 89)!important;box-shadow:none!important}   /* (Oct 16, 22:04) a unit switched on: green; off keeps the grey */
 .wf-iadark [role="button"][data-grab-close] span{background:rgba(235, 235, 245, 0.3)!important}
 /* (Oct 16, 21:45, trial) the incident map's controls (drone, helmet camera, re-centre, full screen) as white glass buttons with the cards' drop shadow, dark icons */
