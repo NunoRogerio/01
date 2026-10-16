@@ -478,7 +478,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   // ---- Switchers (segmented multi-buttons): one shared motion for every one in the app ----
   // On a new choice the yellow first grows 6px above and below, then glides to the option, and snaps back to its height
   // on arrival. Any thumb with class .seg or .segthumb gets it (for .segthumb the yellow is its .segblob child).
-  var SEG = { grow: 6, lead: 98, total: 434 };   /* (Oct 10, 22:15) 30% faster (was 140 / 620 ms) */
+  var SEG = { grow: 4, lead: 98, total: 434 }   /* (Oct 16, 22:15) the moving thumb swells 4px above and below at most (was 6) */;   /* (Oct 10, 22:15) 30% faster (was 140 / 620 ms) */
   window.__wfSeg = SEG;
   // Header actions on incident screens (chat, notifications, profile), the same three round buttons as the main screen.
   // Notifications and the profile open the main screen's panels; closing the panel comes straight back here.
