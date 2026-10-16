@@ -1402,8 +1402,8 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         {columns.map((c) => {
           const type = typeOf(c);
           let control = null;
-          if (c.editable === false) {
-            control = mode === "edit" ? (
+          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding
+            control = mode === "edit" && !c.viz ? (
               <input className="hvt-text" disabled aria-label={c.title} value={c.format ? c.format(draft[c.key]) : (draft[c.key] ?? "")} readOnly />
             ) : null;
           } else if (type === "singleSelect") {
@@ -1430,6 +1430,7 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         )}
       </div>
       <div className="hvt-edittools">
+        {mode === "add" && <span className="hvt-editnote">All fields are mandatory.</span>}
         <button type="button" className="hvt-btn hvt-btn--icon-left" disabled={!canApply} onClick={onApply}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Check}</span>Apply
         </button>
@@ -2860,15 +2861,16 @@ export function DataTable({
     setTimeout(() => setEditing((e) => (e && e.closing ? null : e)), 430);
   };
   const cancelEdit = () => closeEditing();
-  const canApplyEdit = !!editing && Object.entries(editing.draft).some(([k, v]) => {
-    const c = columns.find((x) => x.key === k);
-    return c && c.editable !== false && v !== "" && v != null;
-  });
+  const askedCols = columns.filter((c) => c.editable !== false && !c.viz); // what the panel asks for
+  const filled = (v) => v !== "" && v != null && String(v).trim() !== "";
+  const canApplyEdit = !!editing && (editing.mode === "add"
+    ? askedCols.length > 0 && askedCols.every((c) => filled(editing.draft[c.key])) // adding: Apply only once every field is filled
+    : Object.entries(editing.draft).some(([k, v]) => { const c = columns.find((x) => x.key === k); return c && c.editable !== false && !c.viz && v !== "" && v != null; }));
   const applyEdit = () => {
     if (!editing || !canApplyEdit) return;
     const clean = {};
     columns.forEach((c) => {
-      if (c.editable === false) return;
+      if (c.editable === false || c.viz) return;
       const v = editing.draft[c.key];
       clean[c.key] = typeOf(c) === "number" ? (v === "" || v == null ? "" : Number(v)) : v ?? "";
     });

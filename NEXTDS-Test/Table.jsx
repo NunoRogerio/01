@@ -536,6 +536,8 @@ const CSS = `
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23e6e6e6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 6l4.5 4.5L12.5 6'/%3E%3C/svg%3E")}
 .hvt-text{padding:0 12px}
 .hvt-text::placeholder{color:var(--content-placeholder);opacity:1}
+.hvt-text[type="number"]{-moz-appearance:textfield;appearance:textfield}
+.hvt-text[type="number"]::-webkit-inner-spin-button,.hvt-text[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0} /* number fields: no up and down arrows */
 .hvt-select:hover:not(:disabled),.hvt-text:hover:not(:disabled),.hvt-ms-btn:hover:not(:disabled){background:var(--hvt-input-hover-bg)} /* hover changes the fill only, the 1px border stays (as the search field) */
 :is(.hvt-select,.hvt-text,.hvt-ms-btn):focus:not(:disabled),:is(.hvt-select,.hvt-text,.hvt-ms-btn):focus:hover:not(:disabled){background:var(--container-secondary-background);box-shadow:none} /* typing: white, as the search field */
 [data-hvt-kbd] :is(.hvt-select,.hvt-text,.hvt-ms-btn):focus{border-color:var(--container-secondary-background);box-shadow:0 0 0 3px var(--border-focus);background:var(--container-secondary-background);outline:0}
@@ -738,7 +740,8 @@ const CSS = `
 .hvt-editcell{min-height:32px;padding:0 12px}
 .hvt-editcell > *{min-width:0}
 .hvt-editcell > input{width:100%}
-.hvt-edittools{display:flex;justify-content:flex-end;gap:8px;padding:8px;border-top:1px solid var(--border-default)}
+.hvt-edittools{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:8px;border-top:1px solid var(--border-default)}
+.hvt-editnote{margin-right:auto;padding-left:8px;font-size:12px;line-height:18px;color:var(--content-placeholder)} /* adding: every field is needed, said once at the bottom left */
 .hvt-card .hvt-editfields{padding:8px 0}
 .hvt-card .hvt-editrow{margin-bottom:5px}
 .hvt-group.is-delete-target{box-shadow:inset 0 0 0 2px var(--semantic-negative)}
@@ -2366,8 +2369,8 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         {columns.map((c) => {
           const type = typeOf(c);
           let control = null;
-          if (c.editable === false) {
-            control = mode === "edit" ? (
+          if (c.editable === false || c.viz) { // read-only values (metrics the system reports) are not asked when adding
+            control = mode === "edit" && !c.viz ? (
               <input className="hvt-text" disabled aria-label={c.title} value={c.format ? c.format(draft[c.key]) : (draft[c.key] ?? "")} readOnly />
             ) : null;
           } else if (type === "singleSelect") {
@@ -2394,6 +2397,7 @@ function EditPanel({ mode, columns, draft, onDraft, onApply, onCancel, colSize, 
         )}
       </div>
       <div className="hvt-edittools">
+        {mode === "add" && <span className="hvt-editnote">All fields are mandatory.</span>}
         <button type="button" className="hvt-btn hvt-btn--icon-left" disabled={!canApply} onClick={onApply}>
           <span className="hvt-icon" aria-hidden="true">{Icons.Check}</span>Apply
         </button>
@@ -3824,15 +3828,16 @@ export function DataTable({
     setTimeout(() => setEditing((e) => (e && e.closing ? null : e)), 430);
   };
   const cancelEdit = () => closeEditing();
-  const canApplyEdit = !!editing && Object.entries(editing.draft).some(([k, v]) => {
-    const c = columns.find((x) => x.key === k);
-    return c && c.editable !== false && v !== "" && v != null;
-  });
+  const askedCols = columns.filter((c) => c.editable !== false && !c.viz); // what the panel asks for
+  const filled = (v) => v !== "" && v != null && String(v).trim() !== "";
+  const canApplyEdit = !!editing && (editing.mode === "add"
+    ? askedCols.length > 0 && askedCols.every((c) => filled(editing.draft[c.key])) // adding: Apply only once every field is filled
+    : Object.entries(editing.draft).some(([k, v]) => { const c = columns.find((x) => x.key === k); return c && c.editable !== false && !c.viz && v !== "" && v != null; }));
   const applyEdit = () => {
     if (!editing || !canApplyEdit) return;
     const clean = {};
     columns.forEach((c) => {
-      if (c.editable === false) return;
+      if (c.editable === false || c.viz) return;
       const v = editing.draft[c.key];
       clean[c.key] = typeOf(c) === "number" ? (v === "" || v == null ? "" : Number(v)) : v ?? "";
     });
@@ -4923,25 +4928,25 @@ const DATASETS = [
         serial: r.details["Serial number"], firmware: r.details.Firmware, owner: r.details.Owner, lastSeen: r.details["Last seen"] };
     } },
   { id: "vsp-systems", group: "VSP 360", label: "Storage systems", title: "Storage Systems", addLabel: "Add Storage System",
-    columns: [SEL("health", "Health", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("name", "System", { sortable: true }),
+    columns: [SEL("health", "Health", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS, editable: false }), TXT("name", "System", { sortable: true }),
       SEL("model", "Model", VSP_MODELS.map((m) => m[0]), { tag: MODEL_TAGS }), SEL("site", "Site", SITES),
-      NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("alerts", "Alerts", { sortable: true })],
+      NUM("usedPct", "Used", { sortable: true, format: pctFmt, editable: false }), NUM("alerts", "Alerts", { sortable: true, editable: false })], // metrics: reported once the system runs
     extra: [TXT("serial", "Serial number"), NUM("totalTB", "Total capacity (TB)", { format: fmt }), NUM("iops", "IOPS", { format: fmt }), NUM("latency", "Latency (ms)", { format: dec1 }), TXT("microcode", "Microcode")],
     viz: { type: "trend", title: "IOPS trend", format: (n) => `${n}K` },
     sort: { key: "name", dir: "asc" }, make: makeSystem,
     detailsOf: (r) => ({ "Serial number": r.serial ?? "", Microcode: r.microcode ?? "", "Total capacity": r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", IOPS: r.iops != null ? fmt(r.iops) : "", Latency: r.latency != null ? `${dec1(r.latency)} ms` : "" }),
     rows: buildRows(48, makeSystem, (r) => ({ "Serial number": r.serial, Microcode: r.microcode, "Total capacity": `${fmt(r.totalTB)} TB`, IOPS: fmt(r.iops), Latency: `${dec1(r.latency)} ms` })) },
   { id: "vsp-pools", group: "VSP 360", label: "Pools", title: "Pools", addLabel: "Add Pool",
-    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("name", "Pool", { sortable: true }),
+    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS, editable: false }), TXT("name", "Pool", { sortable: true }),
       SEL("type", "Type", POOL_TYPES, { tag: { "Dynamic Provisioning": 7, "Dynamic Tiering": 10, Snapshot: 12 } }), TXT("system", "Storage system"),
-      NUM("usedPct", "Used", { sortable: true, format: pctFmt }), NUM("subscription", "Subscription", { sortable: true, format: pctFmt })],
+      NUM("usedPct", "Used", { sortable: true, format: pctFmt, editable: false }), NUM("subscription", "Subscription", { sortable: true, format: pctFmt, editable: false })],
     extra: [NUM("totalTB", "Capacity (TB)", { format: fmt }), NUM("volumes", "Volumes")],
     viz: { type: "area", title: "Used trend", format: (n) => `${n}%` },
     sort: { key: "name", dir: "asc" }, make: makePool,
     detailsOf: (r) => ({ Capacity: r.totalTB != null ? `${fmt(r.totalTB)} TB` : "", Volumes: r.volumes ?? "" }),
     rows: buildRows(40, makePool, (r) => ({ Capacity: `${fmt(r.totalTB)} TB`, Volumes: r.volumes })) },
   { id: "vsp-volumes", group: "VSP 360", label: "Volumes", title: "Volumes", addLabel: "Add Volume",
-    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("ldev", "LDEV ID", { sortable: true }), TXT("name", "Volume"),
+    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS, editable: false }), TXT("ldev", "LDEV ID", { sortable: true }), TXT("name", "Volume"),
       TXT("pool", "Pool"), NUM("capacityGB", "Capacity (GB)", { sortable: true, format: fmt }), SEL("protection", "Protection", PROTECTIONS, { tag: { None: 5, "Local snapshot": 7, "Remote replication": 10, "Global-active device": 12 } })],
     extra: [TXT("host", "Host"), NUM("usedPct", "Used", { format: pctFmt }), TXT("created", "Created")],
     viz: { type: "bar", title: "Used", format: (n) => `${n}%`, of: (r) => (r.usedPct != null ? [r.usedPct] : null) }, // the volume's own Used value
@@ -4949,9 +4954,9 @@ const DATASETS = [
     detailsOf: (r) => ({ Host: r.host ?? "", Used: r.usedPct != null ? `${r.usedPct}%` : "", Created: r.created ?? "" }),
     rows: buildRows(60, makeVolume, (r) => ({ Host: r.host, Used: `${r.usedPct}%`, Created: r.created })) },
   { id: "vsp-hosts", group: "VSP 360", label: "Hosts", title: "Hosts", addLabel: "Add Host",
-    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS }), TXT("name", "Host", { sortable: true }),
+    columns: [SEL("status", "Status", ["Normal", "Warning", "Critical"], { status: HEALTH_STATUS, editable: false }), TXT("name", "Host", { sortable: true }),
       SEL("os", "Operating system", HOST_KINDS.map((h) => h[1]), { tag: { "VMware ESXi 8.0": 7, "Windows Server 2022": 1, "RHEL 9.4": 4, "Oracle Linux 8": 4, "AIX 7.3": 9 } }),
-      SEL("protocol", "Protocol", PROTOCOLS, { tag: { FC: 3, iSCSI: 8, "NVMe/TCP": 10, "NVMe/FC": 12 } }), NUM("volumes", "Volumes", { sortable: true }), TXT("lastSeen", "Last seen")],
+      SEL("protocol", "Protocol", PROTOCOLS, { tag: { FC: 3, iSCSI: 8, "NVMe/TCP": 10, "NVMe/FC": 12 } }), NUM("volumes", "Volumes", { sortable: true, editable: false }), TXT("lastSeen", "Last seen", { editable: false })],
     extra: [TXT("cluster", "Cluster"), TXT("initiator", "Initiator WWN")],
     viz: { type: "area", title: "I/O trend", format: (n) => `${n * 10} MB/s` },
     sort: { key: "name", dir: "asc" }, make: makeHost,
@@ -5012,7 +5017,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 07:55"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 11:30"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6044,6 +6049,7 @@ export default function App() {
     [columns, cfg.microViz, vizType, dsViz.title]
   );
   const vizValuesOf = (r) => { // the dataset's own values; one value alone (Volumes' Used) ends a sample history when the chart is a line
+    if (r.isNew) return null; // a new item has no metrics until it runs
     const own = dsViz.of && dsViz.of(r);
     if (!own || !own.length) return vizSeries(r);
     if (own.length > 1 || vizType === "bar") return own;
@@ -6319,7 +6325,8 @@ export default function App() {
               rowView={cfg.rowView}
               rowMenu={cfg.rowMenu}
               showFilterButton={!cfg.noHeader && cfg.showFilterButton}
-              onRowsChange={(next, ch) => { if (cfg.tableState === "empty") { setDataRows([...next, ...dataRows]); set({ tableState: "default" }); } else setDataRows(next); setLast(`${ch.type} → ${ch.row ? (ch.row.name || ch.row.c1 || `row ${ch.row.id}`) : ""} (${next.length} rows)`); }}
+              onRowsChange={(next, ch) => { const marked = ch.type === "add" ? next.map((r) => (r === ch.row ? { ...r, isNew: true } : r)) : next; // a new item: its metrics come once it runs
+                if (cfg.tableState === "empty") { setDataRows([...marked, ...dataRows]); set({ tableState: "default" }); } else setDataRows(marked); setLast(`${ch.type} → ${ch.row ? (ch.row.name || ch.row.c1 || `row ${ch.row.id}`) : ""} (${next.length} rows)`); }}
               initialFilterModel={startModel}
               onFilterModelChange={setModel}
               onSelectionChange={(ids) => setLast(`${ids.length} selected`)}

@@ -32,7 +32,8 @@ export interface TableColumn<R extends TableRow = TableRow> {
   align?: "left" | "right";
   /** false: the title does not sort. Default true. */
   sortable?: boolean;
-  /** false: the field is read-only in the add / edit panel. */
+  /** false: the field is not entered by people (a metric the system reports, for example): it is read-only in the edit panel
+   *  and not asked in the add panel. Adding asks every other field and enables Apply once all are filled. */
   editable?: boolean;
   /** Draws the cell yourself (links, icons, bars, several fields…). Search, filters and sorting still use the row's value at `key`,
    *  and `format` still gives the text that search matches. Takes priority over `status` and `tag`. */
