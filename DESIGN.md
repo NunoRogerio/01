@@ -2185,3 +2185,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 22:26) Decision panels: a unit switch that is off uses the Cancel button's grey (the secondary, #6A6A6E on the dark glass).
 - (Oct 16, 22:27) Decision panels: once their content has scrolled up, it fades at the top too (the same fade as at the bottom), under the fixed icon, so it shows there is more above. Other panels keep the bottom fade only.
 - (Oct 16, 22:28) Decision panels: Dispatch (smoke check and initial attack) in the switches' green (rgb(52, 199, 89)) with dark text (rgb(28, 28, 30)) for contrast; No action keeps the primary.
+- (Oct 16, 22:32) Detection, captain's and summary cards: 8px corners (their corner tags too); thumbnails 20% smaller (76px, was 96px) with 8px corners, giving the text more room.
