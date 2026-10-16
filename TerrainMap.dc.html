@@ -676,7 +676,7 @@ class Component extends DCLogic {
   wfLblClear() { try { const L = document.querySelectorAll('[data-wf-maplbl]'); if (!L.length) return; const ov = [].slice.call(document.querySelectorAll('[data-wf-leg] > *, [data-wf-leg] button, .mbtn, .avbtn, .wf-note-t, [style*="z-index: 50"]')).filter((e) => { const c = getComputedStyle(e); return c.visibility !== 'hidden' && +c.opacity > 0.05 && c.display !== 'none'; }).map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0 && r.width * r.height < 60000);   /* real overlays only: not the page's veils or the map's own layer */
       L.forEach((el) => { const r = el.getBoundingClientRect(), hit = ov.some((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top < q.bottom + 4 && r.bottom > q.top - 4); const v = hit ? 'hidden' : ''; if (el.style.visibility !== v) el.style.visibility = v; }); } catch (e) {} }
   componentDidUpdate(prev) {
-    this._pv = null; clearTimeout(this._lblT); this.wfLblClear(); this._lblT = setTimeout(() => this.wfLblClear(), 450);
+    const pvPrev = this._pv; if (!this._zAnim) this._pv = null;   /* a zoom glide in progress keeps its view through the page's re-renders */ clearTimeout(this._lblT); this.wfLblClear(); this._lblT = setTimeout(() => this.wfLblClear(), 450);
     // full screen: the title box keeps clear of the legend column on the right, so it is told the column's width
     try { const full = this.props.isFull === true || this.props.isFull === 'true'; if (full) { const L = [...document.querySelectorAll('[data-wf-leg]')].find((e) => e.offsetWidth); const w = L ? Math.max(0, L.offsetWidth - 16) : 0;
       if (Math.abs(w - (this._legWpx || 0)) > 1) { this._legWpx = w; clearTimeout(this._legWT); this._legWT = setTimeout(() => this.forceUpdate(), 0); } } } catch (e) {}
@@ -689,7 +689,20 @@ class Component extends DCLogic {
     const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, (q.mode === 'pin' && Number(q.pinGrow) > 0 ? 'proj' : 'now'),   /* (Oct 16) entering or leaving the projection reframes; +1 / +3 / +6 h keep the zoom */ (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
     const selfPick = this._selfPick && Date.now() < this._selfPick.until && this._selfPick.k === (p.scopeSt || '') + '|' + (p.scopeCo || '');
     if (sig(prev) !== sig(p) && !selfPick) {
-      this._animUntil = Date.now() + 700;
+      /* (Oct 16, 19:52) Now <-> projection on an incident map: the zoom glides there (0.7 s, eased in and out) instead of jumping;
+         the incident stays put on its straight path while the scale changes in log steps */
+      const only = (q) => sig(q).split('|').filter((x, i) => i !== 6).join('|');
+      if (only(prev) === only(p) && p.mode === 'pin' && this.el) {
+        try { const from = pvPrev && pvPrev.s && pvPrev.cx != null ? Object.assign({}, pvPrev) : this.view(), to = this.homeView(), PX = Number(p.pinX), PY = Number(p.pinY), W0 = this.W(), H0 = this.H();
+          if (isFinite(PX) && isFinite(PY) && from && to && Math.abs(Math.log(to.s / from.s)) > 0.01) {
+            const loc = (v) => ({ x: (PX - v.cx) * v.s + W0 / 2, y: (PY - v.cy) * v.s + H0 / 2 }), a = loc(from), b = loc(to), l0 = Math.log(from.s), l1 = Math.log(to.s), t0 = performance.now(), D = 700, me = {};
+            this._zAnim = me; this._pv = Object.assign({}, from); this._gest = true; if (this.stopGlide) this.stopGlide();
+            const step = (t) => { if (this._zAnim !== me) return; const k = Math.min(1, (t - t0) / D), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, sv = Math.exp(l0 + (l1 - l0) * e), x = a.x + (b.x - a.x) * e, y = a.y + (b.y - a.y) * e;
+              this.setView(PX - (x - W0 / 2) / sv, PY - (y - H0 / 2) / sv, sv);
+              if (k < 1) requestAnimationFrame(step); else { this._zAnim = null; this.endGest(); this._pv = {}; this.setState({ cx: undefined, cy: undefined, s: undefined }); } };
+            requestAnimationFrame(step); return; } } catch (e) {}
+      }
+      this._animUntil = Date.now() + 700; this._pv = {};
       this.setState({ cx: undefined, cy: undefined, s: undefined });
     }
   }
@@ -1466,6 +1479,8 @@ class Component extends DCLogic {
     const p = this.props, fullNow = p.isFull === true || p.isFull === 'true';
     const W = this.W(), H = this.H();
     const LAND16 = (this.props.isFull === true || this.props.isFull === 'true') && !!(window.__wfVP && window.__wfVP.land);   /* (Oct 5) full-screen map in landscape: the location card 16px from the screen's left edge (the camera sits mid-height, clear of it) */
+    /* (Oct 16, 19:52) Now <-> projection: the first drawing after the switch keeps the old view (the glide then starts from it, no jump to the end and back) */
+    { const pp = this.props, pk = pp.mode === 'pin' ? (pp.pinId || '') + '|' + (Number(pp.pinGrow) > 0 ? 'proj' : 'now') : ''; if (pk && this._pgK && pk !== this._pgK && pk.split('|')[0] === this._pgK.split('|')[0] && this._rv && !(this.state && this.state.cx != null)) this._pv = Object.assign({}, this._pv || {}, this._rv); this._pgK = pk; }
     const c = this.clampView(this.view().cx, this.view().cy, this.view().s);
     const s = c.s;
     const tx = W / 2 - c.cx * s, ty = H / 2 - c.cy * s;
