@@ -68,7 +68,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
 [data-wf-pop] .wf-title-xs{font-size:18px!important;line-height:24px!important}
 </style>
 </helmet>
-<div ref="{{setEl}}" data-wf-maproot="1" data-wf-isfull="{{fullAttr}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: {{rootTA}}; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
+<div ref="{{setEl}}" data-wf-maproot="1" data-wf-isfull="{{fullAttr}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onClickCapture="{{onRootClick}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: {{rootTA}}; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">
 
   <!-- While a finger moves the map, these layers move as one picture (a CSS transform); the full redraw follows a few times a second and on release -->
   <div data-wf-gl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}">
@@ -610,6 +610,9 @@ class Component extends DCLogic {
         else if (typeof p.onBgTap === 'function' && !full && typeof p.onFull !== 'function') p.onBgTap();
       }
     };
+    /* (Oct 16, 12:37, every map) a click anywhere on the map that is not on a marker, a tooltip or a control closes the open tooltip: the
+       pointer path alone missed it on the page-locked maps (the candidate's detections), where the page owns the touch */
+    this.onRootClick = (e) => { if (!(this.state || {}).pop) return; const t = e && e.target; let hit = false; try { hit = !!(t && t.closest && t.closest('[data-wf-pop], .tipwrap, button, a, [role=button], [role=group], [role=tab], [role=slider]')); } catch (x) {} if (hit) return; if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); };
     this.stop = (e) => e.stopPropagation();
     this.zoomIn = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1.6); };
     this.zoomOut = () => { this._animUntil = Date.now() + 600; this.zoomAt(this.W() / 2, this.win().c, 1 / 1.6); };
@@ -1629,7 +1632,7 @@ class Component extends DCLogic {
         return { op: want ? 1 : 0, txt: 'Loading map' }; })(),
       pinTtlD: p.fireOnly === true || p.fireOnly === 'true' || p.noTitle === true || p.noTitle === 'true' ? 'none' : 'flex', glO: (W / 2) + 'px ' + (H / 2) + 'px', glT: this._glFlip ? 'translate(0px, 0px)' : 'scale(1)',
       legDown: this.legDown, legMove: this.legMove, legUp: this.legUp, legClick: this.legClick,
-      setEl: this.setEl, rootTA: this.isLocked() ? 'pan-y' : 'none',   /* a locked (page) map lets a vertical swipe scroll the page; taps still reach its legend and buttons */ onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, onLost: this.onLost, stop: this.stop,
+      setEl: this.setEl, rootTA: this.isLocked() ? 'pan-y' : 'none',   /* a locked (page) map lets a vertical swipe scroll the page; taps still reach its legend and buttons */ onDown: this.onDown, onRootClick: this.onRootClick, onMove: this.onMove, onUp: this.onUp, onLost: this.onLost, stop: this.stop,
       zoomIn: this.zoomIn, zoomOut: this.zoomOut, recenter: this.recenter,
       cursor: (this.state || {}).dragging ? 'grabbing' : 'grab',
       w: W, h: H, s: +s.toFixed(4), tx: +tx.toFixed(1), ty: +ty.toFixed(1),
