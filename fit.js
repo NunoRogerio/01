@@ -1485,7 +1485,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     var add=function(el,dp){dp=dp||0;if(!shown(el))return;var cs=el.ownerDocument.defaultView.getComputedStyle(el);if(cs.pointerEvents==='none'&&!el.children.length&&!el.textContent.trim())return;   /* a plain veil (the map's vignette) stays */
       var r=topRect(el);if(r.bottom<=0||r.top>=SH||r.right<=0||r.left>=(window.top.innerWidth||390))return;   /* off screen: nothing to see travel */
       if(r.height>SH*0.6&&el.children.length&&dp<5&&!paints(el)){[].forEach.call(el.children,function(c){if(c.tagName!=='SCRIPT'&&c.tagName!=='STYLE')add(c,dp+1);});return;}   /* a screen-high holder (the panels column): its pieces travel each their own way */
-      var lr=el.getBoundingClientRect(),k=r.height/(lr.height||r.height||1)||1,up=(r.top+r.bottom)/2<mid;out.push({el:el,dy:up?-(r.bottom+32)/k:(SH-r.top+32)/k});};
+      var k=r.height/(el.offsetHeight||r.height||1)||1,up=(r.top+r.bottom)/2<mid;   /* screen pixels per CSS pixel of the element (frames and the page zoom included) */out.push({el:el,dy:up?-(r.bottom+32)/k:(SH-r.top+32)/k});};
     return add;};
   var peel=function(target,out){var add=collector(out),e=target;while(e&&e.parentElement&&e!==e.ownerDocument.body){var par=e.parentElement;[].forEach.call(par.children,function(c){if(c!==e&&c.tagName!=='SCRIPT'&&c.tagName!=='STYLE')add(c);});e=par;}return out;};
   var mapPeel=function(root,out){var add=collector(out);[].forEach.call(root.children,function(c){if(!c.hasAttribute('data-wf-gl'))add(c);});return out;};
@@ -1499,7 +1499,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       var st=MI.state||{},sel=st.selId,L0=[].concat(MI.props.ignitions||[],MI.props.fires||[]),it=L0.filter(function(g){return g&&g.id===sel;})[0];if(!it||!isFinite(it.x)||!isFinite(it.y))return false;
     }catch(x){return false;}
     var PX=Number(it.x),PY=Number(it.y),v0=MI.view(),W=MI.W(),H=MI.H(),done=false,T0=Date.now();
-    w.style.transform='none';w.style.background='transparent';w.style.boxShadow='none';w.style.opacity='0';dim.style.display='none';
+    w.style.transform='none';w.style.background='transparent';w.style.boxShadow='none';w.style.zIndex='-1';f.style.opacity='1';dim.style.display='none';   /* (Oct 16, 18:55) the incident loads fully drawn behind the main screen (an invisible frame is not drawn on iPhone: it never got ready) */
     var mapR=function(){return topRect(MR);};
     // the main map's view that puts the marker at local point (lx, ly) at scale s
     var viewAt=function(lx,ly,s){return {cx:PX-(lx-W/2)/s,cy:PY-(ly-H/2)/s,s:s};};
@@ -1527,10 +1527,10 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     // 3. the incident's map takes over; its header slides down, its lower surfaces slide up
     var finish=function(DM){var inL=[];try{if(DM){peel(DM,inL);mapPeel(DM,inL);var e=DM.ownerDocument.defaultView.frameElement;while(e&&e!==f){peel(e,inL);e=e.ownerDocument.defaultView.frameElement;}}}catch(x){}
       var inA=slide(inL,'in');inA.forEach(function(an){try{an.pause();an.currentTime=0;}catch(x){}});
-      w.style.opacity='1';f.style.opacity='1';try{f.getAnimations().forEach(function(an){an.cancel();});}catch(x){}
-      var fd=w.animate([{opacity:0},{opacity:1}],{duration:220,easing:'ease-out',fill:'forwards'});
+      w.style.zIndex='300';f.style.opacity='1';try{f.getAnimations().forEach(function(an){an.cancel();});}catch(x){}
+      var fd=w.animate([{opacity:0},{opacity:1}],{duration:220,easing:'ease-out',fill:'backwards'});
       inA.forEach(function(an){try{an.play();}catch(x){}});
-      setTimeout(function(){inA.forEach(function(an){try{an.cancel();}catch(x){}});fd.cancel();w.style.opacity='1';navigate();},SLIDE+40);};
+      setTimeout(function(){inA.forEach(function(an){try{an.cancel();}catch(x){}});navigate();},SLIDE+40);};
     var poll=function(){if(done)return;if(ready()&&Date.now()-T0>250){if(fl)setTimeout(land,0);else land();return;}if(Date.now()-T0>8000){done=true;finish(findMap(f.contentDocument,0));return;}setTimeout(poll,70);};
     setTimeout(poll,100);
     return true;};
