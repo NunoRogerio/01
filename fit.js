@@ -1536,3 +1536,15 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     return true;};
   addEventListener('pageshow',function(e){try{if(window.__wfSharedUndo){window.__wfSharedUndo();window.__wfSharedUndo=null;}}catch(x){}});
 })();
+
+// (Oct 16, 18:40, temporary) Sign-in check: an error on any screen, or the main screen finding nobody signed in, is noted;
+// the login screen then shows that note in a small line at its foot (a tap hides it), so a failed sign-in says why.
+(function(){
+  try{window.addEventListener('error',function(e){try{if(e&&e.message)localStorage.setItem('wf-lasterr',JSON.stringify({t:Date.now(),m:String(e.message).slice(0,160)+' ('+String(e.filename||'').split('/').pop().split('?')[0]+':'+(e.lineno||0)+')',p:location.pathname.split('/').pop()}));}catch(x){}});
+    window.addEventListener('unhandledrejection',function(e){try{var r=e&&e.reason;localStorage.setItem('wf-lasterr',JSON.stringify({t:Date.now(),m:'Promise: '+String(r&&r.message||r).slice(0,160),p:location.pathname.split('/').pop()}));}catch(x){}});}catch(x){}
+  if(!/\/Login\.dc\.html$/.test(location.pathname)||window.top!==window)return;
+  var show=function(){try{var L=[],now=Date.now();['wf-why','wf-lasterr'].forEach(function(k){var v=JSON.parse(localStorage.getItem(k)||'null');if(v&&now-v.t<5*60000)L.push((v.p?v.p.replace('.dc.html','')+': ':'')+v.m);});if(!L.length)return;
+    var d=document.createElement('div');d.setAttribute('role','status');d.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;padding:8px 16px;border-radius:16px;background:rgba(28,28,30,0.85);color:rgb(255, 255, 255);font:13px/18px -apple-system,system-ui,sans-serif;word-break:break-word';
+    d.textContent='Last sign-in issue: '+L.join(' | ');d.onclick=function(){d.remove();try{localStorage.removeItem('wf-why');localStorage.removeItem('wf-lasterr');}catch(x){}};document.body.appendChild(d);}catch(x){}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(show,800);});else setTimeout(show,800);
+})();
