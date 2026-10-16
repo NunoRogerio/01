@@ -648,7 +648,16 @@ window.__wfBlink=function(path,dur){
 // secondary (dark, hi-vis text) to step back and the primary (hi-vis) to go ahead. Tap the scrim or swipe down to cancel.
 // window.__wfConfirm({ title, body, cancel, ok, onOk, onCancel })
 (function(){
-  window.__wfConfirm=function(o){
+  /* (Oct 16, 12:03) a panel that grows out of the control that opened it and folds back into it: a clip that widens from the control's
+   shape to the whole panel (no scaling, nothing bounces); the panel's content fades in once it is open and out before it folds */
+try{document.addEventListener('pointerdown',function(e){try{var b=e.target&&e.target.closest&&e.target.closest('.wf-ibtn,.btn');if(b){window.__wfLastTap=b;window.__wfLastTapT=Date.now();}}catch(x){}},true);}catch(x){}   /* the control last pressed, for panels that grow out of it */
+window.__wfGrow=function(panel,from,open,done){try{if(!panel){if(done)done();return;}var pr=panel.getBoundingClientRect(),F=from&&from.getBoundingClientRect?from.getBoundingClientRect():from,k=(pr.width/(panel.offsetWidth||pr.width))||1;
+  var at=F&&F.width?'inset('+Math.max(0,(F.top-pr.top)/k).toFixed(1)+'px '+Math.max(0,(pr.right-F.right)/k).toFixed(1)+'px '+Math.max(0,(pr.bottom-F.bottom)/k).toFixed(1)+'px '+Math.max(0,(F.left-pr.left)/k).toFixed(1)+'px round 24px)':'inset(100% 0px 0px 0px round 24px)',full='inset(0px 0px 0px 0px round 24px)';
+  var kids=[].slice.call(panel.children);
+  if(open){panel.style.transition='none';panel.style.clipPath=at;panel.style.visibility='visible';kids.forEach(function(e){e.style.transition='none';e.style.opacity='0';});void panel.offsetWidth;
+    requestAnimationFrame(function(){panel.style.transition='clip-path .5s cubic-bezier(.4,0,.2,1)';panel.style.clipPath=full;setTimeout(function(){kids.forEach(function(e){e.style.transition='opacity .25s ease';e.style.opacity='1';});},260);setTimeout(function(){if(done)done();},520);});}
+  else{kids.forEach(function(e){e.style.transition='opacity .15s ease';e.style.opacity='0';});setTimeout(function(){panel.style.transition='clip-path .45s cubic-bezier(.4,0,.2,1)';panel.style.clipPath=at;setTimeout(function(){panel.style.visibility='hidden';if(done)done();},470);},120);}}catch(x){if(done)done();}};
+window.__wfConfirm=function(o){
     o=o||{};var root=document.querySelector('[data-wfroot]')||document.body;
     var old=root.querySelector('.wf-cfm');if(old)old.remove();
     var w=document.createElement('div');w.className='wf-cfm';w.style.cssText='position:absolute;inset:0;z-index:2147482000';   /* (Oct 8, 22:28) a dialog is on top of everything */
@@ -668,7 +677,7 @@ window.__wfBlink=function(path,dur){
        title, line and buttons; Cancel folds it back into the button */
     if(o.fromRect){var R0=root.getBoundingClientRect(),kk=(R0.width/(root.offsetWidth||R0.width))||1,F=o.fromRect,fl=(F.left-R0.left)/kk,ft=(F.top-R0.top)/kk,fw=F.width/kk,fh=F.height/kk,RH=R0.height/kk,RW=R0.width/kk;
       p.className='wf-dlg wf-dlg-grow';p.removeAttribute('data-swipe');sc.style.background='rgba(0,0,0,0.16)';
-      p.style.cssText='position:absolute;left:16px;right:16px;bottom:'+Math.max(16,RH-(ft+fh))+'px;display:flex;flex-direction:column;box-sizing:border-box;padding:24px;border-radius:24px;background:'+(o.bg||'rgba(255,255,255,0.62)')+';-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:none;font-family:inherit;transition:clip-path .45s cubic-bezier(.4,0,.2,1);will-change:clip-path';
+      p.style.cssText='position:absolute;left:16px;right:16px;bottom:'+Math.max(16,RH-(ft+fh))+'px;display:flex;flex-direction:column;box-sizing:border-box;padding:24px;border-radius:24px;background:'+(o.bg||'rgba(255,255,255,0.86)')+';-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:none;font-family:inherit;transition:clip-path .45s cubic-bezier(.4,0,.2,1);will-change:clip-path';
       if(o.fg){h.style.color=o.fg;b.style.color=o.fg;}
       var C=[].slice.call(p.children);C.forEach(function(e){e.style.opacity='0';e.style.transition='opacity .25s ease';});
       if(o.icon){var ic=document.createElement('div');ic.setAttribute('aria-hidden','true');ic.innerHTML=o.icon;ic.style.cssText='display:flex;margin:0 0 16px;opacity:0;transition:opacity .25s ease;color:'+(o.iconColor||'currentColor');var sv=ic.querySelector('svg');if(sv){sv.setAttribute('width','42');sv.setAttribute('height','42');sv.style.cssText='stroke-width:1.5px';}p.insertBefore(ic,h);C.unshift(ic);}
