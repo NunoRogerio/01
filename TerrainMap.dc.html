@@ -1338,7 +1338,7 @@ class Component extends DCLogic {
   // The widest view the map serves: the whole state or country of the selected area (California, Portugal), never just
   // the county or the incidents framed in it, so zooming out always reaches the whole region.
   outerFit() {
-    const p = this.props, G = this.geo(), st = p.scopeSt, g = st && (st === 'US' ? G.states.US : G.states[st]);
+    const p = this.props, G = this.geo(), st = p.scopeSt || ((p.mode === 'pin' || p.mode === 'spread') ? p.stationsSt : ''), g = st && (st === 'US' ? G.states.US : G.states[st]);   /* (Oct 16) an incident map zooms out, full screen, as far as its state (or country region): never held at its own framing */
     const b0 = this.base(); if (!g || !g.box) return b0;
     const box = g.box, bw = Math.max(1, Math.abs(box[2] - box[0])), bh = Math.max(1, Math.abs(box[3] - box[1])), w = this.win();
     const s = Math.min(w.cw / bw, w.h / bh), W = this.W(), H = this.H(), cx = (box[0] + box[2]) / 2, cy = (box[1] + box[3]) / 2;
@@ -1346,7 +1346,7 @@ class Component extends DCLogic {
   }
   pinCloseOn() { return this.props.mode === 'pin' && Number(this.props.pinClose) > 0 && !!window.__wfLiveMap; }   // live map only: the demo's baked map uses other zoom units
   zMin() { if (this.pinCloseOn()) return window.__wfLiveMap ? 0.03 : 0.3;   // opened close on an ignition: full screen can still zoom out to the region
-    const o = this.outerFit(), b = this.base(); return Math.max(window.__wfLiveMap ? 0.0005 : 0.008, Math.min(o.s || 0.05, b.s || 0.05) * 0.6); }   // zoom out stops at 60% of the whole region's view
+    const o = this.outerFit(), b = this.base(); if (o === b && (this.props.mode === 'pin' || this.props.mode === 'spread')) return window.__wfLiveMap ? 0.03 : 0.3;   /* (Oct 16) no state outline known: the region's zoom-out, as a pin opened close */ return Math.max(window.__wfLiveMap ? 0.0005 : 0.008, Math.min(o.s || 0.05, b.s || 0.05) * 0.6); }   // zoom out stops at 60% of the whole region's view
   zMax() { return Math.max(window.__wfLiveMap ? 24 : 1, this.base().s || 1); }
   // Navigating by the map: 1 s after the map comes to rest, the region filling at least 80% of the visible map becomes
   // the selection (a county or district if one alone fills it; when several share the screen, their state or country).
