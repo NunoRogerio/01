@@ -70,7 +70,7 @@
    (15:37) it is fully there, to be read, as soon as a stretch as tall as its header is visible above the buttons */
 (function(){var Q='[data-wf-kpicard], ul[data-wf-evk], [data-wf-sumcard], [data-wf-page] h3.wf-note',raf=0;
   function f(){raf=0;try{var b=document.querySelector('[data-wf-actbar][data-wf-float="flex"]'),pg=document.querySelector('[data-wf-page="1"]');if(!pg)return;
-    var t=Infinity;if(b){[].forEach.call(b.children,function(x){if(x.offsetHeight>0){var r=x.getBoundingClientRect();if(r.height>0&&r.top<t)t=r.top;}});}
+    var t=Infinity;if(b){[].forEach.call(b.children,function(x){var ps=getComputedStyle(x).position;if(x.offsetHeight>0&&ps!=='absolute'&&ps!=='fixed'){var r=x.getBoundingClientRect();if(r.height>0&&r.top<t)t=r.top;}});}   /* (15:44) only the buttons' own row: the fixed note pill and the stripe strip sit elsewhere and made every card read as under */
     pg.querySelectorAll(Q).forEach(function(el){var r=el.getBoundingClientRect(),u='0';if(t<Infinity&&r.height>0&&r.bottom>t){var hd=el.firstElementChild,hh=hd?hd.getBoundingClientRect().bottom-r.top:0;if(!(hh>=16))hh=48;hh=Math.min(hh,r.height);if(t-r.top<hh)u='1';}
       if(el.getAttribute('data-wf-under')!==u)el.setAttribute('data-wf-under',u);});}catch(e){}}
   function q(){if(!raf)raf=requestAnimationFrame(f);}
