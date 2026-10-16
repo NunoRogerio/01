@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792185308"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792185742"></script>
+<script src="prefs.js?v=1792186182"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792173262"></script>
@@ -100,6 +100,7 @@
 .wf-iadark li > span:first-child,.wf-iadark li > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li > span:nth-child(2) > span:last-child{transition:opacity .2s ease}
 .wf-iadark li:has(.wf-tog[aria-checked=false]) > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:last-child{opacity:.4}   /* (Oct 16, 22:24) a unit switched off dims: its icon (and its circle), name and line */
 .wf-iadark .wf-tog[aria-checked=false]{background:var(--wf-sec-bg)!important;box-shadow:none!important}   /* (Oct 16, 22:26) off: the Cancel button's grey */
+.wf-iadark .btn.primary.wf-okgo:not([aria-disabled="true"]){background:rgb(52, 199, 89)!important;color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}   /* (Oct 16, 22:28) Dispatch in the switches' green, dark text for contrast */
 .wf-iadark .wf-tog[aria-checked=true]{background:rgb(52, 199, 89)!important;box-shadow:none!important}   /* (Oct 16, 22:04) a unit switched on: green; off keeps the grey */
 .wf-iadark [role="button"][data-grab-close] span{background:rgba(235, 235, 245, 0.3)!important}
 /* (Oct 16, 21:45, trial) the incident map's controls (drone, helmet camera, re-centre, full screen) as white glass buttons with the cards' drop shadow, dark icons */
@@ -1001,7 +1002,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="button" tabindex="0" aria-label="{{iab.closeLbl}}" data-grab-close data-swipe-go onClick="{{iab.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- (Oct 16, 20:32) the decision's own icon (from the button it grew out of), centred at the top, 42px, in its colour -->
     <div data-wf-iaic="1" aria-hidden="true" style="display: flex; justify-content: center; margin: 0 0 16px"></div>
-    <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none">
+    <div data-wf-fadeup="1" style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none">
       <!-- (Oct 16, 22:04) the title and its line scroll with the units: only the icon stays fixed at the top -->
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-shrink: 0; margin-bottom: 24px; padding: 0 16px">
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="iaTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000">{{iab.ttl}}</h2><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{iab.sub}}</span></span>
@@ -1981,13 +1982,13 @@ class Component extends DCLogic {
             o.iab = Object.assign(o.iab, { d: 'flex', y: opn ? '0%' : '100%', vis: opn ? 'visible' : 'hidden', op: opn ? '1' : '0', pe: opn ? 'auto' : 'none', ttl: PTl ? 'Ataque inicial' : 'Initial attack',   /* the same words as the button that opens it */ sub: o.ia.sub, note: o.ia.note, rows: o.ia.rows,
               sendD: sentAt ? 'none' : 'block', doneD: sentAt ? 'flex' : 'none', doneTxt: PTl ? 'Ataque inicial enviado' : 'Initial attack sent', sendLbl: PTl ? 'Enviar ataque inicial' : 'Send initial attack',
               sendDis: nOn ? 'false' : 'true', sendOp: nOn ? '1' : '0.4', sendCls: nOn ? 'primary' : 'wf-sec', send: nOn && snd ? snd : () => {},
-              sendRowD: sentAt ? 'none' : 'grid', cancelLbl: PTl ? 'Cancelar' : 'Cancel', okLbl: PTl ? 'Despachar' : 'Dispatch',   /* (Oct 16, 12:03) the dispatcher's word */ cancel: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (o.iab && o.iab.close) o.iab.close(); else this.setState({ iaOpen: false }); }, sendGo: () => { const g = o.vf && o.vf.sendNow; if (!nOn || !g) return; g(); }, okCls: nOn ? 'primary' : 'wf-sec', okDis: nOn ? 'false' : 'true' });
+              sendRowD: sentAt ? 'none' : 'grid', cancelLbl: PTl ? 'Cancelar' : 'Cancel', okLbl: PTl ? 'Despachar' : 'Dispatch',   /* (Oct 16, 12:03) the dispatcher's word */ cancel: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (o.iab && o.iab.close) o.iab.close(); else this.setState({ iaOpen: false }); }, sendGo: () => { const g = o.vf && o.vf.sendNow; if (!nOn || !g) return; g(); }, okCls: nOn ? 'primary wf-okgo' : 'wf-sec', okDis: nOn ? 'false' : 'true' });
             /* (Oct 16, 12:26) one panel for the three decisions, the same glass and layout: its title, its line with the reasons, its units (the
                initial attack's, switchable; the smoke check's one engine), Cancel | its word. Dispatch was always disabled: the retired safety
                pin still held Send locked; the panel's own button now follows only whether a unit is on */
             { const md = st.iaMode || 'sent', pl0 = (fr.place || '').trim(), u0 = U[0], cf1 = (window.__wfConf0 || {})[cid] != null ? window.__wfConf0[cid] : (fr.cand ? fr.cand.conf : null), fold = (fn) => () => { try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} if (fn) fn(); if (o.iab && o.iab.close) o.iab.close(); };
               if (md === 'check') Object.assign(o.iab, { ttl: PTl ? 'Reconhecimento' : 'Smoke check', sub: u0 ? (PTl ? u0.name + ' (' + String(u0.where).replace(/\.+$/, '') + ') vai a ' + pl0 + ' ver, a ' + u0.eta + ' min. O ponto de situação confirma o incêndio ou cancela.' + (cf1 != null ? ' Deteções: ' + cf1 + '% de confiança.' : '') : u0.name + ' from ' + String(u0.where).replace(/\.+$/, '') + ' goes to ' + pl0 + ' to look, ' + u0.eta + ' min away. Its size-up confirms the fire or cancels it.' + (cf1 != null ? ' Detections: ' + cf1 + '% confidence.' : '')) : (PTl ? 'Um veículo vai a ' + pl0 + ' ver.' : 'One engine goes to ' + pl0 + ' to look.'),
-                rows: (o.ia.rows || []).slice(0, 1).map((r) => Object.assign({}, r, { swD: 'none', tagD: 'none' })), note: '', okLbl: PTl ? 'Despachar' : 'Dispatch', okCls: 'primary', okDis: 'false', sendGo: fold(o.vf && o.vf.checkNow), sendRowD: VD[cid] ? 'none' : 'grid', doneD: 'none' });
+                rows: (o.ia.rows || []).slice(0, 1).map((r) => Object.assign({}, r, { swD: 'none', tagD: 'none' })), note: '', okLbl: PTl ? 'Despachar' : 'Dispatch', okCls: 'primary wf-okgo', okDis: 'false', sendGo: fold(o.vf && o.vf.checkNow), sendRowD: VD[cid] ? 'none' : 'grid', doneD: 'none' });
               else if (md === 'dismissed') Object.assign(o.iab, { ttl: PTl ? 'Sem ação' : 'No action', sub: PTl ? 'Encerrar ' + pl0 + ' sem enviar meios.' + (cf1 != null ? ' Deteções: ' + cf1 + '% de confiança.' : '') + ' Sai das listas e dos mapas e passa para Resolvidos.' : 'Close ' + pl0 + ' with no units sent.' + (cf1 != null ? ' Detections: ' + cf1 + '% confidence.' : '') + ' It leaves the lists and maps and goes to Resolved.',
                 rows: [], note: '', okLbl: PTl ? 'Sem ação' : 'No action', okCls: 'primary', okDis: 'false', sendGo: fold(o.vf && o.vf.dismissNow), sendRowD: VD[cid] ? 'none' : 'grid', doneD: 'none' });
               else o.iab.sendGo = fold(o.iab.sendGo); }
