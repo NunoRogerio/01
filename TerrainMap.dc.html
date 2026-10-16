@@ -14,11 +14,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792070010"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792132274"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1791878728"></script>
 <script src="station.js?v=1792067104"></script>
-<script src="i18n.js?v=1792067104"></script>
+<script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792066597"></script>
 
 <title>Terrain map</title>
@@ -2032,7 +2032,8 @@ class Component extends DCLogic {
     /* (Oct 14, 08:41) a detection's marker: the civil (FFW) ones on the civil green, as their cards and tooltip panel; selected, its outline dark grey and 2px */
     (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(239, 246, 255)' : 'rgb(255, 255, 255)';   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '2px solid rgb(58, 58, 60)' : '1px solid rgba(0, 121, 166, 0.45)'; });
     /* (Oct 15, 06:01) a tap on a map tooltip panel closes it, every kind (detections, candidates, fires, stations); its buttons keep their own action */
-    OUT.popTap = (e) => { const t = e && e.target; if (t && t.closest && t.closest('a, button')) return; if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
+    OUT.popTap = (e) => { const t = e && e.target; if (t && t.closest && t.closest('a, button')) return; if (e && e.stopPropagation) e.stopPropagation();   /* (Oct 16, 07:17) the whole tooltip opens its incident (or station): a tap anywhere on it acts as its foot button; a tooltip with nothing to open (a detection) still closes */
+      const pe = t && t.closest ? t.closest('[data-wf-pop]') : null, go = pe ? pe.querySelector('a[data-wf-split]') : null; if (go && go.offsetParent) { go.click(); return; } closePop(); };
     OUT.popClose = (e) => { if (e && e.stopPropagation) e.stopPropagation(); closePop(); };
     OUT.popCls = 'wfpop' + ((this.state || {}).popSpin ? ' wfpop-out' : '');
     OUT.popXRot = (this.state || {}).popSpin ? '90deg' : '0deg';
