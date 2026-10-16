@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792152763"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792153039"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792152805"></script>
+<script src="prefs.js?v=1792153039"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792136318"></script>
@@ -1641,6 +1641,10 @@ class Component extends DCLogic {
       wm: (() => { if (!(isPin || mode === 'spread') || !window.__wfLiveMap || !window.__wfWater) return { id: 'wfWm0', lakes: '', sea: '', url: 'none' };
         const x0 = isPin ? Number(p.pinX) : Number(p.fireX), y0 = isPin ? Number(p.pinY) : Number(p.fireY); if (!isFinite(x0) || !isFinite(y0) || (!x0 && !y0)) return { id: 'wfWm0', lakes: '', sea: '', url: 'none' };
         const Wt = window.__wfWater(34.19 - (y0 - 662) / 2829, (x0 - 518) / 2345 - 118.13), id = 'wfWm' + (this._wmK || (this._wmK = Math.random().toString(36).slice(2, 8)));
+        /* (Oct 16, 13:16) a safety check: if the incident itself would sit on the masked water, the water data is wrong there: no mask */
+        const onWater = (d) => { if (!d) return false; try { const K = this._wmChk || (this._wmChk = {}), k = d.length + ':' + x0 + ',' + y0; if (K[k] != null) return K[k]; let sv = document.getElementById('wf-wm-probe'); if (!sv) { sv = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); sv.id = 'wf-wm-probe'; sv.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden;visibility:hidden'); document.body.appendChild(sv); }
+          const pe = document.createElementNS('http://www.w3.org/2000/svg', 'path'); pe.setAttribute('d', d); pe.setAttribute('fill-rule', 'evenodd'); sv.appendChild(pe); const pt = sv.createSVGPoint ? sv.createSVGPoint() : null; let r = false; if (pt && pe.isPointInFill) { pt.x = x0; pt.y = y0; r = pe.isPointInFill(pt); } pe.remove(); K[k] = r; return r; } catch (x) { return false; } };
+        if (Wt && (onWater(Wt.sea) || onWater(Wt.lakes))) return { id, lakes: '', sea: '', url: 'none' };
         return Wt && (Wt.lakes || Wt.sea) ? { id, lakes: Wt.lakes || '', sea: Wt.sea || '', url: 'url(#' + id + ')' } : { id, lakes: '', sea: '', url: 'none' }; })(),
       isRisk, isSpread: mode === 'spread', isPin,
       // An ignition candidate's pin is 30% smaller than a fire's estimated ignition point

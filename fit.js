@@ -1406,7 +1406,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 // water from OpenStreetMap (lakes, reservoirs, riverbanks as polygons, islands kept; the sea from the coastline, land on its
 // left) and gives the maps a mask in their own units, so every fire shape stops at the shore. Kept 7 days per area on this phone.
 (function () {
-  var MEM = {}, TTL = 7 * 864e5, LK = 'wf-water1-', DLAT = 0.09, DLON = 0.11, N = 512;
+  var MEM = {}, TTL = 7 * 864e5, LK = 'wf-water2-', DLAT = 0.09, DLON = 0.11, N = 512;
   var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; };
   function keyOf(la, lo) { return (Math.round(la / 0.05) * 0.05).toFixed(2) + ',' + (Math.round(lo / 0.05) * 0.05).toFixed(2); }
   function join(ws) { var rings = [], open = []; ws.forEach(function (w) { if (w.length < 2) return; var a = w[0], b = w[w.length - 1]; if (a[0] === b[0] && a[1] === b[1]) rings.push(w); else open.push(w.slice()); });
@@ -1446,7 +1446,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
           if (e.type === 'way') { var r = pt(e.geometry); if (r.length > 2) lakes += ringD(r); return; }
           if (e.type === 'relation') join((e.members || []).filter(function (mb) { return mb.type === 'way' && mb.geometry; }).map(function (mb) { return pt(mb.geometry); })).forEach(function (r) { if (r.length > 2) lakes += ringD(r); }); });
         /* coastline pieces cut at the box are joined first, so the sea side is read along whole stretches */
-        var res = { t: Date.now(), lakes: lakes, sea: seaD(join(coast).map(function (L) { return L; }), S, W) };
+        var res = { t: Date.now(), lakes: lakes, sea: seaD(coast, S, W) };   /* (Oct 16, 13:16) coastline ways are read one by one, never joined: joining reversed some, which flipped their sea side and masked the land (the projections vanished) */
         MEM[k] = { st: 'done', res: res }; try { localStorage.setItem(LK + k, JSON.stringify(res)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
       }).catch(function () { MEM[k] = { st: 'fail' }; setTimeout(function () { if (MEM[k] && MEM[k].st === 'fail') delete MEM[k]; }, 60000); });
     return null; };
