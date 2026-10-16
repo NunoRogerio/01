@@ -2191,3 +2191,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 22:37, fix) Mini KPI reorder: the values are fitted to their cards in the same frame the new order is drawn (before anything is painted), so no text jumps or resizes after a drop.
 - (Oct 16, 22:40; supersedes the 8px cards of 22:32) Detection, captain's, smoke check and summary cards: 16px corners again (thumbnails keep 8px and the smaller 76px size).
 - (Oct 16, 23:01, fix) Decision panels: the off switch is exactly the Cancel button's grey in every theme (the dark theme's own switch colour had painted it darker).
+- (Oct 16, 23:04, fix) The incident page's cards holder lets taps through its empty areas: once the cards rise over the map band (arrival hint or any scroll), the projection switcher and the markers under its empty top still answer taps.

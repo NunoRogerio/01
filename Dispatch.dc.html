@@ -85,6 +85,8 @@
 /* (Oct 16, 22:00; supersedes 15:27) a decision panel opens over the incident page as it is: no map dimming, the cards, summary and key figures stay in place */
 /* (Oct 16, 21:14) a map tooltip on the incident page is never hidden under the projection or its area: they fade out while it is open */
 [data-wf-band] [data-wf-ovl]{transition:opacity .25s ease}
+/* (Oct 16, 23:04, fix) the cards' holder is see-through to taps: its empty top area, risen over the map band by a scroll (the arrival hint), was swallowing taps on the projection switcher and the markers; only the cards themselves take taps */
+[data-wf-cards]{pointer-events:none}[data-wf-cards]>*{pointer-events:auto}
 /* (Oct 16, 21:56) the projection switcher: the panels' soft shadow, and its active option inset 4px on every side (top, bottom, left, right alike) */
 .wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important}
 .wf-seg.wf-seg-glass[aria-label="Projection"]>.segthumb{left:4px!important;top:4px!important;bottom:4px!important}
