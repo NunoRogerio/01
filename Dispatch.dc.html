@@ -96,6 +96,7 @@
 .wf-iadark ul[style*="background: rgb(255, 255, 255)"]{background:rgba(255, 255, 255, 0.1)!important}
 .wf-iadark li{border-color:rgba(255, 255, 255, 0.12)!important}
 .wf-iadark li span[style*="color: rgb(58, 58, 60)"]{background:rgba(255, 255, 255, 0.12)!important;color:rgb(235, 235, 245)!important}
+.wf-iadark .wf-tog[aria-checked=true]{background:rgb(52, 199, 89)!important;box-shadow:none!important}   /* (Oct 16, 22:04) a unit switched on: green; off keeps the grey */
 .wf-iadark [role="button"][data-grab-close] span{background:rgba(235, 235, 245, 0.3)!important}
 /* (Oct 16, 21:45, trial) the incident map's controls (drone, helmet camera, re-centre, full screen) as white glass buttons with the cards' drop shadow, dark icons */
 [data-wf-band] div[data-wf-ovl][data-wf-keepsp][style*="z-index: 51"] button{background:rgba(255, 255, 255, 0.62)!important;color:#1C1C1E!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important}
@@ -996,11 +997,12 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div role="button" tabindex="0" aria-label="{{iab.closeLbl}}" data-grab-close data-swipe-go onClick="{{iab.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- (Oct 16, 20:32) the decision's own icon (from the button it grew out of), centred at the top, 42px, in its colour -->
     <div data-wf-iaic="1" aria-hidden="true" style="display: flex; justify-content: center; margin: 0 0 16px"></div>
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 24px; padding: 0 16px">
+    <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none">
+      <!-- (Oct 16, 22:04) the title and its line scroll with the units: only the icon stays fixed at the top -->
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-shrink: 0; margin-bottom: 24px; padding: 0 16px">
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="iaTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000">{{iab.ttl}}</h2><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{iab.sub}}</span></span>
       <button type="button" class="mbtn" onClick="{{iab.close}}" aria-label="{{iab.closeLbl}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </div>
-    <div style="display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none">
       <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden; flex-shrink: 0">
         <sc-for list="{{iab.rows}}" as="u" hint-placeholder-count="5">
           <!-- (Oct 16, 07:17) the smoke check's engine opens folded: its crew slides out under it on a tap (chevron down when folded, up when open) -->
