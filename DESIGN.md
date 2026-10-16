@@ -2140,3 +2140,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 19:19) Main screen: the map runs under the floating top card to the screen's top edge (no strip above it); the map's clear area and its legend start under the card again (the legend was hidden behind it).
 - (Oct 16, 19:19) Dispatch profiles (ECC, CSREPC): the Ignition candidates chip is always on; Active fires, Resolved fires and Fire stations start off and toggle as usual.
 - (Oct 16, 19:23) The draw-out of half-passed cards on the incident page is removed (no auto-scroll); "no auto-scroll or snapping on any page" stands.
+- (Oct 16, 19:24; supersedes the stage-tag-foot trigger of 14:07) Incident cards scrolling up under the header may pass a third of their height under it first; past that third they shrink 20%, darken 8% and start fading (gone by the screen's top). Coming back down, they grow back once less than a third is under it.
