@@ -688,12 +688,17 @@
       /* (Oct 13, 16:54) the dispatch center's own view: nothing is sent until its dispatcher decides (Send initial attack, Smoke check or
          Dismiss on the incident's page); until then the chat holds the detections only, and the story starts with that decision */
       if (dspMe() && !dspDone(c)) { c.msgs.push({ kind: 'sys', id: newId(), t: Date.now(), vt: Date.now(), st0: c.stage, en: 'Send the initial attack or a smoke check to call the team', pt: 'Envie o ataque inicial ou um reconhecimento para chamar a equipa' }); c.hold = true; c.dspHold = true; c.holdAt = Date.now(); c.updated = Date.now(); return; }
+      /* (Oct 16, 21:20) the dispatcher decided before the team was in place (its stations still loading): the story starts from that decision, a smoke check as a smoke check (it ran on as an initial attack, and the candidate became a fire before the captain had looked) */
+      if (dspMe()) { var Dv = ''; try { Dv = (JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {})[c.incId] || ''; } catch (e) {} if (Dv === 'check' || Dv === 'sent') { c.chk = Dv === 'check'; c.dsp = Dv; c.dspAt = Date.now(); } }
       candRest(c, false); return; }
     fireStart(c); }
   function dspMe() { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } }
   function dspDone(c) { try { var D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; return D[c.incId] === 'sent' || D[c.incId] === 'check'; } catch (e) { return false; } }
   /* the dispatcher's decision releases the held story: the initial attack (or the one engine of a smoke check) is sent from now */
-  function dspGo(id, kind) { var db = load(), c = null; Object.keys(db.chats).forEach(function (k) { var x = db.chats[k]; if (x && String(x.incId) === String(id)) c = x; }); if (!c || !c.dspHold) return false;
+  function dspGo(id, kind) { /* (Oct 16, 21:20) the decision acts on the chats as stored now: a page loaded ahead (the incident page in its frame) may hold an older copy, in which the incident's chat is not yet held, and the decision was lost (the story then ran on as a fire) */ try { var raw0 = localStorage.getItem(KEY); if (raw0 && raw0 !== LASTRAW) DB = null; } catch (e) {} var db = load(), c = null; Object.keys(db.chats).forEach(function (k) { var x = db.chats[k]; if (x && String(x.incId) === String(id)) c = x; });
+    /* (Oct 16, 21:20) a chat whose team arrived but whose story never started (its page was replaced while loading): it starts now, from this decision */
+    if (c && !c.dspHold && c.kind === 'cand' && !c.closed && !c.dismissed && !(c.msgs || []).length && !(c.queue || []).length && (c.stations || []).length) { if (kind === 'dismissed') c.dismissed = true; else start(c); c.updated = Date.now(); save(); emit(); return true; }
+    if (!c || !c.dspHold) return false;
     /* (Oct 14, 17:20) the initial attack the captain of a smoke check asked for: the rest of the response plan rolls, he declares the fire */
     if (c.chkWait) { if (kind !== 'sent') return false; c.chkWait = false; c.dspHold = false; c.chk = false; c.dsp = 'sent'; iaGo(c);
       var nG = 0; (c.forces || []).forEach(function (f) { if (f.st === 'standby' && nG < 1 && !busyElse(c, f)) { f.st = 'enroute'; nG++; } });
@@ -1009,7 +1014,8 @@
     var pend = (c.msgs || []).filter(function (m) { return m.kind === 'card' && (m.actions || []).length && !m.done && !m.govOnly && !m.summary; }).pop();
     if (pend) { if (!pend.govSeen) { pend.govSeen = now; ch = true; } else if (now - pend.govSeen > 20000 && !c._govBusy) { var A = pend.actions, pick = A.find(function (a) { return a.primary && AUTO_NO.indexOf(a.key) < 0; }) || A.find(function (a) { return AUTO_NO.indexOf(a.key) < 0; }) || A[0];
         if (pick && pick.key !== 'dispatch' && pick.key !== 'topic') { c._govBusy = 1; govQ.push([c.key, pick.key, pend.id]); setTimeout(function () { c._govBusy = 0; }, 3000); } } }
-    else { var X = actions(c).filter(function (a) { return a.primary && (a.key === 'next' || a.key === 'closeCheck' || a.key === 'confirm'); })[0];
+    /* (Oct 16, 21:20) the dispatch center never declares a candidate by the simulation: on its screens a candidate becomes a fire only through its own decision and the captain's size-up (a chat not yet started was being declared 20 s in, before anyone had looked) */
+    else { var X = actions(c).filter(function (a) { return a.primary && (a.key === 'next' || a.key === 'closeCheck' || (a.key === 'confirm' && !(ecc && c.kind === 'cand'))); })[0];
       if (X) { if (!c.flags.govChip || c.flags.govChip.k !== X.key + c.stage) { c.flags.govChip = { k: X.key + c.stage, at: now }; ch = true; } else if (now - c.flags.govChip.at > 20000 && !c._govBusy) { c._govBusy = 1; govQ.push([c.key, X.key, null]); setTimeout(function () { c._govBusy = 0; }, 3000); } } }
     /* the request that climbs the chain, once a fire is on the line and growing */
     if (!ecc && c.stage >= 3 && c.stage <= 4 && !c.flags.ma && now - (c.stageAt || now) > 15000) { c.flags.ma = 1; ch = true;

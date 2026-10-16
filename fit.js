@@ -658,13 +658,13 @@ window.__wfBlink=function(path,dur){
   /* (Oct 16, 12:03) a panel that grows out of the control that opened it and folds back into it: a clip that widens from the control's
    shape to the whole panel (no scaling, nothing bounces); the panel's content fades in once it is open and out before it folds */
 try{document.addEventListener('pointerdown',function(e){try{var b=e.target&&e.target.closest&&e.target.closest('.wf-ibtn,.btn');if(b){window.__wfLastTap=b;window.__wfLastTapT=Date.now();}}catch(x){}},true);}catch(x){}   /* the control last pressed, for panels that grow out of it */
-var gcss=function(){if(document.getElementById('wf-grow-css'))return;var st=document.createElement('style');st.id='wf-grow-css';st.textContent='.wf-grow-out>*{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease,visibility 0s linear .12s!important}';(document.head||document.documentElement).appendChild(st);};
-window.__wfGrow=function(panel,from,open,done){try{if(!panel){if(done)done();return;}var pr=panel.getBoundingClientRect(),F=from&&from.getBoundingClientRect?from.getBoundingClientRect():from,k=(pr.width/(panel.offsetWidth||pr.width))||1;
+var gcss=function(){if(document.getElementById('wf-grow-css'))return;var st=document.createElement('style');st.id='wf-grow-css';st.textContent='.wf-grow-out>*{opacity:0!important;visibility:hidden!important;transition:none!important}';(document.head||document.documentElement).appendChild(st);};
+window.__wfGrow=function(panel,from,open,done,near){try{if(!panel){if(done)done();return;}var pr=panel.getBoundingClientRect(),F=from&&from.getBoundingClientRect?from.getBoundingClientRect():from,k=(pr.width/(panel.offsetWidth||pr.width))||1;
   var at=F&&F.width?'inset('+Math.max(0,(F.top-pr.top)/k).toFixed(1)+'px '+Math.max(0,(pr.right-F.right)/k).toFixed(1)+'px '+Math.max(0,(pr.bottom-F.bottom)/k).toFixed(1)+'px '+Math.max(0,(F.left-pr.left)/k).toFixed(1)+'px round 24px)':'inset(100% 0px 0px 0px round 24px)',full='inset(0px 0px 0px 0px round 24px)';
   var kids=[].slice.call(panel.children);
-  if(open){panel.classList.remove('wf-grow-out');panel.style.transition='none';panel.style.clipPath=at;panel.style.visibility='visible';kids.forEach(function(e){e.style.transition='none';e.style.opacity='0';});void panel.offsetWidth;
+  if(open){panel.classList.remove('wf-grow-out');panel.style.transition='none';panel.style.opacity='';panel.style.clipPath=at;panel.style.visibility='visible';kids.forEach(function(e){e.style.transition='none';e.style.opacity='0';});void panel.offsetWidth;
     requestAnimationFrame(function(){panel.style.transition='clip-path .5s cubic-bezier(.4,0,.2,1)';panel.style.clipPath=full;setTimeout(function(){kids.forEach(function(e){e.style.transition='opacity .25s ease';e.style.opacity='1';});},260);setTimeout(function(){if(done)done();},520);});}
-  else{/* (Oct 16, 20:32) the content (Cancel and the primary included) leaves the moment the fold starts, held hidden by a class so no redraw brings it back before the panel is a button again */gcss();panel.classList.add('wf-grow-out');kids.forEach(function(e){e.style.transition='opacity .12s ease';e.style.opacity='0';});panel.style.transition='clip-path .6s cubic-bezier(.45,0,.2,1)';panel.style.clipPath=at;setTimeout(function(){panel.style.visibility='hidden';if(done)done();},620);}}   /* (Oct 16, 13:58) a gentler fold: content out first, then a slower clip */catch(x){if(done)done();}};
+  else{/* (Oct 16, 20:32) the content (Cancel and the primary included) leaves the moment the fold starts, held hidden by a class so no redraw brings it back before the panel is a button again */gcss();panel.classList.add('wf-grow-out');kids.forEach(function(e){e.style.transition='none';e.style.opacity='0';});panel.style.transition='clip-path .6s cubic-bezier(.45,0,.2,1)';panel.style.clipPath=at;/* (Oct 16, 21:18) no pop at the end: the control it folds into is shown under it just before it lands and the panel melts away over it (no object vanishing and reappearing) */setTimeout(function(){try{if(near)near();}catch(x){}panel.style.transition='clip-path .6s cubic-bezier(.45,0,.2,1), opacity .18s ease';panel.style.opacity='0';},440);setTimeout(function(){panel.style.visibility='hidden';panel.style.opacity='';if(done)done();},640);}}   /* (Oct 16, 13:58) a gentler fold: content out first, then a slower clip */catch(x){if(done)done();}};
 window.__wfConfirm=function(o){
     o=o||{};var root=document.querySelector('[data-wfroot]')||document.body;
     var old=root.querySelector('.wf-cfm');if(old)old.remove();
@@ -691,7 +691,7 @@ window.__wfConfirm=function(o){
       if(o.icon){var ic=document.createElement('div');ic.setAttribute('aria-hidden','true');ic.innerHTML=o.icon;ic.style.cssText='display:flex;margin:0 0 16px;opacity:0;transition:opacity .25s ease;color:'+(o.iconColor||'currentColor');var sv=ic.querySelector('svg');if(sv){sv.setAttribute('width','42');sv.setAttribute('height','42');sv.style.cssText='stroke-width:1.5px';}p.insertBefore(ic,h);C.unshift(ic);}
       var clipAt=function(){var pr=p.getBoundingClientRect(),pl=(pr.left-R0.left)/kk,pt=(pr.top-R0.top)/kk,pw=pr.width/kk,ph=pr.height/kk;return 'inset('+Math.max(0,ft-pt).toFixed(1)+'px '+Math.max(0,pl+pw-(fl+fw)).toFixed(1)+'px '+Math.max(0,pt+ph-(ft+fh)).toFixed(1)+'px '+Math.max(0,fl-pl).toFixed(1)+'px round 24px)';};
       p.style.transition='none';p.style.clipPath=clipAt();void p.offsetWidth;p.style.transition='clip-path .45s cubic-bezier(.4,0,.2,1)';
-      close=function(ok){if(done)return;done=true;try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}sc.style.opacity='0';gcss();p.classList.add('wf-grow-out');C.forEach(function(e){e.style.transition='opacity .12s ease';e.style.opacity='0';});p.style.clipPath=clipAt();setTimeout(function(){w.remove();},600);try{(ok?o.onOk:o.onCancel)&&(ok?o.onOk:o.onCancel)();}catch(x){}};
+      close=function(ok){if(done)return;done=true;try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}sc.style.opacity='0';gcss();p.classList.add('wf-grow-out');C.forEach(function(e){e.style.transition='none';e.style.opacity='0';});p.style.clipPath=clipAt();setTimeout(function(){w.remove();},600);try{(ok?o.onOk:o.onCancel)&&(ok?o.onOk:o.onCancel)();}catch(x){}};
       sc.onclick=function(){close(false);};no.onclick=function(){close(false);};yes.onclick=function(){close(true);};
       requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.clipPath='inset(0px 0px 0px 0px round 24px)';setTimeout(function(){C.forEach(function(e){e.style.opacity='1';});},220);});});
       return {close:close};}
@@ -1395,7 +1395,7 @@ document.addEventListener('click', function (e) { if (Date.now() - (window.__wfK
 (function () { try { if (window.top === window || !/[?&]embed=1/.test(location.search)) return; document.documentElement.classList.add('wf-embed');
   var st = document.createElement('style'); st.textContent = 'html.wf-embed [data-wf-back],html.wf-embed .wf-mb,html.wf-embed button[data-wf-burger],html.wf-embed [data-wf-burger-spot],html.wf-embed a[href^="Chat.dc.html"],html.wf-embed [aria-label^="Notifications"],html.wf-embed [aria-label^="Assignments"],html.wf-embed [aria-label="Preferences"],html.wf-embed [data-wf-teamchat]{display:none!important}html.wf-embed [data-wf-chev]{pointer-events:none!important}html.wf-embed [data-wf-chev]::before{display:none!important}'; (document.head || document.documentElement).appendChild(st);
   /* links that would leave the incident open in the whole app, not inside the blade */
-  document.addEventListener('click', function (e) { var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a || /^#|^javascript/.test(a.getAttribute('href') || '')) return; var h = a.getAttribute('href'); if (/^(Dispatch|Alert)\.dc\.html/.test(h)) return; e.preventDefault(); e.stopPropagation(); try { window.top.location.href = h; } catch (x) {} }, true);
+  document.addEventListener('click', function (e) { var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if (!a || /^#|^javascript/.test(a.getAttribute('href') || '')) return; if (a.closest('[data-wf-back]')) { try { if (window.top.__wfFlyBack && window.top.__wfFlyBack(null, a)) { e.preventDefault(); e.stopImmediatePropagation(); return; } } catch (x) {} } var h = a.getAttribute('href'); if (/^(Dispatch|Alert)\.dc\.html/.test(h)) return; e.preventDefault(); e.stopPropagation(); try { window.top.location.href = h; } catch (x) {} }, true);
 } catch (e) {} })();
 
 /* (Oct 15, 14:04) the confirmation halo: when a captain confirms a fire on scene, the screen's edge glows like Siri's, in red, orange and purple, turning slowly; it fades in, holds, fades out (about 4 s) and never takes a touch */
@@ -1521,15 +1521,26 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       if(k<1)requestAnimationFrame(step);else{try{clearTimeout(M._rgT);M.endGest();}catch(z){}if(cb)cb();}})(t0);};
   // (Oct 16, 19:13) The way back, incident -> main screen: the incident's surfaces leave (header up, the rest down), its map zooms out to
   // the main screen's view, then the main screen comes back with its surfaces sliding in over the same map (the way in, reversed).
-  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(!a||window.top!==window)return;if(!/\/(Chat|Dispatch)\.dc\.html$/.test(location.pathname))return;
-    var B=null;try{B=JSON.parse(sessionStorage.getItem(BACK)||'null');}catch(x){}if(!B||!B.v)return;var ref='';try{ref=document.referrer?new URL(document.referrer).pathname:'';}catch(x){}if(!/\/Main\.dc\.html$/.test(ref)||history.length<2)return;
-    var DM=findMap(document,0),DI=DM&&DM.__wfMap;if(!DI)return;
-    e.preventDefault();e.stopImmediatePropagation();if(a.__wfGoing)return;a.__wfGoing=1;try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}
+  /* (Oct 16, 21:18) every back on an incident screen zooms out (never the old pull-down): the header back, and the backs inside the incident
+     page's frame (No action closed, Done...), which hand it to the top window. Without the way-in record (opened from a notification or a
+     list, or another incident's record), the map zooms out around where it is before the main screen comes back over it. */
+  window.__wfFlyBack=function(e,a){try{if(window.top!==window||!/\/(Chat|Dispatch)\.dc\.html$/.test(location.pathname))return false;
+    var ref='';try{ref=document.referrer?new URL(document.referrer).pathname:'';}catch(x){}var toMain=/\/Main\.dc\.html$/.test(ref)&&history.length>=2;if(!toMain&&ref)return false;   /* a real back to another screen keeps its own way */
+    var DM=findMap(document,0),DI=DM&&DM.__wfMap;if(!DI)return false;
+    if(e){e.preventDefault();e.stopImmediatePropagation();}if(window.__wfGoingBack)return true;window.__wfGoingBack=1;try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}
+    var B=null;try{B=JSON.parse(sessionStorage.getItem(BACK)||'null');}catch(x){}var v=DI.view();
+    if(B&&B.v){var Wd=DI.W(),Hd=DI.H(),ix=(B.px-v.cx)*v.s+Wd/2,iy=(B.py-v.cy)*v.s+Hd/2;if(ix<-Wd*0.25||ix>Wd*1.25||iy<-Hd*0.25||iy>Hd*1.25)B=null;}   /* another incident's record */
     var L=[];try{peel(DM,L);mapPeel(DM,L);var fe=DM.ownerDocument.defaultView.frameElement;while(fe){peel(fe,L);fe=fe.ownerDocument.defaultView.frameElement;}}catch(x){}
-    slide(L,'out');try{var Ldoc=DM.ownerDocument;flyCss.call(null);}catch(x){}
-    setTimeout(function(){try{var rD=topRect(DM),kD=rD.width/(DI.W()||1),kM=B.r.width/(B.W||1),Q=kM*B.v.s,sD=Q/kD;
+    slide(L,'out');try{flyCss.call(null);}catch(x){}
+    var leave=function(){try{sessionStorage.setItem(BACKT,String(Date.now()));sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}if(toMain)history.back();else location.href='Main.dc.html';};
+    setTimeout(function(){try{if(B&&B.v){var rD=topRect(DM),kD=rD.width/(DI.W()||1),kM=B.r.width/(B.W||1),Q=kM*B.v.s,sD=Q/kD;
         var cx=B.v.cx+((rD.left+kD*DI.W()/2)-(B.r.left+kM*B.W/2))/Q,cy=B.v.cy+((rD.top+kD*DI.H()/2)-(B.r.top+kM*B.H/2))/Q;
-        flyMap(DI,[B.px,B.py],{cx:cx,cy:cy,s:sD},900,function(){try{sessionStorage.setItem(BACKT,String(Date.now()));sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}history.back();});   /* the last picture of this screen stays until the main screen has drawn (the push-up arrival's hold) */}catch(x){history.back();}},SLIDE*0.6);},true);
+        flyMap(DI,[B.px,B.py],{cx:cx,cy:cy,s:sD},900,leave);}
+      else flyMap(DI,[v.cx,v.cy],{cx:v.cx,cy:v.cy,s:v.s/10},900,leave);   /* the last picture of this screen stays until the main screen has drawn (the push-up arrival's hold) */}catch(x){leave();}},SLIDE*0.6);return true;}catch(x){return false;}};
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(!a)return;
+    if(window.top!==window){try{if(window.top.__wfFlyBack&&window.top.__wfFlyBack(null,a)){e.preventDefault();e.stopImmediatePropagation();}}catch(x){}return;}
+    window.__wfFlyBack(e,a);},true);
+  addEventListener('pageshow',function(){window.__wfGoingBack=0;});
   // arriving back on the main screen: no view transition of its own (the maps already match), and on a fresh load the surfaces slide in here
   addEventListener('pagereveal',function(e){try{if(e.viewTransition)window.__wfVTdone=e.viewTransition.finished;}catch(x){}});   /* the surfaces slide in once the arrival's dissolve is over */
   (function(){if(!/\/Main\.dc\.html$/.test(location.pathname)||window.top!==window)return;var t0=Date.now();
@@ -1602,3 +1613,5 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     d.textContent='Last sign-in issue: '+L.join(' | ');d.onclick=function(){d.remove();try{localStorage.removeItem('wf-why');localStorage.removeItem('wf-lasterr');}catch(x){}};document.body.appendChild(d);}catch(x){}};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(show,800);});else setTimeout(show,800);
 })();
+// (Oct 16, 21:25) the incident arrival hint runs once per opening: back on the main screen, the next opening of an incident hints again
+(function(){try{if(/\/Main\.dc\.html$/.test(location.pathname)&&window.top===window)sessionStorage.removeItem('wf-hint-done');}catch(e){}})();
