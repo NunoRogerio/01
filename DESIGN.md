@@ -2174,3 +2174,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 22:02, trial) Summary, detection and captain's cards: no header band. The header row (icon, title, time) sits on the card's own background, the whole card one colour.
   The body starts right under the header row (no 16px gap above it, as there is no band to clear).
 - (Oct 16, 22:04) Initial attack (decision) panels: only the icon stays fixed at the top; the title and its line scroll up with the units, so more of the dispatch shows. Unit switches on: green (rgb(52, 199, 89)); off: the grey.
+- (Oct 16, 22:07, trial) Incident page map: no drone or maximize buttons. A tap on the incident's marker opens the full-screen map (in place); in full screen, a tap on the marker, or on re-centre (always on there), glides the map back to the incident's view and the page's surfaces slide back in. The drone button shows in full screen only.
