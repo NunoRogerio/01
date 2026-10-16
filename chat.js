@@ -492,7 +492,7 @@
     var base = { tag: { en: S.en, pt: S.pt }, tagC: S.ink || S.c, stage: s };
     if (s === 0) return Object.assign(base, { tag: { en: 'Ignition detected', pt: 'Ignição detetada' }, title: { en: 'Heat anomaly', pt: 'Anomalia térmica' },
       body: { en: (c.src || 'Satellite') + (c.det ? ' · ' + hhmm(c.det) : ''), pt: (c.src || 'Satélite').replace('Satellite', 'Satélite') + (c.det ? ' · ' + hhmm(c.det) : '') },
-      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Confidence', pt: 'Probabilidade' }, c: '#3A3A3C' } : null });
+      kpi: c.conf ? { v: c.conf + '%', l: { en: 'Confidence', pt: 'Confiança' }, c: '#3A3A3C' } : null });
     if (s === 1) return Object.assign(base, { tag: { en: 'Ignition confirmed', pt: 'Ignição confirmada' }, title: { en: 'Active fire', pt: 'Incêndio ativo' },   /* (Oct 10, 23:42) the name is in the header */
       body: { en: 'Nearest stations, by straight-line distance and estimated drive time', pt: 'Quartéis mais próximos, por distância em linha reta e tempo estimado' },
       rows: st.map(function (x, i) { return { a: x.short, b: kmTxt(x.km) + ' · ~' + x.min + ' min', r: { en: 'Awaiting', pt: 'A aguardar' }, rc: '#545458', i: i }; }).map(function (r, i, R) { if (c.sentIdx && i === R.length - 1) sentRows(c, R); return r; }) });
