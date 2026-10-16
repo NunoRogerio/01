@@ -559,7 +559,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div></div>
     <div data-wf-cards="1" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex-shrink: 0; flex-grow: 1; padding-top: {{pgPadT}}; background: transparent">
     <!-- (Oct 13, 07:12) the verification, first under a candidate's map: what the sources say, how fast civil cameras made it
-         (with and without them), and for the dispatch profiles the decision itself. The sources, one card each, follow in Detections. -->
+         (all detections together, civil and official alike), and for the dispatch profiles the decision itself. The sources, one card each, follow in Detections. -->
     <!-- (Oct 13, 09:04) the dispatch profiles' second tab, Initial attack (in place of Crews): before sending, the units the response plan
          proposes (the nearest available, each with its ETA), which Send initial attack orders; after, each unit's status as it rolls in -->
     <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -6; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
@@ -1681,17 +1681,19 @@ class Component extends DCLogic {
       call: 'M6 4h3l1.5 4.5-2 1.5a10 10 0 0 0 5.5 5.5l1.5-2 4.5 1.5v3a2 2 0 0 1-2 2A15 15 0 0 1 4 6a2 2 0 0 1 2-2Z' };
     out.forEach((x) => { x.ic = x.ic || EIC[x.kind] || EIC.sat; });
 
-    /* the verdict for whoever verifies: how many sources, the first smoke, how fast with and without the civil cameras */
+    /* the verdict for whoever verifies: the first smoke, what all the detections show together, when it is enough to dispatch */
     const FFWK = { car: 1, c360: 1, phone: 1 }, civ = out.filter((x) => x.civil), net = out.filter((x) => !FFWK[x.kind] && x.at != null), W0 = net.length ? Math.max(...net.map((x) => x.at)) : null;
     const KN = { car: Lx('car camera', 'câmara de carro'), c360: Lx('action camera', 'câmara de ação'), phone: Lx('phone camera', 'câmara de telemóvel'), call: Lx('call', 'chamada') };
     const first = out[0], lines = [];
     if (isLive && droneStrong && first && KN[first.kind]) lines.push(Lx('First smoke from a ' + KN[first.kind] + ' at ' + hm(first.at) + '.', 'Primeiro fumo numa ' + KN[first.kind] + ' às ' + hm(first.at) + '.'));
     /* (Oct 13, 14:28) nothing is confirmed before the first unit's size-up on scene: the detections show smoke, they make it possible to dispatch
-       sooner (with and without the FFW cameras), and the confirmation comes from the crew sent */
-    if (isLive && droneStrong) lines.push(Lx('Enough to dispatch at ' + hm(V) + ', at about ' + hm(W0 != null && W0 > V ? W0 : V) + ' without FFW cameras.', 'Suficiente para despachar às ' + hm(V) + ', por volta das ' + hm(W0 != null && W0 > V ? W0 : V) + ' sem câmaras FFW.'));   /* (Oct 14, 16:53) one sentence, no full stop inside */
-    /* (Oct 13, 14:07) the passive cameras of Forest Fire Watch (cars, action cameras, phones) are "FFW cameras" everywhere; a 911 call is not one */
-    const ffwN = out.filter((x) => FFWK[x.kind]).length;
-    if (ffwN) lines.push(Lx(ffwN + ' of ' + out.length + ' detections are FFW cameras.', ffwN + ' de ' + out.length + ' deteções são câmaras FFW.'));
+       sooner, and the confirmation comes from the crew sent */
+    /* (Oct 16, 15:30) every detection, civil or official, counts toward the verdict: the summary speaks of all of them together (no
+       "without civil cameras" alternative, no civil/official split); the decision then rests on that whole picture */
+    const nS = droneStrong ? out.length : out.filter((x) => x.kind !== 'sat' && x.kind !== 'call').length;
+    if (isLive && out.length > 1) lines.push(droneStrong ? Lx((out.length === 2 ? 'Both' : 'All ' + out.length) + ' detections show smoke or heat at the point.', (out.length === 2 ? 'As 2' : 'As ' + out.length) + ' deteções mostram fumo ou calor no ponto.')
+      : Lx(nS + ' of ' + out.length + ' detections see no smoke.', nS + ' de ' + out.length + ' deteções sem fumo visível.'));
+    if (isLive && droneStrong) lines.push(Lx('Enough to dispatch at ' + hm(V) + '.', 'Suficiente para despachar às ' + hm(V) + '.'));
     /* (Oct 13, 08:46) after Send initial attack: the first captain on scene reports on conditions, the strongest evidence (the
        ground truth). Dispatched at the verification (V min after the satellite), on scene 9 to 14 min later; it appears 20 s
        after the send in the demo. A fire: confirmed, its size and behaviour, the captain takes command; none: a false alarm. */
