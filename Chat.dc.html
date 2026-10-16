@@ -644,7 +644,9 @@ class Component extends DCLogic {
       key: (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { if (e.preventDefault) e.preventDefault(); close(); } }
     };
   }
-  componentDidMount() {
+  /* (Oct 16, 13:00) the dispatcher closed this candidate with No action */
+  wfNA(c) { try { return !!c && c.kind !== 'dm' && (JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {})[c.incId] === 'dismissed'; } catch (e) { return false; } }
+  componentDidMount() { window.__wfChatRefresh = () => { try { this.forceUpdate(); } catch (e) {} };
     // A photo tooltip hides on any tap elsewhere
     document.addEventListener('pointerdown', (e) => { if ((this.state || {}).avTip && !(e.target && e.target.closest && e.target.closest('[data-avtip]'))) this.setState({ avTip: null }); }, true);
     this._sync = () => this.forceUpdate();
@@ -1352,9 +1354,10 @@ class Component extends DCLogic {
         return { rk: { tagD: HT && !c.closed && !c.dismissed ? 'inline-flex' : 'none', dock: H.ackd || safe ? '1' : '0', id: H.id, tag: HT ? HT.tag : '', txt: HT ? (safe ? L('Structures are now safe', 'As habitações estão seguras') : HT.title) : '', sub: HT ? HT.sub : '', op: safe ? '0.32' : '1', pe: safe ? 'none' : 'auto', flt: safe ? 'grayscale(1)' : 'none' } }; })(),
       c: { stateD: c.kind === 'dm' ? 'none' : 'flex', place: (B ? L('Drill · ', 'Simulação · ') : '') + (window.__wfIncName ? window.__wfIncName(c.place, c.kind !== 'dm' && !c.police && ((C.fireStage ? C.fireStage(c) : c.stage) >= 1 || c.kind === 'fire') && !c.dismissed) : c.place), sub: c.kind === 'dm' ? c.reg : B ? benchTxt : (c.people.length ? '' : L('Calling the teams…', 'A chamar as equipas…')), subD: c.kind === 'dm' || B || !c.people.length ? 'flex' : 'none',   /* (Oct 10, 23:29) no region under an incident's name in the chat header */
         flip: (() => { /* (Oct 12, 21:00) the stage moves forward: the stage button flips over (0.99 s, as the duty card) */ const L0 = this._stLast = this._stLast || {}; if (L0[c.key] != null && c.stage > L0[c.key]) { const t = this._stFlipAt = Date.now(); setTimeout(() => { if (this._stFlipAt === t) this.forceUpdate(); }, 1050); } L0[c.key] = c.stage; return Date.now() - (this._stFlipAt || 0) < 1000 ? 'wf-hflip .99s cubic-bezier(.2,.8,.2,1) both' : 'none'; })(),
-        st: T(S), stC: tone(S).c, bg: tone(S).bg, ic: iconFor(S), summary, bar,
+        st: this.wfNA(c) ? L('Incident closed', 'Incidente encerrado') : T(S), stC: this.wfNA(c) ? 'rgb(58, 58, 60)' : tone(S).c, bg: this.wfNA(c) ? 'rgb(229, 229, 234)' : tone(S).bg, ic: this.wfNA(c) ? 'M5 12.5l4.5 4.5L19 7.5' : iconFor(S), summary, bar,   /* (Oct 16, 13:00) No action: the band turns grey, "Incident closed", nothing else */
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
           return { forT: d || '', forD: 'none', arML: 'auto', goD: c.kind === 'dm' ? 'none' : 'inline-flex', goT: (this.state || {}).mv ? L('Team', 'Equipa') : L('Map', 'Mapa'), visit: (c.kind === 'fire' || (C.fireStage ? C.fireStage(c) : c.stage) >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : (!c.dismissed && C.candMeta && C.candMeta(c)) || L('View', 'Ver'),   /* (Oct 11, 07:11) a candidate: when it was detected */ ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
+        ...(this.wfNA(c) ? { goD: 'none', visit: '', forD: 'none', forT: '' } : {}),
         ...(() => { const ex = false;   /* (Oct 9, 09:03) the band no longer unfolds: it opens the incident */ return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */
           /* (Oct 8, 19:10, app-wide) the stages the field drives are never moved by hand: Ongoing starts when the crews leave on the
