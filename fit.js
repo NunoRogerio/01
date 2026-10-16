@@ -1504,12 +1504,42 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
   // the incident screen's map: the largest visible map in the frame and the frames inside it
   var findMap=function(doc,depth){var best=null,area=0;try{[].forEach.call(doc.querySelectorAll('[data-wf-maproot]'),function(m){if(!m.__wfMap||!shown(m))return;var lr=m.getBoundingClientRect(),hit=null;try{hit=doc.elementFromPoint(lr.left+lr.width/2,Math.max(lr.top,0)+Math.min(lr.height,doc.defaultView.innerHeight)*0.3);}catch(x){}if(!hit||!m.contains(hit))return;   /* the map really on show there, not one waiting under it */var r=topRect(m),a=r.width*r.height;if(a>area){area=a;best=m;}});
       if(depth<3)[].forEach.call(doc.querySelectorAll('iframe'),function(fr){try{var cd=fr.contentDocument;if(cd&&shown(fr)){var b=findMap(cd,depth+1);if(b){var r=topRect(b),a=r.width*r.height;if(a>area){area=a;best=b;}}}}catch(x){}});}catch(x){}return best;};
+  var BACK='wf-shared-from',BACKT='wf-shared-back';
+  var flyCss=function(){if(document.getElementById('wf-fly-css'))return;var st=document.createElement('style');st.id='wf-fly-css';st.textContent='html.wf-flying [data-wf-maproot] .wf-ctag{display:none!important}';(document.head||document.documentElement).appendChild(st);};
+  var recentBack=function(){try{var t=+sessionStorage.getItem(BACKT)||0;return Date.now()-t<15000;}catch(x){return false;}};
+  /* a map flies to a view: one world point (the incident) glides straight on screen while the zoom changes in log steps */
+  var flyMap=function(M,P,to,ms,cb){var Wm=M.W(),Hm=M.H(),loc=function(v){return {x:(P[0]-v.cx)*v.s+Wm/2,y:(P[1]-v.cy)*v.s+Hm/2};},from=M.view(),p0=loc(from),p1=loc(to),l0=Math.log(from.s),l1=Math.log(to.s),t0=performance.now();M._gest=true;try{M.stopGlide&&M.stopGlide();}catch(x){}
+    (function step(t){var k=Math.min(1,(t-t0)/ms),e=ez(k),sv=Math.exp(l0+(l1-l0)*e),x=p0.x+(p1.x-p0.x)*e,y=p0.y+(p1.y-p0.y)*e;try{M.setView(P[0]-(x-Wm/2)/sv,P[1]-(y-Hm/2)/sv,sv);}catch(z){}
+      if(k<1)requestAnimationFrame(step);else{try{clearTimeout(M._rgT);M.endGest();}catch(z){}if(cb)cb();}})(t0);};
+  // (Oct 16, 19:13) The way back, incident -> main screen: the incident's surfaces leave (header up, the rest down), its map zooms out to
+  // the main screen's view, then the main screen comes back with its surfaces sliding in over the same map (the way in, reversed).
+  document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(!a||window.top!==window)return;if(!/\/(Chat|Dispatch)\.dc\.html$/.test(location.pathname))return;
+    var B=null;try{B=JSON.parse(sessionStorage.getItem(BACK)||'null');}catch(x){}if(!B||!B.v)return;var ref='';try{ref=document.referrer?new URL(document.referrer).pathname:'';}catch(x){}if(!/\/Main\.dc\.html$/.test(ref)||history.length<2)return;
+    var DM=findMap(document,0),DI=DM&&DM.__wfMap;if(!DI)return;
+    e.preventDefault();e.stopImmediatePropagation();if(a.__wfGoing)return;a.__wfGoing=1;try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}
+    var L=[];try{peel(DM,L);mapPeel(DM,L);var fe=DM.ownerDocument.defaultView.frameElement;while(fe){peel(fe,L);fe=fe.ownerDocument.defaultView.frameElement;}}catch(x){}
+    slide(L,'out');try{var Ldoc=DM.ownerDocument;flyCss.call(null);}catch(x){}
+    setTimeout(function(){try{var rD=topRect(DM),kD=rD.width/(DI.W()||1),kM=B.r.width/(B.W||1),Q=kM*B.v.s,sD=Q/kD;
+        var cx=B.v.cx+((rD.left+kD*DI.W()/2)-(B.r.left+kM*B.W/2))/Q,cy=B.v.cy+((rD.top+kD*DI.H()/2)-(B.r.top+kM*B.H/2))/Q;
+        flyMap(DI,[B.px,B.py],{cx:cx,cy:cy,s:sD},900,function(){try{sessionStorage.setItem(BACKT,String(Date.now()));sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}history.back();});   /* the last picture of this screen stays until the main screen has drawn (the push-up arrival's hold) */}catch(x){history.back();}},SLIDE*0.6);},true);
+  // arriving back on the main screen: no view transition of its own (the maps already match), and on a fresh load the surfaces slide in here
+  addEventListener('pagereveal',function(e){try{if(e.viewTransition)window.__wfVTdone=e.viewTransition.finished;}catch(x){}});   /* the surfaces slide in once the arrival's dissolve is over */
+  (function(){if(!/\/Main\.dc\.html$/.test(location.pathname)||window.top!==window)return;var t0=Date.now();
+    /* until they slide in, the main screen shows only its map (no header or blades flashing in place first) */
+    if(recentBack()){try{var hs=document.createElement('style');hs.id='wf-backin-css';hs.textContent='html.wf-backin #dc-root{visibility:hidden!important}html.wf-backin [data-wf-maproot]{visibility:visible!important}html.wf-backin [data-wf-maproot] .wf-ctag{display:none!important}';(document.head||document.documentElement).appendChild(hs);document.documentElement.classList.add('wf-backin');setTimeout(function(){document.documentElement.classList.remove('wf-backin');},12000);   /* a safety net only */}catch(x){}}
+    var go=function(){if(window.__wfSharedUndo||!recentBack())return;var MR=document.querySelector('[data-wf-maproot]'),MI=MR&&MR.__wfMap;if(!MI){if(Date.now()-t0<4000)setTimeout(go,60);return;}
+      var B=null;try{B=JSON.parse(sessionStorage.getItem(BACK)||'null');}catch(x){}try{if(B&&B.v){MI._pv=Object.assign({},MI._pv||{},B.v);MI.setState({cx:B.v.cx,cy:B.v.cy,s:B.v.s});}}catch(x){}
+      var VT=window.__wfVTdone;(VT&&VT.then?VT.then(function(){},function(){}):Promise.resolve()).then(function(){setTimeout(function(){document.documentElement.classList.remove('wf-backin');var L=[];try{peel(MR,L);mapPeel(MR,L);}catch(x){}var A=slide(L,'in');   /* shown and moved out in the same frame, then in */
+        setTimeout(function(){A.forEach(function(an){try{an.cancel();}catch(x){}});},SLIDE+40);try{sessionStorage.removeItem(BACKT);}catch(x){}},VT?60:350);});};
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(go,0);});else setTimeout(go,0);})();
   window.__wfShared=function(a,w,f,dim,navigate,drawn){
     try{if(!/\/Main\.dc\.html$/.test(location.pathname)||window.top!==window)return false;var pop=a.closest('[data-wf-pop]');if(!pop)return false;
       var MR=pop.closest('[data-wf-maproot]')||document.querySelector('[data-wf-maproot]'),MI=MR&&MR.__wfMap;if(!MI||!MI.view)return false;
       var st=MI.state||{},sel=st.selId,L0=[].concat(MI.props.ignitions||[],MI.props.fires||[]),it=L0.filter(function(g){return g&&g.id===sel;})[0];if(!it||!isFinite(it.x)||!isFinite(it.y))return false;
     }catch(x){return false;}
     var PX=Number(it.x),PY=Number(it.y),v0=MI.view(),W=MI.W(),H=MI.H(),done=false,T0=Date.now();
+    flyCss();document.documentElement.classList.add('wf-flying');   /* (Oct 16, 19:13) no confidence tags on the markers while the map zooms in */
+    try{var R00=topRect(MR);sessionStorage.setItem(BACK,JSON.stringify({t:Date.now(),px:PX,py:PY,v:v0,W:W,H:H,r:{left:R00.left,top:R00.top,width:R00.width}}));}catch(x){}
     w.style.transform='none';w.style.background='transparent';w.style.boxShadow='none';w.style.zIndex='-1';f.style.opacity='1';dim.style.display='none';   /* (Oct 16, 18:55) the incident loads fully drawn behind the main screen (an invisible frame is not drawn on iPhone: it never got ready) */
     var mapR=function(){return topRect(MR);};
     // the main map's view that puts the marker at local point (lx, ly) at scale s
@@ -1525,7 +1555,11 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     var R0=mapR(),kM=R0.width/W||1,est=null;try{est=JSON.parse(sessionStorage.getItem(EST)||'null');}catch(x){}
     var g=est&&est.q>0?est:{x:(window.top.innerWidth||390)/2,y:(window.top.innerHeight||844)*0.35,q:Math.min(24,v0.s*6)*kM};   /* q: screen pixels per world unit */
     fly(viewAt((g.x-R0.left)/kM,(g.y-R0.top)/kM,g.q/kM),900);
-    try{window.__wfSharedUndo=function(){try{fl=null;MI._gest=false;outA.forEach(function(an){an.cancel();});document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.getAnimations().forEach(function(an){an.cancel();});});MI._pv=Object.assign({},MI._pv||{},v0);MI.setState({cx:v0.cx,cy:v0.cy,s:v0.s});}catch(x){}};}catch(x){}
+    /* back on this screen from the phone's cache: the map is set back where it was, and the surfaces that left come back in (the way out, reversed) */
+    try{window.__wfSharedUndo=function(){try{fl=null;MI._gest=false;MI._pv=Object.assign({},MI._pv||{},v0);MI.setState({cx:v0.cx,cy:v0.cy,s:v0.s,selId:'__none',pop:null});
+      document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.getAnimations().forEach(function(an){an.cancel();});});
+      var rev=recentBack();outA.forEach(function(an){try{if(rev){an.playbackRate=1;an.reverse();an.onfinish=function(){an.cancel();};}else an.cancel();}catch(x){}});
+      setTimeout(function(){document.documentElement.classList.remove('wf-flying');},rev?SLIDE+40:0);}catch(x){}};}catch(x){}
     // 2. the incident screen ready: land exactly on its map's framing, then hand over
     var drawn2=function(d){var r=d&&d.readyState!=='loading'&&d.getElementById('dc-root');return !!(r&&r.firstElementChild&&r.textContent.trim().length>20&&!d.getElementById('wf-load')&&!d.documentElement.classList.contains('wf-hold')&&d.defaultView.__wfVP&&Math.abs(r.getBoundingClientRect().width-d.defaultView.innerWidth)<3);};   /* drawn and fitted to its frame, its map tiles may still be arriving (the map underneath has them) */
     var ready=function(){try{var d=f.contentDocument;if(!drawn2(d))return false;var ok=true;[].forEach.call(d.querySelectorAll('iframe'),function(x){try{if(!x.offsetWidth||!x.getAttribute('src')||/^(about|data|javascript):/i.test(x.getAttribute('src')))return;var cd=x.contentDocument;if(!cd||cd.location.href==='about:blank'||!drawn2(cd))ok=false;}catch(y){}});return ok&&!!findMap(d,0);}catch(x){return false;}};
@@ -1545,7 +1579,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     var poll=function(){if(done)return;if(ready()&&Date.now()-T0>250){if(fl)setTimeout(land,0);else land();return;}if(Date.now()-T0>8000){done=true;finish(findMap(f.contentDocument,0));return;}setTimeout(poll,70);};
     setTimeout(poll,100);
     return true;};
-  addEventListener('pageshow',function(e){try{if(window.__wfSharedUndo){window.__wfSharedUndo();window.__wfSharedUndo=null;}}catch(x){}});
+  addEventListener('pageshow',function(e){try{if(window.__wfSharedUndo){window.__wfSharedUndo();window.__wfSharedUndo=null;try{sessionStorage.removeItem(BACKT);}catch(x){}}}catch(x){}});
 })();
 
 // (Oct 16, 18:40, temporary) Sign-in check: an error on any screen, or the main screen finding nobody signed in, is noted;
