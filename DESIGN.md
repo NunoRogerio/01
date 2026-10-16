@@ -2171,3 +2171,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 21:58) Initial attack panel line: what the attack rests on, when the first unit arrives and all are in, then "These are the recommended units; to reconfigure them, switch them on or off below." (pt "Estes são os meios recomendados; se quiser, reconfigure-os à mão abaixo."). No list of the units (they are in the switches).
 - (Oct 16, 21:59, app-wide) No sideways scroll anywhere: a left or right swipe never moves a screen, a panel or a list (vertical scrollers and the page clip sideways overflow, no sideways rubber band).
 - (Oct 16, 22:00; supersedes the quiet-map / cards-fade of 15:27) Decision panels open over the incident page as it is: the map is not dimmed and the cards, summary and mini KPIs stay; the panel simply sits on top (a tap outside still closes it).
+- (Oct 16, 22:02, trial) Summary, detection and captain's cards: no header band. The header row (icon, title, time) sits on the card's own background, the whole card one colour.
+  The body starts right under the header row (no 16px gap above it, as there is no band to clear).
