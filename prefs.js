@@ -252,14 +252,14 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     '[data-wf-actbar][data-wf-float="flex"]{position:absolute!important;left:0;right:0;bottom:var(--wf-actb,32px);z-index:6;padding:0 16px!important;background:transparent!important;pointer-events:none}' +
     '[data-wf-actbar][data-wf-float="flex"]>*{pointer-events:auto}[data-wf-actbar][data-wf-float="flex"]::after,[data-wf-actbar][data-wf-float="flex"]>.wf-stripes{display:none!important}' +
     'section:has(>[data-wf-actbar][data-wf-float="flex"]) [data-wf-page]{padding-bottom:180px!important}' +
-    /* (Oct 16, 11:47) the decisions wear the app's glass (as the legend chips and cards over the map: frosted, blur 16px, saturate 180%),
+    /* (Oct 16, 12:26) no transition at all: they show already drawn, glass and blur included. (Oct 16, 11:47) the decisions wear the app's glass (as the legend chips and cards over the map: frosted, blur 16px, saturate 180%),
        each with its muted tint: Dismiss the neutral glass, (Oct 16, 11:49) all labels white: Dismiss a grey glass, Smoke check a muted orange glass, Initial attack a muted red glass */
-    ':root .btn.wf-ibtn{-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:none!important;border:0!important;outline:none!important;background-clip:padding-box}' +
+    ':root .btn.wf-ibtn{transition:none!important;animation:none!important;transform:translateZ(0);-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:none!important;border:0!important;outline:none!important;background-clip:padding-box}' +
     /* (Oct 16, 11:50) all three white glass with a dark label; the icon carries the decision's colour: Dismiss grey, Smoke check muted orange, Initial attack muted red */
     ':root .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(255, 255, 255, 0.62)!important;color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}' +
     ':root .btn.wf-ibtn.wf-sec > svg{color:rgb(99, 99, 102)}:root .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(196, 106, 36)}:root .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(188, 64, 52)}' +
     'html.wf-dark .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(44, 44, 46, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
-    'html.wf-dark .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)}html.wf-dark .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)}html.wf-dark .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)}' +
+    'html.wf-dark .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)!important}html.wf-dark .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)!important}html.wf-dark .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)!important}' +
     /* (Oct 16, 11:55) the projection switcher over a map wears the decisions' glass: the white frosted track, dark options; the chosen one stays the dark grey thumb, as glass too */
     '.wf-seg.wf-seg-glass{background:rgba(255, 255, 255, 0.62)!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important}' +
     '.wf-seg.wf-seg-glass>.segthumb>.segblob{background:rgba(58, 58, 60, 0.78)!important;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}' +
