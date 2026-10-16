@@ -4597,6 +4597,7 @@ const SCREEN_CSS = `
 .hvs-tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px} /* only the tags, no container behind them */
 .hvs-taggroups{display:flex;flex-direction:column;gap:24px}
 .hvs-searchroot{min-height:420px}
+.hvs-searchroot > .hvt-qfwrap{display:inline-flex} /* the field keeps its own width, so its list matches it */
 .hvs-searchout{margin:24px 0 0}
 .hvs-pkgbtn{height:28px;margin-left:auto;padding:0 16px;border:0;background:#1f1f1f;color:#fff;font:inherit;font-size:12px;font-weight:600;line-height:18px;cursor:pointer}
 .hvs-pkgbtn:hover:not(:disabled){background:#3a3a3a}
@@ -5022,7 +5023,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 12:05"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 18:40"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5556,7 +5557,7 @@ function TagView({ type, kind, cat, text }) {
   );
 }
 function TagsBench({ theme, onTheme }) {
-  const [c, setC] = useState({ type: "status", kind: "positive", cat: 7, size: "default", show: "one", label: "" });
+  const [c, setC] = useState({ type: "status", kind: "positive", cat: 7, size: "default", show: "all", label: "" }); // opens on every tag
   const set = (p) => setC((x) => ({ ...x, ...p }));
   const statusText = (k) => (TAG_STATUS.find((x) => x[0] === k) || TAG_STATUS[0])[2];
   const text = (type, kind, cat) => c.label.trim() || (type === "status" ? statusText(kind) : `Category ${cat}`);
@@ -5583,7 +5584,7 @@ function TagsBench({ theme, onTheme }) {
       </div>
       <div className="hvs-benchstage hvt-scope" data-theme={theme}>
         <style>{CSS}</style>
-        <div className={`hvt-root${c.size === "compact" ? " is-compact" : ""}`} style={{ padding: 16 }}>
+        <div className={`hvt-root${c.size === "compact" ? " is-compact" : ""}`} style={{ padding: 16, background: "transparent" }}>{/* only the tags: no grey container, it is not part of the tag */}
           {c.show === "one" ? (
             <div className="hvs-tagrow"><TagView type={c.type} kind={c.kind} cat={c.cat} text={text(c.type, c.kind, c.cat)} /></div>
           ) : (
@@ -5637,20 +5638,12 @@ function SearchBench({ theme, onTheme }) {
       </div>
       <div className="hvs-benchstage hvt-scope" data-theme={theme}>
         <style>{CSS}</style>
-        <div className="hvt-root hvs-searchroot" style={{ padding: 16 }}>
-          <div className="hvt-titlebar" style={{ padding: 0 }}>
-            <h3 className="hvt-title">Storage Systems</h3>
-            <div className="hvt-actions-bar">
-              <div className="hvt-sf">
+        <div className="hvt-root hvs-searchroot" style={{ padding: 16, background: "transparent" }}>{/* only the search field: no title, container or text, they are not part of it */}
                 <QuickFilter value={value} onChange={setValue} onSubmit={(t) => setSubmitted((t === undefined ? value : t).trim())}
                              mode={c.mode} expanded={expanded} onExpandedChange={setExpanded} placeholder={c.placeholder}
                              suggestions={c.suggest ? pool : []} recents={c.recent ? recents : []}
                              onRecent={(t) => setRecents((p) => [t, ...p.filter((x) => x.toLowerCase() !== t.toLowerCase())].slice(0, 5))}
                              disabled={c.state === "disabled"} error={c.state === "error" ? c.errorText : ""} />
-              </div>
-            </div>
-          </div>
-          <p className="hvt-muted hvs-searchout" aria-live="polite">{submitted ? `Searching for "${submitted}".` : "Type to see suggestions. Enter or View All Results searches."}</p>
         </div>
       </div>
     </>
