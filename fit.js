@@ -1,4 +1,11 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
+// (Oct 16, 19:05) Storage health, first thing on every screen: if this phone's storage refuses a small write (full: big caches
+// kept by older versions), the largest reloadable entries are dropped until it accepts again, so the sign-in can always be saved.
+(function(){var ok=function(){try{localStorage.setItem('wf-probe',String(Date.now()));localStorage.removeItem('wf-probe');return true;}catch(e){return false;}};
+  try{if(ok())return;var KEEP=/^(wf-role|wf-last-user|wf-custom|wf-custom-profiles|wf-profile-edits|wf-profile-hidden|wf-mt-key|wf-ai-key|wf-ai-off|wf-invited-by|wf-primary|wf-app-version)$/,L=[];
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!KEEP.test(k))L.push([k,(localStorage.getItem(k)||'').length]);}
+    L.sort(function(a,b){return b[1]-a[1];});var gone=[];for(var j=0;j<L.length&&!ok();j++){localStorage.removeItem(L[j][0]);gone.push(L[j][0]+' '+Math.round(L[j][1]/1000)+'k');}
+    window.__wfFreed=gone.join(', ');try{sessionStorage.setItem('wf-freed',window.__wfFreed);}catch(x){}}catch(e){}})();
 // (Oct 7, 19:40) Station profiles (captain, team lead) have their station as their home screen instead of the region map.
 function wfHomeUrl(){try{var r=localStorage.getItem('wf-role')||'',c=localStorage.getItem('wf-custom')||'';if(r&&/^(coord|ff|eng|fft|ptco|ptce|ptbo)$/.test(c))return 'Station.dc.html?home=1';}catch(e){}return 'Main.dc.html';}
 /* (Oct 14, 17:10) the dispatch profiles' decisions on each incident (sent, smoke check, dismissed, confirmed) last as long as its chats:
@@ -1543,7 +1550,8 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
   try{window.addEventListener('error',function(e){try{if(e&&e.message)localStorage.setItem('wf-lasterr',JSON.stringify({t:Date.now(),m:String(e.message).slice(0,160)+' ('+String(e.filename||'').split('/').pop().split('?')[0]+':'+(e.lineno||0)+')',p:location.pathname.split('/').pop()}));}catch(x){}});
     window.addEventListener('unhandledrejection',function(e){try{var r=e&&e.reason;localStorage.setItem('wf-lasterr',JSON.stringify({t:Date.now(),m:'Promise: '+String(r&&r.message||r).slice(0,160),p:location.pathname.split('/').pop()}));}catch(x){}});}catch(x){}
   if(!/\/Login\.dc\.html$/.test(location.pathname)||window.top!==window)return;
-  var show=function(){try{var L=[],now=Date.now();['wf-why','wf-lasterr'].forEach(function(k){var v=JSON.parse(localStorage.getItem(k)||'null');if(v&&now-v.t<5*60000)L.push((v.p?v.p.replace('.dc.html','')+': ':'')+v.m);});if(!L.length)return;
+  var show=function(){try{var L=[],now=Date.now();var W=/[?&]why=([^&]+)/.exec(location.search);if(W)L.push(decodeURIComponent(W[1]));var fr='';try{fr=sessionStorage.getItem('wf-freed')||'';}catch(x){}if(fr)L.push('freed '+fr);
+    var tot=0;try{for(var q=0;q<localStorage.length;q++){var kq=localStorage.key(q);tot+=kq.length+(localStorage.getItem(kq)||'').length;}}catch(x){}var wr='ok';try{localStorage.setItem('wf-probe','1');localStorage.removeItem('wf-probe');}catch(x){wr='FULL';}if(L.length||wr!=='ok')L.push('storage '+Math.round(tot/1000)+'k chars, write '+wr);['wf-why','wf-lasterr'].forEach(function(k){var v=JSON.parse(localStorage.getItem(k)||'null');if(v&&now-v.t<5*60000)L.push((v.p?v.p.replace('.dc.html','')+': ':'')+v.m);});if(!L.length)return;
     var d=document.createElement('div');d.setAttribute('role','status');d.style.cssText='position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;padding:8px 16px;border-radius:16px;background:rgba(28,28,30,0.85);color:rgb(255, 255, 255);font:13px/18px -apple-system,system-ui,sans-serif;word-break:break-word';
     d.textContent='Last sign-in issue: '+L.join(' | ');d.onclick=function(){d.remove();try{localStorage.removeItem('wf-why');localStorage.removeItem('wf-lasterr');}catch(x){}};document.body.appendChild(d);}catch(x){}};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(show,800);});else setTimeout(show,800);

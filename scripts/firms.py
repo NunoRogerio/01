@@ -18,10 +18,7 @@ from shapely.strtree import STRtree
 
 NE = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/'
 CACHE = os.environ.get('NE_CACHE', '.ne-cache')
-COUNTRIES = set('''ALB AND AUT BLR BEL BIH BGR HRV CYP CZE DNK EST FIN FRA DEU GRC HUN ISL IRL ITA KOS LVA LIE LTU LUX
-MLT MDA MCO MNE NLD MKD NOR POL PRT ROU RUS SMR SRB SVK SVN ESP SWE CHE TUR UKR GBR VAT
-ATG ARG BHS BRB BLZ BOL CAN CHL COL CRI CUB DMA DOM ECU SLV GRD GTM GUY HTI HND JAM MEX NIC PAN PRY
-PER KNA LCA VCT SUR TTO USA URY VEN'''.split())
+COUNTRIES = {'PRT', 'USA'}   # (Oct 16) California and Portugal are enough: only Portugal and the United States
 PT_NAMES = {'Azores': 'Açores'}
 SOURCES = ['VIIRS_NOAA20_NRT', 'VIIRS_SNPP_NRT', 'VIIRS_NOAA21_NRT',
            'MODIS_NRT',      # Terra + Aqua: more passes a day (1 km)
@@ -31,7 +28,7 @@ SOURCES = ['VIIRS_NOAA20_NRT', 'VIIRS_SNPP_NRT', 'VIIRS_NOAA21_NRT',
 GOES = [('noaa-goes19', 'GOES-19'), ('noaa-goes18', 'GOES-18')]
 GOES_SCANS = 6                                       # the last hour of full-disk scans per satellite
 GOES_CONF = {10: 80, 11: 85, 13: 70, 30: 80, 31: 85, 33: 70}   # good, saturated and high-probability fire pixels only
-BOXES = ['-170,-60,-25,84', '-32,34,60,82']          # Americas, Europe (+ Turkey, European Russia)
+BOXES = ['-180,15,-60,72', '-32,29,-6,43']          # the United States (Alaska, Hawaii), Portugal (Azores, Madeira)
 CELL = 0.03                                          # ~3 km: one candidate per cluster of detections
 MAX_POINTS = 20000                                   # safety ceiling only: every detection is kept
 
