@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792138652"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792148061"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1792147856"></script>
 <script src="station.js?v=1792067104"></script>
@@ -1721,12 +1721,16 @@ class Component extends DCLogic {
     const DSP = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
     let VD = {}; try { VD = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {}
     /* (Oct 14, 08:22) every decision at the foot asks first (a missed tap must not send or dismiss): the app's confirmation dialog, over the whole screen even inside the chat's map view */
-    const ask = (k, fn) => () => { const W = (() => { try { return window.parent !== window && window.parent.__wfConfirm ? window.parent : window; } catch (e) { return window; } })(); if (!W.__wfConfirm) { fn(); return; }
+    const ask = (k, fn) => (ev) => { const W = (() => { try { return window.parent !== window && window.parent.__wfConfirm ? window.parent : window; } catch (e) { return window; } })(); if (!W.__wfConfirm) { fn(); return; }
+      /* (Oct 16, 11:53) a square decision opens its confirmation out of itself: its place on screen (in the dialog window's coordinates), its icon in its colour, its glass */
+      const G = (() => { try { const bt = ev && ev.currentTarget && ev.currentTarget.classList && ev.currentTarget.classList.contains('wf-ibtn') ? ev.currentTarget : null; if (!bt) return null; const r = bt.getBoundingClientRect(); let ox = 0, oy = 0, kx = 1;
+        if (W !== window && window.frameElement) { const fr = window.frameElement.getBoundingClientRect(); kx = fr.width / (window.innerWidth || fr.width) || 1; ox = fr.left; oy = fr.top; }
+        const sv = bt.querySelector('svg'); return { fromRect: { left: ox + r.left * kx, top: oy + r.top * kx, width: r.width * kx, height: r.height * kx }, icon: sv ? sv.outerHTML : '', iconColor: sv ? getComputedStyle(sv).color : '', bg: getComputedStyle(bt).backgroundColor, fg: getComputedStyle(bt).color }; } catch (x) { return null; } })();
       const pl = (c.place || '').trim(), T = { sent: [Lx('Send the initial attack?', 'Enviar o ataque inicial?'), Lx('The response plan\'s units go to ' + pl + '.', 'Os meios do plano de resposta seguem para ' + pl + '.'), Lx('Send', 'Enviar')],
         check: (() => { const u = (this._chkU || {})[c.id], w = u ? String(u.where).replace(/\.+$/, '') : '';   /* (Oct 15, 15:10) names the crew that goes: the response plan's first engine */
           return [Lx('Send a smoke check?', 'Enviar um reconhecimento?'), u ? Lx(u.name + ' from ' + w + ' goes to ' + pl + ' to look, ' + u.eta + ' min away. Its size-up confirms or cancels.', u.name + ' (' + w + ') vai a ' + pl + ' ver, a ' + u.eta + ' min. O ponto de situação confirma ou cancela.') : Lx('One engine goes to ' + pl + ' to look. Its size-up confirms or cancels.', 'Um veículo vai a ' + pl + ' ver. O ponto de situação confirma ou cancela.'), Lx('Send', 'Enviar')]; })(),
         dismissed: [Lx('Dismiss ' + pl + '?', 'Descartar ' + pl + '?'), Lx('It leaves the lists and maps and goes to Resolved.', 'Sai das listas e dos mapas e passa para Resolvidos.'), Lx('Dismiss', 'Descartar')] }[k];
-      W.__wfConfirm({ title: T[0], body: T[1], cancel: Lx('Cancel', 'Cancelar'), ok: T[2], onOk: fn }); };
+      W.__wfConfirm(Object.assign({ title: T[0], body: T[1], cancel: Lx('Cancel', 'Cancelar'), ok: T[2], onOk: fn }, G || {})); };
     const done = VD[c.id], chkAsk = done === 'check' && isLive && onScene && droneStrong, decide = (k) => () => {   /* chkAsk: the captain of the smoke check asks for the initial attack: the foot offers it alone */ try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {} let D = {}; try { D = JSON.parse(sessionStorage.getItem('wf-verify') || '{}') || {}; } catch (e) {} D[c.id] = k; D[c.id + '@'] = Date.now(); if (k === 'check') D[c.id + '^'] = Date.now(); try { sessionStorage.setItem('wf-verify', JSON.stringify(D)); } catch (e) {} this.forceUpdate(); try { if (window.__wfChat && window.__wfChat.dspGo) window.__wfChat.dspGo(c.id, k); } catch (e) {}   /* (Oct 13, 16:54) the team's story starts with the decision */
       /* (Oct 13, 08:59) Send initial attack is the dispatch center's confirmation: the candidate becomes an active fire ("<place> Fire", First alert), its detections kept; the captain's arrival then moves it to Crews on scene */
       /* (Oct 13, 10:30) Dismiss: the candidate leaves the lists and maps and goes to Resolved as Dismissed */

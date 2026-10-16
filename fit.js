@@ -663,6 +663,21 @@ window.__wfBlink=function(path,dur){
     p.appendChild(h);p.appendChild(b);p.appendChild(a);w.appendChild(sc);w.appendChild(p);root.appendChild(w);
     var done=false,close=function(ok){if(done)return;done=true;try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}sc.style.opacity='0';p.style.transform='translateY(105%)';setTimeout(function(){w.remove();},520);try{(ok?o.onOk:o.onCancel)&&(ok?o.onOk:o.onCancel)();}catch(x){}};
     sc.onclick=function(){close(false);};no.onclick=function(){close(false);};yes.onclick=function(){close(true);};
+    /* (Oct 16, 11:53) o.fromRect (viewport px of this window), o.icon (svg markup), o.bg: the dialog grows out of the button that asked, as a panel on
+       that button's own glass: it opens from the button's shape (a clip that widens, no scaling, nothing bounces), its icon on top, the same
+       title, line and buttons; Cancel folds it back into the button */
+    if(o.fromRect){var R0=root.getBoundingClientRect(),kk=(R0.width/(root.offsetWidth||R0.width))||1,F=o.fromRect,fl=(F.left-R0.left)/kk,ft=(F.top-R0.top)/kk,fw=F.width/kk,fh=F.height/kk,RH=R0.height/kk,RW=R0.width/kk;
+      p.className='wf-dlg wf-dlg-grow';p.removeAttribute('data-swipe');sc.style.background='rgba(0,0,0,0.16)';
+      p.style.cssText='position:absolute;left:16px;right:16px;bottom:'+Math.max(16,RH-(ft+fh))+'px;display:flex;flex-direction:column;box-sizing:border-box;padding:24px;border-radius:24px;background:'+(o.bg||'rgba(255,255,255,0.62)')+';-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:none;font-family:inherit;transition:clip-path .45s cubic-bezier(.4,0,.2,1);will-change:clip-path';
+      if(o.fg){h.style.color=o.fg;b.style.color=o.fg;}
+      var C=[].slice.call(p.children);C.forEach(function(e){e.style.opacity='0';e.style.transition='opacity .25s ease';});
+      if(o.icon){var ic=document.createElement('div');ic.setAttribute('aria-hidden','true');ic.innerHTML=o.icon;ic.style.cssText='display:flex;margin:0 0 16px;opacity:0;transition:opacity .25s ease;color:'+(o.iconColor||'currentColor');var sv=ic.querySelector('svg');if(sv){sv.setAttribute('width','42');sv.setAttribute('height','42');sv.style.cssText='stroke-width:1.5px';}p.insertBefore(ic,h);C.unshift(ic);}
+      var clipAt=function(){var pr=p.getBoundingClientRect(),pl=(pr.left-R0.left)/kk,pt=(pr.top-R0.top)/kk,pw=pr.width/kk,ph=pr.height/kk;return 'inset('+Math.max(0,ft-pt).toFixed(1)+'px '+Math.max(0,pl+pw-(fl+fw)).toFixed(1)+'px '+Math.max(0,pt+ph-(ft+fh)).toFixed(1)+'px '+Math.max(0,fl-pl).toFixed(1)+'px round 24px)';};
+      p.style.transition='none';p.style.clipPath=clipAt();void p.offsetWidth;p.style.transition='clip-path .45s cubic-bezier(.4,0,.2,1)';
+      close=function(ok){if(done)return;done=true;try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}sc.style.opacity='0';C.forEach(function(e){e.style.opacity='0';});p.style.transitionDelay='.1s';p.style.clipPath=clipAt();setTimeout(function(){w.remove();},600);try{(ok?o.onOk:o.onCancel)&&(ok?o.onOk:o.onCancel)();}catch(x){}};
+      sc.onclick=function(){close(false);};no.onclick=function(){close(false);};yes.onclick=function(){close(true);};
+      requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.clipPath='inset(0px 0px 0px 0px round 24px)';setTimeout(function(){C.forEach(function(e){e.style.opacity='1';});},220);});});
+      return {close:close};}
     requestAnimationFrame(function(){requestAnimationFrame(function(){sc.style.opacity='1';p.style.transform='translateY(0)';});});
     return {close:close};
   };
