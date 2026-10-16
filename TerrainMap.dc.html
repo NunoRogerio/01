@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792185308"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792185383"></script>
+<script src="prefs.js?v=1792185742"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792173262"></script>
@@ -225,7 +225,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </span>
   </sc-for>
   </div>
-  <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0.0) 70%, rgba(0,0,0,0.055) 100%)"></div>
+  <!-- (Oct 16, 22:21) no vignette over the map: the map is shown as it is -->
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 14, 11:50) the detection markers ride the moving map layer, so they stay locked to their place while it pans or zooms (outside it they stood still until the next redraw) -->
