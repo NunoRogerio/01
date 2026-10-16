@@ -656,7 +656,7 @@ window.__wfGrow=function(panel,from,open,done){try{if(!panel){if(done)done();ret
   var kids=[].slice.call(panel.children);
   if(open){panel.style.transition='none';panel.style.clipPath=at;panel.style.visibility='visible';kids.forEach(function(e){e.style.transition='none';e.style.opacity='0';});void panel.offsetWidth;
     requestAnimationFrame(function(){panel.style.transition='clip-path .5s cubic-bezier(.4,0,.2,1)';panel.style.clipPath=full;setTimeout(function(){kids.forEach(function(e){e.style.transition='opacity .25s ease';e.style.opacity='1';});},260);setTimeout(function(){if(done)done();},520);});}
-  else{kids.forEach(function(e){e.style.transition='opacity .15s ease';e.style.opacity='0';});setTimeout(function(){panel.style.transition='clip-path .45s cubic-bezier(.4,0,.2,1)';panel.style.clipPath=at;setTimeout(function(){panel.style.visibility='hidden';if(done)done();},470);},120);}}catch(x){if(done)done();}};
+  else{kids.forEach(function(e){e.style.transition='opacity .22s cubic-bezier(.4,0,.2,1)';e.style.opacity='0';});setTimeout(function(){panel.style.transition='clip-path .6s cubic-bezier(.45,0,.2,1)';panel.style.clipPath=at;setTimeout(function(){panel.style.visibility='hidden';if(done)done();},620);},160);}}   /* (Oct 16, 13:58) a gentler fold: content out first, then a slower clip */catch(x){if(done)done();}};
 window.__wfConfirm=function(o){
     o=o||{};var root=document.querySelector('[data-wfroot]')||document.body;
     var old=root.querySelector('.wf-cfm');if(old)old.remove();
