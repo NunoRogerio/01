@@ -2952,6 +2952,7 @@ export function DataTable({
 
   const total = serverMode ? (rowCount != null ? rowCount : localRows.length) : processed.length;
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const paged = showPagination && pageCount > 1; // one page only ("1 of 1"): the pagination is off, the table ends with its rows
   const safePage = Math.min(page, pageCount);
   const visible = serverMode || !showPagination ? processed : processed.slice((safePage - 1) * pageSize, safePage * pageSize);
 
@@ -3057,7 +3058,7 @@ export function DataTable({
     "--hvt-head-h": density === "compact" ? "40px" : "48px", // Comfortable and Balanced: a 48px column titles row // Compact: a 40px column titles row
     "--hvt-ctl": `${ctl}px`,
     "--hvt-lead": `${lead}px`,
-    "--hvt-page-rows": showPagination ? pageSize : Math.max(1, processed.length),
+    "--hvt-page-rows": paged ? pageSize : Math.max(1, processed.length),
     "--hvt-max-extra": `${maxExtra}px`,
     "--hvt-visible-rows": showPagination && scrollbarVertical ? Math.max(1, pageSize - 2) : visibleRows, // pagination with vertical scroll: the table is 2 rows shorter than the page and scrolls to show the rest
     "--hvt-col-min": `${columnMinWidth}px`,
@@ -4177,7 +4178,7 @@ export function DataTable({
         visible.map(renderRow)
       )}
       {/* when the rows do not fill the table, one empty row takes the remaining space (same gap and padding as the rows) */}
-      {showPagination && !loading && visible.length > 0 && !maximized && (visible.length - (removing ? 1 : 0) < pageSize) && (
+      {paged && !loading && visible.length > 0 && !maximized && (visible.length - (removing ? 1 : 0) < pageSize) && (
         <div className="hvt-fillrow" aria-hidden="true" />
       )}
     </div>
@@ -4185,7 +4186,7 @@ export function DataTable({
 
   /* rows per page only offers sizes the rows can fill: with 12 rows, 5 and 10; with 5 rows or fewer there is nothing to choose */
   const sizeChoices = [...new Set([...pageSizeOptions, pageSize])].filter((n) => n <= total).sort((a, b) => a - b);
-  const pagerEl = showPagination ? (
+  const pagerEl = paged ? (
     <div className="hvt-pager">
       <div className="hvt-pager-left">
         <MenuButton variant="ghost" role="listbox" ariaLabel="Rows per page" title="Number of rows per page" label={String(pageSize)} value={pageSize}
@@ -5021,7 +5022,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 11:58"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 12:05"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
