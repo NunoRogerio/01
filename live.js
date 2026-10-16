@@ -149,7 +149,10 @@ window.__wfRegionUp = function (st, co) {
   function idbGet(k){return idb().then(function(db){return new Promise(function(ok){var r=db.transaction('kv').objectStore('kv').get(k);r.onsuccess=function(){ok(r.result);};r.onerror=function(){ok(null);};});}).catch(function(){return null;});}
   function save(stamp){
     var c=readCache();c[stamp]=Date.now();
-    c.rows=window.__wfLiveFiresAll||window.__wfLiveFires||null;c.geo=window.__wfGeoStates||null;delete c.cands;delete c.boxes;
+    /* (Oct 16, 18:50) the fires themselves (US, Portugal, Brazil: megabytes now) go to IndexedDB too; localStorage keeps only the
+       sources' times. Kept there they filled the iPhone's storage, and the sign-in itself could no longer be saved (back to log in) */
+    delete c.rows;delete c.geo;delete c.cands;delete c.boxes;
+    idbPut(KEY+'|rows',{rows:window.__wfLiveFiresAll||window.__wfLiveFires||null,geo:window.__wfGeoStates||null});
     if(stamp==='tSat')idbPut(KEY,{cands:window.__wfLiveCandsAll||window.__wfLiveCands||null,boxes:window.__wfGeoBoxes||null,t:c.tSat});
     try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){}
     window.__wfWorld=null;window.__wfGeo=null;
@@ -517,7 +520,10 @@ window.__wfRegionUp = function (st, co) {
   };
 
   var c=readCache(),now=Date.now();
-  if(c.rows){if(window.__wfFireName)c.rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3],r[10],r[2]);});window.__wfLiveFiresAll=c.rows;dsApply(false);}if(c.geo)window.__wfGeoStates=c.geo;if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
+  var useRows=function(rows,geo){if(rows&&!window.__wfLiveFiresAll){if(window.__wfFireName)rows.forEach(function(r){if(r&&r[0]!=='PT'&&typeof r[3]==='string')r[3]=window.__wfFireName(r[3],r[10],r[2]);});window.__wfLiveFiresAll=rows;dsApply(false);}if(geo&&!window.__wfGeoStates)window.__wfGeoStates=geo;};
+  var rowsP=null;
+  if(c.rows||c.geo){useRows(c.rows,c.geo);var big={rows:c.rows,geo:c.geo};delete c.rows;delete c.geo;try{localStorage.setItem(KEY,JSON.stringify(c));}catch(e){try{localStorage.removeItem(KEY);}catch(x){}}idbPut(KEY+'|rows',big);}   /* an older copy kept in localStorage: moved out, freeing the space */
+  else rowsP=idbGet(KEY+'|rows').then(function(v){if(!v||!v.rows){try{localStorage.removeItem(KEY);}catch(x){}return;}   /* none saved: every source counts as stale and loads */if(v){useRows(v.rows,v.geo);window.__wfWorld=null;window.__wfGeo=null;try{window.dispatchEvent(new Event('wf-sync'));}catch(e){}}});if(c.tPT||c.tUS||c.tCAN||c.tBR)window.__wfLiveAt=Math.max(c.tPT||0,c.tUS||0,c.tCAN||0,c.tBR||0);
   var jsonOk=function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();};
   /* (Oct 13, 13:26) the data loads again on demand (the map's refresh button) and by itself every 5 minutes; __wfUpdatedAt is
      when it last came in (the cached sources' own time on open), for "Updated N min ago" */
@@ -577,7 +583,7 @@ window.__wfRegionUp = function (st, co) {
     netBusy=Promise.all(P.map(function(x){return Promise.resolve(x).catch(function(){});})).then(function(){netBusy=null;window.__wfUpdatedAt=Date.now();try{window.dispatchEvent(new Event('wf-sync'));window.dispatchEvent(new Event('wf-updated'));}catch(e){}});
     return netBusy;
   }
-  net(false);
+  if(rowsP)rowsP.then(function(){net(false);},function(){net(false);});else net(false);   /* the saved fires first, then what has changed */
   window.__wfRefresh=function(){return net(true);};
   setInterval(function(){if(document.visibilityState!=='hidden'&&Date.now()-(window.__wfUpdatedAt||0)>=TTL-5000)net(true);},30000);
 })();

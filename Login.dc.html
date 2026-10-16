@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792172324"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792173001"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="menu.js?v=1791782987"></script>
@@ -577,6 +577,8 @@ class Component extends DCLogic {
         try { document.documentElement.classList.add('wf-lgbusy'); if (window.__wfMenu && document.documentElement.classList.contains('wf-menuopen')) window.__wfMenu.close(); } catch (x) {}
         try { if (window.__wfSoftOut) window.__wfSoftOut(); } catch (x) {}   // the loading screen takes over right here, then carries on in the app
         setTimeout(() => { window.location.href = typeof wfHomeUrl === 'function' ? wfHomeUrl() : 'Main.dc.html'; }, 560);   // once the loading screen has faded in (0.5 s)
+        /* (Oct 16, 18:50) a full storage must never stop the sign-in: the role is written first and, if refused, the big data cache (reloadable) is dropped and it is written again */
+        try { window.localStorage.setItem('wf-role', sel[9] || sel[0]); } catch (x) { try { Object.keys(window.localStorage).filter((k) => /^wf-live-fires/.test(k)).forEach((k) => window.localStorage.removeItem(k)); window.localStorage.setItem('wf-role', sel[9] || sel[0]); } catch (y) {} }
         try { window.localStorage.setItem('wf-role', sel[9] || sel[0]); window.localStorage.setItem('wf-last-user', sel[0]); if (sel[9]) window.localStorage.setItem('wf-custom', sel[0]); else window.localStorage.removeItem('wf-custom'); window.sessionStorage.removeItem('wf-scope'); window.sessionStorage.removeItem('wf-nav'); window.sessionStorage.removeItem('wf-home-title'); } catch (e) {}
         try { if (window.__wfSetY) window.__wfSetY(sel[9] || sel[0]); } catch (x) {}   // the signed-in profile's hi-vis colour, from the loading screen on
         window.__wfMem = Object.assign(window.__wfMem || {}, { role: sel[9] || sel[0], scope: null });
