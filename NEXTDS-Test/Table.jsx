@@ -777,6 +777,8 @@ const CSS = `
 @media (prefers-reduced-motion:reduce){.hvt-banner-wrap{transition:none}.hvt-group.is-removing,.hvt-group.is-removing > *,.hvt-group.is-edit-in,.hvt-group.is-edit-in > *{animation:none}.hvt-group.is-edit-out{display:none}}
 .hvt-banner{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px;border-radius:var(--component-containerradius)}
 .hvt-banner.is-info{background:var(--semantic-informative);color:var(--base-dark)}
+/* on a coloured area (the green filter bar, the blue add / edit panel, the blue banner) every button hovers alike: white at 72%, no outline */
+.hvt-edittools .hvt-btn:hover:not(:disabled),.hvt-banner.is-info :is(.hvt-btn,.hvt-icon,.hvt-gbtn):hover:not(:disabled){background:color-mix(in srgb,var(--page-background) 72%,transparent) !important;box-shadow:none !important}
 .hvt-banner.is-error{background:var(--semantic-negative);color:var(--container-secondary-background)}
 .hvt-banner-icon{display:block;flex:none;width:32px;height:32px}
 .hvt-banner-icon svg{display:block;width:100%;height:100%}
@@ -5019,7 +5021,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 11:48"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 11:58"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
