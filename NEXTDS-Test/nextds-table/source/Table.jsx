@@ -5019,7 +5019,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 11:40"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-16 11:48"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6050,8 +6050,18 @@ export default function App() {
     () => (cfg.microViz ? [...columns, { key: "__viz", title: dsViz.title, viz: vizType, vizFormat: dsViz.format, vizMax: dsViz.max, sortable: false }] : columns),
     [columns, cfg.microViz, vizType, dsViz.title]
   );
+  /* a new item in the Workbench: the values nobody enters (status, metrics, details) are filled with sample values, as if it were connected and running */
+  const connectSample = (r) => {
+    const smp = ds.make ? ds.make(Number(r.id) + 97) : {};
+    const out = { ...r };
+    [...ds.columns, ...(ds.extra || [])].forEach((c) => {
+      if (out[c.key] !== "" && out[c.key] != null) return;
+      out[c.key] = c.status ? "Normal" : c.key === "alerts" ? 0 : smp[c.key]; // a system that just came up is healthy, with no alerts
+    });
+    if (ds.detailsOf) out.details = ds.detailsOf(out);
+    return out;
+  };
   const vizValuesOf = (r) => { // the dataset's own values; one value alone (Volumes' Used) ends a sample history when the chart is a line
-    if (r.isNew) return null; // a new item has no metrics until it runs
     const own = dsViz.of && dsViz.of(r);
     if (!own || !own.length) return vizSeries(r);
     if (own.length > 1 || vizType === "bar") return own;
@@ -6327,7 +6337,7 @@ export default function App() {
               rowView={cfg.rowView}
               rowMenu={cfg.rowMenu}
               showFilterButton={!cfg.noHeader && cfg.showFilterButton}
-              onRowsChange={(next, ch) => { const marked = ch.type === "add" ? next.map((r) => (r === ch.row ? { ...r, isNew: true } : r)) : next; // a new item: its metrics come once it runs
+              onRowsChange={(next, ch) => { const marked = ch.type === "add" ? next.map((r) => (r === ch.row ? connectSample(r) : r)) : next; // a new item shows sample metrics, as if it were connected
                 if (cfg.tableState === "empty") { setDataRows([...marked, ...dataRows]); set({ tableState: "default" }); } else setDataRows(marked); setLast(`${ch.type} → ${ch.row ? (ch.row.name || ch.row.c1 || `row ${ch.row.id}`) : ""} (${next.length} rows)`); }}
               initialFilterModel={startModel}
               onFilterModelChange={setModel}
