@@ -2086,7 +2086,7 @@ class Component extends DCLogic {
       /* full screen: the map is titled with the place in view and the level above it (county > state > country; a country has none) */
       mapTtl: s.full ? scope.title : '', mapSub: s.full ? (coObj ? stObj.name : stObj.n ? stObj.n + ((stObj.id === 'US' || stObj.id === 'AMZ' || stObj.id === 'BRA') ? ' states' : stObj.id === 'PT' ? ' districts' : stObj.country === 'US' ? ' counties' : ' regions') : '') : '',   /* full-screen map card: the area and how many subdivisions it has ("58 counties") */
       full: !!s.full, toggleFull: () => this.setState({ full: !s.full, list: false }),
-      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : (this._tbh || 163)), clipBleed: s.full || L.side ? 0 : 40, tipSafe: s.full || L.side ? 56 : L.barH + 23, ctrlTop: 422,
+      padB: s.full || L.side ? 40 : L.barH + 8, clipT: s.full ? 0 : (L.side ? 52 : (this._tbh || 140) + 72),   /* (Oct 16, 19:19) the floating top card's foot (56px status area + 16px drop + the card): the legend sits under the card again, not behind it */ clipBleed: s.full || L.side ? 0 : 1000,   /* (Oct 16, 19:19) the top card floats over the map: the map runs under it to the screen's top edge (no strip above) */ tipSafe: s.full || L.side ? 56 : L.barH + 23, ctrlTop: 422,
       clipL: L.side && !s.full ? L.colL + L.colW : L.sl, clipR: Math.min(L.sr || 0, 16),   /* landscape: the right side has no camera, so the map's controls and legend sit 32px from that edge (16 + 16) */
       topY: s.full ? 'calc(-100% - 88px)' : '0px', topOp: s.full ? 0 : 1, topPE: s.full ? 'none' : 'auto', downY: s.full || s.msOpen ? '200px' : '0px', downOp: s.full || s.msOpen ? 0 : 1,
     };

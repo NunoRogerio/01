@@ -1100,6 +1100,7 @@ class Component extends DCLogic {
     return out;
   }
   toggleLayer(k) {
+    if (k === 'cands') { let cu = ''; try { cu = window.localStorage.getItem('wf-custom') || ''; } catch (e) {} if (/^(ecc|ptecc)$/.test(cu)) return; }   /* (Oct 16, 19:19) the dispatch profiles verify ignitions: their candidates chip is always on */
     // Re-centre only moves the view: no layer changes from the same tap (a ghost click landing on a chip)
     if (this._homeAt && Date.now() - this._homeAt < 1000) return;
     // store only what was tapped: the main map's stations chip has its own key, so other maps keep their stations setting
