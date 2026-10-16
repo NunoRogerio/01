@@ -559,7 +559,7 @@ class Component extends DCLogic {
       this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
       // Remember a possible tap on the bare map (not a marker, popup, legend or button).
       let bg = false; try { bg = !(e.target && e.target.closest && e.target.closest('button,a,[role=button],[role=group],[role=dialog],[role=tooltip]')); } catch (x) {}
-      this._tap = Object.keys(this.pts).length === 1 ? { x: e.clientX, y: e.clientY, t: performance.now(), bg } : null;
+      this._tap = Object.keys(this.pts).length === 1 ? { x: e.clientX, y: e.clientY, t: performance.now(), bg } : null; this._tapMax = 0;
       this.setState({ dragging: true });
     };
     this.onMove = (e) => {
@@ -570,7 +570,7 @@ class Component extends DCLogic {
       const k = this.scaleK();
       if (ids.length === 1) {
         const v = this.view();
-        if (this._tap && Math.hypot(e.clientX - this._tap.x, e.clientY - this._tap.y) > 8) this._tap = null;
+        if (this._tap) { const dm = Math.hypot(e.clientX - this._tap.x, e.clientY - this._tap.y); this._tapMax = Math.max(this._tapMax || 0, dm); if (dm > 12) this._tap = null; }
         this.pts[e.pointerId] = { x: e.clientX, y: e.clientY };
         const n = performance.now(), T = this._trail || (this._trail = []); T.push([n, e.clientX, e.clientY]); while (T.length > 2 && n - T[0][0] > 80) T.shift();
         this._moved = true; this.setView(v.cx - (e.clientX - prev.x) / k / v.s, v.cy - (e.clientY - prev.y) / k / v.s, v.s);
@@ -600,7 +600,11 @@ class Component extends DCLogic {
       // A quick tap on the bare map goes back (detail screens pass onBgTap); an open popup closes first.
       const tp = this._tap; this._tap = null;
       const p = this.props, full = p.isFull === true || p.isFull === 'true';
-      if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8) {
+      /* (Oct 16, 08:59, every map) an open tooltip (incident, detection, station…) closes on any tap on the map itself: a touch that
+         hardly moves (12px), however long it lasts; a drag or a pinch keeps it */
+      const tpQuiet = tp && tp.bg && !this._pinched && this._tapMax <= 12;
+      if (tpQuiet && (this.state || {}).pop) { if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); }
+      else if (tp && tp.bg && !this._pinched && performance.now() - tp.t < 450 && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) <= 8) {
         if ((this.state || {}).pop) { if (this._closePop) this._closePop(); else this.setState({ pop: null, popSpin: false }); }
         /* full screen only from its button: a tap on the map itself does not open it */
         else if (typeof p.onBgTap === 'function' && !full && typeof p.onFull !== 'function') p.onBgTap();
