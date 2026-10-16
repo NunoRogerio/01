@@ -1368,7 +1368,8 @@ window.__wfKpiDrag = function (self, key, grp, onTap, SK) {
         /* (Oct 16, 21:42) the drop lands softly: each card glides from where it shows to its new place and settles with a gentle bounce (FLIP), the lifted one included */
         const B0 = {}; cards().forEach((c) => { const r = c.getBoundingClientRect(); B0[c.getAttribute('data-wf-kpi')] = [r.left, r.top]; });
         reset(); cards().forEach((c) => { c.style.transition = 'none'; }); self.forceUpdate();
-        requestAnimationFrame(() => requestAnimationFrame(() => { cards().forEach((c) => { c.style.transition = ''; const b = B0[c.getAttribute('data-wf-kpi')]; if (!b) return; const r = c.getBoundingClientRect(), dx = (b[0] - r.left) / d.k, dy = (b[1] - r.top) / d.k; if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
+        requestAnimationFrame(() => { try { if (window.__wfFitKpi) window.__wfFitKpi(); } catch (x) {} });   /* (Oct 16, 22:37) the values are fitted to their new cards before they show: no text jumping after the drop */
+        requestAnimationFrame(() => requestAnimationFrame(() => { try { if (window.__wfFitKpi) window.__wfFitKpi(); } catch (x) {} cards().forEach((c) => { c.style.transition = ''; const b = B0[c.getAttribute('data-wf-kpi')]; if (!b) return; const r = c.getBoundingClientRect(), dx = (b[0] - r.left) / d.k, dy = (b[1] - r.top) / d.k; if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) return;
           try { c.style.zIndex = c.getAttribute('data-wf-kpi') === d.key ? '3' : ''; const an = c.animate([{ transform: 'translate(' + dx + 'px, ' + dy + 'px)' }, { transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.34,1.3,.5,1)' }); an.onfinish = () => { c.style.zIndex = ''; }; } catch (x) {} }); })); }
     };
 };

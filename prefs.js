@@ -287,6 +287,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     ':root .btn.wf-ibtn.wf-ib-src:not([aria-disabled="true"]),html.wf-dark .btn.wf-ibtn.wf-ib-src:not([aria-disabled="true"]){background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}.wf-ibtn>*{transition:opacity .2s ease}.wf-ibtn.wf-ib-src>*{opacity:0!important}' +
     /* no press dimming on the decision buttons (Oct 16, 22:11) */
     '.wf-ibtn:active,.btn.wf-ibtn:active{opacity:1!important}.wf-ibtn{-webkit-tap-highlight-color:transparent}' +
+    /* (Oct 16, 22:35) a decision already taken: its button stays, disabled (fainter glass, icon and label at 40%, not clickable), with a green check top right */
+    ':root .btn.wf-ibtn[aria-disabled="true"]{background:rgba(28, 28, 30, 0.42)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important;pointer-events:none!important;opacity:1!important}:root .btn.wf-ibtn[aria-disabled="true"]>:not(.wf-okb){opacity:.4!important}:root .btn.wf-ibtn>span.wf-okb{left:auto!important;right:8px!important;bottom:auto!important;top:8px!important;overflow:visible!important}' +
     /* (Oct 16, 21:59, app-wide) no sideways scroll anywhere: a vertical scroller never scrolls (or rubber-bands) sideways, nor does the page */
     'html,body{overflow-x:hidden;overscroll-behavior-x:none}[style*="overflow-y: auto"]:not([style*="overflow-x"]),[style*="overflow-y: scroll"]:not([style*="overflow-x"]),.wf-snap{overflow-x:hidden!important;overscroll-behavior-x:none}' +
     '.wf-dec-fade .wf-ibtn{transition:opacity .25s ease!important}' +   /* (Oct 16, 21:18) opening a decision panel: its buttons fade out as it grows (never a sudden vanish) */   /* (Oct 16, 13:58) hidden while a decision panel is open or folding */
@@ -632,6 +634,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   setInterval(fadeAll, 1000);   // content that grows by animation (drawers opening) is caught within a second
   /* Round controls: their press (swell + haptic) lives in fit.js, loaded on every screen */
   /* Mini card numbers: shrink the value until value + unit fit inside the card's 8px side padding */
+  window.__wfFitKpi = function () { try { fitKpi(); } catch (e) {} };   /* (Oct 16, 22:37) run at once by the KPI reorder, before the moved cards are painted */
   function fitKpi() {
     /* (Oct 5, 02:20; 03:00) One simple rule for every mini card's value: it starts at the Likelihood card's size (32px value,
        15px unit) and, when value + unit don't fit inside the card's 8px padding (clear of a vertical note such as Estimate by
