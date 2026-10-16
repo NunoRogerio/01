@@ -1192,7 +1192,7 @@ class Component extends DCLogic {
   wfShId() { let v = ''; try { v = (JSON.parse(sessionStorage.getItem('wf-fireview') || 'null') || {}).id || ''; } catch (x) {} return v + '|' + location.pathname; }
   /* (Oct 16, 22:18) iPhone Safari: after a scroll made by script, the sticky map band is drawn in place but answers taps where it would have scrolled to
      (the projection and the markers stopped responding after the arrival hint); re-laying the band out once puts its touch areas back under it */
-  wfStickyFix() { try { const bd = document.querySelector('[data-wf-band]'); if (!bd) return; bd.style.position = 'relative'; void bd.offsetHeight; bd.style.position = ''; bd.style.transform = 'translateZ(0)'; void bd.offsetHeight; requestAnimationFrame(() => { bd.style.transform = ''; }); } catch (x) {} }
+  wfStickyFix() { try { const bd = document.querySelector('[data-wf-band]'); if (!bd) return; const ps = bd.style.position || 'sticky'; bd.style.position = 'relative'; void bd.offsetHeight; bd.style.position = ps; bd.style.transform = 'translateZ(0)'; void bd.offsetHeight; requestAnimationFrame(() => { bd.style.transform = ''; }); } catch (x) {} }
   wfScrollHint() { if (this._shT) return; { const f0 = this.wfShId(); if (this._shDone && this._shDone === f0) return; try { if (sessionStorage.getItem('wf-hint-done') === f0) { this._shDone = f0; return; } } catch (x) {} } const t0 = Date.now(); let last = null, still = 0;
     const tick = () => { this._shT = 0; try {
         const sc = document.querySelector('[data-wf-page="1"]'), sum = document.querySelector('[data-wf-sumcard]'), sec = sum && sum.closest('section'), seg = document.querySelector('[data-wf-band] .wf-seg[aria-label="Projection"]');
