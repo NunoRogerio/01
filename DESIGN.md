@@ -2120,3 +2120,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 14:03) A card shrunk under the incident header is also 8% darker: a dark veil (rgba(0, 0, 0, 0.08)) inside its glass, eased with the shrink (0.35 s); it lifts as the card grows back.
 - (Oct 16, 14:07; supersedes the 8px line) Incident cards change at the stage tag's foot (the band with the confidence): scrolling up, a card shrinks 20% and darkens 8% when its top reaches that line, then fades out until its top reaches the screen's top; scrolling down it grows back as soon as its (shrunk) top touches the line again.
 - (Oct 16, 14:07) The quiet map dims 16% and loses 20% saturation (was 10% and 10%).
+- (Oct 16, 14:11, trial) The quiet map also blurs (4px) with its dimming and desaturation, in the same 0.7 s ease.
