@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792151768"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792151940"></script>
+<script src="prefs.js?v=1792152177"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792136318"></script>
@@ -685,14 +685,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span class="wf-note" style="display: {{cc.trD}}; margin-top: 8px">{{cc.axis}}</span>
       <!-- (Oct 15, 13:06) where and when close the page: the coordinates and the detection / start time after the Summary, Detections and key figures -->
       <div style="display: flex; flex-direction: column; align-self: stretch; flex-shrink: 0; margin-top: {{cc.locMt}}">
-      <div style="display: {{floc.d}}; align-self: stretch; margin: 0 0 56px; text-align: left">
+      <!-- (Oct 16, 13:02) the where and when cards are removed from the incident page (one object less); their data still drives the page -->
+      <div style="display: none; align-self: stretch; margin: 0 0 56px; text-align: left">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000; font-variant-numeric: tabular-nums">{{floc.gps}}</span><span aria-live="polite" style="display: grid; grid-template-rows: {{floc.rows}}; opacity: {{floc.op}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), opacity .4s ease"><span style="min-height: 0; overflow: hidden; font-size: 16px; line-height: 20px; color: #186B2D">Copied to clipboard</span></span></span>
           <button type="button" class="mbtn" onClick="{{floc.copy}}" aria-label="{{floc.aria}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: {{floc.c}}; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{floc.ic}}"></path></svg></button>
         </div>
       </div>
 <!-- When: the GPS component's twin, right under it (where, then when): the time on top, the date as annotation, a clock icon where the copy icon sits -->
-      <div style="display: flex; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 0 56px">
+      <div style="display: none; flex-direction: column; align-self: stretch; flex-shrink: 0; text-align: left; margin: -48px 0 56px">
         <!-- How long it has been active is on the stage tag above (for 9 d), so the card holds only when it started, in normal text -->
         <div style="position: relative; display: {{hdTimeD2}}; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: #FFFFFF">
           <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 17px; line-height: 22px; color: #000000">{{startTxt}}<svg width="13" height="13" viewBox="0 0 24 24" role="img" aria-label="Night ignition" style="display: {{startNightD}}; margin: 0 0 -1px 8px; vertical-align: baseline"><path d="M15.5 3.7A9 9 0 1 0 15.5 20.3A8.3 8.3 0 0 1 15.5 3.7Z" transform="rotate(-25 12 12)" fill="#1C1C1E"></path></svg></span></span>
