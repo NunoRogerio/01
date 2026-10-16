@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792136318"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792137063"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1792136318"></script>
 <script src="station.js?v=1792067104"></script>
@@ -273,7 +273,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
   </sc-if>
   <!-- (Oct 11, 16:55) a candidate full screen: its pin map, as the candidate page had it -->
   <sc-if value="{{bandCandOn}}" hint-placeholder-val="{{ false }}">
-  <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cpin.h}}" grow-tap="{{cpin.t}}" mode="pin" pad-bottom="72" pin-close="{{vpc}}" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{vcams}}" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attrBottom}}" hint-size="390px,844px"></dc-import>
+  <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-bg-tap="{{bgTap}}" close-x="true" pin-grow="{{cpin.h}}" mode="pin" pad-bottom="72" pin-close="{{vpc}}" locked="true" no-view="true" no-routes="true" st-names="true" cams="{{vcams}}" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{mapH}}" clip-left="{{mapCL}}" clip-right="{{mapCR}}" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="{{ctrlTop}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" on-full="{{toggleFull}}" is-full="{{full}}" radius="{{zero}}" attr-bottom="{{attrBottom}}" hint-size="390px,844px"></dc-import>
   </sc-if>
   </div>
   <!-- Full-screen map: the same stage tag and stack as on the page, laid over the map header's band (its own tag hidden there); tap to unfold, tap outside to fold -->
@@ -530,7 +530,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </sc-if>
       <!-- (Oct 11, 16:55) a candidate: the candidate's pin map, as its page had it (the projection grows from the marker) -->
       <sc-if value="{{bandCandOn}}" hint-placeholder-val="{{ false }}">
-      <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-full="{{toggleFull}}" pin-grow="{{cpin.h}}" grow-tap="{{cpin.t}}" mode="pin" pad-bottom="72" pin-close="{{vpc}}" start-zoom="{{vsz}}" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{MAPH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-lift="{{cpin.lift}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" cams="{{vcams}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{bandAttrB}}" hint-size="390px,310px"></dc-import>
+      <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-full="{{toggleFull}}" pin-grow="{{cpin.h}}" mode="pin" pad-bottom="72" pin-close="{{vpc}}" start-zoom="{{vsz}}" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{MAPH}}" clip-top="{{zero}}" clip-bottom="{{zero}}" pin-lift="{{cpin.lift}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" cams="{{vcams}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" is-full="{{no}}" radius="{{zero}}" attr-bottom="{{bandAttrB}}" hint-size="390px,310px"></dc-import>
       </sc-if>
       <!-- (Oct 4) The projection, laid over the map's foot: dark map-control style, 16px from the map's edges -->
       <div role="tablist" aria-label="Projection" class="wf-seg" onClick="{{fp.stop}}" onPointerDown="{{fp.stop}}" onPointerMove="{{fp.stop}}" onPointerUp="{{fp.stop}}" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{fp.d}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">

@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792136318"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792137063"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1792136318"></script>
 <script src="station.js?v=1792067104"></script>
@@ -103,6 +103,9 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
       <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
 <path d="{{batAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
             <path d="{{stAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+      <!-- (Oct 16) water is not fuel: every fire shape (outline, spread, projections) is masked by the water around the incident (OpenStreetMap lakes and the sea), so it stops at the shore -->
+      <defs><mask id="{{wm.id}}" maskUnits="userSpaceOnUse" x="-3000000" y="-3000000" width="6000000" height="6000000"><rect x="-3000000" y="-3000000" width="6000000" height="6000000" fill="#FFFFFF"></rect><path d="{{wm.lakes}}" fill="#000000" fill-rule="evenodd"></path><path d="{{wm.sea}}" fill="#000000" shape-rendering="crispEdges"></path></mask></defs>
+      <g mask="{{wm.url}}">
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
@@ -141,6 +144,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
           <path d="{{mActive}}" fill="none" stroke="#E8590C" stroke-width="{{mSw.one}}" stroke-linecap="round" stroke-linejoin="round"></path>
         </sc-if>
       </sc-if>
+      </g>
       <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
         <sc-for list="{{camLines}}" as="ln" hint-placeholder-count="3">
           <path d="{{ln.d}}" fill="none" stroke="#0079A6" stroke-width="{{lw.w13}}" stroke-dasharray="{{lw.d36}}" stroke-linecap="round" style="opacity: 0.85"><animate attributeName="stroke-dashoffset" values="{{lw.o18}}" dur="1.2s" repeatCount="indefinite"></animate></path>
@@ -675,7 +679,7 @@ class Component extends DCLogic {
     }
     this.unitTick();
     const p = this.props;
-    const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, q.pinGrow, q.growTap, (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
+    const sig = (q) => [q.focusX, q.focusY, q.zoom, q.scopeSt, q.scopeCo, q.pinId, (q.mode === 'pin' && Number(q.pinGrow) > 0 ? 'proj' : 'now'),   /* (Oct 16) entering or leaving the projection reframes; +1 / +3 / +6 h keep the zoom */ (Array.isArray(q.ignitions) ? q.ignitions.map((g) => g.id).join(',') : '')].join('|');
     const selfPick = this._selfPick && Date.now() < this._selfPick.until && this._selfPick.k === (p.scopeSt || '') + '|' + (p.scopeCo || '');
     if (sig(prev) !== sig(p) && !selfPick) {
       this._animUntil = Date.now() + 700;
@@ -902,9 +906,9 @@ class Component extends DCLogic {
     let spanC = null;
     const NSs = this.nearSt(), PC = Number(p.pinClose);
     const LIFT = Math.max(0, Number(p.pinLift) || 0);   // the pin sits that much higher, clear of something laid over the map's foot (the projection switcher)
-    /* (Oct 16) a candidate's projection (+1 / +3 / +6 h): the map zooms into the incident so the projected shape fills 80% of the
+    /* (Oct 16) a candidate's projection (+1 / +3 / +6 h): the map zooms into the incident so the +1 h shape fills 80% of the
        map's free space (under the title in full screen, above the projection switcher), centred in it; Now keeps the detections' framing */
-    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), PGH) : null;
+    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), 1) : null;   /* (Oct 16, 08:49) one zoom for every horizon: framed on +1 h; +3 / +6 h only grow the shape */
     if (PG && PG.xy && PG.xy.length > 2) {
       const w1 = this.win(), FULL = p.isFull === true || p.isFull === 'true', xs = PG.xy.map((q) => q[0]).concat(Number(p.pinX)), ys = PG.xy.map((q) => q[1]).concat(Number(p.pinY));
       const top = w1.t + (FULL ? 150 : 16), bot = w1.b - (FULL ? 96 : 2 * LIFT + 8), cw = this.W() - w1.l - w1.r - 32;
@@ -1627,6 +1631,10 @@ class Component extends DCLogic {
       w: W, h: H, s: +s.toFixed(4), tx: +tx.toFixed(1), ty: +ty.toFixed(1),
       pct: Math.round(s / (this.base().s || 1) * 100) + '%',
       kmPx: Math.round(100 * s),
+      wm: (() => { if (!(isPin || mode === 'spread') || !window.__wfLiveMap || !window.__wfWater) return { id: 'wfWm0', lakes: '', sea: '', url: 'none' };
+        const x0 = isPin ? Number(p.pinX) : Number(p.fireX), y0 = isPin ? Number(p.pinY) : Number(p.fireY); if (!isFinite(x0) || !isFinite(y0) || (!x0 && !y0)) return { id: 'wfWm0', lakes: '', sea: '', url: 'none' };
+        const Wt = window.__wfWater(34.19 - (y0 - 662) / 2829, (x0 - 518) / 2345 - 118.13), id = 'wfWm' + (this._wmK || (this._wmK = Math.random().toString(36).slice(2, 8)));
+        return Wt && (Wt.lakes || Wt.sea) ? { id, lakes: Wt.lakes || '', sea: Wt.sea || '', url: 'url(#' + id + ')' } : { id, lakes: '', sea: '', url: 'none' }; })(),
       isRisk, isSpread: mode === 'spread', isPin,
       // An ignition candidate's pin is 30% smaller than a fire's estimated ignition point
       ...(() => { const cand = Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId);

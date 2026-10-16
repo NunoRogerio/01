@@ -1377,3 +1377,53 @@ requestAnimationFrame(function(){requestAnimationFrame(function(){h.classList.ad
 try{if(navigator.vibrate)navigator.vibrate([12,60,12]);}catch(e){}}catch(e){}};
 /* (Oct 15, 14:13) a held halo stays until the captain's card is touched (tapped or dragged); then it fades out (0.8 s) */
 window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h)return;h.classList.remove('on');setTimeout(function(){if(h.parentNode)h.remove();},900);}catch(e){}};
+
+// (Oct 16) Water is not fuel: a fire's outline and its projections never sit on water. Around an incident the app reads the
+// water from OpenStreetMap (lakes, reservoirs, riverbanks as polygons, islands kept; the sea from the coastline, land on its
+// left) and gives the maps a mask in their own units, so every fire shape stops at the shore. Kept 7 days per area on this phone.
+(function () {
+  var MEM = {}, TTL = 7 * 864e5, LK = 'wf-water1-', DLAT = 0.09, DLON = 0.11, N = 512;
+  var X = function (lo) { return (lo + 118.13) * 2345 + 518; }, Y = function (la) { return (34.19 - la) * 2829 + 662; };
+  function keyOf(la, lo) { return (Math.round(la / 0.05) * 0.05).toFixed(2) + ',' + (Math.round(lo / 0.05) * 0.05).toFixed(2); }
+  function join(ws) { var rings = [], open = []; ws.forEach(function (w) { if (w.length < 2) return; var a = w[0], b = w[w.length - 1]; if (a[0] === b[0] && a[1] === b[1]) rings.push(w); else open.push(w.slice()); });
+    while (open.length) { var cur = open.shift(), grown = true;
+      while (grown) { grown = false; var e = cur[cur.length - 1], s = cur[0]; if (e[0] === s[0] && e[1] === s[1]) break;
+        for (var i = 0; i < open.length; i++) { var o = open[i], oa = o[0], ob = o[o.length - 1];
+          if (oa[0] === e[0] && oa[1] === e[1]) { cur = cur.concat(o.slice(1)); } else if (ob[0] === e[0] && ob[1] === e[1]) { cur = cur.concat(o.slice().reverse().slice(1)); }
+          else if (ob[0] === s[0] && ob[1] === s[1]) { cur = o.slice(0, -1).concat(cur); } else if (oa[0] === s[0] && oa[1] === s[1]) { cur = o.slice().reverse().slice(0, -1).concat(cur); } else continue;
+          open.splice(i, 1); grown = true; break; } }
+      rings.push(cur); }
+    return rings; }
+  function ringD(r) { return 'M' + r.map(function (q) { return X(q[1]).toFixed(1) + ' ' + Y(q[0]).toFixed(1); }).join('L') + 'Z'; }
+  // the sea: the coastline drawn into a fine grid (two cells thick), seeded on its right (the water side), filled up to it
+  function seaD(lines, S, W) { if (!lines.length) return '';
+    var g = new Uint8Array(N * N), cw = 2 * DLON / N, ch = 2 * DLAT / N, ci = function (lo) { return Math.floor((lo - W) / cw); }, cj = function (la) { return Math.floor((la - S) / ch); };
+    var mark = function (i, j) { if (i >= 0 && j >= 0 && i < N && j < N) g[j * N + i] = 1; }, seeds = [];
+    lines.forEach(function (L) { for (var k = 1; k < L.length; k++) { var a = L[k - 1], b = L[k], dla = b[0] - a[0], dlo = b[1] - a[1], n = Math.max(1, Math.ceil(Math.max(Math.abs(dlo) / cw, Math.abs(dla) / ch) * 2));
+      for (var t = 0; t <= n; t++) { var la = a[0] + dla * t / n, lo = a[1] + dlo * t / n, i = ci(lo), j = cj(la); mark(i, j); mark(i + 1, j); mark(i, j + 1); }
+      var len = Math.hypot(dlo / cw, dla / ch) || 1, ra = -dlo / cw / len, ro = dla / ch / len;   /* the right of the way's direction, in cells (north up) */
+      var mla = (a[0] + b[0]) / 2, mlo = (a[1] + b[1]) / 2; seeds.push([ci(mlo) + Math.round(ro * 3), cj(mla) + Math.round(ra * 3)]); } });
+    var q = []; seeds.forEach(function (s) { var i = s[0], j = s[1]; if (i >= 0 && j >= 0 && i < N && j < N && !g[j * N + i]) { g[j * N + i] = 2; q.push(j * N + i); } });
+    while (q.length) { var c = q.pop(), i = c % N, j = (c - i) / N; [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (d) { var a = i + d[0], b = j + d[1]; if (a < 0 || b < 0 || a >= N || b >= N) return; var k = b * N + a; if (!g[k]) { g[k] = 2; q.push(k); } }); }
+    for (var k2 = 0; k2 < N * N; k2++) if (g[k2] === 1) { var i2 = k2 % N, j2 = (k2 - i2) / N; if ((i2 > 0 && g[k2 - 1] === 2) || (i2 < N - 1 && g[k2 + 1] === 2) || (j2 > 0 && g[k2 - N] === 2) || (j2 < N - 1 && g[k2 + N] === 2)) g[k2] = 3; }
+    var d = ''; for (var j3 = 0; j3 < N; j3++) { var run = -1; for (var i3 = 0; i3 <= N; i3++) { var w = i3 < N && g[j3 * N + i3] >= 2; if (w && run < 0) run = i3; if (!w && run >= 0) { var x0 = X(W + run * cw), x1 = X(W + i3 * cw), y0 = Y(S + (j3 + 1) * ch), y1 = Y(S + j3 * ch); d += 'M' + x0.toFixed(1) + ' ' + y0.toFixed(1) + 'H' + x1.toFixed(1) + 'V' + y1.toFixed(1) + 'H' + x0.toFixed(1) + 'Z'; run = -1; } } }
+    return d; }
+  function load(k) { try { var v = JSON.parse(localStorage.getItem(LK + k) || 'null'); if (v && Date.now() - v.t < TTL) return v; } catch (e) {} return null; }
+  // the water around a point, as { lakes, sea } SVG paths in map units (lakes with fill-rule evenodd, so islands stay land); null while loading
+  window.__wfWater = function (la, lo) { if (!(Math.abs(la) < 85) || !isFinite(lo)) return null; var k = keyOf(la, lo), m = MEM[k];
+    if (m) return m.st === 'done' ? m.res : null; var c = load(k); if (c) { MEM[k] = { st: 'done', res: c }; return c; }
+    MEM[k] = { st: 'loading' }; var c0 = k.split(',').map(Number), S = c0[0] - DLAT, Nn = c0[0] + DLAT, W = c0[1] - DLON, E = c0[1] + DLON, B = S.toFixed(4) + ',' + W.toFixed(4) + ',' + Nn.toFixed(4) + ',' + E.toFixed(4);
+    var q = '[out:json][timeout:40][bbox:' + B + '];(way["natural"="water"];relation["natural"="water"];way["landuse"="reservoir"];relation["landuse"="reservoir"];way["waterway"="riverbank"];);out geom;way["natural"="coastline"];out geom(' + B + ');';
+    fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q), headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function (js) {
+        var E0 = js.elements || [], lakes = '', coast = [], pt = function (g) { return (g || []).filter(Boolean).map(function (p) { return [p.lat, p.lon]; }); };
+        E0.forEach(function (e) { var tg = e.tags || {};
+          if (tg.natural === 'coastline') { var L = pt(e.geometry); if (L.length > 1) coast.push(L); return; }
+          if (e.type === 'way') { var r = pt(e.geometry); if (r.length > 2) lakes += ringD(r); return; }
+          if (e.type === 'relation') join((e.members || []).filter(function (mb) { return mb.type === 'way' && mb.geometry; }).map(function (mb) { return pt(mb.geometry); })).forEach(function (r) { if (r.length > 2) lakes += ringD(r); }); });
+        /* coastline pieces cut at the box are joined first, so the sea side is read along whole stretches */
+        var res = { t: Date.now(), lakes: lakes, sea: seaD(join(coast).map(function (L) { return L; }), S, W) };
+        MEM[k] = { st: 'done', res: res }; try { localStorage.setItem(LK + k, JSON.stringify(res)); } catch (e) {} try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
+      }).catch(function () { MEM[k] = { st: 'fail' }; setTimeout(function () { if (MEM[k] && MEM[k].st === 'fail') delete MEM[k]; }, 60000); });
+    return null; };
+})();
