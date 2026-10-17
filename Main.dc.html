@@ -16,9 +16,9 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792223914"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792241729"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792236078"></script>
+<script src="prefs.js?v=1792241729"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792173262"></script>
@@ -1528,7 +1528,7 @@ class Component extends DCLogic {
         const GRID = [0, 20, 38, 52, 64, 85, 130, 165, 195, 215, 250, 290, 330].map((h) => { let l = 20; while (l < 95 && cr(hsl(h, 100, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(h, 100, l + (93 - l) * i / 6)); })
           .concat([(() => { let l = 20; while (cr(hsl(0, 0, l)) < 4.6) l += 0.5; return [0, 1, 2, 3, 4, 5].map((i) => hsl(0, 0, l + (93 - l) * i / 6)); })()]);
         const gOpen = !!s.colPick, gClose = () => this.setState({ colPick: false });
-        return { d: pmSec === 'look' ? 'flex' : 'none', colL: T('Decorative elements', 'Elementos decorativos'),   /* (Oct 9, 14:29) it no longer colours the primary buttons (dark grey now): only stripes, counters, thumbs and other accents */ palL: T('Palette', 'Paleta'), pickL: T('More colours', 'Mais cores'),
+        return { d: 'none', colL: T('Decorative elements', 'Elementos decorativos'),   /* (Oct 9, 14:29) it no longer colours the primary buttons (dark grey now): only stripes, counters, thumbs and other accents */ palL: T('Palette', 'Paleta'), pickL: T('More colours', 'Mais cores'),
           cols: SUG.map(([h, name]) => ({ name, bg: h, on: h === cur ? 'true' : 'false', tick: h === cur ? 1 : 0, ring: ring(h === cur), pick: () => { if (h === cur) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} setC(h); } })),
           own: cur, ownDot: known ? '#FFFFFF' : cur, ownRing: ring(!known),
           openPick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ colPick: true }); },
@@ -1541,11 +1541,8 @@ class Component extends DCLogic {
             pick: () => { if (sel) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} window.__wfPalette.set(k); this.forceUpdate(); } }; }) };
       })(),
       pfGroups: [
-        // (Oct 3, 21:13) the Theme choice is hidden while the dark theme is off (prefs.js DARK_ON)
-        group('Text size', text, [['condensed', 'S'], ['normal', 'M'], ['comfortable', 'L']], (v) => setPref('text', v)),
-        // Spacing (Oct 3, 18:10): every space of 16px or more one step down or up the spacing scale (prefs.js)
-        group('Spacing', P ? P.get('space') || 'comfortable' : 'comfortable', [   // (Oct 3, 20:52) icons: three squares, close together, comfortable, far apart; (Oct 3, 21:48) two rows, so the vertical spacing shows too
-          ['condensed', '', 'M5.5 6.5h5v5h-5Z M11.5 6.5h5v5h-5Z M17.5 6.5h5v5h-5Z M5.5 12.5h5v5h-5Z M11.5 12.5h5v5h-5Z M17.5 12.5h5v5h-5Z', 'Condensed'], ['comfortable', '', 'M3 5.25h5v5h-5Z M11.5 5.25h5v5h-5Z M20 5.25h5v5h-5Z M3 13.75h5v5h-5Z M11.5 13.75h5v5h-5Z M20 13.75h5v5h-5Z', 'Comfortable'], ['spacious', '', 'M0.9 4.2h5v5h-5Z M11.5 4.2h5v5h-5Z M22.1 4.2h5v5h-5Z M0.9 14.8h5v5h-5Z M11.5 14.8h5v5h-5Z M22.1 14.8h5v5h-5Z', 'Spacious']], (v) => setPref('space', v))
+        // (Oct 17, 13:53) Appearance holds only the theme: light (default) or dark (the Spotify-like dark). Text size, spacing, palettes and the primary colour are gone
+        group('Theme', theme === 'dark' ? 'dark' : 'light', [['light', 'Light'], ['dark', 'Dark']], (v) => setPref('theme', v))
       ]
     };
   }

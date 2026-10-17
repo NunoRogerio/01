@@ -123,50 +123,50 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     // Candidate markers at night (Oct 3, 21:02): the yellow fill at 80% so they stand out on the dark map as much as the light
     // ones do by day; their rim and moon stay dark on the yellow, and the pulse ring turns yellow (a dark ring would vanish)
     o.push('circle[fill="#E5FF00"][style*="fill-opacity: 0.2"]{fill-opacity:.8!important}.tipwrap svg.mk,.tipwrap svg,.fzone>svg.mk{opacity:1!important}.tipwrap svg.mk circle[fill="#E5FF00"]{fill-opacity:.8!important}');
-    o.push('circle[fill="#E5FF00"][stroke="#3A3A3C"],circle[fill="#E5FF00"][style*="stroke: #3A3A3C"],[data-wf-maproot] circle[fill="none"][stroke="#3A3A3C"]:not(:has(animate)){stroke:#1C1C1E!important}[data-wf-maproot] circle[fill="none"][stroke="#3A3A3C"]:has(animate),[data-wf-maproot] circle[fill="none"]:has(animateTransform),.wf-pinpulse{stroke:var(--wf-y,#E5FF00)!important}.wf-tdot{background:rgba(var(--wf-y-rgb,229,255,0),0.8)!important}');
+    o.push('circle[fill="#E5FF00"][stroke="#3E3E3E"],circle[fill="#E5FF00"][style*="stroke: #3E3E3E"],[data-wf-maproot] circle[fill="none"][stroke="#3E3E3E"]:not(:has(animate)){stroke:#1C1C1E!important}[data-wf-maproot] circle[fill="none"][stroke="#3E3E3E"]:has(animate),[data-wf-maproot] circle[fill="none"]:has(animateTransform),.wf-pinpulse{stroke:var(--wf-y,#E5FF00)!important}.wf-tdot{background:rgba(var(--wf-y-rgb,229,255,0),0.8)!important}');
     o.push('path[transform="rotate(-25 12 12)"][fill="#1C1C1E"]{fill:#E5E5EA}');   // the night moon next to text turns light at night (Oct 3, 18:31); on the map's yellow markers it stays dark
-    [['rgb(242, 242, 247)', '#262629'], ['rgb(255, 255, 255)', '#333336'], ['rgb(238, 238, 240)', '#333336'], ['rgb(229, 229, 234)', '#3A3A3C'],
-      ['rgb(227, 227, 232)', '#3A3A3C'], ['rgb(230, 230, 235)', '#222225'],
+    [['rgb(242, 242, 247)', '#181818'], ['rgb(255, 255, 255)', '#282828'], ['rgb(238, 238, 240)', '#282828'], ['rgb(229, 229, 234)', '#3E3E3E'],
+      ['rgb(227, 227, 232)', '#3E3E3E'], ['rgb(230, 230, 235)', '#1F1F1F'],
       ['rgba(118, 118, 128, 0.12)', 'rgba(118,118,128,0.24)'], ['rgba(60, 60, 67, 0.3)', 'rgba(235,235,245,0.3)'], ['rgba(60, 60, 67, 0.2)', 'rgba(235,235,245,0.2)'], ['rgba(60, 60, 67, 0.12)', 'rgba(235,235,245,0.12)'],
       ['rgba(52, 199, 89, 0.08)', 'rgba(48,209,88,0.16)'], ['rgba(52, 199, 89, 0.12)', 'rgba(48,209,88,0.18)'], ['rgba(204, 153, 0, 0.12)', 'rgba(255,214,10,0.16)'],
       ['rgba(0, 121, 166, 0.1)', 'rgba(90,200,250,0.16)'], ['rgba(0, 113, 227, 0.06)', 'rgba(64,156,255,0.14)']
     ].concat([0.7, 0.72, 0.78, 0.8, 0.82, 0.85, 0.88, 0.9, 0.92, 0.94, 0.95, 0.97, 0.98].map(function (a) {   // frosted white panels, chips and pills
-      return ['rgba(255, 255, 255, ' + a + ')', 'rgba(51,51,54,' + Math.max(a, 0.82) + ')']; }))
+      return ['rgba(255, 255, 255, ' + a + ')', 'rgba(40,40,40,' + Math.max(a, 0.82) + ')']; }))
     .concat([0.7, 0.78, 0.8, 0.85, 0.88, 0.9, 0.92, 0.94, 0.96, 0.97, 0.98].map(function (a) {   // frosted grey map controls and legend chips
-      return ['rgba(242, 242, 247, ' + a + ')', 'rgba(38,38,41,' + Math.max(a, 0.88) + ')']; }))
-    .concat([['rgba(242, 242, 247, 0.62)', 'rgba(38,38,41,0.74)'], ['rgba(230, 230, 235, 0.62)', 'rgba(28,28,30,0.74)']])   // glass over maps: legend chips and cards (Oct 2)
+      return ['rgba(242, 242, 247, ' + a + ')', 'rgba(24,24,24,' + Math.max(a, 0.88) + ')']; }))
+    .concat([['rgba(242, 242, 247, 0.62)', 'rgba(24,24,24,0.74)'], ['rgba(230, 230, 235, 0.62)', 'rgba(18,18,18,0.74)']])   // glass over maps: legend chips and cards (Oct 2)
     .forEach(function (p) { o.push(col('background', p[0], p[1])); o.push(col('background-color', p[0], p[1])); });
-    [['rgb(0, 0, 0)', '#E8E8ED'], ['rgba(118, 118, 128, 0.12)', 'rgba(118,118,128,0.24)'], ['rgb(84, 84, 88)', '#AEAEB2'], ['rgb(60, 60, 67)', '#D1D1D6'], ['rgb(72, 72, 74)', '#AEAEB2'], ['rgb(152, 152, 159)', '#8E8E93'], ['rgb(110, 110, 115)', '#AEAEB2'],
+    [['rgb(0, 0, 0)', '#FFFFFF'], ['rgba(118, 118, 128, 0.12)', 'rgba(118,118,128,0.24)'], ['rgb(84, 84, 88)', '#B3B3B3'], ['rgb(60, 60, 67)', '#D1D1D6'], ['rgb(72, 72, 74)', '#B3B3B3'], ['rgb(152, 152, 159)', '#A7A7A7'], ['rgb(110, 110, 115)', '#B3B3B3'],
       ['rgb(0, 98, 204)', '#409CFF'], ['rgb(0, 106, 145)', '#5AC8FA'], ['rgb(0, 113, 227)', '#409CFF'], ['rgb(10, 111, 219)', '#409CFF'], ['rgb(30, 122, 52)', '#30D158'],
-      ['rgb(122, 86, 0)', '#FFD60A'], ['rgb(58, 58, 60)', '#E8E8ED'], ['rgb(0, 121, 166)', '#5AC8FA'], ['rgb(110, 58, 208)', '#BF5AF2'], ['rgb(44, 44, 46)', '#D1D1D6'], ['rgb(99, 99, 102)', '#AEAEB2'], ['rgb(108, 108, 112)', '#AEAEB2'],
+      ['rgb(122, 86, 0)', '#FFD60A'], ['rgb(58, 58, 60)', '#FFFFFF'], ['rgb(0, 121, 166)', '#5AC8FA'], ['rgb(110, 58, 208)', '#BF5AF2'], ['rgb(44, 44, 46)', '#D1D1D6'], ['rgb(99, 99, 102)', '#B3B3B3'], ['rgb(108, 108, 112)', '#B3B3B3'],
       ['rgb(184, 74, 0)', '#FF9F0A'], ['rgb(184, 54, 10)', '#FF9F0A'], ['rgb(154, 74, 0)', '#FF9F0A'], ['rgb(179, 20, 27)', '#FF6961'], ['rgb(135, 88, 0)', '#FFD60A'], ['rgb(0, 112, 122)', '#40C8E0'], ['rgb(10, 102, 204)', '#409CFF'], ['rgb(163, 72, 0)', '#FF9F0A'], ['rgb(176, 0, 26)', '#FF6961'], ['rgb(122, 63, 224)', '#BF5AF2']
     ].forEach(function (p) { o.push(col('color', p[0], p[1])); });
     o.push('[style*="solid rgba(60, 60, 67"]{border-color:rgba(84,84,88,0.65)!important}');
-    o.push('svg [stroke="#545458"]{stroke:#AEAEB2}');
+    o.push('svg [stroke="#545458"]{stroke:#B3B3B3}');
     o.push('[style*="text-shadow: rgb(255, 255, 255)"]{text-shadow:0 0 2px #000,0 0 6px #000!important}');   // map labels and credit: dark halo
-    /* One dark palette: page #1E1E20, surface #262629, raised #333336, band/fill #3A3A3C; text #E8E8ED, secondary #AEAEB2, tertiary #8E8E93, controls #D1D1D6 */
+    /* One dark palette: page #121212, surface #181818, raised #282828, band/fill #3E3E3E; text #FFFFFF, secondary #B3B3B3, tertiary #A7A7A7, controls #D1D1D6 */
     // The screens' own style sheets
-    o.push('html,body{background:#1E1E20!important;color:#E8E8ED}a{color:#409CFF}');
+    o.push('html,body{background:#121212!important;color:#FFFFFF}a{color:#409CFF}');
     o.push('.segblob{background:var(--wf-pri-bg)!important}.segopt[aria-checked=true],.segopt[aria-selected=true]{color:var(--wf-pri-fg)!important}.segopt[aria-checked=false],.segopt[aria-selected=false]{color:#D1D1D6!important}');   // the accent is the same hi-vis yellow in both themes
-    o.push('.wf-qual{background:#3A3A3C!important;color:#E8E8ED!important}');
-    o.push('[role=meter] span[style*="background: #3A3A3C"],.bar[style*="background: #3A3A3C"],.chbar[style*="background: #3A3A3C"]{background:#D1D1D6!important}');   // thin bars read light at night
-    o.push('[data-wf-kpicard] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-kpicard] path[stroke="#3A3A3C"],[data-wf-kpicard] svg[stroke="#3A3A3C"]{stroke:#D1D1D6}[data-wf-kpicard] path[stroke="#FFFFFF"]{stroke:#333336}');   // KPI micro charts: the dark grey reads light at night
-    o.push('html:root .sheet{background:#262629!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#AEAEB2!important}');
-    o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
-    o.push('.igpill::after{background:rgba(51,51,54,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#E8E8ED!important}');
+    o.push('.wf-qual{background:#3E3E3E!important;color:#FFFFFF!important}');
+    o.push('[role=meter] span[style*="background: #3E3E3E"],.bar[style*="background: #3E3E3E"],.chbar[style*="background: #3E3E3E"]{background:#D1D1D6!important}');   // thin bars read light at night
+    o.push('[data-wf-kpicard] path[fill="#3E3E3E"]{fill:#D1D1D6}[data-wf-kpicard] path[stroke="#3E3E3E"],[data-wf-kpicard] svg[stroke="#3E3E3E"]{stroke:#D1D1D6}[data-wf-kpicard] path[stroke="#FFFFFF"]{stroke:#282828}');   // KPI micro charts: the dark grey reads light at night
+    o.push('html:root .sheet{background:#181818!important}.kpi small,.lbl,.sqsearch::placeholder,.pw::placeholder{color:#B3B3B3!important}');
+    o.push('.tip,.ctip,.igpill,a.card,.stackbtn{background:rgba(40,40,40,0.97)!important;border-color:rgba(84,84,88,0.65)!important;color:#D1D1D6!important}');
+    o.push('.igpill::after{background:rgba(40,40,40,0.97)!important;border-color:rgba(84,84,88,0.65)!important}.tip b,.ctip b{color:#FFFFFF!important}');
     o.push('.sqrow::after,.sqtop::before{background:rgba(84,84,88,0.65)!important}.strow{border-top-color:rgba(84,84,88,0.65)!important}');
-    o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#E8E8ED!important}');
-    o.push('html:root .wf-note{color:#AEAEB2!important}');
+    o.push('html:root .wf-big,html:root .wf-like,html:root .wf-like-xs{color:#FFFFFF!important}');
+    o.push('html:root .wf-note{color:#B3B3B3!important}');
     o.push('.wf-rm{background:rgba(255,69,58,0.10)!important;color:#FF8A80!important;-webkit-text-fill-color:#FF8A80!important}');   // Remove: red tint with red text, 5:1 at night too
-    o.push('html:root .wf-title-xs{color:#E8E8ED!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#AEAEB2}.wf-tabs .tabopt[aria-selected=true]{color:#E8E8ED}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3A3A3C}.wf-qual{color:#E8E8ED!important}');   // class-set text colours   // big numbers stay readable at night
-    o.push('html:root{--wf-pri-bg:#E5E5EA;--wf-pri-fg:#1C1C1E;--wf-band-solid:#3A3A3C;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#E8E8ED}html:root .wf-danger{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important}');
-    o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#E8E8ED!important}.flap,.flap>.fl{background:#3A3A3C!important}.ghost.round{background:rgba(51,51,54,0.88)!important}');
+    o.push('html:root .wf-title-xs{color:#FFFFFF!important}.wf-seg .segopt{color:#D1D1D6}.wf-tabs .tabopt{color:#B3B3B3}.wf-tabs .tabopt[aria-selected=true]{color:#FFFFFF}.wf-tabs{box-shadow:none}.wf-tabs::before{background:#3E3E3E}.wf-qual{color:#FFFFFF!important}');   // class-set text colours   // big numbers stay readable at night
+    o.push('html:root{--wf-pri-bg:#E5E5EA;--wf-pri-fg:#1C1C1E;--wf-band-solid:#3E3E3E;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5);--wf-ter-bg:rgba(var(--wf-y-rgb), 0.12);--wf-ter-fg:#FFFFFF}html:root .wf-danger{background:rgba(255,69,58,0.15)!important;color:#FF8A80!important}');
+    o.push('.stepb{background:rgba(118,118,128,0.24)!important;color:#FFFFFF!important}.flap,.flap>.fl{background:#3E3E3E!important}.ghost.round{background:rgba(40,40,40,0.88)!important}');
     o.push('.opt:hover,.sqrow[data-sel=false]:not(.nosep):not([disabled]):hover{background-color:rgba(118,118,128,0.18)!important}');
     // Map: the street tiles turn to a night map; markers and fire shapes keep their colours
     o.push('image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{filter:url(#wfNightTiles)}');
-    o.push('rect[fill="#F2F2F7"]{fill:#262629}');
+    o.push('rect[fill="#F2F2F7"]{fill:#181818}');
     o.push('[aria-label^="Map legend"] path[stroke="#1C1C1E"]{stroke:#E5E5EA}');
-    o.push('[data-wf-maploader] path[fill="#3A3A3C"]{fill:#D1D1D6}[data-wf-maploader] path[stroke="#3A3A3C"]{stroke:#D1D1D6}');   /* the loader's flame reads light on the dark grey */
+    o.push('[data-wf-maploader] path[fill="#3E3E3E"]{fill:#D1D1D6}[data-wf-maploader] path[stroke="#3E3E3E"]{stroke:#D1D1D6}');   /* the loader's flame reads light on the dark grey */
     return o.join('\n');
   }
 
@@ -201,7 +201,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     /* (Oct 10, 22:01, app-wide) every round button is dark: dark grey with a white icon (it was light grey with a dark icon); the counters on them get a ring of the page colour so they stay apart */
     ':is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]),.wf-mb{background:rgba(255, 255, 255, 0.2)!important;color:rgb(58, 58, 60)!important;-webkit-text-fill-color:rgb(58, 58, 60);-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important;border:0!important}' +   /* (Oct 16, 13:06, app-wide) the round buttons are white glass with dark grey icons and the tooltips' shadow (were the dark #3A3A3C formula) */
     'html.wf-dark :is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]) svg [stroke]:not([stroke=none]){stroke:rgb(242, 242, 247)}' +
-    'html.wf-dark :is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]),html.wf-dark .wf-mb{background:rgba(44, 44, 46, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)}' +
+    'html.wf-dark :is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]),html.wf-dark .wf-mb{background:rgba(40, 40, 40, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)}' +
     /* (Oct 16, 15:52) count badges on red: white numbers (a round button's dark text fill was inherited and unreadable on the red) */ ':root [style*="background: rgb(215, 0, 21)"]{color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important}' +
     ':is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]) svg :not([stroke=none]):not([stroke=currentColor])[stroke],.wf-mb svg :not([stroke=none]):not([stroke=currentColor])[stroke]{stroke:rgb(58, 58, 60)}' +
     ':is(button,a,[role=button]):is([style*="border-radius: 50%"],[style*="border-radius:50%"],[data-round][style*="border-radius: 999px"]):is([style*="rgba(118,118,128,0.12)"],[style*="rgba(118, 118, 128, 0.12)"]) svg :not([fill=none]):not([fill=currentColor])[fill],.wf-mb svg :not([fill=none]):not([fill=currentColor])[fill]{fill:rgb(58, 58, 60)}' +
@@ -239,7 +239,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     'html{--wf-panel-r:28px;--wf-panel-sh:0 0 40px rgba(0,0,0,.14);--wf-safe-b:48px}' +   // shared panel: radius, shadow, 48px clear of the home indicator
     'html .wf-panel{bottom:var(--wf-safe-b)!important;border-radius:0 0 var(--wf-panel-r) var(--wf-panel-r)!important;box-shadow:var(--wf-panel-sh)!important}' +
     // dialogs: a panel that runs to the bottom edge, 24px inside, with its buttons kept 48px clear of the home indicator; no light around it
-    'html .wf-dlg{left:0!important;right:0!important;bottom:0!important;padding:30px 24px calc(32px + var(--wf-safe-b))!important;border-radius:28px 28px 0 0!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
+    'html .wf-dlg{left:8px!important;right:8px!important;bottom:8px!important;padding:30px 24px calc(24px + var(--wf-safe-b))!important;border-radius:48px!important;box-shadow:var(--wf-panel-sh)!important;transition-property:transform,translate!important;transition-duration:.5s,.5s!important}' +
     'html .wf-dlg[aria-hidden="true"]{translate:0 24px!important;box-shadow:none!important}' +
     '.wf-dlg-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}.wf-dlg-acts.wf-stack{grid-template-columns:1fr}.wf-dlg-acts.wf-stack>*:last-child{order:-1}' +
     // dialogs: 24px around the content, plus 48px clear of the home indicator
@@ -263,30 +263,31 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     /* (Oct 17, 05:38; supersedes the dark glass of Oct 16, 21:54) back to white glass in light mode, the label dark grey; the icon keeps the decision's colour, deep enough to read on white */
     ':root .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(255, 255, 255, 0.62)!important;color:rgb(58, 58, 60)!important;-webkit-text-fill-color:rgb(58, 58, 60)!important}' +
     ':root .btn.wf-ibtn.wf-sec > svg{color:rgb(110, 110, 115)!important}:root .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(201, 110, 34)!important}:root .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(208, 72, 58)!important}' +
-    'html.wf-dark .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(44, 44, 46, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
+    'html.wf-dark .btn.wf-ibtn:not([aria-disabled="true"]){background:rgba(40, 40, 40, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
     'html.wf-dark .btn.wf-ibtn.wf-sec > svg{color:rgb(174, 174, 178)!important}html.wf-dark .btn.wf-ibtn.wf-ib-chk > svg{color:rgb(230, 146, 74)!important}html.wf-dark .btn.wf-ibtn.wf-ib-ia > svg{color:rgb(236, 112, 98)!important}' +
     /* (Oct 16, 11:55) the projection switcher over a map wears the decisions' glass: the white frosted track, dark options; the chosen one stays the dark grey thumb, as glass too */
     '.wf-seg.wf-seg-glass{background:rgba(255, 255, 255, 0.62)!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important}' +
     '.wf-seg.wf-seg-glass>.segthumb>.segblob{background:rgba(28, 28, 30, 0.78)!important;-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}' +
     '.wf-seg.wf-seg-glass .segopt[aria-selected=false]{color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}.wf-seg.wf-seg-glass .segopt[aria-selected=true]{color:rgb(255, 255, 255)!important;-webkit-text-fill-color:rgb(255, 255, 255)!important}' +
-    'html.wf-dark .wf-seg.wf-seg-glass{background:rgba(44, 44, 46, 0.62)!important}html.wf-dark .wf-seg.wf-seg-glass .segopt[aria-selected=false]{color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
+    'html.wf-dark .wf-seg.wf-seg-glass{background:rgba(40, 40, 40, 0.62)!important}html.wf-dark .wf-seg.wf-seg-glass .segopt[aria-selected=false]{color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
     /* (Oct 16, 12:46, trial) the incident header's back and team buttons: white glass, dark grey icon and text, the tooltips' shadow */
     ':root .wf-gbtn.wf-gbtn{background:rgba(255, 255, 255, 0.2)!important;color:rgb(58, 58, 60)!important;-webkit-text-fill-color:rgb(58, 58, 60)!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important;border:0!important}' +
-    'html.wf-dark .wf-gbtn.wf-gbtn{background:rgba(44, 44, 46, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
+    'html.wf-dark .wf-gbtn.wf-gbtn{background:rgba(40, 40, 40, 0.62)!important;color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}' +
     /* (Oct 16, 12:55) every confirmation panel wears the incidents list's look: the white glass with the stripe pattern along its top
        (the same band the blades carry), the decisions' panels, the grow-out confirmations and the bottom dialogs alike */
     '.wf-gpanel,.wf-dlg{background:rgba(255, 255, 255, 0.62)!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;isolation:isolate}' +
     '.wf-gpanel::before{content:"";position:absolute;left:0;right:0;top:0;height:96px;z-index:-1;pointer-events:none;border-top-left-radius:inherit;border-top-right-radius:inherit;background:repeating-linear-gradient(-60deg,var(--wf-sp-c,rgba(0,0,0,0.07)) 0 8.49px,transparent 8.49px 16.97px);-webkit-mask-image:linear-gradient(to top,transparent 0,transparent 30%,rgba(0,0,0,0.25) 65%,#000 100%);mask-image:linear-gradient(to top,transparent 0,transparent 30%,rgba(0,0,0,0.25) 65%,#000 100%)}' +
-    'html.wf-dark .wf-gpanel,html.wf-dark .wf-dlg{background:rgba(44, 44, 46, 0.62)!important}' +
+    /* (Oct 17, 13:53) confirmation panels as Spotify's sheets: 8px clear of the screen's sides and foot, every corner rounded 48px, concentric with the phone's own corners */ '.wf-gpanel{border-radius:48px!important}.wf-iapanel.wf-gpanel{left:8px!important;right:8px!important;bottom:8px!important}' +
+    'html.wf-dark .wf-gpanel,html.wf-dark .wf-dlg{background:rgba(40, 40, 40, 0.62)!important}' +
     /* (Oct 16, 12:57, app-wide) the mini KPI cards are glass with the tooltips' shadow, as the incident's cards over the map (a press still sets its own shadow) */
-    ':root [data-wf-kpicard][data-wf-kpicard]{background:rgba(255, 255, 255, 0.62)!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)}html.wf-dark [data-wf-kpicard][data-wf-kpicard]{background:rgba(44, 44, 46, 0.62)!important}'   /* (Oct 16, 13:02) doubled so the palette's white mapping can't win */ +
+    ':root [data-wf-kpicard][data-wf-kpicard]{background:rgba(255, 255, 255, 0.62)!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)}html.wf-dark [data-wf-kpicard][data-wf-kpicard]{background:rgba(40, 40, 40, 0.62)!important}'   /* (Oct 16, 13:02) doubled so the palette's white mapping can't win */ +
     '[data-wf-band] [data-wf-maproot]{transition:clip-path .5s cubic-bezier(.2,.8,.2,1)!important}' +   /* (Oct 16, 20:10) the quiet map's dim and blur come from a veil over it (backdrop): a filter on the map itself blurred its edges into a white halo round the screen */   /* (Oct 16, 13:55) the quiet map also dims 10% and loses 10% saturation */   /* (Oct 16, 15:38) a smooth change, never 0-1: the map root's inline transition (clip-path) had overridden the filter's; both kept here, the filter from the same function list so Safari interpolates it */
     '[data-wf-ovl]{transition:opacity .7s cubic-bezier(.4,0,.2,1)}.wf-mapquiet [data-wf-ovl]{opacity:0.001!important;pointer-events:none!important}' +   /* (Oct 16, 13:08) a quiet map: only the base map shows; (13:20) faded to 0.001, never 0: Safari stops painting a layer at 0 and the markers and projection redrawn meanwhile never came back */
     ':is(button,a,[role=button]):is([style*="border-radius: 50%"],[data-round]):active{opacity:1!important;transform:scale(.94);transition:transform .12s ease}' +   /* (Oct 16, 13:11) a pressed round button keeps its round shape: no opacity change (Safari drew the blurred backdrop square while fading) */
     /* (Oct 17, 09:35, trial) the decisions' surface: the main screen's incidents blade (white glass, blur 16px, saturate 180%, 24px corners, its soft
        shadow, the stripe pattern along its top), 16px from the screen's sides and foot; the three decisions are tiles inside it (the neutral fill, 16px
        corners, no glass or shadow of their own) */
-    '.wf-decsurf{position:relative;isolation:isolate;box-sizing:border-box;padding:24px 16px 16px;margin-bottom:calc(16px - var(--wf-actb, 32px));border-radius:24px;overflow:hidden;background:rgba(255, 255, 255, 0.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:0 0 16px rgba(0,0,0,0.08)}html.wf-dark .wf-decsurf{background:rgba(44, 44, 46, 0.62)}' +
+    '.wf-decsurf{position:relative;isolation:isolate;box-sizing:border-box;padding:24px 16px 16px;margin-bottom:calc(16px - var(--wf-actb, 32px));border-radius:24px;overflow:hidden;background:rgba(255, 255, 255, 0.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:0 0 16px rgba(0,0,0,0.08)}html.wf-dark .wf-decsurf{background:rgba(40, 40, 40, 0.62)}' +
     /* (Oct 17, 12:21) the tiles keep the decisions' own white glass and drop shadow inside the surface; only their corners follow it (16px) */ ':root .wf-decsurf .btn.wf-ibtn.wf-ibtn{border-radius:16px!important}' +
     '.wf-dec-hide .wf-ibtn:not(.wf-ib-src){opacity:0!important;pointer-events:none!important}' +
     /* (Oct 16, 22:11) the button a panel grows out of hands its glass to the panel in the same frame (one layer of glass, never two), and only its icon and label fade; folding back, the glass comes back in the frame the panel goes and the icon and label fade in */
@@ -438,6 +439,8 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     o.push(':root{--wf-mid-grey:' + P.sec + ';--wf-mid-grey-tint:' + P.sec + ';--wf-ter-fg:' + P.ink2 + '}');
     return o.join('\n');
   }
+  /* (Oct 17, 13:53) the dark theme's variables, Spotify's greys: page #121212, surface #181818, fill #282828, white text, #B3B3B3 secondary */
+  var DARKP = { page: '#121212', surface: '#181818', fill: '#282828', ink: '#FFFFFF', ink2: '#E0E0E0', sec: '#B3B3B3' };
   window.__wfPalettes = PALS;
   window.__wfPalette = { get: palId, set: function (k) { try { localStorage.setItem('wf-palette', PALS[k] ? k : 'snow'); } catch (e) {} apply(); try { window.dispatchEvent(new Event('wf-prefs')); } catch (x) {} } };
   // A choice made in the menu (which on most screens is a frame underneath, menu.js) applies to the screen above at once
@@ -447,16 +450,17 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   window.__wfTourLock = function () { try { return sessionStorage.getItem('wf-tour') ? 'CA' : null; } catch (e) { return null; } };
   function apply() {
     // Dark theme is off for now (Oct 3, 21:13): every screen is light, whatever was chosen before; the dark styles stay for later
-    var DARK_ON = false, theme = DARK_ON ? get('theme', 'light') : 'light', size = get('text', 'normal');
-    try { spApply(get('space', 'comfortable')); } catch (e) {}
+    /* (Oct 17, 13:53) the dark theme is on (Spotify's dark greys); text size, spacing and palettes are fixed at their defaults */
+    var DARK_ON = true, theme = DARK_ON ? get('theme', 'light') : 'light', size = 'normal';
+    try { spApply('comfortable'); } catch (e) {}
     var el = document.getElementById('wf-prefs');
     if (!el) { el = document.createElement('style'); el.id = 'wf-prefs'; (document.head || document.documentElement).appendChild(el); }
-    var pal = theme === 'dark' ? 'snow' : palId();
-    el.textContent = (theme === 'dark' ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + '\n' + palVars(PALS[pal]) + ('\n' + palCss(PALS[pal]));
+    var pal = 'snow', DK = theme === 'dark';
+    el.textContent = (DK ? darkCss() : '') + '\nsvg [fill="#E5FF00"],svg [fill="#CCFF00"]{fill:var(--wf-y)}svg [stroke="#E5FF00"],svg [stroke="#CCFF00"]{stroke:var(--wf-y)}\n' + BTN + '\n' + fontCss(size) + '\n' + palVars(DK ? DARKP : PALS[pal]) + (DK ? '' : '\n' + palCss(PALS[pal]));   /* dark: its own variables, no light palette over it */
     var root = document.documentElement;
     root.classList.toggle('wf-dark', theme === 'dark');
     root.style.colorScheme = theme === 'dark' ? 'dark' : 'light';
-    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#262629' : PALS[pal].page);
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', theme === 'dark' ? '#121212' : PALS[pal].page);
     var sb = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]'); if (sb) sb.setAttribute('content', 'black-translucent');   /* the map and the blur run under the status bar */
     if (document.body) ensureNightFilter(); else document.addEventListener('DOMContentLoaded', ensureNightFilter);   // both tile filters: night, and the less saturated day map
     // Scroll fades take the new theme's colours at once (measured again now and once colour transitions have settled)
