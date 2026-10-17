@@ -2207,3 +2207,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Confirmation panels (Oct 17):** like Spotify's sheets: 8px clear of the screen's sides and foot, every corner rounded 48px (concentric with the phone's corners). Bottom dialogs and the panels that grow from a button alike.
 - **Projection switcher (Oct 17):** besides a tap, the chosen option can be dragged; a haptic tick at each horizon passed, and on release it snaps firmly (0.16 s, ease-out, no bounce) to the nearest: Now, +1, +3, +6 h.
 - **Captain's card (Oct 17, 13:55):** same background as the other detection cards; only its verdict tag carries the colour.
+- **Captain's request (Oct 17, 13:57):** after a smoke check finds fire, his card shows a second white strip with a check under the command line: "Captain … recommends an initial attack". The dark grey Initial attack button left the card; the decisions at the foot send it.
