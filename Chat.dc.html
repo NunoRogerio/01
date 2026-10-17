@@ -16,12 +16,12 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792249995"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792253833"></script>
+<script src="prefs.js?v=1792254084"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
 <script src="chat.js?v=1792247781"></script>
-<script src="tour.js?v=1792247781"></script>
+<script src="tour.js?v=1792254084"></script>
 <script src="feedcam.js?v=1792247781"></script>
 <script src="trophy.js?v=1792247781"></script>
 
@@ -148,7 +148,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <sc-for list="{{pins}}" as="p" hint-placeholder-count="0">
         <!-- (Oct 9, 11:16) a tap opens the card right here, over the chat (a layer above it, smooth shadow): its text and its buttons, to answer
              without leaving the latest messages; the chat neither scrolls nor moves. A tap on the header folds it again. -->
-        <div style="pointer-events: auto; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 16px rgba(0,0,0,0.16), 0 0 16px rgba(0,0,0,0.16)">
+        <div style="pointer-events: auto; display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; background: var(--wf-surface, #FFFFFF); box-shadow: 0 0 16px rgba(0,0,0,0.16)">
         <button type="button" class="chbtn" onClick="{{p.go}}" aria-expanded="{{p.exp}}" style="pointer-events: auto; width: 100%; display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; border: 0; border-radius: 0; background: linear-gradient({{p.bg}}, {{p.bg}}), var(--wf-surface, #FFFFFF); box-shadow: none; color: {{p.fg}}; font: inherit; text-align: left; cursor: pointer">
           <span aria-hidden="true" style="display: {{p.icD}}; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0"><svg width="24" height="24" viewBox="0 0 24 24"><path d="{{p.ic.d}}" fill="{{p.ic.fill}}" stroke="{{p.ic.c}}" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"></path></svg></span>
           <span style="flex-grow: 1; min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px">{{p.tag}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; font-variant-numeric: tabular-nums">{{p.time}}</span><!-- (Oct 11, 00:42) the time in normal text on the right, as on the card band -->

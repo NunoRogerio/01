@@ -357,7 +357,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       // Circle-guide profiles (Oct 3): dark glass cards (as the helicopter profile), with these touches:
       (WF_TOUR_HELI ? '' :
       // achievements stand out: the hi-vis yellow, solid, with dark text and a soft glow
-      '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 2px 12px rgba(var(--wf-y-rgb,229,255,0),0.55);color:#1C1C1E}' +
+      '#wf-tour .ta{background:var(--wf-y,#E5FF00);box-shadow:0 0 0 1px rgba(28,28,30,0.12),0 0 16px rgba(0,0,0,0.16);color:#1C1C1E}' +
       // the card glows softly all round, pulsing with the screen-edge glow
       // a slightly darker glass that lets the screen underneath show through, softly blurred (Oct 3)
       '#wf-tour .tb{background:rgba(40, 40, 40, 0.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%)}' +

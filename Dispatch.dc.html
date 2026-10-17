@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792249995"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792253833"></script>
+<script src="prefs.js?v=1792254084"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -50,7 +50,7 @@
   location.replace('Chat.dc.html');
 } catch (e) {} })();
 </script>
-<script src="tour.js?v=1792247781"></script>
+<script src="tour.js?v=1792254084"></script>
 <script src="trophy.js?v=1792247781"></script>
 <script src="feedcam.js?v=1792247781"></script>
 <script src="menu.js?v=1792247781"></script>
@@ -88,7 +88,7 @@
 /* (Oct 16, 23:04, fix) the cards' holder is see-through to taps: its empty top area, risen over the map band by a scroll (the arrival hint), was swallowing taps on the projection switcher and the markers; only the cards themselves take taps */
 [data-wf-cards]{pointer-events:none}[data-wf-cards]>*{pointer-events:auto}
 /* (Oct 16, 21:56) the projection switcher: the panels' soft shadow, and its active option inset 4px on every side (top, bottom, left, right alike) */
-.wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:inset 0 2px 6px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.04)!important}html.wf-dark .wf-seg.wf-seg-glass[aria-label="Projection"]{box-shadow:inset 0 2px 6px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.06)!important}
+.wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:0 0 16px rgba(0,0,0,0.16)!important}
 .wf-seg.wf-seg-glass[aria-label="Projection"]>.segthumb{left:4px!important;top:4px!important;bottom:4px!important}
 /* (Oct 16, 21:54) a decision panel keeps the glass of the button it grows out of: the dark glass, its text light, its buttons in the dark-surface formula */
 /* (Oct 17, 05:38) light mode: the decision panels keep the white glass of the buttons they grow out of (the .wf-gpanel glass, dark text, the theme's buttons); the dark glass below now only in dark mode */
@@ -184,10 +184,10 @@ a{color:#006A91}a:hover{color:#006A91}
 .btn .spin{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 .btn:hover .spin{transform:rotate(-90deg)}
 .primary{background:#E86A00;color:#1A0F00;animation:breathe 2.8s ease-in-out infinite}
-.primary:hover{background:#C25700;color:#1A0F00;box-shadow:0 14px 34px -10px rgba(232,106,0,0.75);animation:none}
+.primary:hover{background:#C25700;color:#1A0F00;box-shadow:0 0 16px rgba(0,0,0,0.16);animation:none}
 @keyframes breatheG{0%,100%{box-shadow:0 0 0 0 rgba(52,199,89,0)}50%{box-shadow:0 0 0 6px rgba(52,199,89,0.12)}}
 .primary.green{background:#13BF5A;color:#04170C;animation:breatheG 2.8s ease-in-out infinite}
-.primary.green:hover{background:#248A3D;color:#04170C;box-shadow:0 14px 34px -10px rgba(52,199,89,0.75);animation:none}
+.primary.green:hover{background:#248A3D;color:#04170C;box-shadow:0 0 16px rgba(0,0,0,0.16);animation:none}
 .ghost{background:rgba(60,60,67,0.05);color:#000000;border-color:rgba(60,60,67,0.088)}
 .ghost:hover{background:rgba(60,60,67,0.099);border-color:rgba(60,60,67,0.22);color:#000000}
 .round{border-radius:50%}
@@ -195,7 +195,7 @@ a{color:#006A91}a:hover{color:#006A91}
 .chip:hover{transform:translateY(-1px)}
 .chip:active{transform:scale(.96)}
 .card{transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s ease,background-color .3s ease,box-shadow .3s ease}
-a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-shadow:0 18px 40px -18px rgba(232,106,0,0.55)}
+a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-shadow:0 0 16px rgba(0,0,0,0.16)}
 .row{transition:background-color .2s ease}
 .row:hover{background-color:rgba(60,60,67,0.044)}
 .seg{transition:left .38s cubic-bezier(.2,.8,.2,1),width .38s cubic-bezier(.2,.8,.2,1)}
@@ -505,7 +505,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <!-- One card per station (and air support), 16px apart -->
     <ul class="wf-snap" style="display: flex; flex-direction: column; gap: 56px; flex-shrink: 1; min-height: 0; margin: 8px -12px 0; padding: 16px; list-style: none; overflow-y: auto; scrollbar-width: none">
       <sc-for list="{{snd.rows}}" as="o" hint-placeholder-count="2">
-        <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 16px rgba(0,0,0,0.16), 0 0 2px rgba(0,0,0,0.06)">
+        <li style="display: flex; flex-direction: column; flex-shrink: 0; border-radius: 16px; background: #FFFFFF; overflow: hidden; box-shadow: 0 0 16px rgba(0,0,0,0.16)">
           <!-- Header: the crest (or the air support badge) sits on the top of the name; the units below line up with it: icons in the crest's column, names under the station's text -->
           <div style="display: grid; grid-template-columns: 40px minmax(0, 1fr) 48px; align-items: start; gap: 16px; padding: 16px; box-sizing: border-box; background-color: {{o.hdBg}}"><img src="{{o.crest}}" data-crest="{{o.name}}" alt="" style="display: {{o.crestD}}; width: 32px; height: 32px; object-fit: contain">
           <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
