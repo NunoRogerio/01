@@ -2233,3 +2233,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Multi-buttons (Oct 17, 16:51, trial):** every segmented control is sunk into its glass with an inner shadow instead of the drop shadow.
 - **Decision squares' corners (Oct 17, 17:07):** the same logic as the bottom panel: 16px corners, and only the corners that sit on the phone's round corners take the big 48px: the first visible square's bottom left and the last one's bottom right (a lone square takes both).
 - **Decision squares' gap (Oct 17, 17:12):** 8px between the squares (as their margin to the screen's edges); the squares grow equally to fill the row.
+- **Decision labels (Oct 17, 17:15):** 24px off the square's foot (8px higher).
