@@ -25,7 +25,7 @@ Shared code lives in `prefs.js`: styles, themes, the switcher, buttons and the s
 | Callout | 16px regular | Body text where it was 16px and black |
 | Subheadline | 15px, 20px line, grey `#6E6E73` | Secondary sentences, group titles (semibold), tags and capsules (semibold), card details with values in semibold dark grey (was 16px) |
 | Footnote | 13px, 18px line, grey | Notes, the location line (was 14px) |
-| KPI | Large bold, dark grey `#3A3A3C` | Big numbers |
+| KPI | Large regular (400, Oct 17; was semibold), dark grey `#3A3A3C` | Big numbers and letters, mini KPI cards included |
 
 Shape with it: status tags are capsules (12px side padding); stage bands are 44px tall (Apple's touch height); white list cards sit on the grouped page without a shadow. Secondary text stays `#6E6E73`: Apple's own secondary grey fails WCAG contrast on the grouped page.
 
@@ -2196,3 +2196,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 16, 23:19) Incident decisions: after one is taken (Check sent, its button disabled) the three buttons keep floating over the page; no foot strip with the stripe behind them.
 - (Oct 16, 23:19) The captain's on-scene report lands straight in the Detections stack, on top (no floating card, no glowing screen edge). The stack reads newest first: Initial attack (once sent, with the verdict that led to it; it replaces the top Initial attack section for the dispatch profiles), then Captain on scene, then Smoke check, then the detections.
 - (Oct 17, 05:38; supersedes Oct 16, 21:54) Decision buttons (No action, Smoke check, Initial attack) and the panels and confirmations that grow out of them: white glass (rgba(255, 255, 255, 0.62), blur 16px, saturate 180%) in light mode, dark grey label (rgb(58, 58, 60)), icons in the decision's colour (grey rgb(110, 110, 115), orange rgb(201, 110, 34), red rgb(208, 72, 58)); a taken decision: fainter white glass (0.42), label and icon at 40%. Dark mode keeps the dark glass.
+
+- **Projected area (Oct 17):** the counting number and its unit in semibold; the NWCG size class is no longer text after the number: a one-letter informative tag (24px, 8px corners, white letter on the class colour, the same colour as the number) sits at the right end of the line, after the time ("By 20:09 [D]"), and changes letter and colour as the number counts.
+- **Crews as card groups (Oct 17):** every list of units (initial attack and smoke check on the incident page, the dispatch panel, the stations on a fire) is a group of cards 8px apart: the top information (title and line, or the station) is one card and each unit is its own card, its folded crew inside it. Small cards shrink and fade under the fixed header one by one instead of one tall card sliding under it at full size.

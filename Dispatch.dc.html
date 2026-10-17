@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792186750"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792223914"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="prefs.js?v=1792211942"></script>
 <script src="station.js?v=1792067104"></script>
@@ -279,7 +279,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
 a.card,.stackbtn{background-color:rgba(255,255,255,.92)!important;border-color:rgba(60,60,67,.08)!important;box-shadow:0 0 24px rgba(0,0,0,.10)!important}
 .opt:hover{background-color:rgba(118,118,128,.08)}
 .lbl{font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;color:#545458}
-.kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
+.kpi{font-family:ui-rounded,'SF Pro Rounded',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:400;letter-spacing:-.01em}
 .kpi small{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;font-weight:400;color:#545458}
 .tip,.ctip,.igpill{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1);border-radius:13px;color:#3C3C43;box-shadow:0 0 30px rgba(0,0,0,.14)}
 .igpill::after{background:rgba(255,255,255,.98);border-color:rgba(60,60,67,.1)}
@@ -576,8 +576,8 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <dc-import name="TerrainMap" on-drone="{{goDroneFeed}}" on-full="{{toggleFull}}" pin-grow="{{cpin.h}}" mode="pin" pad-bottom="120" pin-close="{{vpc}}" start-zoom="{{vsz}}" locked="true" no-view="true" fire-only="true" loader="true" stations-st="{{fireSt}}" ignitions="{{cpin.ign}}" fires="{{cpin.none}}" pin-id="{{fireId}}" w="{{mapW}}" h="{{bandFull}}" clip-top="{{bandOV}}" clip-bleed="{{bandOV}}" clip-bleed-b="{{bandBelow}}" clip-bottom="{{bandBelow}}" pin-lift="{{cpin.lift}}" pin-x="{{fireX}}" pin-y="{{fireY}}" pin-label="{{cpin.label}}" pin-coords="{{cpin.coords}}" cams="{{vcams}}" zoom="{{cpin.zoom}}" focus-x="{{fireX}}" focus-y="{{cpin.fy}}" controls="side" is-full="{{bfull}}" keep-view="true" marker-full="true" radius="{{zero}}" attr-bottom="{{bandAttrB}}" hint-size="390px,310px"></dc-import>
       </sc-if>
       <!-- (Oct 16, 15:58) the projected area, top left of the map: large regular text, the number counting to each horizon's value -->
-      <!-- (Oct 16, 21:43) the projected area sits on the projection switcher, 8px above it and as wide as it: the counting number on the left, its line (size class, time) on the right, right-aligned with the switcher -->
-      <div data-wf-ovl="1" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: 72px; z-index: 30; display: {{fac.d}}; align-items: baseline; justify-content: space-between; gap: 16px; pointer-events: none" class="wf-halo"><span data-wf-sizecls="{{fac.k}}" style="display: block; flex-shrink: 0; font-size: 34px; font-weight: 400; line-height: 40px; color: rgb(72, 72, 74); font-variant-numeric: tabular-nums; white-space: nowrap"><span data-wf-count="{{fac.v}}"></span> {{fac.u}}</span><span style="display: block; min-width: 0; font-size: 15px; line-height: 20px; color: rgb(72, 72, 74); text-align: right">{{fac.when}}</span></div>
+      <!-- (Oct 16, 21:43) the projected area sits on the projection switcher, 8px above it and as wide as it: the counting number (semibold, Oct 17) on the left; on the right, right-aligned with the switcher, the time and the NWCG size class as a one-letter tag in the class colour (Oct 17), never text after the number -->
+      <div data-wf-ovl="1" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: 72px; z-index: 30; display: {{fac.d}}; align-items: baseline; justify-content: space-between; gap: 16px; pointer-events: none" class="wf-halo"><span data-wf-sizecls="{{fac.k}}" style="display: block; flex-shrink: 0; font-size: 34px; font-weight: 600; line-height: 40px; color: rgb(72, 72, 74); font-variant-numeric: tabular-nums; white-space: nowrap"><span data-wf-count="{{fac.v}}"></span> {{fac.u}}</span><span style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; font-size: 15px; line-height: 20px; color: rgb(72, 72, 74); text-align: right"><span>{{fac.when}}</span><span data-wf-sizetag="1" role="img" aria-label="{{fac.clsAria}}" style="display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-width: 24px; height: 24px; box-sizing: border-box; padding: 0 4px; border-radius: 8px; background: rgb(72, 72, 74); color: rgb(255, 255, 255); font-size: 15px; font-weight: 600; line-height: 20px">{{fac.cls}}</span></span></div>
       <!-- (Oct 4) The projection, laid over the map's foot: dark map-control style, 16px from the map's edges -->
       <div role="tablist" data-wf-ovl="1" aria-label="Projection" class="wf-seg wf-seg-glass" onClick="{{fp.stop}}" onPointerDown="{{fp.stop}}" onPointerMove="{{fp.stop}}" onPointerUp="{{fp.stop}}" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{fp.d}}; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 4); transform: translateX({{fp.x}})"><span class="segblob"></span></span>
@@ -593,8 +593,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <section aria-label="{{ia.ttl}}" style="display: {{ia.d}}; order: -6; flex-direction: column; flex-shrink: 0; margin: 0 16px 56px">
       <span style="display: block; font-size: 28px; font-weight: 700; line-height: 34px; color: #000000">{{ia.ttl}}</span>
       <span style="display: block; margin-top: 8px; font-size: 16px; line-height: 20px; color: #6E6E73">{{ia.sub}}</span>
-      <ul style="display: flex; flex-direction: column; margin: 24px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
-        <sc-for list="{{ia.rows}}" as="u" hint-placeholder-count="5">
+      <div style="display: flex; flex-direction: column; gap: 8px; margin: 24px 0 0">
+<sc-for list="{{ia.units}}" as="un" hint-placeholder-count="2">
+<ul data-wf-sckcard="1" style="display: flex; flex-direction: column; flex-shrink: 0; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+<sc-for list="{{un.rows}}" as="u" hint-placeholder-count="1">
           <!-- (Oct 16, 07:17) the smoke check's engine opens folded: its crew slides out under it on a tap (chevron down when folded, up when open) -->
           <li role="{{u.role}}" aria-expanded="{{u.expStr}}" onClick="{{u.tap}}" style="display: flex; align-items: center; gap: 16px; box-sizing: border-box; max-height: {{u.mh}}; padding: {{u.pad}} 16px; opacity: {{u.op}}; overflow: hidden; cursor: {{u.cur}}; border-top: {{u.bt}}; transition: max-height .32s ease-in-out, padding .32s ease-in-out, opacity .24s ease-in-out">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C; overflow: hidden"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{u.icD}}"><path d="{{u.ic}}"></path></svg><img src="{{u.img}}" alt="" style="display: {{u.imgD}}; width: 48px; height: 48px; object-fit: cover"></span>
@@ -604,7 +606,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </li>
         </sc-for>
-      </ul>
+</ul>
+</sc-for>
+</div>
       <span class="wf-note" style="display: block; margin-top: 8px; font-size: 13px; line-height: 18px; color: #6E6E73">{{ia.note}}</span>
     </section>
     <!-- A fire being viewed: the tooltip already gave the time active, so the detail leads with what comes next: containment
@@ -678,11 +682,15 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
         <div style="display: flex; flex-direction: column; gap: 16px; margin: 0">
           <!-- (Oct 16, 22:34) the smoke check, first of the detections: the engine sent to look (its truck, the title, when it was sent), its status as it rolls in and its crew -->
           <!-- (Oct 16, 23:19) the initial attack, once sent, joins the same stack on top (newest first): above the captain's report and the smoke check, its units as they roll in -->
-          <div data-wf-sckcard="1" style="order: -2; display: {{iak.d}}; flex-direction: column; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
+          <div data-wf-sckgrp="1" style="order: -2; display: {{iak.d}}; flex-direction: column; gap: 8px">
+            <div data-wf-sckcard="1" style="display: flex; flex-direction: column; padding-bottom: 16px; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
             <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{iak.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{iak.ttl}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{iak.time}}</span></span>
             <span style="display: block; padding: 0 16px; font-size: 16px; line-height: 20px; color: #6E6E73">{{iak.sub}}</span>
-            <ul style="display: flex; flex-direction: column; margin: 8px 0 0; padding: 0; list-style: none">
-              <sc-for list="{{iak.rows}}" as="u" hint-placeholder-count="1">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{iak.units}}" as="un" hint-placeholder-count="2">
+<ul data-wf-sckcard="1" style="display: flex; flex-direction: column; flex-shrink: 0; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
+<sc-for list="{{un.rows}}" as="u" hint-placeholder-count="1">
                 <li role="{{u.role}}" aria-expanded="{{u.expStr}}" onClick="{{u.tap}}" style="display: flex; align-items: center; gap: 16px; box-sizing: border-box; max-height: {{u.mh}}; padding: {{u.pad}} 16px; opacity: {{u.op}}; overflow: hidden; cursor: {{u.cur}}; border-top: {{u.bt}}; transition: max-height .32s ease-in-out, padding .32s ease-in-out, opacity .24s ease-in-out">
                   <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C; overflow: hidden"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{u.icD}}"><path d="{{u.ic}}"></path></svg><img src="{{u.img}}" alt="" style="display: {{u.imgD}}; width: 48px; height: 48px; object-fit: cover"></span>
                   <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0">
@@ -691,13 +699,19 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   </span>
                 </li>
               </sc-for>
-            </ul>
+</ul>
+</sc-for>
+</div>
           </div>
-          <div data-wf-sckcard="1" style="order: 0; display: {{sck.d}}; flex-direction: column; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
+          <div data-wf-sckgrp="1" style="order: 0; display: {{sck.d}}; flex-direction: column; gap: 8px">
+            <div data-wf-sckcard="1" style="display: flex; flex-direction: column; padding-bottom: 16px; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
             <span style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 8px 16px; box-sizing: border-box; font-size: 17px; font-weight: 600; line-height: 22px; color: #000000"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{sck.ic}}"></path></svg><span style="flex: 1 1 auto; min-width: 0">{{sck.ttl}}</span><span style="flex-shrink: 0; font-size: 16px; font-weight: 400; line-height: 20px; color: #3C3C43; font-variant-numeric: tabular-nums">{{sck.time}}</span></span>
             <span style="display: block; padding: 0 16px; font-size: 16px; line-height: 20px; color: #6E6E73">{{sck.sub}}</span>
-            <ul style="display: flex; flex-direction: column; margin: 8px 0 0; padding: 0; list-style: none">
-              <sc-for list="{{sck.rows}}" as="u" hint-placeholder-count="1">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{sck.units}}" as="un" hint-placeholder-count="2">
+<ul data-wf-sckcard="1" style="display: flex; flex-direction: column; flex-shrink: 0; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: color-mix(in srgb, var(--wf-surface, #FFFFFF) 62%, transparent); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 24px rgba(0,0,0,0.16); overflow: hidden">
+<sc-for list="{{un.rows}}" as="u" hint-placeholder-count="1">
                 <li role="{{u.role}}" aria-expanded="{{u.expStr}}" onClick="{{u.tap}}" style="display: flex; align-items: center; gap: 16px; box-sizing: border-box; max-height: {{u.mh}}; padding: {{u.pad}} 16px; opacity: {{u.op}}; overflow: hidden; cursor: {{u.cur}}; border-top: {{u.bt}}; transition: max-height .32s ease-in-out, padding .32s ease-in-out, opacity .24s ease-in-out">
                   <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C; overflow: hidden"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display: {{u.icD}}"><path d="{{u.ic}}"></path></svg><img src="{{u.img}}" alt="" style="display: {{u.imgD}}; width: 48px; height: 48px; object-fit: cover"></span>
                   <span style="display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0">
@@ -706,7 +720,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                   </span>
                 </li>
               </sc-for>
-            </ul>
+</ul>
+</sc-for>
+</div>
           </div>
           <sc-for list="{{evid}}" as="ev" hint-placeholder-count="1">
             <!-- (Oct 13, 08:22) one row per source: its type icon by the title; under it the image small (96px) with the description beside it -->
@@ -847,16 +863,17 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
           <!-- One card per station on this fire: the station heads it (crest, name, distance and crews still free), its units under it.
                The head folds the units away and back (chevron down when folded, up when open). -->
           <sc-for list="{{d.groups}}" as="gp" hint-placeholder-count="2">
-            <ul data-wf-gp="{{gp.gk}}" style="position: relative; display: block; margin: 8px 0 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+            <div data-wf-gp="{{gp.gk}}" style="display: flex; flex-direction: column; gap: 8px; margin: 8px 0 0"><!-- (Oct 17, 08:58) a group of cards: the station on top, then one card per unit -->
+            <ul data-wf-sckcard="1" style="position: relative; display: block; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
               <span aria-hidden="true" style="display: {{gp.dotD}}; position: absolute; top: 4px; right: 4px; z-index: 2; width: 12px; height: 12px; border-radius: 50%; background: #E6352B; pointer-events: none"></span>
               <li><!-- (Oct 10, 21:57) the station always shows its units: no fold, no chevron --><div aria-label="{{gp.aria}}" style="display: flex; align-items: center; gap: 16px; width: 100%; padding: 16px 16px; box-sizing: border-box; color: #000000; text-align: left">
                 <img src="{{gp.crest}}" alt="" style="display: {{gp.crestD}}; width: 44px; height: 44px; flex-shrink: 0; object-fit: contain">
                 <span style="display: flex; flex-direction: column; flex-grow: 1; min-width: 0"><span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3">{{gp.name}}</span><span style="font-size: 15px; line-height: 20px; color: #6E6E73">{{gp.sub}}</span></span>
                 </div></li>
-              <li style="display: grid; grid-template-rows: 1fr"><ul style="min-height: 0; overflow: hidden; margin: 0; padding: 0; list-style: none; border-top: 1px solid rgba(60,60,67,0.22)">   <!-- a full-width line between the station and its units (Oct 5, same team card as the resolution summary) -->
+              </ul>
               <sc-for list="{{gp.units}}" as="u" hint-placeholder-count="2">
               <!-- Unit row: the icon in the crest's column; the name on the first row with the status tag (one width for all) anchored at the row's right; the description under them -->
-              <li class="wf-unit" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: start; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box">
+              <ul data-wf-sckcard="1" style="display: block; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden"><li class="wf-unit" style="display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: start; gap: 4px 16px; min-height: 76px; padding: 16px; box-sizing: border-box">
                 <!-- (Oct 10, 22:59) the summary's list format: a 48px round icon in the status tag's colour --><span aria-hidden="true" style="grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: {{u.tagBg}}; color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{u.ic}}"></path></svg></span>
                 <span style="min-width: 0; font-size: 17px; font-weight: 600; line-height: 22px; overflow-wrap: anywhere">{{u.name}}</span>
                 <span style="grid-column: 2 / -1; min-width: 0; font-size: 15px; line-height: 20px; color: #6E6E73; overflow-wrap: anywhere">{{u.sub}}</span>
@@ -866,10 +883,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
                 <span role="meter" aria-label="{{u.meterAria}}" aria-valuenow="{{u.pct}}" aria-valuemin="0" aria-valuemax="100" style="grid-column: 1 / -1; position: relative; display: none; height: 4px; margin-top: 8px; border-radius: 999px; background: rgba(60,60,67,0.12); overflow: hidden">
                   <span style="position: absolute; left: 0; top: 0; bottom: 0; width: {{u.pct}}%; border-radius: 999px; background: #3A3A3C"></span>
                 </span>
-              </li>
+              </li></ul>
               </sc-for>
-              </ul></li>
-            </ul>
+            </div>
           </sc-for>
         </li>
         </sc-if>
@@ -1043,8 +1059,10 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="iaTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000">{{iab.ttl}}</h2><span style="font-size: 17px; line-height: 22px; color: #3C3C43">{{iab.sub}}</span></span>
       <button type="button" class="mbtn" onClick="{{iab.close}}" aria-label="{{iab.closeLbl}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: -6px 0 0; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
     </div>
-      <ul style="display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden; flex-shrink: 0">
-        <sc-for list="{{iab.rows}}" as="u" hint-placeholder-count="5">
+      <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0">
+<sc-for list="{{iab.units}}" as="un" hint-placeholder-count="2">
+<ul data-wf-unitcard="1" style="display: flex; flex-direction: column; flex-shrink: 0; margin: 0; padding: 0; list-style: none; border-radius: 16px; background: #FFFFFF; overflow: hidden">
+<sc-for list="{{un.rows}}" as="u" hint-placeholder-count="1">
           <!-- (Oct 16, 07:17) the smoke check's engine opens folded: its crew slides out under it on a tap (chevron down when folded, up when open) -->
           <li role="{{u.role}}" aria-expanded="{{u.expStr}}" onClick="{{u.tap}}" style="display: flex; align-items: center; gap: 16px; box-sizing: border-box; max-height: {{u.mh}}; padding: {{u.pad}} 16px; opacity: {{u.op}}; overflow: hidden; cursor: {{u.cur}}; border-top: {{u.bt}}; transition: max-height .32s ease-in-out, padding .32s ease-in-out, opacity .24s ease-in-out">
             <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3A3A3C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{u.ic}}"></path></svg></span>
@@ -1054,7 +1072,9 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
             </span>
           </li>
         </sc-for>
-      </ul>
+</ul>
+</sc-for>
+</div>
       <span class="wf-note" style="display: block; margin: 8px 16px 0; font-size: 13px; line-height: 18px; color: #6E6E73">{{iab.note}}</span>
     </div>
     <div style="display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; padding-top: 24px">
@@ -1914,7 +1934,7 @@ class Component extends DCLogic {
         tabs: HZ.map((k) => ({ label: k ? '+' + k + ' h' : 'Now', sel: String(k === h), w: k === h ? 600 : 400, fgD: k === h ? '#1C1C1E' : '#FFFFFF', dotD: HM && HM.at[k] ? 'block' : 'none', aria: (k ? '+' + k + ' h' : 'Now') + (HM && HM.at[k] ? '. Structures threatened' : ''), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: k, fhzT: ((this.state || {}).fhzT || 0) + 1 }); } })) };
       /* (Oct 16, 15:58) the projection's area, top left of the map under the header: Now starts from the ignition's size, +1 / +3 / +6 h
          read the area of the shape the map draws for that horizon; the number counts up or down to each new value */
-      o.fac = (() => { if (!on || o.full) return { d: 'none', v: '0', u: '', k: '1', when: '', top: '0px' }; const FR = (o._hsSrc && o._hsSrc.frow) || {}, id = String(o.fireId || FR.id || 'x'); let sd = 7; for (const ch of id) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
+      o.fac = (() => { if (!on || o.full) return { d: 'none', v: '0', u: '', k: '1', when: '', cls: '', clsAria: '', top: '0px' }; const FR = (o._hsSrc && o._hsSrc.frow) || {}, id = String(o.fireId || FR.id || 'x'); let sd = 7; for (const ch of id) sd = (sd * 31 + ch.charCodeAt(0)) >>> 0;
         const cand = !!FR.cand, A0 = cand ? 0.5 + (sd % 4) * 0.5 : Math.max(0.5, (Number(FR.ha) || 0) / 0.4047 || 5 + (sd % 20)), FB = { 0: 1, 1: 40, 3: 90, 6: 220 };
         let ac = h ? A0 * (cand ? FB[h] : G[h]) : A0;
         if (cand && h) { try { const M = [...document.querySelectorAll('[data-wf-maproot]')].map((e) => e.__wfMap).find((m) => m && m.props && m.props.mode === 'pin' && m.pinGrowShape), S = M && M.pinGrowShape(Number(M.props.pinX), Number(M.props.pinY), h), xy = S && S.xy;
@@ -1922,7 +1942,7 @@ class Component extends DCLogic {
         const U = this.wfUnits(), ha = U.area === 'ha', val = ha ? ac * 0.4047 : ac, ov = (() => { try { return window.parent !== window ? Number(window.parent.__wfStageB) || 0 : 0; } catch (e) { return 0; } })();
         /* (Oct 16, 19:09) units abbreviated (ac, ha); under the value the time it describes: "As of 19:09" for Now, "By 20:09" for +1 h (24-hour clock) */
         const at = new Date(Date.now() + h * 3600000), hm = String(at.getHours()).padStart(2, '0') + ':' + String(at.getMinutes()).padStart(2, '0'), PTl = window.__wfLang === 'pt';
-        return { d: 'flex', v: String(val < 10 ? Math.round(val * 10) / 10 : Math.round(val)), u: ha ? 'ha' : 'ac', k: ha ? '2.4711' : '1', when: (PTl ? 'Classe ' : 'Size class ') + 'ABCDEFG'[[0.25, 10, 100, 300, 1000, 5000].filter((x) => ac >= x).length] + '. ' + (h ? (PTl ? 'Até às ' : 'By ') + hm : (PTl ? 'Às ' : 'As of ') + hm),   /* (Oct 16, 19:10) the NWCG fire size class of the projected area, as the crews name it */ top: (ov > 0 ? ov + 32 : 16) + 'px' }; })();
+        return { d: 'flex', v: String(val < 10 ? Math.round(val * 10) / 10 : Math.round(val)), u: ha ? 'ha' : 'ac', k: ha ? '2.4711' : '1', when: h ? (PTl ? 'Até às ' : 'By ') + hm : (PTl ? 'Às ' : 'As of ') + hm, cls: 'ABCDEFG'[[0.25, 10, 100, 300, 1000, 5000].filter((x) => ac >= x).length], clsAria: (PTl ? 'Classe ' : 'Size class ') + 'ABCDEFG'[[0.25, 10, 100, 300, 1000, 5000].filter((x) => ac >= x).length],   /* (Oct 16, 19:10; Oct 17 as a one-letter tag after the time) the NWCG fire size class of the projected area, as the crews name it; fit.js keeps the letter and colour in step with the counting number */ top: (ov > 0 ? ov + 32 : 16) + 'px' }; })();
       /* (Oct 6) houses in reach: a red dot on each horizon whose projected shape reaches them, and the pulsing red warning that opens the earliest */
       const HT = on && HM && window.__wfHomesText ? window.__wfHomesText(HM, window.__wfLang === 'pt') : null;
       const hmGo = () => { if (!HT) return; try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ fhz: HT.h, fhzT: ((this.state || {}).fhzT || 0) + 1, ftab: 'fire', full: false }); try { const sc = document.querySelector('[data-wf-page="1"]'); if (sc) sc.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {} };
@@ -2087,6 +2107,10 @@ class Component extends DCLogic {
     try { const DSPk = /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); if (DSPk && o.ia && o.ia.d === 'flex' && /^(Initial attack|Ataque inicial)$/.test(o.ia.ttl || '')) { const tm = (String(o.ia.sub).match(/(\d\d:\d\d)/) || [])[1] || '', vt = (o.vf && o.vf.title) || '';
         o.iak = Object.assign({}, o.ia, { d: 'flex', time: tm, ic: 'M3 17h2m14 0h2M5 17V9h9l3 4h2v4M5 17a2 2 0 1 0 4 0m6 0a2 2 0 1 0 4 0M9 17h6', sub: (vt ? vt + '. ' : '') + o.ia.sub });
         o.ia = Object.assign({}, o.ia, { d: 'none' }); } } catch (e) {}
+    /* (Oct 17, 08:58) crews as a group of cards: the top information is one card, each unit its own card (with its folded crew inside), so the
+       page's shrink and fade work on small cards and none goes under the fixed header at full size */
+    { const units = (rows) => { const U = []; (rows || []).forEach((r) => { const crew = r.icD === 'none' && U.length; if (crew) U[U.length - 1].rows.push(r); else U.push({ rows: [Object.assign({}, r, { bt: '0' })] }); }); return U; };
+      ['ia', 'iak', 'sck', 'iab'].forEach((K) => { if (o[K]) o[K].units = units(o[K].rows); }); }
     // Crew metrics live in Situation's Key figures as optional cards (off until switched on with the + tile); no tiles on Crews.
     // Vehicles and People are already there (Vehicles, Personnel), so only the crew-specific figures join.
     if (o.cc && Array.isArray(o.cc.med) && o.cc.medD !== 'none') { const fx = (o.deployed || []).find((d) => d.fx); const none = { svgD: 'none', segD: 'none', dot: '', line: '', lineC: 'none', area: '', areaFill: 'none', bars: '', barC: 'none', bar2: '', bar2C: 'none', segs: [], aria: '' };
