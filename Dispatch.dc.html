@@ -75,6 +75,8 @@
       if(el.getAttribute('data-wf-under')!==u)el.setAttribute('data-wf-under',u);});}catch(e){}}
   function q(){if(!raf)raf=requestAnimationFrame(f);}
   document.addEventListener('scroll',q,true);addEventListener('resize',q);setInterval(q,400);document.addEventListener('DOMContentLoaded',q);})();</script>
+<style>/* (Oct 17, 20:27) the Summary is not shown until its arrival brings it up from below the screen */ html:not(.wf-arrived) [data-wf-sumsec] { visibility: hidden; }</style>
+<script>setTimeout(function(){document.documentElement.classList.add('wf-arrived');},20000);</script>
 </head>
 <body>
 <x-dc>
@@ -665,7 +667,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       </div>
         <!-- (Oct 9, 13:07) no "(move cards to reorder)" hint -->
       <!-- (Oct 14, 17:25) after where and when: the Summary, then the Detections it rests on, and only then the key figures -->
-    <section aria-label="{{vf.ttl}}" style="display: {{vf.d}}; align-self: stretch; flex-direction: column; flex-shrink: 0; margin: 0 0 56px; text-align: left">
+    <section data-wf-sumsec="1" aria-label="{{vf.ttl}}" style="display: {{vf.d}}; align-self: stretch; flex-direction: column; flex-shrink: 0; margin: 0 0 56px; text-align: left">
       <!-- (Oct 13, 09:58) titled "Summary" like Detections; the verdict in bold, the facts as bullets -->
       <h3 class="wf-note" style="margin: 0 0 8px; font-size: 14px; font-weight: 400; line-height: 18px; color: rgb(110, 110, 115)">{{vf.sum}}</h3>   <!-- (Oct 15, 13:18) section titles in the note style, as the detections count was -->
       <!-- (Oct 13, 14:28) a card like the detection cards: a header (icon, the verdict, the time of the latest detection) and an info area -->
@@ -1262,9 +1264,9 @@ class Component extends DCLogic {
   wfScrollHint() { if (this._shT) return; { const f0 = this.wfShId(); if (this._shDone && this._shDone === f0) return; /* (Oct 17, 20:01) on every entry, not once per incident */ } const t0 = Date.now(); let last = null, still = 0;
     const tick = () => { this._shT = 0; try {
         const sc = document.querySelector('[data-wf-page="1"]'), sum = document.querySelector('[data-wf-sumcard]'), sec = sum && sum.closest('section'), seg = document.querySelector('[data-wf-band] .wf-seg[aria-label="Projection"]');
-        if (!sc || !sec || !seg || !sec.offsetParent || !seg.offsetParent || Date.now() - t0 > 20000) { if (Date.now() - t0 <= 20000) this._shT = setTimeout(tick, 250); else if (this._shPre) { try { this._shPre.style.translate = ''; } catch (x) {} this._shPre = null; } return; }
+        if (!sc || !sec || !seg || !sec.offsetParent || !seg.offsetParent || Date.now() - t0 > 20000) { if (Date.now() - t0 <= 20000) this._shT = setTimeout(tick, 250); else { document.documentElement.classList.add('wf-arrived'); if (this._shPre) { try { this._shPre.style.translate = ''; } catch (x) {} this._shPre = null; } } return; }
         /* (Oct 17, 20:13) the Summary waits below the screen until the arrival brings it up from there to its peek (it no longer shows, then vanishes) */
-        const unPre = () => { if (this._shPre) { this._shPre = null; try { sec.style.translate = ''; sc.dispatchEvent(new Event('scroll')); } catch (x) {} } };
+        const unPre = () => { document.documentElement.classList.add('wf-arrived'); if (this._shPre) { this._shPre = null; try { sec.style.translate = ''; sc.dispatchEvent(new Event('scroll')); } catch (x) {} } };
         if (this._shPre === undefined) { const dd = Math.round(sc.getBoundingClientRect().bottom - sec.getBoundingClientRect().top + 24); this._shPre = dd > 0 ? sec : null; if (dd > 0) sec.style.translate = '0 ' + dd + 'px'; }
         const fid = this.wfShId(); if (this._shDone === fid) { unPre(); return; }
         if (sc.scrollTop > 2 || this._shTouched) { this._shDone = fid; unPre(); return; }
@@ -1279,8 +1281,8 @@ class Component extends DCLogic {
           /* (Oct 17, 20:01) the arrival brings the Summary card only up to its peek: its shrunk top 72px above the decisions (less on a short card, so under half of it shows), still smaller, faded and darker; never past where it used to land */
           const D = (() => { try { const r = sum.getBoundingClientRect(), h = sum.offsetHeight || r.height, top = r.top - (h - r.height) / 2, ab = document.querySelector('[data-wf-actbar] .wf-decrow'), q = ab && ab.offsetParent ? ab.getBoundingClientRect() : null, lnB = q && q.height ? q.top : sc.getBoundingClientRect().bottom, pk = Math.max(16, Math.min(72, 0.4 * h - 8)); return Math.min(D0, Math.round(top - pre - (lnB - pk - 0.1 * h))); } catch (x) { return D0; } })();
           /* already high enough to peek where it is: it rises from below the screen to that place, the last thing to move */
-          if (this._shPre && D >= 4) unPre();   /* too low even unmoved: the scroll below brings it up */
-          if (this._shPre) { this._shPre = null; sec.animate([{ translate: sec.style.translate }, { translate: '0 0' }], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' }); sec.style.translate = ''; const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 760) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
+          /* (Oct 17, 20:27) it lands exactly at its peek, never further: the space above it takes up the difference (less or more than its laid-out place) */
+          if (this._shPre) { this._shPre = null; const mt = -D; if (Math.abs(mt) >= 1) { sec.style.marginTop = mt + 'px'; sec.style.translate = '0 ' + (Math.round(parseFloat(String(sec.style.translate).split(' ')[1]) || 0) + D) + 'px'; } document.documentElement.classList.add('wf-arrived'); sec.animate([{ translate: sec.style.translate }, { translate: '0 0' }], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' }); sec.style.translate = ''; const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 760) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
           if (D < 4) return;
         const max = sc.scrollHeight - sc.clientHeight, to = Math.min(max, D), ov = Math.min(8, Math.round(to * 0.12)), y0 = sc.scrollTop, T1 = 550, T2 = 210, a0 = performance.now();
         const io = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2), oo = (k) => 1 - Math.pow(1 - k, 3);
