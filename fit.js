@@ -1572,16 +1572,24 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     // the main map's view that puts the marker at local point (lx, ly) at scale s
     var viewAt=function(lx,ly,s){return {cx:PX-(lx-W/2)/s,cy:PY-(ly-H/2)/s,s:s};};
     var localOf=function(v){return {x:(PX-v.cx)*v.s+W/2,y:(PY-v.cy)*v.s+H/2};};
-    var fl=null;   /* the flight: from the current view to a target, the marker gliding straight, the zoom in log steps */
-    var fly=function(to,ms,cb){var from=MI.view(),p0=localOf(from),p1=localOf(to),l0=Math.log(from.s),l1=Math.log(to.s),t0=performance.now(),me={};fl=me;MI._gest=true;if(MI.stopGlide)try{MI.stopGlide();}catch(x){}
-      (function step(t){if(fl!==me)return;var k=Math.min(1,(t-t0)/ms),e=ez(k),s=Math.exp(l0+(l1-l0)*e),v=viewAt(p0.x+(p1.x-p0.x)*e,p0.y+(p1.y-p0.y)*e,s);try{MI.setView(v.cx,v.cy,v.s);}catch(x){}
-        if(k<1)requestAnimationFrame(step);else{fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(x){}if(cb)cb();}})(t0);};
+    /* (Oct 17, 17:25) ONE flight, never a second one: it heads for a first guess of the incident's framing, and the moment the incident
+       screen gives the exact framing the remaining path bends onto it: a correction added on top of the running flight, starting with
+       no speed of its own and ending at rest on the exact view (a smootherstep), so the motion never stops, restarts or jumps at the end.
+       The marker glides on screen and the zoom moves in log steps, as before. */
+    var fl=null,FLY_MS=1100;
+    var sst=function(u){u=Math.max(0,Math.min(1,u));return u*u*u*(u*(u*6-15)+10);};
+    var fly=function(to,ms){var from=MI.view(),p0=localOf(from),pg=localOf(to),l0=Math.log(from.s),lg=Math.log(to.s),t0=performance.now(),me={t0:t0,ms:ms,cb:null,c:null};fl=me;MI._gest=true;if(MI.stopGlide)try{MI.stopGlide();}catch(x){}
+      me.retarget=function(to2,cb){var t=performance.now(),p1=localOf(to2),l1=Math.log(to2.s),left=Math.max(0,me.t0+me.ms-t);me.c={t:t,d:Math.max(left,520),dx:p1.x-pg.x,dy:p1.y-pg.y,dl:l1-lg};me.cb=cb;};
+      (function step(t){if(fl!==me)return;var k=Math.min(1,(t-t0)/ms),e=ez(k),x=p0.x+(pg.x-p0.x)*e,y=p0.y+(pg.y-p0.y)*e,l=l0+(lg-l0)*e,C=me.c,w=C?sst((t-C.t)/C.d):0;
+        if(C){x+=C.dx*w;y+=C.dy*w;l+=C.dl*w;}var v=viewAt(x,y,Math.exp(l));try{MI.setView(v.cx,v.cy,v.s);}catch(z){}
+        if(k<1||(C&&w<1)||!C)requestAnimationFrame(step);if(k>=1&&C&&w>=1){fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(z){}if(me.cb)me.cb();}})(t0);
+      return me;};
     // 1. the tooltip fades, the main screen's surfaces leave, the map heads for the incident's framing (last time's, or a fair guess)
     try{document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.animate([{opacity:1},{opacity:0}],{duration:200,easing:'ease-out',fill:'forwards'});});}catch(x){}
     var outL=[];try{peel(MR,outL);mapPeel(MR,outL);}catch(x){}var outA=slide(outL,'out');
     var R0=mapR(),kM=R0.width/W||1,est=null;try{est=JSON.parse(sessionStorage.getItem(EST)||'null');}catch(x){}
     var g=est&&est.q>0?est:{x:(window.top.innerWidth||390)/2,y:(window.top.innerHeight||844)*0.35,q:Math.min(24,v0.s*6)*kM};   /* q: screen pixels per world unit */
-    fly(viewAt((g.x-R0.left)/kM,(g.y-R0.top)/kM,g.q/kM),900);
+    var FL=fly(viewAt((g.x-R0.left)/kM,(g.y-R0.top)/kM,g.q/kM),FLY_MS);
     /* back on this screen from the phone's cache: the map is set back where it was, and the surfaces that left come back in (the way out, reversed) */
     try{window.__wfSharedUndo=function(){try{fl=null;MI._gest=false;MI._pv=Object.assign({},MI._pv||{},v0);MI.setState({cx:v0.cx,cy:v0.cy,s:v0.s,selId:'__none',pop:null});
       document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.getAnimations().forEach(function(an){an.cancel();});});
@@ -1595,7 +1603,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       var rD=topRect(DM),kD=rD.width/(DI.W()||1),vD=DI.view(),Q=kD*vD.s,rM=mapR(),kM2=rM.width/W||1,sM=Q/kM2;
       var cx=vD.cx+((rM.left+kM2*W/2)-(rD.left+kD*DI.W()/2))/Q,cy=vD.cy+((rM.top+kM2*H/2)-(rD.top+kD*DI.H()/2))/Q;
       try{var mp=localOf({cx:cx,cy:cy,s:sM});sessionStorage.setItem(EST,JSON.stringify({x:rM.left+mp.x*kM2,y:rM.top+mp.y*kM2,q:Q}));}catch(x){}
-      fly({cx:cx,cy:cy,s:sM},fl?520:420,function(){finish(DM);});};
+      FL.retarget({cx:cx,cy:cy,s:sM},function(){finish(DM);});};   /* the running flight bends onto the exact framing: no second flight */
     // 3. the incident's map takes over; its header slides down, its lower surfaces slide up
     var finish=function(DM){var inL=[];try{if(DM){peel(DM,inL);mapPeel(DM,inL);var e=DM.ownerDocument.defaultView.frameElement;while(e&&e!==f){peel(e,inL);e=e.ownerDocument.defaultView.frameElement;}}}catch(x){}
       var inA=slide(inL,'in');inA.forEach(function(an){try{an.pause();an.currentTime=0;}catch(x){}});
@@ -1603,7 +1611,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       var fd=w.animate([{opacity:0},{opacity:1}],{duration:220,easing:'ease-out',fill:'backwards'});
       inA.forEach(function(an){try{an.play();}catch(x){}});
       setTimeout(function(){inA.forEach(function(an){try{an.cancel();}catch(x){}});navigate();},SLIDE+40);};
-    var poll=function(){if(done)return;if(ready()&&Date.now()-T0>250){if(fl)setTimeout(land,0);else land();return;}if(Date.now()-T0>8000){done=true;finish(findMap(f.contentDocument,0));return;}setTimeout(poll,70);};
+    var poll=function(){if(done)return;if(ready()&&Date.now()-T0>250){land();return;}if(Date.now()-T0>8000){done=true;finish(findMap(f.contentDocument,0));return;}setTimeout(poll,70);};
     setTimeout(poll,100);
     return true;};
   addEventListener('pageshow',function(e){try{if(window.__wfSharedUndo){window.__wfSharedUndo();window.__wfSharedUndo=null;try{sessionStorage.removeItem(BACKT);}catch(x){}}}catch(x){}});
