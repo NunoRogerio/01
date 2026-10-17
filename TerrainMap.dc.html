@@ -14,9 +14,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792254627"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792254844"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792254511"></script>
+<script src="prefs.js?v=1792254844"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -1908,7 +1908,8 @@ class Component extends DCLogic {
         /* each marker kind's count in the area, shown in its legend chip (dark grey, as every count) */
         let NC = isRisk ? (() => { const F = Array.isArray(p.fires) ? p.fires : [], nRes = F.filter((g) => g.info && g.info.resolved).length;
           const sk = (p.scopeSt || '') + '|' + (p.scopeCo || ''), SFc = this.stationFile(); let nSt = this._stCnt && this._stCnt.k === sk ? this._stCnt.n : null;
-          if (nSt == null && SFc && SFc.pts) { const inSc = this.inScopeFn(); nSt = inSc ? SFc.pts.filter((q) => inSc(q[0], q[1])).length : SFc.pts.length; this._stCnt = { k: sk, n: nSt }; }
+          if (nSt == null && SFc && SFc.pts) { const inSc = this.inScopeFn(), whole = !p.scopeSt || p.scopeSt === 'US';   /* (Oct 17, 17:32) only the stations of the area on view (a state, a region, a county); while that area's outline is not known yet there is no number at all, never the whole country's count */
+            if (inSc) { nSt = SFc.pts.filter((q) => inSc(q[0], q[1])).length; this._stCnt = { k: sk, n: nSt }; } else if (whole) { nSt = SFc.pts.length; this._stCnt = { k: sk, n: nSt }; } else nSt = null; }
           return { cands: Array.isArray(p.ignitions) ? p.ignitions.length : null, fires: F.length - nRes, resolved: nRes, stations: nSt }; })() : {};
         if (p.legNow || p.legGrow) { NC = Object.assign({}, NC || {}, p.legNow ? { burn: p.legNow } : {}, p.legGrow ? { grow: p.legGrow } : {}); }   /* the Projection screen: area and perimeter in the chips */;
         const legend = this.legendItems(has, NC); const optOpen = !!window.__wfCtrlOpen;

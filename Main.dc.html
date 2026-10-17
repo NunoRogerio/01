@@ -16,9 +16,9 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792254627"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792254844"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792254511"></script>
+<script src="prefs.js?v=1792254844"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -234,7 +234,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
-  <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: 16px 32px 16px 32px">
+  <!-- (Oct 17, 17:30) 12px inside the glass all round (the notifications counter may stick out of it), the same as the incident header; the glass itself 12px from the screen -->
+  <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; padding: max(0px, calc(max(var(--wf-top, 0px), env(safe-area-inset-top, 0px)) - 48px)) 24px 12px 24px; min-height: var(--wf-tophd-min, 0px); box-sizing: border-box">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
     <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 4px 8px 16px; border: 0; border-radius: 12px; background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-height: 44px; max-width: 100%; min-width: 0">
@@ -252,7 +253,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   </header>
   <!-- (Oct 13, 13:06) the dispatch profiles are greeted by rank and name under the area, with the station home's salutations
        (one at random, by the time of day); 16px under "5 counties", rank and surname in semibold; taps pass through to the grabber -->
-  <p aria-live="off" style="position: relative; display: {{gr.d}}; margin: -16px 0 0; padding: 0 32px 16px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty; pointer-events: none">{{gr.a}}<b style="font-weight: 600">{{gr.who}}</b>{{gr.b}}</p>
+  <p aria-live="off" style="position: relative; display: {{gr.d}}; margin: -12px 0 0; padding: 0 24px 12px; font-size: 17px; line-height: 22px; color: #000000; text-wrap: pretty; pointer-events: none">{{gr.a}}<b style="font-weight: 600">{{gr.who}}</b>{{gr.b}}</p>
   <!-- (Oct 11, 20:50) a government body's own line under the area: the requests that climbed the chain and wait for it (red), the strike
        teams or reinforcement groups it sent, the units out on the area's fires; a tap opens the incident chats -->
   <div data-wf-govtags="1" style="position: relative; display: {{gv.d}}; flex-wrap: wrap; gap: 8px; margin-top: -8px; padding: 0 32px 16px">
