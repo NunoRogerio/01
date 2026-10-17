@@ -1892,6 +1892,8 @@ class Component extends DCLogic {
         chkDis: chkSent || sent ? 'true' : 'false', chkOkD: chkSent ? 'flex' : 'none', dsDis: capFire || sent ? 'true' : 'false', dsOkD: 'none', iaOkD: sent ? 'flex' : 'none' });
       if (chkSent || sent) vf.check = noop; if (capFire || sent) vf.dismiss = noop; if (sent) { vf.send = noop; vf.sendDis = 'true'; vf.sendOp = '1'; vf.sendCls = 'primary'; } }
     else Object.assign(vf, { chkDis: 'false', chkOkD: 'none', dsDis: 'false', dsOkD: 'none', iaOkD: 'none' });
+    /* (Oct 17, 14:06) an incident already closed (its chat closed or dismissed it) offers no decision: the foot says it is closed, as the main screen does */
+    if (DSP && this.wfClosed(c.id)) Object.assign(vf, { decD: 'none', doneD: 'none', sentD: 'none', naD: 'flex', naTxt: Lx('Incident closed', 'Incidente encerrado'), floatD: 'flex' });
     if (vf.decD === 'flex' && DSP) vf.floatD = 'flex';   /* (Oct 16, 23:19) the three decisions always float over the page, a decision taken (Check sent, its button disabled) included: no foot strip with the stripe behind them */
     /* (Oct 15, 13:13) detections that arrive while the screen is open float above it until tapped (one at a time, the oldest first); the ones there on entry are simply listed */
     const ES = this._evS && this._evS.id === c.id ? this._evS : (this._evS = { id: c.id, seen: null, float: [], dock: null });
