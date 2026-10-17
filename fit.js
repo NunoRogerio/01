@@ -134,7 +134,8 @@ window.__wfBlink=function(path,dur){
   /* Installed on the home screen, the page runs under the status bar (translucent): the frame's own top 52px show there, so maps and blurs continue under the clock and the camera; in a browser tab the bar is the browser's */
   var SA=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
   /* only when the page really runs under the status bar (a top safe area): an app installed before the change keeps the old bar */
-  function under(){var u=false;try{if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pr);u=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!u&&innerHeight>innerWidth&&innerHeight>=Math.max(screen.width,screen.height)-2)u=true;   /* (Oct 5, 20:45) upright only: held sideways the screen's long side always fits, which wrongly read as 'under the status bar' and pushed every screen 52px down */}}catch(e){}return u;}
+  function under(){var u=false;try{var pq=document.createElement('div');pq.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pq);var inTop=parseFloat(getComputedStyle(pq).paddingTop)||0;pq.remove();if(!SA&&inTop>20&&innerHeight>innerWidth)return true;   /* (Oct 17, 15:57) a browser tab that also runs under the status bar (Safari on iOS 26, viewport-fit=cover, a top safe area): the frame starts at the screen's top, so the map (or the top panel) is painted under the clock, never a white bar */
+    if(SA){var pr=document.createElement('div');pr.style.cssText='position:fixed;visibility:hidden;padding-top:env(safe-area-inset-top,0px)';(document.body||document.documentElement).appendChild(pr);u=(parseFloat(getComputedStyle(pr).paddingTop)||0)>20;pr.remove();if(!u&&innerHeight>innerWidth&&innerHeight>=Math.max(screen.width,screen.height)-2)u=true;   /* (Oct 5, 20:45) upright only: held sideways the screen's long side always fits, which wrongly read as 'under the status bar' and pushed every screen 52px down */}}catch(e){}return u;}
   var UNDER=under();
   var EMB0=window.top!==window&&/[?&]embed=1/.test(location.search);   /* (Oct 8, 22:02) in the chat's incident blade: no browser bar to hide */
   var W=390,H=844,TOP=(UNDER||EMB0)?0:52,VH=H-TOP,MAXS=1.6;window.__wfTOP=TOP;try{document.documentElement.style.setProperty('--wf-top',TOP+'px');}catch(e){}   /* the frame's top hidden behind the browser's bar: tall sheets keep their 48px clear below what is really visible */
@@ -1623,31 +1624,34 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 // (Oct 16, 21:25) the incident arrival hint runs once per opening: back on the main screen, the next opening of an incident hints again
 (function(){try{if(/\/Main\.dc\.html$/.test(location.pathname)&&window.top===window)sessionStorage.removeItem('wf-hint-done');}catch(e){}})();
 
-// (Oct 17, 15:23) Every switcher (segmented multi-button, .wf-seg): besides a tap, the chosen option's thumb can be dragged.
-// It starts only when the press lands on the thumb itself (so it is predictable), follows the finger along the track (a haptic tick
-// at each option it passes), and on release snaps firmly to the nearest option (0.16 s ease-out, no bounce) and chooses it with
-// that option's own tap, so every switcher keeps its own behaviour. The thumb is moved with the CSS translate property, on top of the
-// transform the screen sets, so a re-render never fights the finger. Switchers whose options differ in width are tap-only.
+// (Oct 17, 15:23; 15:58 every switcher, any option widths) Every switcher (segmented multi-button, .wf-seg): besides a tap, the chosen
+// option can be dragged. Pressing it grows its dark grey thumb (6px above and below, as in its glide) to say it can be moved; it then
+// follows the finger anywhere along the track (a haptic tick at each option it passes) and on release snaps firmly to the nearest
+// option (0.16 s ease-out, no bounce), choosing it with that option's own tap, so every switcher keeps its own behaviour. The thumb is
+// moved with the CSS translate property, on top of the transform the screen sets, so a re-render never fights the finger.
 (function(){
-  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .16s cubic-bezier(.2,.9,.1,1)!important}';(document.head||document.documentElement).appendChild(css);
+  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb>.segblob{transition:inset .15s cubic-bezier(.2,.9,.1,1)}.wf-seggrab>.segthumb>.segblob{inset:-6px 0!important}.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .16s cubic-bezier(.2,.9,.1,1)!important}';(document.head||document.documentElement).appendChild(css);
   var D=null,mute=0;
   var opts=function(el){return [].slice.call(el.querySelectorAll('.segopt')).filter(function(o){return o.offsetWidth>0;});};
+  var near=function(d,cx){var b=0,bd=1e9;d.C.forEach(function(c,i){var q=Math.abs(c-cx);if(q<bd){bd=q;b=i;}});return b;};
   document.addEventListener('pointerdown',function(e){try{if(D||(e.button&&e.button!==0))return;var el=e.target&&e.target.closest&&e.target.closest('.wf-seg');if(!el)return;var th=el.querySelector(':scope>.segthumb');if(!th)return;var O=opts(el);if(O.length<2)return;
-    var R=O.map(function(o){return o.getBoundingClientRect();}),w0=R[0].width;for(var i=1;i<R.length;i++){if(Math.abs(R[i].width-w0)>2)return;}
-    var step=(R[R.length-1].left-R[0].left)/(R.length-1);if(!(step>0))return;var tr=th.getBoundingClientRect();if(e.clientX<tr.left-4||e.clientX>tr.right+4||e.clientY<tr.top-8||e.clientY>tr.bottom+8)return;
-    var cur=Math.max(0,Math.min(O.length-1,Math.round((tr.left+tr.width/2-(R[0].left+R[0].width/2))/step)));
-    D={el:el,th:th,O:O,step:step,cur:cur,x0:e.clientX,y0:e.clientY,t:0,last:cur,mv:false,id:e.pointerId};}catch(x){D=null;}},true);
-  document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-D.y0)>Math.abs(dx)){D=null;return;}D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag');}
-    e.preventDefault();e.stopPropagation();var lo=-D.cur*D.step,hi=(D.O.length-1-D.cur)*D.step;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=D.cur+Math.round(D.t/D.step);if(n!==D.last){D.last=n;try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
-  var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;if(!d.mv)return;if(e){e.stopPropagation();}mute=Date.now();
-    var n=Math.max(0,Math.min(d.O.length-1,d.cur+Math.round(d.t/d.step))),el=d.el,th=d.th,tf0=th.style.transform||getComputedStyle(th).transform,t0=performance.now();
+    var tr=th.getBoundingClientRect();if(e.clientX<tr.left-4||e.clientX>tr.right+4||e.clientY<tr.top-8||e.clientY>tr.bottom+8)return;
+    var C=O.map(function(o){var r=o.getBoundingClientRect();return r.left+r.width/2;}),c0=tr.left+tr.width/2;
+    D={el:el,th:th,O:O,C:C,c0:c0,l0:tr.left,cur:0,x0:e.clientX,t:0,last:0,mv:false,id:e.pointerId};D.cur=D.last=near(D,c0);
+    el.classList.add('wf-seggrab');try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}try{el.setPointerCapture(e.pointerId);}catch(x){}}catch(x){D=null;}},true);
+  /* the press on the thumb owns the gesture: the page never scrolls under it (iOS would otherwise take the touch and cancel the drag) */
+  document.addEventListener('touchmove',function(e){if(D)e.preventDefault();},{capture:true,passive:false});
+  document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<4)return;D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag');}
+    e.preventDefault();e.stopPropagation();var lo=D.C[0]-D.c0,hi=D.C[D.C.length-1]-D.c0;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=near(D,D.c0+D.t);if(n!==D.last){D.last=n;try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
+  var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;d.el.classList.remove('wf-seggrab');if(!d.mv)return;if(e){e.stopPropagation();}mute=Date.now();
+    var n=near(d,d.c0+d.t),el=d.el,th=d.th,want=d.l0+d.t,tf0=th.style.transform+'|'+th.style.width,t0=performance.now();
     try{if(navigator.vibrate)navigator.vibrate(14);}catch(x){}
-    var snap=function(rest){th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap');th.style.translate='';},200);});};
-    if(n===d.cur){snap(d.t);return;}
+    /* hand the thumb over without a jump: measure where the screen put it, start the snap from where the finger left it */
+    var snap=function(){th.style.translate='0px 0';var nl=th.getBoundingClientRect().left,rest=want-nl;th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap');th.style.translate='';},200);});};
+    if(n===d.cur){snap();return;}
     mute=0;try{d.O[n].click();}catch(x){}mute=Date.now();
-    /* wait for the screen to move the thumb to its new place (its transform changes), then hand over without a jump */
-    (function wait(){var tf=th.style.transform||getComputedStyle(th).transform;if(tf!==tf0||performance.now()-t0>400){snap(d.t-(n-d.cur)*d.step);return;}requestAnimationFrame(wait);})();};
-  document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;if(d.mv){d.el.classList.remove('wf-segdrag');d.th.style.translate='';}}},true);
+    (function wait(){var tf=th.style.transform+'|'+th.style.width;if(tf!==tf0||performance.now()-t0>400){requestAnimationFrame(snap);return;}requestAnimationFrame(wait);})();};
+  document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;d.el.classList.remove('wf-seggrab','wf-segdrag');d.th.style.translate='';}},true);
   /* the browser's own click after a drag is not a choice: only the drag's snap chooses */
   document.addEventListener('click',function(e){if(mute&&Date.now()-mute<350&&e.target&&e.target.closest&&e.target.closest('.wf-seg')){e.stopPropagation();e.preventDefault();}},true);
 })();
