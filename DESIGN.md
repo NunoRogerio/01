@@ -2213,4 +2213,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Decisions surface corners (Oct 17, 14:07):** the same as the confirmation panels: 8px from the screen's sides and foot, 48px corners; the three buttons inside 32px corners (concentric: 48 less the 16px padding).
 - **Decisions open from their surface (Oct 17, 14:34):** a tap on any of the three decisions fades all three; the surface under them hands its glass to the confirmation panel, which grows out of it (clip from the surface's shape, 48px corners) and folds back into it on Cancel.
 - **Grow and fold (Oct 17, 15:20):** the panel's stripe band rides its growing (and folding) top edge, never hidden; faster: grow 0.38 s (confirmations 0.34 s), fold 0.45 s (confirmations 0.38 s).
-- **Shadows (Oct 17, 15:22):** the confirmation panels and the decisions' surface carry the app's drop shadow (0 0 24px, black at 16
+- **Shadows (Oct 17, 15:22):** the confirmation panels and the decisions' surface carry the app's drop shadow (0 0 24px, black at 16 percent); a panel is unclipped once open so its clip never cuts the shadow.
