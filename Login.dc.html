@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792254844"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792256193"></script>
 <script src="avatar.js?v=1791872737"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="menu.js?v=1792247781"></script>
@@ -66,7 +66,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
   <!-- The free space sits between the logo group and the fields: a chosen profile card grows upward into it, so the logo and Log in never move -->
   <div aria-hidden="true" style="flex: 1 1 0; min-height: 0"></div>
   <form onSubmit="{{noSubmit}}" style="position: relative; z-index: 1; display: flex; flex-direction: column; flex-shrink: 0; margin: 0">
-    <div style="display: flex; flex-direction: column; border-radius: 14px; background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
+    <div style="display: flex; flex-direction: column; border-radius: var(--wf-r, 16px); background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 0 0.5px rgba(255,255,255,0.5) inset">
       <div style="position: relative; display: flex; flex-direction: column; padding: 0 16px">
         <span id="userLbl" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Username</span>
         <!-- The chosen profile shows as its mini card right in the Username field (tap it to choose another) -->
@@ -131,7 +131,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
     <!-- (Oct 5, 02:40) Create profile stays fixed at the top; only the profiles scroll under it -->
     <div style="display: flex; flex-direction: column; flex-shrink: 0; padding: 8px 16px 0">
       <!-- First, above the list: create a profile of your own (kept on this phone). (Oct 5, 09:02) the app's one "add" word: a bare row (no card background, so it reads differently from the cards) with the grey 56px + tile, label and description, as Add resources and Add data source -->
-      <button type="button" class="opt" onClick="{{cp.open}}" aria-label="Create profile" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: transparent; box-shadow: none; font: inherit; color: #000000; text-align: left; cursor: pointer">
+      <button type="button" class="opt" onClick="{{cp.open}}" aria-label="Create profile" style="display: flex; align-items: center; gap: 16px; flex-shrink: 0; min-height: 80px; padding: 16px; box-sizing: border-box; border: 0; border-radius: var(--wf-r, 16px); background: transparent; box-shadow: none; font: inherit; color: #000000; text-align: left; cursor: pointer">
         <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; flex-shrink: 0; border-radius: 8px; background: rgba(118,118,128,0.12); color: #3C3C43"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>
         <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
           <span style="font-size: 17px; font-weight: 600; line-height: 22px">Create profile</span>
@@ -142,7 +142,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
     <div role="listbox" aria-label="Profiles" style="display: flex; flex-direction: column; gap: 16px; flex-grow: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; position: relative; padding: 8px 16px {{padB}}px; clip-path: inset(6px 0 0 0); opacity: {{pOp}}; transform: translateY({{pY2}}); transition: opacity .35s ease {{pDelay2}}, transform .55s cubic-bezier(.2,.8,.2,1) {{pDelay2}}">
 
       <sc-for list="{{profiles}}" as="p" hint-placeholder-count="4">
-        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" onPointerDown="{{p.down}}" onPointerMove="{{p.move}}" onPointerUp="{{p.up}}" onPointerCancel="{{p.up}}" onContextMenu="{{p.noMenu}}" aria-label="{{p.aria}}" style="position: relative; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: pan-y; display: flex; flex-direction: column; gap: 32px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: 16px; overflow: hidden; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
+        <button type="button" class="opt" role="option" aria-selected="{{p.selStr}}" onClick="{{p.pick}}" onPointerDown="{{p.down}}" onPointerMove="{{p.move}}" onPointerUp="{{p.up}}" onPointerCancel="{{p.up}}" onContextMenu="{{p.noMenu}}" aria-label="{{p.aria}}" style="position: relative; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; touch-action: pan-y; display: flex; flex-direction: column; gap: 32px; flex-shrink: 0; padding: 16px; border: 2px solid {{p.ring}}; border-radius: var(--wf-r, 16px); overflow: hidden; background: #FFFFFF; font: inherit; color: #000000; text-align: left; cursor: pointer">
           <!-- (Oct 6) the role first, as the card's qualifier band (edge to edge, square corners): its rank marks (three for the
                administrator, two for a team coordinator, one for a firefighter) and its name, so the hierarchy reads at a glance -->
           <span style="display: flex; align-items: center; gap: 8px; align-self: stretch; min-height: 44px; margin: -16px -16px -16px; padding: 0 16px; background: #E5E5EA; color: #000000; font-size: 17px; font-weight: 600; line-height: 22px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{p.rkIcD}}; flex-shrink: 0"><path d="{{p.rkIc}}"></path></svg>{{p.rk}}</span>
@@ -192,14 +192,14 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
         </div>
       </div>
       <!-- The texts: write the idea, and on Enter (or leaving the field) the app offers to polish it -->
-      <div style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF">
+      <div style="display: flex; flex-direction: column; border-radius: var(--wf-r, 16px); background: #FFFFFF">
         <sc-for list="{{cp.fields}}" as="f" hint-placeholder-count="4">
           <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 16px; border-top: {{f.sep}}">
             <span style="font-size: 15px; line-height: 20px; color: #545458">{{f.label}}</span>
             <sc-if value="{{f.line}}" hint-placeholder-val="{{ true }}"><input type="text" value="{{f.v}}" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" autocomplete="off" aria-label="{{f.label}}" style="min-width: 0; height: 30px; padding: 0; border: 0; outline: 0; background: transparent; font: inherit; font-size: 17px; color: #000000"></sc-if>
             <sc-if value="{{f.area}}" hint-placeholder-val="{{ false }}"><textarea rows="4" onInput="{{f.onInput}}" onKeyDown="{{f.onKey}}" onBlur="{{f.onBlur}}" placeholder="{{f.ph}}" enterkeyhint="done" aria-label="{{f.label}}" value="{{f.v}}" style="min-width: 0; padding: 4px 0 0; border: 0; outline: 0; background: transparent; resize: none; font: inherit; font-size: 17px; line-height: 22px; color: #000000"></textarea></sc-if>
             <!-- The offer: polish this text? Yes rewrites it (Claude with a key saved in Chat settings, else a tidy of spelling and punctuation); Undo brings yours back -->
-            <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: 12px; background: rgba(118, 118, 128, 0.14)">
+            <div style="display: {{f.askD}}; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 16px; border-radius: var(--wf-r, 16px); background: rgba(118, 118, 128, 0.14)">
               <span style="flex-grow: 1; min-width: 0; font-size: 16px; line-height: 20px; color: #1C1C1E">{{f.askTxt}}</span>
               <button type="button" class="btn wf-sec" onClick="{{f.no}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: rgb(99, 99, 102); color: rgb(255, 255, 255); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.noLbl}}</button>
               <button type="button" class="btn primary" onClick="{{f.yes}}" style="display: {{f.btnD}}; align-items: center; height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 15px; font-weight: 600; cursor: pointer">{{f.yesLbl}}</button>
@@ -300,7 +300,7 @@ class Component extends DCLogic {
   fieldClip() {
     try { const f = document.querySelector('#dc-root form'), r = document.querySelector('#dc-root [role=dialog]'); if (!f || !r) return null;
       const H = r.offsetHeight, W = r.offsetWidth, t = f.offsetTop, fb = f.firstElementChild ? f.firstElementChild.offsetHeight : 120;
-      return 'inset(' + t + 'px ' + 16 + 'px ' + Math.max(0, H - t - fb) + 'px ' + 16 + 'px round 14px)'; } catch (e) { return null; }
+      return 'inset(' + t + 'px ' + 16 + 'px ' + Math.max(0, H - t - fb) + 'px ' + 16 + 'px round var(--wf-r, 16px))'; } catch (e) { return null; }
   }
   // (Oct 5, 02:36) Slide reveal, as everywhere a screen opens the next one: the login screen (photo included) slides away to
   // the left at full opacity, uncovering the profile picker already in place underneath; closing slides it back over it.
