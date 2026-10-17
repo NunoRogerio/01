@@ -341,7 +341,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
         <!-- (Oct 17, 17:23) counts only, no markers: the two lines aligned left between them, the block centred in the panel -->
         <span style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
           <span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap; font-variant-numeric: tabular-nums; color: {{barC}}">{{barTitle}}</span>
-          <span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap; font-variant-numeric: tabular-nums; color: {{barC}}">{{barSub}}</span>
+          <span style="font-size: 17px; font-weight: 600; line-height: 22px; white-space: nowrap; font-variant-numeric: tabular-nums; color: {{barC2}}">{{barSub}}</span>
         </span>
       </button>
       <!-- Quick tour: a helicopter with "Tour" under it, bottom right of the bottom blade, level with the blade's title -->
@@ -2086,7 +2086,7 @@ class Component extends DCLogic {
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
       liTop: L.side ? 88 : ((window.__wfTOP === 0 ? 60 : 52) + 16) /* the open list rises to 16px under the status bar */, barHNow: listOpen ? 24 : L.barH, barOp: listOpen ? 0 : 1 /* open, the summary under the list goes: the list takes its room */, listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? (this.wfDrag('li').y ? this.wfDrag('li').y + 'px' : '0px') : Math.max(0, L.vh - (L.side ? 88 : ((window.__wfTOP === 0 ? 60 : 52) + 16)) - L.barH) + 'px', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,
       toggleList: () => { if (Date.now() - (this._pulled || 0) < 450) return; this.wfListFlag(false); this.setState({ list: !listOpen }); },
-      barTitle: N + ' candidate' + (N === 1 ? '' : 's'), barC: '#000000', barSub: FIRES.length + ' fire' + (FIRES.length === 1 ? '' : 's'),   /* (Oct 4) counts always, 0 included; (Oct 17) the same counts and words as the incidents list it opens */
+      barTitle: N + ' candidate' + (N === 1 ? '' : 's'), barC: N ? '#000000' : 'rgb(110, 110, 115)', barC2: FIRES.length ? '#000000' : 'rgb(110, 110, 115)',   /* (Oct 17, 20:49) a zero count reads in mid grey */ barSub: FIRES.length + ' fire' + (FIRES.length === 1 ? '' : 's'),   /* (Oct 4) counts always, 0 included; (Oct 17) the same counts and words as the incidents list it opens */
       headY: listOpen ? '0px' : '16px', headDelay: listOpen ? ((N * 40) + 40) + 'ms' : '0ms',
       cardOp: listOpen ? 0 : 1, cardPE: listOpen ? 'none' : 'auto', cardTf: listOpen ? 'scale(0.96)' : 'none', noAlerts: N <= 0, alertLabel: N > 0 ? 'Alerts, ' + N + ' active' : 'Alerts',
       underSrc: this.wfUnder(), underD: this.wfUnder() ? 'block' : 'none', showMap: !this.wfUnder(),
