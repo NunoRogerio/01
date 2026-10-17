@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792267002"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792256193"></script>
+<script src="prefs.js?v=1792267218"></script>
 <script src="station.js?v=1792256193"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -1429,6 +1429,10 @@ class Component extends DCLogic {
     // Remember the view right away: touch events can arrive faster than the screen updates, and each pinch step
     // must build on the last one (not on a view that has not been drawn yet), so the zoom follows the fingers smoothly.
     const v = this.clampView(cx, cy, s); this._pv = Object.assign({}, this._pv || {}, v);
+    /* (Oct 17, 20:58) while a map moves (drag, pinch, glide, flight) the glass stops blurring: every blurred panel over a moving map was
+       re-blurred each frame and the map stuttered and lost its glide; the blur comes back 200 ms after it stops */
+    try { const docs = []; let w0 = window; for (let i = 0; i < 4 && w0; i++) { docs.push(w0.document.documentElement); if (w0 === w0.parent) break; w0 = w0.parent; }
+      docs.forEach((h) => { if (!h.classList.contains('wf-mapmove')) h.classList.add('wf-mapmove'); }); clearTimeout(window.__wfMvT); window.__wfMvT = setTimeout(() => docs.forEach((h) => h.classList.remove('wf-mapmove')), 200); } catch (x) {}
     // One redraw per screen frame: touch events arrive faster than the phone draws (120 Hz screens send even more),
     // so moves in between only update the remembered view and the next frame draws the latest one
     this._pvNext = v; if (!this._pvRaf) this._pvRaf = requestAnimationFrame(() => { this._pvRaf = 0; const n = this._pvNext; this._pvNext = null; if (!n) return;
