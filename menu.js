@@ -6,7 +6,7 @@
 (function () {
   if (window.top !== window || /Main\.dc\.html/.test(location.pathname)) return;
   var DUR = 350,   /* (Oct 9, 18:27) as quick as the other sliding panels (was 530) */ BD = 247,   // the screen's slide, 40% faster (Oct 3, 21:44); the button's move stays as locked
-      EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 12px rgba(0,0,0,0.08)';
+      EASE = 'cubic-bezier(.37,0,.63,1)', MW = 564, SH = '0 0 16px rgba(0,0,0,0.16)';
   var mode = '', ifr = null, ready = false, btn = null, want = null;
   var css = document.createElement('style');
   css.textContent = 'html.wf-menujs [data-wf-burger]:not(.wf-mb){visibility:hidden!important}' +   /* (Oct 9, 17:15) the floating button is the one that shows, menu open or not */   /* (Oct 9, 15:42) while the menu shows, the screen's own menu button stays put in its header and the column covers it */

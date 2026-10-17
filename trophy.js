@@ -52,18 +52,18 @@
     /* (Oct 5, 16:51) the crests sit 16px under the pagination dots (12px + 8px dots + 16px = 36px from the top) and are 48px (was 60px) */
     '.dots{display:none!important}' +   /* (Oct 9) no pagination dots on the trophy: the photos still cycle and swipe */
     
-    '.bd img{display:block;box-sizing:border-box;width:min(48px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:48px;object-fit:contain;background:none;filter:drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
+    '.bd img{display:block;box-sizing:border-box;width:min(48px,calc((100% - (var(--pr) - 1) * 8px) / var(--pr)));aspect-ratio:1;max-width:48px;object-fit:contain;background:none;filter:drop-shadow(0 0 16px rgba(0,0,0,0.16))}' +
     '.kicker:empty{display:none}.kicker{font-size:16px;line-height:18px;font-weight:600;color:rgba(255,255,255,.9);text-shadow:0 0 8px rgba(0,0,0,.5)}' +
     '.headline{font-size:26px;font-weight:700;line-height:30px;letter-spacing:.01em;color:#FFFFFF;text-shadow:0 0 12px rgba(0,0,0,.45)}' +
     '.fire{font-size:20px;font-weight:700;line-height:24px;color:#FFFFFF;text-wrap:balance;text-shadow:0 0 10px rgba(0,0,0,.5)}' +
     '.meta{font-size:16px;line-height:20px;color:#FFFFFF;text-shadow:0 0 8px rgba(0,0,0,.5)}' +
-    '.size{align-self:flex-start;padding:4px 16px;border-radius:8px;background:rgba(242,242,247,.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:16px;line-height:20px;font-weight:600}' +
+    '.size{align-self:flex-start;padding:4px 16px;border-radius:8px;background:rgba(255, 255, 255, 0.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);color:#1C1C1E;font-size:16px;line-height:20px;font-weight:600}' +
     '.act{display:flex;align-items:center;justify-content:center;align-self:stretch;height:48px;margin-top:12px;border-radius:999px;background:var(--wf-pri-bg,#3A3A3C);color:var(--wf-pri-fg,#FFFFFF);font-size:18px;font-weight:600}' +
     '.credit{margin-top:4px;font-size:12px;line-height:14px;color:rgba(255,255,255,.78);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
     '.st{position:absolute;left:0;right:0;bottom:0;height:8px;background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.6}' +
     /* (Oct 5, 16:58, Susana's idea) the crest of the station whose photo comes in swells once and settles, so each photo names its station */
     /* (Oct 5, 17:06 and 17:12, Susana) the crests rest at 60% and 5% darker; the one of the photo on screen at 100%, the change done as the pulse peaks (0.28 s) */
-    '.bd img{opacity:.6;filter:brightness(.95) drop-shadow(0 0 8px rgba(0,0,0,.45));transition:opacity .2s ease .08s,filter .2s ease .08s}.bd img.on{opacity:1;filter:brightness(1) drop-shadow(0 0 8px rgba(0,0,0,.45))}' +
+    '.bd img{opacity:.6;filter:brightness(.95) drop-shadow(0 0 16px rgba(0,0,0,0.16));transition:opacity .2s ease .08s,filter .2s ease .08s}.bd img.on{opacity:1;filter:brightness(1) drop-shadow(0 0 16px rgba(0,0,0,0.16))}' +
     '.bd img.pop{animation:pop .7s cubic-bezier(.3,0,.3,1)}@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}' +
     '[hidden]{display:none!important}' +
     '@media (prefers-reduced-motion:reduce){.tk.go{transition:none}.bd img.pop{animation:none}}';
