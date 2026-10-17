@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792249995"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792251149"></script>
+<script src="prefs.js?v=1792251545"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -226,7 +226,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
 
   <!-- (Oct 16, 15:52) the top card sits where the incident header sits. (Oct 17, 15:44) Its glass reaches 8px from the screen's top and sides with 48px corners, as the bottom panels; its content stays put -->
   <div style="position: relative; z-index: 2; margin-top: 16px; transform: translateY({{topY}}); opacity: {{topOp}}; pointer-events: {{topPE}}; transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .35s ease">
-  <!-- (Oct 16, 12:45) the top blade is a floating glass panel, as the incident header: 16px from the sides, just under the status bar, 24px corners, the decisions' glass and the tooltips' shadow (no stripes) --><span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: calc({{padLn}}px + 8px); right: 8px; top: -64px; bottom: 0; z-index: -1; overflow: hidden; background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); border-radius: 48px; box-shadow: 0 0 16px rgba(0,0,0,0.16)"></span>
+  <!-- (Oct 17, 16:36) in a browser tab (the bar above is the browser's, the map cannot reach under it) the glass starts 8px under the visible top, all four corners round, as the bottom panel; installed under the status bar it still starts 8px from the screen's top -->
+  <!-- (Oct 16, 12:45) the top blade is a floating glass panel, as the incident header: 16px from the sides, just under the status bar, 24px corners, the decisions' glass and the tooltips' shadow (no stripes) --><span aria-hidden="true" data-wf-topbg="1" style="position: absolute; left: calc({{padLn}}px + 8px); right: 8px; top: calc(var(--wf-top, 0px) - 64px); bottom: 0; z-index: -1; overflow: hidden; background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); border-radius: 48px; box-shadow: 0 0 16px rgba(0,0,0,0.16)"></span>
   <!-- Top blade: the area on the left, the profile photo on the right (opens preferences);
        a grabber at its bottom edge says it expands -->
   <!-- 21px from the subtitle to the grabber, the same as from the bottom blade's grabber to its first line (was 36px) -->
@@ -1069,7 +1070,7 @@ class Component extends DCLogic {
   }
   // The top blade's real height (it grows with its header: larger text, longer names, a resized screen); the panels that
   // fold into it (area picker, search) and the map's top edge follow it instead of a fixed 163px
-  wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round(e.offsetHeight); if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
+  wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round(e.offsetHeight) + (window.__wfTOP || 0) /* (Oct 17, 16:36) the glass now starts under the browser's bar: its height as before for the map and panels below */; if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
     [0, 300, 1200].forEach((t) => setTimeout(m, t)); try { if (window.ResizeObserver) { const e = document.querySelector('[data-wf-topbg]'); if (e) new ResizeObserver(m).observe(e); else setTimeout(() => this.wfTopWatch(), 400); } } catch (x) {} window.addEventListener('resize', m); }
   // Find a place: the part of the panel the keyboard hides and the height of the note above, so the watermark sits in the
   // middle of what is actually free (in design px: the screen is scaled to the phone)
