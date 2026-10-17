@@ -46,8 +46,7 @@ body{margin:0}
 /* iOS layer */
 .mbtn:hover{background-color:rgba(118,118,128,.12)}
 .mbtn:active{opacity:.6}
-/* Street tiles fade a little into the app's grey, so fires, candidates and stations stand out */
-image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
+/* (Oct 17, 10:01) street tiles at full strength: no fade into the grey (it read as a light veil, e.g. over Portugal); only the markers sit on the map */
 /* Map markers (fires, candidates, stations, units, pins) at 72% opacity; their tooltip panels stay fully opaque */
 .tipwrap svg,.fzone>svg{opacity:.72}.tipwrap [role=tooltip] svg{opacity:1}
 /* Marker fills (the coloured body) 10 points more transparent than the marker (72% -> 62%); outlines stay at 72% */
@@ -101,8 +100,7 @@ image[href*="api.maptiler.com"],image[href*="tile.openstreetmap"]{opacity:.72}
     </g></svg>
     <svg data-wf-ovl="1" width="1000" height="1000" viewBox="0 0 1000 1000" aria-hidden="true" style="position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none"><g transform="translate({{tx}} {{ty}}) scale({{s}})">
       <!-- (Oct 7) the station's area (captain and team lead maps): a subtle thin outline, no fill -->
-<path d="{{batAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-            <path d="{{stAreaD}}" fill="none" stroke="var(--wf-ink2, #3A3A3C)" stroke-opacity="0.55" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+<!-- (Oct 17, 10:01) no station or battalion area outlines: nothing over the map but its markers -->
       <!-- (Oct 16) water is not fuel: every fire shape (outline, spread, projections) is masked by the water around the incident (OpenStreetMap lakes and the sea), so it stops at the shore -->
       <defs><mask id="{{wm.id}}" maskUnits="userSpaceOnUse" x="-3000000" y="-3000000" width="6000000" height="6000000"><rect x="-3000000" y="-3000000" width="6000000" height="6000000" fill="#FFFFFF"></rect><path d="{{wm.lakes}}" fill="#000000" fill-rule="evenodd"></path><path d="{{wm.sea}}" fill="#000000" shape-rendering="crispEdges"></path></mask></defs>
       <g mask="{{wm.url}}">
@@ -1706,7 +1704,7 @@ class Component extends DCLogic {
         const VEC = { bg: '#E3EEDF', sel: '#E3EEDF', img: false, reg: '', loc: '', forestOp: 0.6, ocean: '#A3D6F3', lakes: '#A3D6F3', county: 'rgba(120,130,120,0.55)', state: '#7D8490', coast: '#8CC7EA', roads: '#A9B9DA', roadCase: '#FFFFFF', mask: '#FFFFFF', maskOp: 0.4 };
         const PAL = {
           standard: window.__wfLiveMap
-            ? { ...VEC, name: window.__wfTiles ? window.__wfTiles.credit() : 'Map © OpenStreetMap', img: true, bg: '#F2F2F7', sel: 'none', forestOp: 0, ocean: 'none', lakes: 'none', coast: 'none', roads: 'none', roadCase: 'none', maskOp: 0.35 }
+            ? { ...VEC, name: window.__wfTiles ? window.__wfTiles.credit() : 'Map © OpenStreetMap', img: true, bg: '#F2F2F7', sel: 'none', forestOp: 0, ocean: 'none', lakes: 'none', coast: 'none', roads: 'none', roadCase: 'none', county: 'none', state: 'none', maskOp: 0 }   /* (Oct 17, 10:01) over the street tiles nothing is drawn: no county or state lines */
             : { ...VEC, name: 'Vector map · street map unavailable here' },
           vector: { ...VEC, name: 'Vector map' },
         };
@@ -2100,8 +2098,7 @@ class Component extends DCLogic {
       const GR = window.__wfGovReq || {}; (OUT.fireMarks || []).forEach((m) => { m.aidD = m.flameD === 'block' && m._g && (aidAt(m._g.x, m._g.y) || GR[String(m._g.id)]) ? 'block' : 'none'; });   /* (Oct 11, 20:50) the government's map: a fire whose request waits for it carries the outer ring */
       (OUT.ignMarks || []).forEach((m) => { const g = IX[m._id]; m.aidD = g && (aidAt(g.x, g.y) || GR[String(m._id)]) ? 'block' : 'none'; m.aidR = +(8.47 + (m.bdW || 5.2) * 0.77 / 2 + 4).toFixed(1); });
       /* (Oct 11, 19:40) a crew's map (Captain, Engineer, Firefighter): its own station's area, and the battalion around it as a fainter dashed outline */
-      OUT.batAreaD = (P0.area === true || P0.area === 'true') && mine && mine.rank !== 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : '';
-      OUT.stAreaD = P0.area === true || P0.area === 'true' ? (mine && mine.rank === 'bc' && window.__wfBattalionAreaPath ? window.__wfBattalionAreaPath(mine.station) : mine && window.__wfStationAreaPath ? window.__wfStationAreaPath(mine.station) : '') : ''; }   /* (Oct 11, 19:10) the Battalion Chief's map: his battalion's area (the Comandante's: the brigade's municipality) */
+      OUT.batAreaD = ''; OUT.stAreaD = '';   /* (Oct 17, 10:01) no area outlines on any map */
     (OUT.stations || []).forEach((m, i) => { m.aT = m.aT || ''; m.aN = m.aN || ''; m.aD = m.aT ? 'block' : 'none'; const k = m._st ? m._st.id : m.tt, o = on('st', k); m.sel = sel('st', k); m.selF = o ? 'url(#wfSelRing)' : 'none'; m.bdC = 'none'; m.bdW = o ? 9.6 : 0; m.mask = o ? 'url(#wfStM)' : 'none'; /* like candidates: the 2px outline grows to 4px outside, same dark grey */ });
     /* (Oct 14, 08:41) a detection's marker: the civil (FFW) ones on the civil green, as their cards and tooltip panel; selected, its outline dark grey and 2px */
     (OUT.camMarks || []).forEach((m, i) => { const o = on('cam', i), cv = !!(m.info && m.info.civ); m.sel = sel('cam', i); m.bg = cv ? 'rgb(0, 122, 255)' : 'rgb(106, 106, 110)';   /* (Oct 16, 23:05) the firefighters' own systems in the Cancel button's grey (was black) */   /* (Oct 16) dots: civil blue, firefighter systems black */   /* (Oct 14, 17:40) solid, no backdrop blur: Safari draws a blurred backdrop a beat behind a moving layer, so the detection markers floated loose while the map panned */ m.bd = o ? '0 0 0 4px rgb(255, 255, 255), 0 0 24px rgba(0, 0, 0, 0.16)' : '0 0 2px rgba(0, 0, 0, 0.25)';   /* selected: the white 4px ring and the tooltip's shadow, as every selected marker */ });
