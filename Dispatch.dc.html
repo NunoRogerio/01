@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792186750"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792186750"></script>
+<script src="prefs.js?v=1792211942"></script>
 <script src="station.js?v=1792067104"></script>
 <script src="i18n.js?v=1792132274"></script>
 <script src="live.js?v=1792173262"></script>
@@ -91,20 +91,21 @@
 .wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important}
 .wf-seg.wf-seg-glass[aria-label="Projection"]>.segthumb{left:4px!important;top:4px!important;bottom:4px!important}
 /* (Oct 16, 21:54) a decision panel keeps the glass of the button it grows out of: the dark glass, its text light, its buttons in the dark-surface formula */
-.wf-iapanel.wf-iadark{background:rgba(28, 28, 30, 0.78)!important;--wf-pri-bg:#E5E5EA;--wf-pri-fg:#1C1C1E;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5)}
-.wf-iadark [style*="color: rgb(0, 0, 0)"],.wf-iadark h2{color:rgb(242, 242, 247)!important}
-.wf-iadark [style*="color: rgb(60, 60, 67)"]{color:rgba(235, 235, 245, 0.8)!important}
-.wf-iadark [style*="color: rgb(110, 110, 115)"]{color:rgba(235, 235, 245, 0.62)!important}
-.wf-iadark ul[style*="background: rgb(255, 255, 255)"]{background:rgba(255, 255, 255, 0.1)!important}
-.wf-iadark li{border-color:rgba(255, 255, 255, 0.12)!important}
-.wf-iadark li span[style*="color: rgb(58, 58, 60)"]{background:rgba(255, 255, 255, 0.12)!important;color:rgb(235, 235, 245)!important}
-.wf-iapanel.wf-iadark .wf-note{color:rgba(235, 235, 245, 0.62)!important;font-size:16px!important;line-height:20px!important}   /* (Oct 16, 22:24) the footnote as the units' own second line, light on the dark glass */
+/* (Oct 17, 05:38) light mode: the decision panels keep the white glass of the buttons they grow out of (the .wf-gpanel glass, dark text, the theme's buttons); the dark glass below now only in dark mode */
+html.wf-dark .wf-iapanel.wf-iadark{background:rgba(28, 28, 30, 0.78)!important;--wf-pri-bg:#E5E5EA;--wf-pri-fg:#1C1C1E;--wf-sec-bg:#6A6A6E;--wf-sec-fg:#F2F2F7;--wf-dis-bg:rgba(106,106,110,0.45);--wf-dis-fg:rgba(242,242,247,0.5)}
+html.wf-dark .wf-iadark [style*="color: rgb(0, 0, 0)"],html.wf-dark .wf-iadark h2{color:rgb(242, 242, 247)!important}
+html.wf-dark .wf-iadark [style*="color: rgb(60, 60, 67)"]{color:rgba(235, 235, 245, 0.8)!important}
+html.wf-dark .wf-iadark [style*="color: rgb(110, 110, 115)"]{color:rgba(235, 235, 245, 0.62)!important}
+html.wf-dark .wf-iadark ul[style*="background: rgb(255, 255, 255)"]{background:rgba(255, 255, 255, 0.1)!important}
+html.wf-dark .wf-iadark li{border-color:rgba(255, 255, 255, 0.12)!important}
+html.wf-dark .wf-iadark li span[style*="color: rgb(58, 58, 60)"]{background:rgba(255, 255, 255, 0.12)!important;color:rgb(235, 235, 245)!important}
+.wf-iapanel.wf-iadark .wf-note{font-size:16px!important;line-height:20px!important}html.wf-dark .wf-iapanel.wf-iadark .wf-note{color:rgba(235, 235, 245, 0.62)!important}   /* (Oct 16, 22:24) the footnote as the units' own second line, light on the dark glass */
 .wf-iadark li > span:first-child,.wf-iadark li > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li > span:nth-child(2) > span:last-child{transition:opacity .2s ease}
 .wf-iadark li:has(.wf-tog[aria-checked=false]) > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:first-child > span:first-child,.wf-iadark li:has(.wf-tog[aria-checked=false]) > span:nth-child(2) > span:last-child{opacity:.4}   /* (Oct 16, 22:24) a unit switched off dims: its icon (and its circle), name and line */
 html:root .wf-iapanel.wf-iadark .wf-tog.wf-tog[aria-checked=false]{background:var(--wf-sec-bg)!important;box-shadow:none!important}   /* (Oct 16, 22:26) off: the Cancel button's grey */
 .wf-iadark .btn.primary.wf-okgo:not([aria-disabled="true"]){background:rgb(52, 199, 89)!important;color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important}   /* (Oct 16, 22:28) Dispatch in the switches' green, dark text for contrast */
 html:root .wf-iapanel.wf-iadark .wf-tog.wf-tog[aria-checked=true]{background:rgb(52, 199, 89)!important;box-shadow:none!important}   /* (Oct 16, 23:01) stronger than the theme's own switch colours (dark mode painted the off track darker than Cancel) */   /* (Oct 16, 22:04) a unit switched on: green; off keeps the grey */
-.wf-iadark [role="button"][data-grab-close] span{background:rgba(235, 235, 245, 0.3)!important}
+html.wf-dark .wf-iadark [role="button"][data-grab-close] span{background:rgba(235, 235, 245, 0.3)!important}
 /* (Oct 16, 21:45, trial) the incident map's controls (drone, helmet camera, re-centre, full screen) as white glass buttons with the cards' drop shadow, dark icons */
 [data-wf-band] div[data-wf-ovl][data-wf-keepsp][style*="z-index: 51"] button{background:rgba(255, 255, 255, 0.62)!important;color:#1C1C1E!important;-webkit-backdrop-filter:blur(16px) saturate(180%)!important;backdrop-filter:blur(16px) saturate(180%)!important;box-shadow:0 0 24px rgba(0,0,0,0.16)!important}
 html.wf-dark [data-wf-band] div[data-wf-ovl][data-wf-keepsp][style*="z-index: 51"] button{background:rgba(44, 44, 46, 0.62)!important;color:#F2F2F7!important}
