@@ -1631,7 +1631,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 // option (0.18 s, eases in and stays: no bounce, no second grow), and only then shrinks back to rest, choosing it with that option's own tap, so every switcher keeps its own behaviour. The thumb is
 // moved with the CSS translate property, on top of the transform the screen sets, so a re-render never fights the finger.
 (function(){
-  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb>.segblob{transition:inset .18s ease-out}.wf-seggrab>.segthumb>.segblob{inset:-4px 0!important}.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .18s cubic-bezier(.2,0,0,1)!important}html .wf-seg.wf-seglive .segopt{transition:color .12s ease}html .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important;font-weight:400}html.wf-dark .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}html .wf-seg.wf-seglive .segopt.wf-seghot{color:var(--wf-pri-fg, #FFFFFF)!important;-webkit-text-fill-color:var(--wf-pri-fg, #FFFFFF)!important;font-weight:600}';(document.head||document.documentElement).appendChild(css);
+  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb>.segblob{transition:inset .18s ease-out}.wf-seggrab>.segthumb>.segblob{inset:-4px 0!important}.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb,.wf-segland>.segthumb{transition:none!important}html .wf-seg.wf-seglive .segopt{transition:color .12s ease}html .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important;font-weight:400}html.wf-dark .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}html .wf-seg.wf-seglive .segopt.wf-seghot{color:var(--wf-pri-fg, #FFFFFF)!important;-webkit-text-fill-color:var(--wf-pri-fg, #FFFFFF)!important;font-weight:600}';(document.head||document.documentElement).appendChild(css);
   var D=null,mute=0;
   var opts=function(el){return [].slice.call(el.querySelectorAll('.segopt')).filter(function(o){return o.offsetWidth>0;});};
   var hot=function(d,n){d.O.forEach(function(o,i){o.classList.toggle('wf-seghot',i===n);});};
@@ -1645,12 +1645,19 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
   document.addEventListener('touchmove',function(e){if(D)e.preventDefault();},{capture:true,passive:false});
   document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<4)return;D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag','wf-seglive');hot(D,D.cur);}
     e.preventDefault();e.stopPropagation();var lo=D.C[0]-D.c0,hi=D.C[D.C.length-1]-D.c0;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=near(D,D.c0+D.t);if(n!==D.last){D.last=n;hot(D,n);try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
+  /* the thumb is held by a style sheet (transform off, its own translate), so the screen's re-render after the choice can never move it */
+  var HS=document.createElement('style');(document.head||document.documentElement).appendChild(HS);
+  var holdAt=function(x,glide){HS.textContent='.wf-seghold>.segthumb{transform:none!important;translate:'+x.toFixed(1)+'px 0!important;transition:'+(glide?'translate .18s cubic-bezier(.2,0,0,1)':'none')+'!important}';};
   var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;if(!d.mv){d.el.classList.remove('wf-seggrab');return;}if(e){e.stopPropagation();}mute=Date.now();
-    var n=near(d,d.c0+d.t),el=d.el,th=d.th,want=d.l0+d.t,tf0=th.style.transform+'|'+th.style.width,t0=performance.now();
+    var n=near(d,d.c0+d.t),el=d.el,th=d.th,want=d.l0+d.t,t0=performance.now();
     try{if(navigator.vibrate)navigator.vibrate(14);}catch(x){}
-    /* hand the thumb over without a jump: measure where the screen put it, start the snap from where the finger left it */
-    var snap=function(){th.style.translate='0px 0';var nl=th.getBoundingClientRect().left,rest=want-nl;th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap','wf-seggrab','wf-seglive');th.style.translate='';d.O.forEach(function(o){o.classList.remove('wf-seghot');});th.__wfSegQuiet=false;},190);});};
-    if(n===d.cur){snap();return;}
+    /* freeze the thumb exactly where the finger left it */
+    holdAt(0,false);th.style.translate='';el.classList.add('wf-seghold');var x0=want-th.getBoundingClientRect().left;holdAt(x0,false);el.classList.remove('wf-segdrag');
+    var tf0=th.style.transform+'|'+th.style.width;
+    /* glide once to where the screen put it, then hand the thumb back and shrink it to rest */
+    var snap=function(){var cur=th.getBoundingClientRect().left;el.classList.add('wf-segland');el.classList.remove('wf-seghold');var fl=th.getBoundingClientRect().left;el.classList.add('wf-seghold');void th.offsetWidth;el.classList.remove('wf-segland');
+      holdAt(x0+(fl-cur),true);setTimeout(function(){el.classList.add('wf-segland');el.classList.remove('wf-seghold','wf-seggrab','wf-seglive');void th.offsetWidth;requestAnimationFrame(function(){el.classList.remove('wf-segland');});HS.textContent='';d.O.forEach(function(o){o.classList.remove('wf-seghot');});th.__wfSegQuiet=false;},200);};
+    if(n===d.cur){requestAnimationFrame(snap);return;}
     th.__wfSegQuiet=true;mute=0;try{d.O[n].click();}catch(x){}mute=Date.now();
     (function wait(){var tf=th.style.transform+'|'+th.style.width;if(tf!==tf0||performance.now()-t0>400){requestAnimationFrame(snap);return;}requestAnimationFrame(wait);})();};
   document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;d.el.classList.remove('wf-seggrab','wf-segdrag','wf-seglive');d.th.style.translate='';d.O.forEach(function(o){o.classList.remove('wf-seghot');});}},true);

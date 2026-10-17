@@ -114,7 +114,7 @@ The one from the user preferences, used everywhere:
 - **Track:** pill-shaped, 52px tall, 10px inner padding, `rgba(118,118,128,.12)`.
 - **Thumb:** lime pill (`.segthumb > .segblob`). On a new choice it grows 12px (6 above, 6 below), glides to the option and settles on arrival.
 - **Options:** 17px text (`.segopt`), with the selected one in semibold dark.
-- **Drag (every switcher):** pressing the chosen option grows its thumb at once to its full glide size (4px above and below) and it keeps that size through the drag; the label under the thumb turns white (semibold) live, the others go back to dark. On release the thumb glides to the nearest option in 0.18 s and stays there (no bounce, no second grow), then shrinks to its resting size.
+- **Drag (every switcher):** pressing the chosen option grows its thumb at once to its full glide size (4px above and below) and it keeps that size through the drag; the label under the thumb turns white (semibold) live, the others go back to dark. On release the thumb glides to the nearest option in 0.18 s, in one direction only, and stays there (no bounce, no second grow, no flash to the target before the glide), then shrinks to its resting size.
 - **Over a map or photo:** same geometry with a dark translucent track.
 
 ### Lists
