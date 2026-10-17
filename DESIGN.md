@@ -2234,3 +2234,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Decision squares' corners (Oct 17, 17:07):** the same logic as the bottom panel: 16px corners, and only the corners that sit on the phone's round corners take the big 48px: the first visible square's bottom left and the last one's bottom right (a lone square takes both).
 - **Decision squares' gap (Oct 17, 17:12):** 8px between the squares (as their margin to the screen's edges); the squares grow equally to fill the row.
 - **Decision labels (Oct 17, 17:15):** 24px off the square's foot (8px higher).
+- **Screen margin 12px (Oct 17, 17:22):** every fixed panel (main screen top card and bottom panel, incident header), the incident's decision squares, and the bottom dialogs/decision panels sit 12px from the screen's edges (was 8px). The 8px gap between the decision squares stays.
