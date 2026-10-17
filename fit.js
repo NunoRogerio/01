@@ -1622,3 +1622,32 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 })();
 // (Oct 16, 21:25) the incident arrival hint runs once per opening: back on the main screen, the next opening of an incident hints again
 (function(){try{if(/\/Main\.dc\.html$/.test(location.pathname)&&window.top===window)sessionStorage.removeItem('wf-hint-done');}catch(e){}})();
+
+// (Oct 17, 15:23) Every switcher (segmented multi-button, .wf-seg): besides a tap, the chosen option's thumb can be dragged.
+// It starts only when the press lands on the thumb itself (so it is predictable), follows the finger along the track (a haptic tick
+// at each option it passes), and on release snaps firmly to the nearest option (0.16 s ease-out, no bounce) and chooses it with
+// that option's own tap, so every switcher keeps its own behaviour. The thumb is moved with the CSS translate property, on top of the
+// transform the screen sets, so a re-render never fights the finger. Switchers whose options differ in width are tap-only.
+(function(){
+  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .16s cubic-bezier(.2,.9,.1,1)!important}';(document.head||document.documentElement).appendChild(css);
+  var D=null,mute=0;
+  var opts=function(el){return [].slice.call(el.querySelectorAll('.segopt')).filter(function(o){return o.offsetWidth>0;});};
+  document.addEventListener('pointerdown',function(e){try{if(D||(e.button&&e.button!==0))return;var el=e.target&&e.target.closest&&e.target.closest('.wf-seg');if(!el)return;var th=el.querySelector(':scope>.segthumb');if(!th)return;var O=opts(el);if(O.length<2)return;
+    var R=O.map(function(o){return o.getBoundingClientRect();}),w0=R[0].width;for(var i=1;i<R.length;i++){if(Math.abs(R[i].width-w0)>2)return;}
+    var step=(R[R.length-1].left-R[0].left)/(R.length-1);if(!(step>0))return;var tr=th.getBoundingClientRect();if(e.clientX<tr.left-4||e.clientX>tr.right+4||e.clientY<tr.top-8||e.clientY>tr.bottom+8)return;
+    var cur=Math.max(0,Math.min(O.length-1,Math.round((tr.left+tr.width/2-(R[0].left+R[0].width/2))/step)));
+    D={el:el,th:th,O:O,step:step,cur:cur,x0:e.clientX,y0:e.clientY,t:0,last:cur,mv:false,id:e.pointerId};}catch(x){D=null;}},true);
+  document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<6)return;if(Math.abs(e.clientY-D.y0)>Math.abs(dx)){D=null;return;}D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag');}
+    e.preventDefault();e.stopPropagation();var lo=-D.cur*D.step,hi=(D.O.length-1-D.cur)*D.step;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=D.cur+Math.round(D.t/D.step);if(n!==D.last){D.last=n;try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
+  var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;if(!d.mv)return;if(e){e.stopPropagation();}mute=Date.now();
+    var n=Math.max(0,Math.min(d.O.length-1,d.cur+Math.round(d.t/d.step))),el=d.el,th=d.th,tf0=th.style.transform||getComputedStyle(th).transform,t0=performance.now();
+    try{if(navigator.vibrate)navigator.vibrate(14);}catch(x){}
+    var snap=function(rest){th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap');th.style.translate='';},200);});};
+    if(n===d.cur){snap(d.t);return;}
+    mute=0;try{d.O[n].click();}catch(x){}mute=Date.now();
+    /* wait for the screen to move the thumb to its new place (its transform changes), then hand over without a jump */
+    (function wait(){var tf=th.style.transform||getComputedStyle(th).transform;if(tf!==tf0||performance.now()-t0>400){snap(d.t-(n-d.cur)*d.step);return;}requestAnimationFrame(wait);})();};
+  document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;if(d.mv){d.el.classList.remove('wf-segdrag');d.th.style.translate='';}}},true);
+  /* the browser's own click after a drag is not a choice: only the drag's snap chooses */
+  document.addEventListener('click',function(e){if(mute&&Date.now()-mute<350&&e.target&&e.target.closest&&e.target.closest('.wf-seg')){e.stopPropagation();e.preventDefault();}},true);
+})();
