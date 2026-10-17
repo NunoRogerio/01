@@ -2210,3 +2210,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Captain's request (Oct 17, 13:57):** after a smoke check finds fire, his card shows a second white strip with a check under the command line: "Captain … recommends an initial attack". The dark grey Initial attack button left the card; the decisions at the foot send it.
 - **Incident map (Oct 17, 14:04):** no Send drone and no helmet camera buttons on it, band or full screen.
 - **One lifecycle (Oct 17, 14:06):** a candidate whose incident is closed or dismissed (its chat says so) leaves the open candidates everywhere (map, lists, counts); its incident page offers no decision, the foot reads "Incident closed".
+- **Decisions surface corners (Oct 17, 14:07):** the same as the confirmation panels: 8px from the screen's sides and foot, 48px corners; the three buttons inside 32px corners (concentric: 48 less the 16px padding).
