@@ -1582,7 +1582,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       me.retarget=function(to2,cb){var t=performance.now(),p1=localOf(to2),l1=Math.log(to2.s),left=Math.max(0,me.t0+me.ms-t);me.c={t:t,d:Math.max(left,520),dx:p1.x-pg.x,dy:p1.y-pg.y,dl:l1-lg};me.cb=cb;};
       (function step(t){if(fl!==me)return;var k=Math.min(1,(t-t0)/ms),e=ez(k),x=p0.x+(pg.x-p0.x)*e,y=p0.y+(pg.y-p0.y)*e,l=l0+(lg-l0)*e,C=me.c,w=C?sst((t-C.t)/C.d):0;
         if(C){x+=C.dx*w;y+=C.dy*w;l+=C.dl*w;}var v=viewAt(x,y,Math.exp(l));try{MI.setView(v.cx,v.cy,v.s);}catch(z){}
-        if(k<1||(C&&w<1)||!C)requestAnimationFrame(step);if(k>=1&&C&&w>=1){fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(z){}if(me.cb)me.cb();}})(t0);
+        if(k>=1&&!C&&me.end){fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(z){}var e0=me.end;me.end=null;e0();return;}if(k<1||(C&&w<1)||!C)requestAnimationFrame(step);if(k>=1&&C&&w>=1){fl=null;try{clearTimeout(MI._rgT);MI.endGest();}catch(z){}if(me.cb)me.cb();}})(t0);
       return me;};
     // 1. the tooltip fades, the main screen's surfaces leave, the map heads for the incident's framing (last time's, or a fair guess)
     try{document.querySelectorAll('[data-wf-pop]').forEach(function(n){n.animate([{opacity:1},{opacity:0}],{duration:200,easing:'ease-out',fill:'forwards'});});}catch(x){}
@@ -1603,7 +1603,12 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       var rD=topRect(DM),kD=rD.width/(DI.W()||1),vD=DI.view(),Q=kD*vD.s,rM=mapR(),kM2=rM.width/W||1,sM=Q/kM2;
       var cx=vD.cx+((rM.left+kM2*W/2)-(rD.left+kD*DI.W()/2))/Q,cy=vD.cy+((rM.top+kM2*H/2)-(rD.top+kD*DI.H()/2))/Q;
       try{var mp=localOf({cx:cx,cy:cy,s:sM});sessionStorage.setItem(EST,JSON.stringify({x:rM.left+mp.x*kM2,y:rM.top+mp.y*kM2,q:Q}));}catch(x){}
-      FL.retarget({cx:cx,cy:cy,s:sM},function(){finish(DM);});};   /* the running flight bends onto the exact framing: no second flight */
+      /* (Oct 17, 20:55) no bend at the end: the flight goes straight to the marker and the scale it set out for; the incident's map takes
+         the main map's final view (the marker stays exactly where it landed), and its own framing is kept for the next flight to aim at */
+      var hand=function(){try{var vM=MI.view(),QM=vM.s*kM2,rM2=mapR(),rD2=topRect(DM),kD2=rD2.width/(DI.W()||1),sD=QM/kD2;
+          var dcx=vM.cx-((rM2.left+kM2*W/2)-(rD2.left+kD2*DI.W()/2))/QM,dcy=vM.cy-((rM2.top+kM2*H/2)-(rD2.top+kD2*DI.H()/2))/QM;
+          DI._pv=Object.assign({},DI._pv||{},{cx:dcx,cy:dcy,s:sD});DI.setView(dcx,dcy,sD);}catch(x){}finish(DM);};
+      if(fl===FL)FL.end=hand;else hand();};
     // 3. the incident's map takes over; its header slides down, its lower surfaces slide up
     var finish=function(DM){var inL=[];try{if(DM){peel(DM,inL);mapPeel(DM,inL);var e=DM.ownerDocument.defaultView.frameElement;while(e&&e!==f){peel(e,inL);e=e.ownerDocument.defaultView.frameElement;}}}catch(x){}
       var inA=slide(inL,'in');inA.forEach(function(an){try{an.pause();an.currentTime=0;}catch(x){}});
