@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792249995"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792251946"></script>
+<script src="prefs.js?v=1792252413"></script>
 <script src="station.js?v=1792247781"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
@@ -88,7 +88,7 @@
 /* (Oct 16, 23:04, fix) the cards' holder is see-through to taps: its empty top area, risen over the map band by a scroll (the arrival hint), was swallowing taps on the projection switcher and the markers; only the cards themselves take taps */
 [data-wf-cards]{pointer-events:none}[data-wf-cards]>*{pointer-events:auto}
 /* (Oct 16, 21:56) the projection switcher: the panels' soft shadow, and its active option inset 4px on every side (top, bottom, left, right alike) */
-.wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:0 0 16px rgba(0,0,0,0.16)!important}
+.wf-seg.wf-seg-glass[aria-label="Projection"]{padding:4px!important;box-shadow:inset 0 2px 6px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.04)!important}html.wf-dark .wf-seg.wf-seg-glass[aria-label="Projection"]{box-shadow:inset 0 2px 6px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.06)!important}
 .wf-seg.wf-seg-glass[aria-label="Projection"]>.segthumb{left:4px!important;top:4px!important;bottom:4px!important}
 /* (Oct 16, 21:54) a decision panel keeps the glass of the button it grows out of: the dark glass, its text light, its buttons in the dark-surface formula */
 /* (Oct 17, 05:38) light mode: the decision panels keep the white glass of the buttons they grow out of (the .wf-gpanel glass, dark text, the theme's buttons); the dark glass below now only in dark mode */
