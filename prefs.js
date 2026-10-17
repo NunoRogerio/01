@@ -527,7 +527,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
       ms.forEach(function (m) {
         var n = m.target;
         if (m.type === 'attributes' && n.classList && (n.classList.contains('seg') || n.classList.contains('segthumb'))) {
-          var p = segPos(n); if (n.__wfSegP !== undefined && p !== n.__wfSegP && n.isConnected) segGrow(n); n.__wfSegP = p;
+          var p = segPos(n); if (n.__wfSegP !== undefined && p !== n.__wfSegP && n.isConnected && !n.__wfSegQuiet) segGrow(n);   /* a dragged thumb is already grown: it only shrinks on landing */ n.__wfSegP = p;
         } else if (m.type === 'childList') { m.addedNodes.forEach(function (a) { if (a.nodeType === 1) { segWatch(a); if (a.classList && (a.classList.contains('seg') || a.classList.contains('segthumb'))) a.__wfSegP = segPos(a); } }); }
       });
     });

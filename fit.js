@@ -1625,14 +1625,16 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 (function(){try{if(/\/Main\.dc\.html$/.test(location.pathname)&&window.top===window)sessionStorage.removeItem('wf-hint-done');}catch(e){}})();
 
 // (Oct 17, 15:23; 15:58 every switcher, any option widths) Every switcher (segmented multi-button, .wf-seg): besides a tap, the chosen
-// option can be dragged. Pressing it grows its dark grey thumb (6px above and below, as in its glide) to say it can be moved; it then
+// option can be dragged. Pressing it grows its dark grey thumb to its full glide size (4px above and below) and it stays that size
+// through the whole drag; the label under it turns white live (as the chosen one). It then
 // follows the finger anywhere along the track (a haptic tick at each option it passes) and on release snaps firmly to the nearest
-// option (0.16 s ease-out, no bounce), choosing it with that option's own tap, so every switcher keeps its own behaviour. The thumb is
+// option (0.18 s, eases in and stays: no bounce, no second grow), and only then shrinks back to rest, choosing it with that option's own tap, so every switcher keeps its own behaviour. The thumb is
 // moved with the CSS translate property, on top of the transform the screen sets, so a re-render never fights the finger.
 (function(){
-  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb>.segblob{transition:inset .15s cubic-bezier(.2,.9,.1,1)}.wf-seggrab>.segthumb>.segblob{inset:-6px 0!important}.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .16s cubic-bezier(.2,.9,.1,1)!important}';(document.head||document.documentElement).appendChild(css);
+  var css=document.createElement('style');css.textContent='.wf-seg>.segthumb>.segblob{transition:inset .18s ease-out}.wf-seggrab>.segthumb>.segblob{inset:-4px 0!important}.wf-seg>.segthumb{translate:0 0}.wf-segdrag>.segthumb{transition:none!important}.wf-segsnap>.segthumb{transition:translate .18s cubic-bezier(.2,0,0,1)!important}html .wf-seg.wf-seglive .segopt{transition:color .12s ease}html .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(28, 28, 30)!important;-webkit-text-fill-color:rgb(28, 28, 30)!important;font-weight:400}html.wf-dark .wf-seg.wf-seglive .segopt:not(.wf-seghot){color:rgb(242, 242, 247)!important;-webkit-text-fill-color:rgb(242, 242, 247)!important}html .wf-seg.wf-seglive .segopt.wf-seghot{color:var(--wf-pri-fg, #FFFFFF)!important;-webkit-text-fill-color:var(--wf-pri-fg, #FFFFFF)!important;font-weight:600}';(document.head||document.documentElement).appendChild(css);
   var D=null,mute=0;
   var opts=function(el){return [].slice.call(el.querySelectorAll('.segopt')).filter(function(o){return o.offsetWidth>0;});};
+  var hot=function(d,n){d.O.forEach(function(o,i){o.classList.toggle('wf-seghot',i===n);});};
   var near=function(d,cx){var b=0,bd=1e9;d.C.forEach(function(c,i){var q=Math.abs(c-cx);if(q<bd){bd=q;b=i;}});return b;};
   document.addEventListener('pointerdown',function(e){try{if(D||(e.button&&e.button!==0))return;var el=e.target&&e.target.closest&&e.target.closest('.wf-seg');if(!el)return;var th=el.querySelector(':scope>.segthumb');if(!th)return;var O=opts(el);if(O.length<2)return;
     var tr=th.getBoundingClientRect();if(e.clientX<tr.left-4||e.clientX>tr.right+4||e.clientY<tr.top-8||e.clientY>tr.bottom+8)return;
@@ -1641,17 +1643,17 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     el.classList.add('wf-seggrab');try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}try{el.setPointerCapture(e.pointerId);}catch(x){}}catch(x){D=null;}},true);
   /* the press on the thumb owns the gesture: the page never scrolls under it (iOS would otherwise take the touch and cancel the drag) */
   document.addEventListener('touchmove',function(e){if(D)e.preventDefault();},{capture:true,passive:false});
-  document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<4)return;D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag');}
-    e.preventDefault();e.stopPropagation();var lo=D.C[0]-D.c0,hi=D.C[D.C.length-1]-D.c0;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=near(D,D.c0+D.t);if(n!==D.last){D.last=n;try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
-  var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;d.el.classList.remove('wf-seggrab');if(!d.mv)return;if(e){e.stopPropagation();}mute=Date.now();
+  document.addEventListener('pointermove',function(e){if(!D||e.pointerId!==D.id)return;var dx=e.clientX-D.x0;if(!D.mv){if(Math.abs(dx)<4)return;D.mv=true;D.el.classList.remove('wf-segsnap');D.el.classList.add('wf-segdrag','wf-seglive');hot(D,D.cur);}
+    e.preventDefault();e.stopPropagation();var lo=D.C[0]-D.c0,hi=D.C[D.C.length-1]-D.c0;D.t=Math.max(lo,Math.min(hi,dx));D.th.style.translate=D.t.toFixed(1)+'px 0';var n=near(D,D.c0+D.t);if(n!==D.last){D.last=n;hot(D,n);try{if(navigator.vibrate)navigator.vibrate(6);}catch(x){}}},{capture:true,passive:false});
+  var end=function(e){if(!D||(e&&e.pointerId!==D.id))return;var d=D;D=null;if(!d.mv){d.el.classList.remove('wf-seggrab');return;}if(e){e.stopPropagation();}mute=Date.now();
     var n=near(d,d.c0+d.t),el=d.el,th=d.th,want=d.l0+d.t,tf0=th.style.transform+'|'+th.style.width,t0=performance.now();
     try{if(navigator.vibrate)navigator.vibrate(14);}catch(x){}
     /* hand the thumb over without a jump: measure where the screen put it, start the snap from where the finger left it */
-    var snap=function(){th.style.translate='0px 0';var nl=th.getBoundingClientRect().left,rest=want-nl;th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap');th.style.translate='';},200);});};
+    var snap=function(){th.style.translate='0px 0';var nl=th.getBoundingClientRect().left,rest=want-nl;th.style.translate=rest.toFixed(1)+'px 0';void th.offsetWidth;el.classList.remove('wf-segdrag');el.classList.add('wf-segsnap');requestAnimationFrame(function(){th.style.translate='0px 0';setTimeout(function(){el.classList.remove('wf-segsnap','wf-seggrab','wf-seglive');th.style.translate='';d.O.forEach(function(o){o.classList.remove('wf-seghot');});th.__wfSegQuiet=false;},190);});};
     if(n===d.cur){snap();return;}
-    mute=0;try{d.O[n].click();}catch(x){}mute=Date.now();
+    th.__wfSegQuiet=true;mute=0;try{d.O[n].click();}catch(x){}mute=Date.now();
     (function wait(){var tf=th.style.transform+'|'+th.style.width;if(tf!==tf0||performance.now()-t0>400){requestAnimationFrame(snap);return;}requestAnimationFrame(wait);})();};
-  document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;d.el.classList.remove('wf-seggrab','wf-segdrag');d.th.style.translate='';}},true);
+  document.addEventListener('pointerup',end,true);document.addEventListener('pointercancel',function(e){if(D&&e.pointerId===D.id){var d=D;D=null;d.el.classList.remove('wf-seggrab','wf-segdrag','wf-seglive');d.th.style.translate='';d.O.forEach(function(o){o.classList.remove('wf-seghot');});}},true);
   /* the browser's own click after a drag is not a choice: only the drag's snap chooses */
   document.addEventListener('click',function(e){if(mute&&Date.now()-mute<350&&e.target&&e.target.closest&&e.target.closest('.wf-seg')){e.stopPropagation();e.preventDefault();}},true);
 })();
