@@ -65,7 +65,7 @@
     var a = o.anchor && o.anchor.getBoundingClientRect ? o.anchor : null, r = a ? home(a) : { left: innerWidth - 60, top: innerHeight / 2, width: 44 };
     el = document.createElement('div'); el.className = 'wf-ms'; el.setAttribute('role', 'search');
     el.innerHTML = '<div class="bx"><span class="ic" aria-hidden="true">' + MAG + '</span><input type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="' + (PT() ? 'Procurar um local' : 'Find a place') + '" placeholder="' + (PT() ? 'Procurar um local' : 'Find a place') + '">' +
-      '<button type="button" class="x mbtn" aria-label="' + (PT() ? 'Fechar a pesquisa' : 'Close search') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><ul class="ls" role="listbox"></ul>';
+      '<button type="button" class="x mbtn" aria-label="' + (PT() ? 'Fechar a pesquisa' : 'Close search') + '"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></button></div><ul class="ls" role="listbox"></ul>';
     document.body.appendChild(el); showAnchor(a, false); tell(true);   // the bottom blade steps away while the box is up   // the box takes the button's place: the button under it hides
     st = { anchor: a, map: a && a.closest ? a.closest('[data-wf-maproot]') : null, query: o.query, go: o.go, w: Math.min(358, innerWidth - 32), x: r.left, y: r.top };
     var bx = el.querySelector('.bx'), inp = el.querySelector('input');

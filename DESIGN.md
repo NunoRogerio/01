@@ -2336,3 +2336,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Green confirm buttons (Oct 18, 19:38)
 - Dispatch and Send (smoke check, initial attack) are one green button: #248A3D with white text (the lighter green with dark text is gone; white on it would fail contrast).
+
+## Oct 18 (23:15)
+- Grabbers paused for a while on every panel and dialog (hidden; the blades keep their swipe, drag and tap behaviours). Bring them back by flipping the Oct 18 grabber rule in prefs.js (and the action menu's line in fit.js) to full opacity.
+- Every X icon is 20% larger, app-wide (20 → 24px in the round buttons; the small tag X 12.5 → 15px; the tour's 18 → 21.6px).
+- (23:18) Projection readout: the time ("By 19:47") sits on the white glass (rgba 255,255,255 0.62, blur 16px, no shadow), 30px tall like the size class tag, 8px side padding, 4px corners, with a 1px outline in the size class colour (it follows the class as the horizon changes), so it reads over any map.
