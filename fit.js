@@ -1583,7 +1583,7 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
        screen gives the exact framing the remaining path bends onto it: a correction added on top of the running flight, starting with
        no speed of its own and ending at rest on the exact view (a smootherstep), so the motion never stops, restarts or jumps at the end.
        The marker glides on screen and the zoom moves in log steps, as before. */
-    var fl=null,FLY_MS=1100;
+    var fl=null,FLY_MS=1400;
     var sst=function(u){u=Math.max(0,Math.min(1,u));return u*u*u*(u*(u*6-15)+10);};
     var fly=function(to,ms){var from=MI.view(),p0=localOf(from),pg=localOf(to),l0=Math.log(from.s),lg=Math.log(to.s),t0=performance.now(),me={t0:t0,ms:ms,cb:null,c:null};fl=me;MI._gest=true;if(MI.stopGlide)try{MI.stopGlide();}catch(x){}
       me.retarget=function(to2,cb){var t=performance.now(),p1=localOf(to2),l1=Math.log(to2.s),left=Math.max(0,me.t0+me.ms-t);me.c={t:t,d:Math.max(left,520),dx:p1.x-pg.x,dy:p1.y-pg.y,dl:l1-lg};me.cb=cb;};
@@ -1615,7 +1615,13 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
       var hand=function(){try{var vM=MI.view(),QM=vM.s*kM2,rM2=mapR(),rD2=topRect(DM),kD2=rD2.width/(DI.W()||1),sD=QM/kD2;
           var dcx=vM.cx-((rM2.left+kM2*W/2)-(rD2.left+kD2*DI.W()/2))/QM,dcy=vM.cy-((rM2.top+kM2*H/2)-(rD2.top+kD2*DI.H()/2))/QM;
           DI._pv=Object.assign({},DI._pv||{},{cx:dcx,cy:dcy,s:sD});DI.setView(dcx,dcy,sD);}catch(x){}finish(DM);};
-      if(fl===FL)FL.end=hand;else hand();};
+      /* (Oct 18, 12:08) one continuous motion onto the incident's own framing: while the flight is still on its way its end bends smoothly
+         onto the exact view (a correction that starts with no speed of its own and settles at rest, mostly the zoom: the marker's place on
+         screen is the same for every incident), so the incident's map and the main map show the same picture at the hand-over and the
+         real page that follows keeps it: no jump, no second move. If the flight is already over, it carries on from rest onto it. */
+      var exact={cx:cx,cy:cy,s:sM};
+      if(fl===FL&&FL.retarget){FL.end=null;FL.retarget(exact,function(){finish(DM);});}
+      else{var F2=fly(exact,700);F2.end=function(){finish(DM);};}};
     // 3. the incident's map takes over; its header slides down, its lower surfaces slide up
     var finish=function(DM){var inL=[];try{if(DM){peel(DM,inL);mapPeel(DM,inL);var e=DM.ownerDocument.defaultView.frameElement;while(e&&e!==f){peel(e,inL);e=e.ownerDocument.defaultView.frameElement;}}}catch(x){}
       var inA=slide(inL,'in');inA.forEach(function(an){try{an.pause();an.currentTime=0;}catch(x){}});
