@@ -2326,3 +2326,10 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Every engine card (initial attack on the page, its card in Detections, the dispatch panel, the smoke check) folds its crew: a tap on the engine opens the firefighters' names under it, as the smoke check did. Aircraft carry no crew list.
 - In a unit card the status tag sits top right; the fold chevron sits at the card's bottom right, 16px from both edges, pointing down when folded and up when open.
 - Each engine of an incident has its own crew; faces never repeat within an incident.
+
+## Oct 18 (17:19–17:54)
+- One arrival for every incident: the first content card always comes up last to its peek (smaller, faded, darker), whether or not the projection switcher is there; a fire with no Summary peeks with its key figures; a page preloaded out of sight waits until it shows; if the arrival can't settle, it still ends at the peek.
+- One way back from every incident: the zoom-out, also when the incident was opened from a list, a notification or a chat card, and when the map is covered; with no map in sight the main screen simply comes back with its own arrival. Leaving an incident never slides down.
+- Two levels to explore what was dispatched: the informative card (smoke check, initial attack) folds its units away and back, and every unit (engines, aircraft, any vehicle) folds its crew. Both chevrons sit at their card's bottom right, 4px from the bottom and right edges, down when folded, up when open.
+- Under an informative card the unit cards have square corners for continuity, the last one rounded at its foot; while they show, the informative card loses its foot corners.
+- Aircraft crews: the pilot and the helitack crew (PT: piloto, chefe de equipa, bombeiros).
