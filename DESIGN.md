@@ -2281,3 +2281,4 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Projection perimeter (Oct 18, 11:19):** the projected shape keeps its dashed perimeter, drawn in the darker shade of its size class colour (the readout's) so the dashes read over the 50% fill.
 - **Notifications X = the menu button (Oct 18, 12:06; refines 10:18):** opening the notifications, the menu button itself turns into the X (its lines fold into the cross, as for the menu) and tapping it closes them, turning back into the menu button; no separate X.
 - **Switcher counts (Oct 18, 12:06):** an option carrying a count has 16px after the number (8px more).
+- **Projection shapes lighter (Oct 18, 12:08):** the projected polygons' fill at 35% (was 50%); their dashed edge unchanged.
