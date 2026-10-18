@@ -14,12 +14,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792318520"></script>
-<script src="avatar.js?v=1792318520"></script>
-<script src="prefs.js?v=1792318520"></script>
-<script src="station.js?v=1792318520"></script>
-<script src="i18n.js?v=1792318520"></script>
-<script src="live.js?v=1792318520"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792319146"></script>
+<script src="avatar.js?v=1792319146"></script>
+<script src="prefs.js?v=1792319146"></script>
+<script src="station.js?v=1792319146"></script>
+<script src="i18n.js?v=1792319146"></script>
+<script src="live.js?v=1792319146"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -107,7 +107,7 @@ body{margin:0}
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
-        <path d="{{pgD}}" fill="{{pgFill}}" fill-opacity="0.5" stroke="{{pgFill}}" stroke-opacity="0.9" style="transition: fill .6s ease, stroke .6s ease" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
+        <path d="{{pgD}}" fill="{{pgFill}}" fill-opacity="0.5" stroke="{{pgStroke}}" stroke-opacity="1" style="transition: fill .6s ease, stroke .6s ease" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
         <!-- (Oct 7) structures threatened: the populated areas the projection reaches, in red on its fill (under the lime they read orange) -->
         <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.85" stroke="none" pointer-events="none"></path><path d="{{wtD}}" fill="#0A6CD6" stroke="#FFFFFF" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"></path>
       </sc-if>
@@ -932,13 +932,16 @@ class Component extends DCLogic {
     const LIFT = Math.max(0, Number(p.pinLift) || 0);   // the pin sits that much higher, clear of something laid over the map's foot (the projection switcher)
     /* (Oct 16) a candidate's projection (+1 / +3 / +6 h): the map zooms into the incident so the +1 h shape fills 80% of the
        map's free space (under the title in full screen, above the projection switcher), centred in it; Now keeps the detections' framing */
-    const PGH = p.mode === 'pin' ? (Number(p.pinGrow) || 0) : 0, PG = PGH > 0 ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), 6) : null;   /* (Oct 16, 09:11) one zoom for every horizon, framed on the +6 h shape (the largest, so +1 h is always in view too); +1 / +3 / +6 h only grow the shape */
+    const PG = p.mode === 'pin' && p.pinX != null && isFinite(Number(p.pinX)) ? this.pinGrowShape(Number(p.pinX), Number(p.pinY), 6) : null;   /* (Oct 18, 11:19) one zoom for the incident's map, Now included: set by the +6 h shape */   /* (Oct 16, 09:11) one zoom for every horizon, framed on the +6 h shape (the largest, so +1 h is always in view too); +1 / +3 / +6 h only grow the shape */
     if (PG && PG.xy && PG.xy.length > 2) {
       const w1 = this.win(), FULL = p.isFull === true || p.isFull === 'true', xs = PG.xy.map((q) => q[0]).concat(Number(p.pinX)), ys = PG.xy.map((q) => q[1]).concat(Number(p.pinY));
       const top = w1.t + (FULL ? 150 : 16), bot = w1.b - (FULL ? 96 : 2 * LIFT + 8), cw = this.W() - w1.l - w1.r - 32;
       const bw = Math.max(1, Math.max(...xs) - Math.min(...xs)), bh = Math.max(1, Math.max(...ys) - Math.min(...ys));
-      s0 = Math.min(40, 0.9 * cw / bw, 0.9 * (bot - top) / bh);   /* the +6 h shape at 90% of the free space */
-      fx = (Math.max(...xs) + Math.min(...xs)) / 2; fy = (Math.max(...ys) + Math.min(...ys)) / 2; spanC = (top + bot) / 2;
+      /* (Oct 18, 11:19) the incident centred in the free space, zoomed so at least 80% of the +6 h shape is in view (the shape grows unevenly, most downwind) */
+      const PX0 = Number(p.pinX), PY0 = Number(p.pinY), hw = 0.95 * cw / 2, hh = 0.95 * (bot - top) / 2;
+      const req = PG.xy.map((q) => Math.min(Math.abs(q[0] - PX0) > 0.01 ? hw / Math.abs(q[0] - PX0) : 1e9, Math.abs(q[1] - PY0) > 0.01 ? hh / Math.abs(q[1] - PY0) : 1e9)).sort((a, b) => a - b);
+      s0 = Math.min(40, req[Math.floor(0.2 * req.length)] || 40); void bw; void bh;
+      fx = PX0; fy = PY0; spanC = (top + bot) / 2;
     }
     else if (this.pinCloseOn()) { s0 = PC; fx = Number(p.pinX) || fx; fy = Number(p.pinY) || fy; spanC = this.win().c - LIFT; }   // close on the ignition, centred in the visible map
     // A candidate's projection (+1 / +3 / +6 h) keeps the zoom locked: the shape fills the map band as it grows; the full-screen map is where to zoom out
@@ -962,7 +965,7 @@ class Component extends DCLogic {
   view() {
     const st = Object.assign({}, this.state || {}, this._pv || {});
     const b = this.base();
-    const z0 = this.pinCloseOn() || (this.props.mode === 'pin' && Number(this.props.pinGrow) > 0) ? 1 : (Number(this.props.startZoom) || 1);   // a page can open the map closer than its framing (e.g. 300% on the candidate)
+    const z0 = this.pinCloseOn() || this.props.mode === 'pin' ? 1 : (Number(this.props.startZoom) || 1);   /* (Oct 18, 11:19) the incident's map keeps its one framing (no closer start) */   // a page can open the map closer than its framing (e.g. 300% on the candidate)
     // zooming in keeps the pin where the framing put it on screen (its offset from the centre shrinks with the zoom)
     const px = Number(this.props.pinX), py = Number(this.props.pinY), hasPin = z0 !== 1 && isFinite(px) && isFinite(py) && this.props.pinX != null;
     const cx0 = hasPin ? px - (px - b.cx) / z0 : b.cx, cy0 = hasPin ? py - (py - b.cy) / z0 : b.cy;
@@ -1157,7 +1160,7 @@ class Component extends DCLogic {
     this.pinHomes(px, py);
     /* (Oct 7) choosing Now / +1 h / +3 h / +6 h morphs the shape (morphD); Now folds it into the marker and back out of it */
     const G0 = h > 0 ? this.pinGrowShape(px, py, h) : null, D = this.morphD('pin', G0 && G0.xy ? G0.xy : null, Array.from({ length: 72 }, () => [px, py]));
-    if (!D) return { pgOn: false, pgD: '', pgFill: 'rgb(199, 199, 204)', pgW: 1, pgDash: '6 5' };
+    if (!D) return { pgOn: false, pgD: '', pgFill: 'rgb(199, 199, 204)', pgStroke: 'rgb(72, 72, 74)', pgW: 1, pgDash: '6 5' };
     const G = { d: D };
     const k = sc > 0 ? sc : 1;   // the map layer is scaled with CSS, so the edge is sized here to stay 1.6px on screen
     /* (Oct 18, 10:02) the projected shape takes its NWCG size class colour (the same scale as the area's tag): A and B grey, C soft yellow,
@@ -1165,8 +1168,8 @@ class Component extends DCLogic {
     let fill = this._pgFill || 'rgb(199, 199, 204)';
     if (G0 && G0.xy && G0.xy.length > 2) { let a = 0; const xy = G0.xy; for (let i = 0; i < xy.length; i++) { const u = xy[i], w = xy[(i + 1) % xy.length]; a += u[0] * w[1] - w[0] * u[1]; }
       const lat = 34.19 - (py - 662) / 2829, ac = Math.abs(a) / 2 * (111.32 * Math.cos(lat * Math.PI / 180) / 2345) * (111.32 / 2829) * 247.105, n = [0.25, 10, 100, 300, 1000, 5000].filter((x) => ac >= x).length;
-      fill = ['rgb(199, 199, 204)', 'rgb(199, 199, 204)', 'rgb(255, 230, 128)', 'rgb(255, 204, 0)', 'rgb(255, 138, 0)', 'rgb(229, 20, 30)', 'rgb(139, 44, 255)'][n]; this._pgFill = fill; }
-    return { pgOn: true, pgD: G.d, pgFill: fill, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
+      fill = ['rgb(199, 199, 204)', 'rgb(199, 199, 204)', 'rgb(255, 230, 128)', 'rgb(255, 204, 0)', 'rgb(255, 138, 0)', 'rgb(229, 20, 30)', 'rgb(139, 44, 255)'][n]; this._pgFill = fill; this._pgStroke = ['rgb(72, 72, 74)', 'rgb(72, 72, 74)', 'rgb(138, 97, 0)', 'rgb(150, 105, 0)', 'rgb(181, 74, 0)', 'rgb(215, 0, 21)', 'rgb(122, 30, 230)'][n]; }   /* (Oct 18, 11:19) the dashed perimeter stays: drawn in the darker shade of the class colour (the readout's), so its dashes read over the fill */
+    return { pgOn: true, pgD: G.d, pgFill: fill, pgStroke: this._pgStroke || 'rgb(72, 72, 74)', pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
   }
   /* (Oct 6) houses in reach of the candidate's projected shapes (+1 / +3 / +6 h, as drawn), checked once the forecast and the terrain are in (fit.js) */
   /* (Oct 7) structures at risk on every incident of an overview map, not only the ones already opened: one incident at a time in the
@@ -1706,7 +1709,7 @@ class Component extends DCLogic {
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
       /* (Oct 16) at +1 / +3 / +6 h the map is only the projection: the detection dots and their lines go */
       camLines: [],   /* (Oct 16, 23:05) no lines from the incident to its detections */
-      camMarks: isPin && !(Number(p.pinGrow) > 0) ? this.wfSpreadCams(p.cams, PX, PY, s).map((c) => withTip(at(c.x, c.y, { info: c.info || null, label: c.label, icon: c.icon || 'M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z' }), c.tt || ('Detection source · ' + c.label), c.td || 'Where this image was taken. The dotted line is its line of sight; crossing lines pinpoint the ignition.')).filter(onScreen) : [],
+      camMarks: [],   /* (Oct 18, 11:19) the incident's map shows no detections at any horizon (Now included): no dots, triangles or lines, only the incident's marker */
       hasFull: typeof p.onFull === 'function' && (window.__wfDesk || window.innerWidth <= window.innerHeight) && !(p.markerFull === true || p.markerFull === 'true'),   // phone in landscape: no maximize / minimize button; turning the phone upright is the way back
       ...(() => {
         const st = this.mapStyle(), open = !!(this.state || {}).msOpen;
