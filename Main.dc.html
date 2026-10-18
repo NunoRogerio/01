@@ -2132,5 +2132,18 @@ class Component extends DCLogic {
   }
 }
 </script>
+<script>/* (Oct 18, 16:53) standing rule: icons in one row (or one column) always share one line. With the menu open, the section icons' centres
+   sit exactly on the X's centre, measured on screen while the panel grows and on every resize (the phone's scaling left them 1-2px off) */
+(() => { const H = document.documentElement; let raf = 0, until = 0;
+  const fix = () => { raf = 0; try { const pill = document.querySelector('[data-wf-pill]'), bb = document.querySelector('button[data-wf-burger]');
+      if (!pill || !bb || !H.classList.contains('wf-pm2')) { if (pill && pill.style.translate) pill.style.translate = ''; } else {
+        const k = (pill.getBoundingClientRect().width / (pill.offsetWidth || 1)) || 1, ic = pill.querySelector('.opt'), a = (ic || pill).getBoundingClientRect(), b = bb.getBoundingClientRect(),
+          cur = parseFloat(String(pill.style.translate || '0 0').split(' ')[1]) || 0, d = ((b.top + b.height / 2) - (a.top + a.height / 2)) / k;
+        if (Math.abs(d) > 0.05) pill.style.translate = '0 ' + (Math.round((cur + d) * 100) / 100) + 'px'; } } catch (x) {}
+    if (performance.now() < until) raf = requestAnimationFrame(fix); };
+  const go = () => { until = performance.now() + 900; if (!raf) raf = requestAnimationFrame(fix); };
+  new MutationObserver(go).observe(H, { attributes: true, attributeFilter: ['class'] }); addEventListener('resize', go); addEventListener('orientationchange', go);
+})();
+</script>
 </body>
 </html>
