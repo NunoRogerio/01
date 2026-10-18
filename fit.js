@@ -792,7 +792,9 @@ window.__wfConfirm=function(o){
     var inner=el.querySelector&&el.querySelector('[data-round-in]');if(inner&&!el.disabled)el=inner;   // a row whose round end button (e.g. the drill-in arrow) reacts when the row is pressed
     var r=el.getBoundingClientRect(),pill=el.hasAttribute('data-round');if(!r.width)return;   // data-round: a pill that behaves like the round buttons
     if(!pill){if(r.width>72||Math.abs(r.width-r.height)>2)return;var br=parseFloat(getComputedStyle(el).borderTopLeftRadius)||0;if(br<r.width*0.4)return;}   // round, or nearly (some screens give round buttons a 20px corner)
-    var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3;
+    var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3,leg=!!(el.closest&&el.closest('[data-wf-leg]'));
+    /* (Oct 18, 10:16, trial on the map legend) a legend chip only swells half as much (15%) and gives no outline pulse: a subtle swell as it turns on or off */
+    if(leg)k=1+(k-1)/2;
     try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}
     // An X (close) button, and the + that adds cards, also turn a gentle quarter turn, as the notifications X does (unless the page already turns it)
     try{var sv=el.querySelector('svg'),pd=sv&&sv.querySelector('path'),d=pd?pd.getAttribute('d')||'':'';
@@ -801,7 +803,7 @@ window.__wfConfirm=function(o){
     (function(b){setTimeout(function(){try{var f=document.activeElement;if(f&&(f===b||b.contains(f)||f.contains(b)))f.blur();}catch(x){}},520);})(el);
     try{if(el.__wfPop)el.__wfPop.cancel();el.__wfPop=el.animate([{scale:'1',easing:'cubic-bezier(.2,.9,.3,1)'},{scale:String(k),offset:0.18,easing:'cubic-bezier(.4,0,.2,1)'},{scale:'1'}],{duration:480});}catch(x){}
     // and a 2px dark grey outline pulses out once from its edge: fully visible at the start, 50% larger at the end, where it has faded out
-    try{var bgc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),dkb=bgc.length>2&&(bgc[3]==null||bgc[3]>0.4)&&(0.299*bgc[0]+0.587*bgc[1]+0.114*bgc[2])<90;   // a dark round button (map controls, drone feed)
+    if(!leg)try{var bgc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),dkb=bgc.length>2&&(bgc[3]==null||bgc[3]>0.4)&&(0.299*bgc[0]+0.587*bgc[1]+0.114*bgc[2])<90;   // a dark round button (map controls, drone feed)
       if(dkb)el.classList.add('wf-dkbtn');
       var g=document.createElement('i'),dk=document.documentElement.classList.contains('wf-dark'),rad=pill?(r.height/2)+'px':'50%',W=r.width,H=r.height,X=r.left,Y=r.top,G=0.5;
       // a dark button would hide its dark line while it swells (the line is drawn over it, dark on dark): the line starts at the swollen edge instead, so it shows from the first moment and still ends 50% beyond the button
