@@ -568,7 +568,8 @@ window.__wfBlink=function(path,dur){
   // (its place is kept), otherwise the main screen opens. Controls inside the name (the houses-warning tag) keep their own tap.
   // (Oct 7, 09:29: dark grey, 16% bigger, 4.6 x 8.1px) a small left chevron, in the 16px between the screen edge and the incident name ([data-wf-chev]), saying the name goes back
   try{var cv=document.createElement('style');cv.textContent='[data-wf-chev]{position:relative}[data-wf-chev]::before{content:"";position:absolute;left:-12.23px;top:calc(var(--wf-chev-y,16px) - 6.34px);width:7.24px;height:12.67px;background:#3A3A3C;pointer-events:none;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 8 14%27%3E%3Cpath d=%27M6.5 1.5 1.5 7l5 5.5%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/contain no-repeat}html.wf-dark [data-wf-chev]::before{background:#D1D1D6}';(document.head||document.documentElement).appendChild(cv);}catch(x){}
-  window.__wfHome=function(){var r=null;try{r=document.referrer?new URL(document.referrer):null;}catch(x){}
+  window.__wfHome=function(){try{if(window.top===window&&window.__wfFlyBack&&window.__wfFlyBack(null))return;}catch(x){}   /* (Oct 18, 17:19) the same zoom-out as every incident back */
+    var r=null;try{r=document.referrer?new URL(document.referrer):null;}catch(x){}
     var H=wfHomeUrl();if(history.length>1&&r&&r.origin===location.origin&&(/\/Main\.dc\.html$/.test(r.pathname)||(H!=='Main.dc.html'&&/\/Station\.dc\.html$/.test(r.pathname)&&/[?&]home=1/.test(r.search)))){history.back();return;}location.href=H;};
   document.addEventListener('click',function(e){
     var a=e.target&&e.target.closest&&e.target.closest('[data-wf-home]');if(!a||e.defaultPrevented)return;
@@ -974,7 +975,7 @@ window.__wfGrowXY = function (pts, GR, seedSrc) { if (!(GR > 1) || !pts || pts.l
       var ok=function(){var r=document.getElementById('dc-root');return !document.getElementById('wf-load')&&r&&r.firstElementChild&&r.textContent.trim().length>20;};
       (function wait(){if(ok()||Date.now()-T0>2600){requestAnimationFrame(function(){requestAnimationFrame(function(){   /* drawn and painted: dissolve over the last 7% (0.21s) */
         try{if(an){var d=an.effect.getComputedTiming().duration;if(an.currentTime<d*.93)an.currentTime=d*.93;}else vt.skipTransition();}catch(x){try{vt.skipTransition();}catch(y){}}});});return;}setTimeout(wait,40);})();}).catch(function(){});},true);
-  addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){var dn='';try{dn=sessionStorage.getItem('wf-vt-backdir')||'';sessionStorage.removeItem('wf-vt-backdir');}catch(x){}try{e.viewTransition.types.add(dn==='down'?'wfbackdown':'wfback');}catch(x){}return;}});
+  addEventListener('pagereveal',function(e){if(!e.viewTransition)return;var t=0;try{t=+sessionStorage.getItem('wf-vt-back')||0;sessionStorage.removeItem('wf-vt-back');}catch(x){}if(Date.now()-t<15000){var dn='';try{dn=sessionStorage.getItem('wf-vt-backdir')||'';sessionStorage.removeItem('wf-vt-backdir');}catch(x){}try{if(dn!=='down')e.viewTransition.types.add('wfback');}catch(x){}return;   /* (Oct 18, 17:19) leaving an incident never slides down: its own zoom-out or the plain dissolve */}});
   document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('[data-wf-back]');if(a)mark();},true);
   var oh=window.__wfHome;if(typeof oh==='function'){window.__wfHome=function(){mark();return oh.apply(this,arguments);};}   /* the incident name's way home is a back too */
   var ob=window.__wfBackOrHome;if(typeof ob==='function'){window.__wfBackOrHome=function(){mark();return ob.apply(this,arguments);};}
@@ -1525,9 +1526,10 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
     else{var P=DM.__wfPF;if(!P)return;DM.__wfPF=null;(P.A||[]).forEach(function(a){try{a.cancel();}catch(x){}});var B=slide(P.L,'in');P.L.forEach(function(q){q.el.style.pointerEvents=q.pe||'';});
       setTimeout(function(){B.forEach(function(a){try{a.cancel();}catch(x){}});},SLIDE+60);}}catch(x){}};
   // the incident screen's map: the largest visible map in the frame and the frames inside it
-  var findMap=function(doc,depth){var best=null,area=0;try{[].forEach.call(doc.querySelectorAll('[data-wf-maproot]'),function(m){if(!m.__wfMap||!shown(m))return;var lr=m.getBoundingClientRect(),hit=null;try{hit=doc.elementFromPoint(lr.left+lr.width/2,Math.max(lr.top,0)+Math.min(lr.height,doc.defaultView.innerHeight)*0.3);}catch(x){}if(!hit||!m.contains(hit))return;   /* the map really on show there, not one waiting under it */var r=topRect(m),a=r.width*r.height;if(a>area){area=a;best=m;}});
-      if(depth<3)[].forEach.call(doc.querySelectorAll('iframe'),function(fr){try{var cd=fr.contentDocument;if(cd&&shown(fr)){var b=findMap(cd,depth+1);if(b){var r=topRect(b),a=r.width*r.height;if(a>area){area=a;best=b;}}}}catch(x){}});}catch(x){}return best;};
+  var findMap=function(doc,depth,loose){var best=null,area=0;try{[].forEach.call(doc.querySelectorAll('[data-wf-maproot]'),function(m){if(!m.__wfMap||!shown(m))return;var lr=m.getBoundingClientRect(),hit=null;try{hit=doc.elementFromPoint(lr.left+lr.width/2,Math.max(lr.top,0)+Math.min(lr.height,doc.defaultView.innerHeight)*0.3);}catch(x){}if(!loose&&(!hit||!m.contains(hit)))return;   /* the map really on show there, not one waiting under it */var r=topRect(m),a=r.width*r.height;if(a>area){area=a;best=m;}});
+      if(depth<3)[].forEach.call(doc.querySelectorAll('iframe'),function(fr){try{var cd=fr.contentDocument;if(cd&&shown(fr)){var b=findMap(cd,depth+1,loose);if(b){var r=topRect(b),a=r.width*r.height;if(a>area){area=a;best=b;}}}}catch(x){}});}catch(x){}return best;};
   var BACK='wf-shared-from',BACKT='wf-shared-back';
+  try{var bm=/\/(Main|Station)\.dc\.html$/.exec(location.pathname);if(bm&&window.top===window)sessionStorage.setItem('wf-last-base',bm[1]);}catch(x){}   /* (Oct 18) the screen an incident was opened from */
   var flyCss=function(){if(document.getElementById('wf-fly-css'))return;var st=document.createElement('style');st.id='wf-fly-css';st.textContent='html.wf-flying [data-wf-maproot] .wf-ctag{display:none!important}';(document.head||document.documentElement).appendChild(st);};
   var recentBack=function(){try{var t=+sessionStorage.getItem(BACKT)||0;return Date.now()-t<15000;}catch(x){return false;}};
   /* a map flies to a view: one world point (the incident) glides straight on screen while the zoom changes in log steps */
@@ -1540,14 +1542,17 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
      page's frame (No action closed, Done...), which hand it to the top window. Without the way-in record (opened from a notification or a
      list, or another incident's record), the map zooms out around where it is before the main screen comes back over it. */
   window.__wfFlyBack=function(e,a){try{if(window.top!==window||!/\/(Chat|Dispatch)\.dc\.html$/.test(location.pathname))return false;
-    var ref='';try{ref=document.referrer?new URL(document.referrer).pathname:'';}catch(x){}var toMain=/\/Main\.dc\.html$/.test(ref)&&history.length>=2;if(!toMain&&ref)return false;   /* a real back to another screen keeps its own way */
-    var DM=findMap(document,0),DI=DM&&DM.__wfMap;if(!DI)return false;
+    var ref='';try{ref=document.referrer?new URL(document.referrer).pathname:'';}catch(x){}var base='';try{base=sessionStorage.getItem('wf-last-base')||'';}catch(x){}
+    /* (Oct 18, 17:19) one way back for every incident: an incident reached through the page's hand-over (list, notifications, chat cards) still came from the main screen */
+    var hand=/\/(Dispatch|Chat)\.dc\.html$/.test(ref)&&base==='Main';var toMain=(/\/Main\.dc\.html$/.test(ref)||hand)&&history.length>=2;if(!toMain&&ref&&!hand)return false;   /* a real back to another screen keeps its own way */
+    var DM=findMap(document,0)||findMap(document,0,true),DI=DM&&DM.__wfMap;
     if(e){e.preventDefault();e.stopImmediatePropagation();}if(window.__wfGoingBack)return true;window.__wfGoingBack=1;try{navigator.vibrate&&navigator.vibrate(8);}catch(x){}
+    var leave=function(){try{sessionStorage.setItem(BACKT,String(Date.now()));sessionStorage.setItem('wf-pu-arrive',String(Date.now()));sessionStorage.removeItem('wf-vt-back');sessionStorage.removeItem('wf-vt-backdir');}catch(x){}if(toMain)history.back();else location.href='Main.dc.html';};   /* the main screen's own arrival only: no slide-down on top */
+    if(!DI){setTimeout(leave,0);return true;}
     var B=null;try{B=JSON.parse(sessionStorage.getItem(BACK)||'null');}catch(x){}var v=DI.view();
     if(B&&B.v){var Wd=DI.W(),Hd=DI.H(),ix=(B.px-v.cx)*v.s+Wd/2,iy=(B.py-v.cy)*v.s+Hd/2;if(ix<-Wd*0.25||ix>Wd*1.25||iy<-Hd*0.25||iy>Hd*1.25)B=null;}   /* another incident's record */
     var L=[];try{peel(DM,L);mapPeel(DM,L);var fe=DM.ownerDocument.defaultView.frameElement;while(fe){peel(fe,L);fe=fe.ownerDocument.defaultView.frameElement;}}catch(x){}
     slide(L,'out');try{flyCss.call(null);}catch(x){}
-    var leave=function(){try{sessionStorage.setItem(BACKT,String(Date.now()));sessionStorage.setItem('wf-pu-arrive',String(Date.now()));}catch(x){}if(toMain)history.back();else location.href='Main.dc.html';};
     setTimeout(function(){try{if(B&&B.v){var rD=topRect(DM),kD=rD.width/(DI.W()||1),kM=B.r.width/(B.W||1),Q=kM*B.v.s,sD=Q/kD;
         var cx=B.v.cx+((rD.left+kD*DI.W()/2)-(B.r.left+kM*B.W/2))/Q,cy=B.v.cy+((rD.top+kD*DI.H()/2)-(B.r.top+kM*B.H/2))/Q;
         flyMap(DI,[B.px,B.py],{cx:cx,cy:cy,s:sD},900,leave);}
