@@ -95,7 +95,7 @@
   function pl(n,one,many){return (String(n).replace(/[.,\s]/g,'')==='1')?one:many;}
   var R=[
     [/^([\d.,]+) (I|i)gnition candidates?$/,function(m,n){return n+' '+pl(n,'candidato','candidatos')+' a ignição';}],
-    [/^([\d.,]+) candidates?$/,function(m,n){return n+' '+pl(n,'candidato','candidatos');}],
+    [/^([\d.,]+) detection candidates?$/,function(m,n){return n+' '+pl(n,'candidato','candidatos')+' de deteção';}],[/^([\d.,]+) confirmed fires?$/,function(m,n){return n+' '+pl(n,'incêndio confirmado','incêndios confirmados');}],[/^([\d.,]+) candidates?$/,function(m,n){return n+' '+pl(n,'candidato','candidatos');}],
     [/^([\d.,]+) fires?$/,function(m,n){return n+' '+pl(n,'incêndio','incêndios');}],[/^No fires$/,'Sem incêndios'],
     [/^([\d.,]+) active fires?$/,function(m,n){return n+' '+pl(n,'incêndio ativo','incêndios ativos');}],
     [/^([\d.,]+) ignition candidates? and ([\d.,]+) fires?$/,function(m,a,b){return a+' '+pl(a,'candidato','candidatos')+' a ignição e '+b+' '+pl(b,'incêndio','incêndios');}],
@@ -165,7 +165,7 @@
     RJ=[
       [/^Search ([\d.,]+) (countries|districts|counties|states|regions)$/,function(m,n,u){return n+({countries:'か国',districts:'県',counties:'郡',states:'州',regions:'地域'})[u]+'を検索';}],[/^No places match “(.+)”$/,'「$1」に一致する場所はありません'],[/^No (countries|districts|counties|states|regions) match “(.+)”$/,function(m,u,q){return '「'+q+'」に一致する'+({countries:'国',districts:'県',counties:'郡',states:'州',regions:'地域'})[u]+'はありません';}],
       [/^All features\. All regions$/,'すべての機能。すべての地域'],[/^All features\. (.+) region only$/,function(m,r){return 'すべての機能。'+N(r)+'のみ';}],[/^Access to all features$/,'すべての機能'],
-      [/^([\d.,]+) (I|i)gnition candidates?$/,'発火候補 $1件'],[/^([\d.,]+) candidates?$/,'候補 $1件'],[/^([\d.,]+) fires?$/,'火災 $1件'],[/^No fires$/,'火災なし'],
+      [/^([\d.,]+) (I|i)gnition candidates?$/,'発火候補 $1件'],[/^([\d.,]+) detection candidates?$/,'検知候補 $1件'],[/^([\d.,]+) confirmed fires?$/,'確認済み火災 $1件'],[/^([\d.,]+) candidates?$/,'候補 $1件'],[/^([\d.,]+) fires?$/,'火災 $1件'],[/^No fires$/,'火災なし'],
       [/^([\d.,]+) active fires?$/,'活動中の火災 $1件'],
       [/^([\d.,]+) ignition candidates? and ([\d.,]+) fires?$/,'発火候補 $1件と火災 $2件'],
       [/^(.+) · ([\d.,]+) ignition candidates? · ([\d.,]+) fires?$/,function(m,p,a,b){return N(p)+' · 発火候補 '+a+'件 · 火災 '+b+'件';}],
