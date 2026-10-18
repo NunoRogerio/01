@@ -2321,3 +2321,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Projection horizons: a dot for the ignition point (Oct 18, 17:14)
 - At +1 h, +3 h and +6 h the incident's marker gives way to a tiny black dot (4px) at the ignition point, so the eye stays on the perimeter; other incidents' markers and confidence tags step aside. Now keeps the marker as it is.
+
+## Unit cards fold their crew (Oct 18, 17:16–17:17)
+- Every engine card (initial attack on the page, its card in Detections, the dispatch panel, the smoke check) folds its crew: a tap on the engine opens the firefighters' names under it, as the smoke check did. Aircraft carry no crew list.
+- In a unit card the status tag sits top right; the fold chevron sits at the card's bottom right, 16px from both edges, pointing down when folded and up when open.
+- Each engine of an incident has its own crew; faces never repeat within an incident.
