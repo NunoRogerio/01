@@ -2302,3 +2302,10 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Icons in a row or column always share one line (Oct 18, 16:53, standing)
 - Icons in one row share one centre line; icons in one column share one centre axis. Never show misaligned icons.
 - Main screen menu: the section icons' centres sit exactly on the X's centre, measured on screen while the panel grows and on every resize, so the phone's scaling can't leave them 1–2px off.
+
+## Oct 18 (16:58–17:03)
+- The peeking card's nudge runs every 6 s (was 8 s). Once the person moves the cards it stops for that visit; every new entry to an incident starts it again.
+- Area picker open: the notifications bell (and chat icon) leave the header; the menu button turns into the X in place, which closes the picker.
+- Incident list panel: a round X top right, 16px from the glass's top and right edges, the same X as the menu's, turning a gentle quarter turn as the list closes; the title keeps clear of it.
+- Count badges on header icons sit 6px further right and 2px higher (top -12px, right -8px).
+- The incident's status pill (stage/confidence) in the fixed top panel is solid: 100% opaque, no glass, no shadow.

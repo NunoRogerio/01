@@ -3127,20 +3127,26 @@ class Component extends DCLogic {
   }
 }
 </script>
-<script>/* (Oct 18, 16:48) the nudge: every 8 s, a first card peeking from under the decisions (smaller, at 60%) rises 16px at full opacity and settles back
-   to its peek, still small: a call to read on. A smooth rise and return, no overshoot. Never while the page is touched, hidden or moving. */
-(() => { let busy = false, touch = 0; const T = () => { touch = Date.now(); };
-  ['pointerdown', 'touchstart', 'wheel'].forEach((ev) => addEventListener(ev, T, { capture: true, passive: true }));
+<script>/* (Oct 18, 16:48) the nudge: every 6 s (17:03; was 8 s), a first card peeking from under the decisions (smaller, at 60%) rises 16px at full opacity and settles back
+   to its peek, still small: a call to read on. A smooth rise and return, no overshoot. (16:58) Once the person moves the cards, it stops for that
+   visit; each new entry to an incident starts it again. Never while the page is hidden or touched. */
+(() => { let busy = false, touch = 0, stopped = false, seen = null; const T = () => { touch = Date.now(); };
+  ['pointerdown', 'touchstart'].forEach((ev) => addEventListener(ev, T, { capture: true, passive: true }));
+  const S = () => { stopped = true; }; ['touchmove', 'wheel'].forEach((ev) => addEventListener(ev, S, { capture: true, passive: true }));
+  const entry = () => { let t = null; try { t = (JSON.parse(sessionStorage.getItem('wf-fireview') || 'null') || {}).t || null; } catch (x) {} return t; };
+  addEventListener('pageshow', () => { stopped = false; seen = entry(); });
   const shown = () => { if (document.hidden) return false; try { const fe = window.frameElement; if (fe) { const W = fe.ownerDocument.defaultView; if (!(fe.getBoundingClientRect().width > 0)) return false; let q = fe; while (q && q.nodeType === 1) { const cs = W.getComputedStyle(q); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity < 0.99) return false; q = q.parentElement; } } } catch (x) {} return true; };
   setInterval(() => { try {
-    if (busy || Date.now() - touch < 4000 || !document.documentElement.classList.contains('wf-arrived') || !shown()) return;
+    const e = entry(); if (e !== seen) { seen = e; stopped = false; }   /* a new entry to an incident */
+    if (stopped || busy || Date.now() - touch < 4000 || !document.documentElement.classList.contains('wf-arrived') || !shown()) return;
+    const sc = document.querySelector('[data-wf-page="1"]'); if (sc && sc.scrollTop > 2) return;
     const sec = [].filter.call(document.querySelectorAll('[data-wf-arrsec]'), (e) => e.offsetParent).sort((x, y) => x.getBoundingClientRect().top - y.getBoundingClientRect().top)[0],
       card = sec && sec.querySelector('[data-wf-sumcard], [data-wf-sckcard], ul[data-wf-evk], [data-wf-kpicard]');
-    if (!card || !card.offsetParent || card.style.opacity !== '0.600') return;   /* only while it peeks under the decisions */
+    if (!card || !card.offsetParent || Math.abs((parseFloat(card.style.opacity) || 1) - 0.6) > 0.01) return;   /* only while it peeks under the decisions (the browser keeps "0.6") */
     busy = true; const E = 'cubic-bezier(.4,0,.2,1)';
     const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: E }, { translate: '0 -16px', opacity: 1, offset: 0.4 }, { translate: '0 -16px', opacity: 1, offset: 0.55, easing: E }, { translate: '0 0', opacity: 0.6 }], { duration: 1500 });
     a.onfinish = a.oncancel = () => { busy = false; };
-  } catch (x) { busy = false; } }, 8000);
+  } catch (x) { busy = false; } }, 6000);
 })();
 </script>
 </body>
