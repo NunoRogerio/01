@@ -539,7 +539,7 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
   var FSEL = '[style*="overflow-y: auto"],[style*="overflow-y: scroll"],[style*="overflow: auto"],.wf-snap,[data-wf-fadetop]';
   // The fade is laid over the content in the colour of what it sits on (e.g. a white card), so the text fades out
   // while the card and the panel keep crisp edges. 48px + 60% = 77px tall.
-  var FH = 54;   // 85px less 20%, then less 20% again
+  var FH = 43;   // 85px less 20%, then less 20% again, then (Oct 18, 10:08) less 20% once more (54 → 43)
   // One colour per scrolling panel, kept while scrolling: the predominant background of its content (the colour covering
   // the most area among its outermost boxes, e.g. the white cards), else the panel's own colour. Measured once per opening.
   // Only (nearly) opaque colours count: a translucent tint (a touch ripple, a pressed row, a hover) never sets the fade colour.
@@ -613,14 +613,14 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     if (el.__wfMaskOwn === undefined) el.__wfMaskOwn = !(el.style.maskImage || el.style.webkitMaskImage);   // leave masks set by a screen alone
     if (!el.__wfMaskOwn) return;
     var cs = getComputedStyle(el), sc = /(auto|scroll)/.test(cs.overflowY) && !!el.offsetParent;
-    var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = !!(el.hasAttribute && el.hasAttribute('data-wf-fadeup')) && sc && el.scrollTop > 1;   /* (Oct 12, 21:10) the fade at the bottom only: the top one is gone (the bottom says enough); (Oct 16, 22:27) except where a panel asks for it (data-wf-fadeup): the decision panels' list fades at the top too once scrolled */
-    var h = Math.round(Math.min(FH, el.clientHeight * 0.3)), ht = el.classList.contains('wf-snap') ? Math.min(h, 32) : h;   // snapping lists: the top fade fits the 32px band items rest under, never over an item
+    var more = sc && el.scrollHeight - el.clientHeight - el.scrollTop > 1, less = sc && el.scrollTop > 1;   /* (Oct 18, 10:08) every scrolling list fades at the top too once scrolled, as at the bottom (supersedes the bottom-only fade of Oct 12) */   /* (Oct 12, 21:10) the fade at the bottom only: the top one is gone (the bottom says enough); (Oct 16, 22:27) except where a panel asks for it (data-wf-fadeup): the decision panels' list fades at the top too once scrolled */
+    var h = Math.round(Math.min(FH, el.clientHeight * 0.3)), ht = el.classList.contains('wf-snap') ? Math.min(h, 26) : h;   // snapping lists: the top fade fits the 32px band items rest under, never over an item
     var th = document.documentElement.classList.contains('wf-dark') + '|' + (document.documentElement.getAttribute('style') || '').length;
     if ((less || more) && (el.__wfBcTh !== th || el.__wfBc === undefined)) { el.__wfBc = behindCol(el); el.__wfBcTh = th; }
     var col = (less || more) ? el.__wfBc : null;
     /* (Oct 16, 20:28) a panel may name its own fade colour (data-wf-fadecol): the incident page's fade is the cards' drop-shadow tint, not white */
     if (col && el.getAttribute && el.getAttribute('data-wf-fadecol')) col = el.getAttribute('data-wf-fadecol');
-    if (col && el.parentElement && el.parentElement.closest('[data-wf-sb="panel"], [data-wf-sb="edge"]')) col = null;   /* (Oct 11, 21:45) over a stripe band: fade the content itself (mask), never paint the surface colour over the band */
+    if (col && el.parentElement && el.parentElement.closest('[data-wf-sb="panel"], [data-wf-sb="edge"], [data-wf-fademask]')) col = null;   /* (Oct 18, 10:12) lists lying on a grown panel's glass (a sibling, not an ancestor): fade the content itself, no painted band */   /* (Oct 11, 21:45) over a stripe band: fade the content itself (mask), never paint the surface colour over the band */
     if (col) {
       if (el.__wfM) { el.style.webkitMaskImage = el.style.maskImage = ''; el.__wfM = ''; }
       fadeOv(el, 'top', less, col, ht); fadeOv(el, 'bottom', more, col, h); return;

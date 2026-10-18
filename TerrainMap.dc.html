@@ -14,12 +14,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792314455"></script>
-<script src="avatar.js?v=1792314172"></script>
-<script src="prefs.js?v=1792314172"></script>
-<script src="station.js?v=1792314172"></script>
-<script src="i18n.js?v=1792314172"></script>
-<script src="live.js?v=1792314172"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792314570"></script>
+<script src="avatar.js?v=1792314570"></script>
+<script src="prefs.js?v=1792314570"></script>
+<script src="station.js?v=1792314570"></script>
+<script src="i18n.js?v=1792314570"></script>
+<script src="live.js?v=1792314570"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -107,7 +107,7 @@ body{margin:0}
       <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
-        <path d="{{pgD}}" fill="{{pgFill}}" fill-opacity="0.5" stroke="{{pgFill}}" stroke-opacity="0.9" style="transition: fill .6s ease, stroke .6s ease" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
+        <path d="{{pgD}}" fill="var(--wf-y, #E5FF00)" fill-opacity="0.5" stroke="#E8590C" stroke-opacity="0.9" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
         <!-- (Oct 7) structures threatened: the populated areas the projection reaches, in red on its fill (under the lime they read orange) -->
         <path d="{{hmD}}" fill="rgb(215, 0, 21)" fill-opacity="0.85" stroke="none" pointer-events="none"></path><path d="{{wtD}}" fill="#0A6CD6" stroke="#FFFFFF" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"></path>
       </sc-if>
@@ -1157,16 +1157,10 @@ class Component extends DCLogic {
     this.pinHomes(px, py);
     /* (Oct 7) choosing Now / +1 h / +3 h / +6 h morphs the shape (morphD); Now folds it into the marker and back out of it */
     const G0 = h > 0 ? this.pinGrowShape(px, py, h) : null, D = this.morphD('pin', G0 && G0.xy ? G0.xy : null, Array.from({ length: 72 }, () => [px, py]));
-    if (!D) return { pgOn: false, pgD: '', pgFill: 'rgb(199, 199, 204)', pgW: 1, pgDash: '6 5' };
+    if (!D) return { pgOn: false, pgD: '', pgW: 1, pgDash: '6 5' };
     const G = { d: D };
     const k = sc > 0 ? sc : 1;   // the map layer is scaled with CSS, so the edge is sized here to stay 1.6px on screen
-    /* (Oct 18, 10:02) the projected shape takes its NWCG size class colour (the same scale as the area's tag): A and B grey, C soft yellow,
-       D strong yellow, E orange, F red, G electric purple; it keeps the last colour while folding back into the marker */
-    let fill = this._pgFill || 'rgb(199, 199, 204)';
-    if (G0 && G0.xy && G0.xy.length > 2) { let a = 0; const xy = G0.xy; for (let i = 0; i < xy.length; i++) { const u = xy[i], w = xy[(i + 1) % xy.length]; a += u[0] * w[1] - w[0] * u[1]; }
-      const lat = 34.19 - (py - 662) / 2829, ac = Math.abs(a) / 2 * (111.32 * Math.cos(lat * Math.PI / 180) / 2345) * (111.32 / 2829) * 247.105, n = [0.25, 10, 100, 300, 1000, 5000].filter((x) => ac >= x).length;
-      fill = ['rgb(199, 199, 204)', 'rgb(199, 199, 204)', 'rgb(255, 230, 128)', 'rgb(255, 204, 0)', 'rgb(255, 138, 0)', 'rgb(229, 20, 30)', 'rgb(139, 44, 255)'][n]; this._pgFill = fill; }
-    return { pgOn: true, pgD: G.d, pgFill: fill, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
+    return { pgOn: true, pgD: G.d, pgW: +(1.6 / k).toFixed(5), pgDash: +(6 / k).toFixed(5) + ' ' + +(5 / k).toFixed(5) };
   }
   /* (Oct 6) houses in reach of the candidate's projected shapes (+1 / +3 / +6 h, as drawn), checked once the forecast and the terrain are in (fit.js) */
   /* (Oct 7) structures at risk on every incident of an overview map, not only the ones already opened: one incident at a time in the

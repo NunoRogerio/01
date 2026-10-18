@@ -14,16 +14,16 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792314455"></script>
-<script src="avatar.js?v=1792314172"></script>
-<script src="prefs.js?v=1792314172"></script>
-<script src="station.js?v=1792314172"></script>
-<script src="i18n.js?v=1792314172"></script>
-<script src="live.js?v=1792314172"></script>
-<script src="chat.js?v=1792314172"></script>
-<script src="tour.js?v=1792314172"></script>
-<script src="feedcam.js?v=1792314172"></script>
-<script src="trophy.js?v=1792314172"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792314570"></script>
+<script src="avatar.js?v=1792314570"></script>
+<script src="prefs.js?v=1792314570"></script>
+<script src="station.js?v=1792314570"></script>
+<script src="i18n.js?v=1792314570"></script>
+<script src="live.js?v=1792314570"></script>
+<script src="chat.js?v=1792314570"></script>
+<script src="tour.js?v=1792314570"></script>
+<script src="feedcam.js?v=1792314570"></script>
+<script src="trophy.js?v=1792314570"></script>
 
 <title>Chats</title>
 <script src="./support.js"></script>
@@ -101,7 +101,9 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- (Oct 16, 12:39) the incident's header is a floating glass panel (as the decision panels: 16px from the top and the sides, 24px corners, the tooltips' shadow), no longer a bar across; the map runs under it to the top of the screen -->
     <!-- (Oct 17, 15:44) as the bottom panels: 8px from the screen's top and sides, 48px corners (the status bar sits on its glass; its content stays where it was) -->
     <!-- (Oct 17, 16:36) in a browser tab the glass starts 8px under the visible top (the browser's bar above it), all four corners round, as the bottom panel; the content stays put -->
-    <div data-wf-chathd="1" style="position: relative; display: flex; flex-direction: column; flex-shrink: 0; z-index: 2; margin: calc(max(var(--wf-top, 0px), env(safe-area-inset-top, 0px)) - 44px) 12px 0; padding: 16px; border-radius: var(--wf-r, 16px); background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 16px rgba(0,0,0,0.16)">
+    <div data-wf-chathd="1" style="position: relative; display: flex; flex-direction: column; flex-shrink: 0; z-index: {{tm.hdZ}}; margin: calc(max(var(--wf-top, 0px), env(safe-area-inset-top, 0px)) - 44px) 12px 0; padding: 16px; border-radius: var(--wf-r, 16px); transition: z-index 0s linear {{tm.hdZd}}">
+      <!-- (Oct 18, 10:05) the panel's glass as its own layer, so the team can grow it down to 12px above the screen's foot (foot corners 48px), as the main screen's top panel -->
+      <span aria-hidden="true" data-wf-chatbg="1" style="position: absolute; left: 0; right: 0; top: 0; bottom: {{tm.gB}}; z-index: -1; pointer-events: none; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) {{tm.footR}} {{tm.footR}}; background: rgba(255, 255, 255, 0.62); -webkit-backdrop-filter: blur(16px) saturate(180%); backdrop-filter: blur(16px) saturate(180%); box-shadow: 0 0 16px rgba(0,0,0,0.16); transition: bottom .5s cubic-bezier(.2,.8,.2,1), border-radius .5s cubic-bezier(.2,.8,.2,1)"></span>
       <!-- (Oct 13, 21:19) the fixed top panel (header + stage band) carries the stripe pattern, as the incident headers; the embedded incident page shows none at its foot -->
       <header style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: start; column-gap: 16px; row-gap: 8px; min-width: 0; padding: 0">
         <!-- (Oct 9, 12:15) to keep the chat tall: back on the left, the team on the right, the incident's name centred between them (16px clear of each), up to two lines, then cut -->
@@ -119,7 +121,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         <!-- The team, folded away: a pill ("5 members", the number in bold) that behaves like the round buttons; it opens the team blade -->
         <!-- (Oct 8, 21:45) the incident itself: a round button in the pill's colour with the incident's map marker (a candidate's ring, a fire's orange dot once declared); it opens the incident's page -->
         <!-- (Oct 9, 09:03) removed: the stage band now opens the incident --><a href="{{hdInc.href}}" class="chbtn" data-round="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; border-radius: 50%; background: rgba(118,118,128,0.12); text-decoration: none"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="{{hdInc.r}}" fill="{{hdInc.fill}}" stroke="{{hdInc.stroke}}" stroke-width="{{hdInc.sw}}"></circle></svg></a>
-        <button type="button" class="chbtn wf-gbtn" data-round="1" onClick="{{tm.open}}" aria-haspopup="dialog" aria-label="{{tm.aria}}" style="grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 16px; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><span style="font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span><!-- (Oct 9, 12:08) the crews' people icon instead of the word "members", to save space --><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M9 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6Z M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5 M15.5 10.5a2.5 2.5 0 1 0 0-5 M17.5 14c2 .4 3.5 2.2 3.5 5"></path></svg></button>
+        <button type="button" class="chbtn wf-gbtn" data-round="1" onClick="{{tm.toggle}}" aria-haspopup="dialog" aria-expanded="{{tm.str}}" aria-label="{{tm.bAria}}" style="grid-column: 3; grid-row: 1; justify-self: end; display: flex; align-items: center; justify-content: center; gap: 4px; height: 44px; min-width: 44px; flex-shrink: 0; margin-top: 4px; padding: 0 {{tm.pad}}; border: 0; border-radius: 999px; background: rgba(118,118,128,0.12); color: #1C1C1E; font: inherit; font-size: 17px; font-weight: 400; white-space: nowrap; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="display: {{tm.xD}}; flex-shrink: 0; transform: rotate({{tm.xRot}}); transition: transform .45s cubic-bezier(.3,.9,.25,1)"><path d="M6 6l12 12M18 6 6 18"></path></svg><span style="display: {{tm.pillD}}; font-weight: 700; font-variant-numeric: tabular-nums">{{tm.n}}</span><!-- (Oct 9, 12:08) the crews' people icon instead of the word "members", to save space --><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: {{tm.pillD}}; flex-shrink: 0"><path d="M9 11a3 3 0 1 0 0-6a3 3 0 1 0 0 6Z M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5 M15.5 10.5a2.5 2.5 0 1 0 0-5 M17.5 14c2 .4 3.5 2.2 3.5 5"></path></svg></button>
       </header>
       <!-- The current state: tinted by stage, with its icon. Tap it for the fire card (time in each stage, projection, forces). -->
       <!-- (Oct 4, 23:15) the stage as the fire page's stage tag (icon, stage, time in it on the right); a tap unfolds the times and the next step -->
@@ -323,7 +325,8 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <!-- ===== Team blade: drops from the top over the chat (glass behind), the team as a list; tap a person for their profile ===== -->
     <div class="wf-hap-scrim wf-glass" onClick="{{tm.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{tm.scrimOp}}; pointer-events: {{tm.pe}}; transition: opacity .4s ease"></div>
     <!-- (Oct 16, 13:11) the team opens as a panel, not a blade: 16px under the incident's header panel and from the sides, 24px corners, the incidents list's glass with the stripe pattern and the tooltips' shadow; it fades and settles into place -->
-    <section role="dialog" class="wf-gpanel" aria-modal="true" aria-label="{{t.team}}" style="position: absolute; left: 16px; right: 16px; top: {{tm.top}}px; max-height: calc(100% - {{tm.top}}px - 32px); z-index: 31; display: flex; flex-direction: column; padding-top: 24px; box-sizing: border-box; border-radius: var(--wf-r, 16px); overflow: hidden; box-shadow: 0 0 16px rgba(0,0,0,0.16); opacity: {{tm.op}}; transform: translateY({{tm.y}}); visibility: {{tm.vis}}; transition: transform .45s cubic-bezier(.4,0,.2,1), opacity .3s ease, visibility 0s linear {{tm.visDelay}}">
+    <section role="dialog" data-wf-fademask="1" aria-modal="true" aria-label="{{t.team}}" style="position: absolute; left: 12px; right: 12px; top: {{tm.top}}px; bottom: 12px; z-index: 32; display: flex; flex-direction: column; padding-top: 8px; box-sizing: border-box; border-radius: 0 0 48px 48px; overflow: hidden; opacity: {{tm.op}}; translate: 0 {{tm.dyPx}}px; visibility: {{tm.vis}}; transition: opacity .3s ease {{tm.inDelay}}, visibility 0s linear {{tm.visDelay}}">
+      <button type="button" data-swipe-go="1" tabindex="-1" aria-hidden="true" aria-label="Close team" onClick="{{tm.close}}" style="position: absolute; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none"></button>
       <header style="display: flex; align-items: flex-start; gap: 8px; padding: 0 16px 24px">
         <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0; padding-top: 0">
           <h2 style="margin: 0; font-size: 28px; font-weight: 700; line-height: 34px">{{t.team}}</h2>
@@ -341,7 +344,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
         </sc-for>
       </div>
       <div role="button" tabindex="0" data-grab-show="1" class="wf-grab gb" onPointerDown="{{tm.h.down}}" onPointerMove="{{tm.h.move}}" onPointerUp="{{tm.h.up}}" onPointerCancel="{{tm.h.cancel}}" onKeyDown="{{tm.h.key}}" aria-label="{{t.close}}" style="display: flex; touch-action: none; align-items: flex-start; justify-content: center; height: 24px; padding: 8px 0 0; border: 0; background: transparent; cursor: pointer; flex-shrink: 0"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
-      <span aria-hidden="true" class="wf-stripes" style="position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none"></span>   <!-- (Oct 9, 11:58) every top blade: the stripes along its bottom edge, over the content -->
+      <!-- (Oct 18, 10:05) no stripes of its own: it lies inside the grown header panel -->
     </section>
 
     <!-- ===== Topic picker: the incidents within 50 km of this station (fires, then ignition candidates), nearest first ===== -->
@@ -1298,8 +1301,8 @@ class Component extends DCLogic {
               icD: ((S0 && S0.icD) || C.ICON[S0.icon]), icC: fire ? S0.c : '#3A3A3C', icFill: fire ? 'none' : 'color-mix(in srgb, ' + Y + ' 80%, transparent)', icBg: fire ? S0.bg : '#ECECEF', aria: o.inc.place + ', ' + Math.round(o.km) + ' km',
               pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this._stick = true; this.setState({ topicPick: false }); C.setTopic(c.key, o.inc); } }; }) }; })(),
       tm: (() => { const on = !!s.team, n = team.length; return { n: String(n), word: L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros'), aria: n + L(n === 1 ? ' member. Open the team' : ' members. Open the team', n === 1 ? ' membro. Abrir a equipa' : ' membros. Abrir a equipa'), sub: n + L(n === 1 ? ' member' : ' members', n === 1 ? ' membro' : ' membros') + '.',   /* the same words as the button that opened it */
-        open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), h: this.shHandle('team', 'tmDy'),
-        mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : '-16px', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.45s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg', top: (this._mvTop || 160) + 16, op: on ? '1' : '0' }; })(),
+        open: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.wfMvMeasure(); this.setState({ team: true, tmDy: 0 }); }, close: () => this.setState({ team: false, tmDy: 0 }), toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if ((this.state || {}).team) this.setState({ team: false, tmDy: 0 }); else { this.wfMvMeasure(); this.setState({ team: true, tmDy: 0 }); } }, h: this.shHandle('team', 'tmDy'), str: on ? 'true' : 'false', bAria: on ? L('Close the team', 'Fechar a equipa') : n + L(n === 1 ? ' member. Open the team' : ' members. Open the team', n === 1 ? ' membro. Abrir a equipa' : ' membros. Abrir a equipa'), pad: on ? '0' : '16px', xD: on ? 'block' : 'none', pillD: on ? 'none' : 'inline', hdZ: on ? 31 : 2, hdZd: on ? '0s' : '.5s', gB: on ? -Math.max(0, (this._mvH || 0) - 12) + 'px' : '0px', footR: on ? '48px' : 'var(--wf-r, 16px)', dyPx: Math.min(0, s.tmDy || 0), inDelay: on ? '.18s' : '0s',
+        mh: s.tmDy && this._tmH0 ? Math.max(120, this._tmH0 + s.tmDy) + 'px' : 'calc(100% - 48px)', mhT: s.tmDy ? '0s' : '.35s', y: on ? '0' : '-16px', vis: on ? 'visible' : 'hidden', visDelay: on ? '0s' : '.35s', scrimOp: on ? 1 : 0, pe: on ? 'auto' : 'none', xRot: on ? '0deg' : '90deg', top: (this._mvTop || 160), op: on ? '1' : '0' }; })(),
       /* (Oct 8, 19:15) Configure dispatch: the stations of the chat, the first two on by default (the nearest); one at least */
       ds: (() => { const MN = window.__wfMine ? window.__wfMine() : null, OWN = MN && MN.level !== 'lead' && C.ownCrews ? C.ownCrews(c) : null;
         /* (Oct 8, 23:25) a station captain configures the dispatch of their own station only: its crews, each with its lieutenant */
