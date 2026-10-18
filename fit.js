@@ -1472,10 +1472,14 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
 // whenever the value changes (up or down), easing in and out over 0.9s. Under 10 it keeps one decimal (a comma in Portuguese).
 (function(){
   var fmt=function(v){var pt=window.__wfLang==='pt';if(v<10){var t=(Math.round(v*10)/10).toFixed(1).replace(/\.0$/,'');return pt?t.replace('.',','):t;}return Math.round(v).toLocaleString(pt?'pt-PT':'en-US');};
-  /* (Oct 16, 19:09) a projected area takes the colour of its fire size class (NWCG, by acres) as it counts: grey up to class B, then
-     amber (C, 10 ac), orange (D, 100 ac), red orange (E, 300 ac), red from class F (1,000 ac), the fifth level */
-  var SZ=[[1000,'rgb(215, 0, 21)'],[300,'rgb(196, 46, 15)'],[100,'rgb(181, 74, 0)'],[10,'rgb(138, 97, 0)'],[0,'rgb(72, 72, 74)']];
-  var tint=function(el,v){var h=el.closest&&el.closest('[data-wf-sizecls]');if(!h)return;var ac=v*(parseFloat(h.getAttribute('data-wf-sizecls'))||1),c=SZ[SZ.length-1][1];for(var i=0;i<SZ.length;i++){if(ac>=SZ[i][0]){c=SZ[i][1];break;}}if(h.style.color!==c)h.style.color=c;var t=h.parentNode&&h.parentNode.querySelector('[data-wf-sizetag]');if(t){var L='ABCDEFG'.charAt([0.25,10,100,300,1000,5000].filter(function(x){return ac>=x;}).length);if(t.textContent!==L){t.textContent=L;t.setAttribute('aria-label',(window.__wfLang==='pt'?'Classe ':'Size class ')+L);}if(t.style.background!==c)t.style.background=c;}};   /* (Oct 17) the size class tag beside it changes letter and colour as the number counts */
+  /* (Oct 18, 10:01) the projected area's NWCG size class is a plain square tag in a clear scale (no outline, no shadow): A and B grey,
+     C soft yellow, D strong yellow, E orange, F red, G (the last, catastrophic) electric purple; its letter black or white, whichever reads
+     better on that colour. The number itself stays dark grey; the tag changes letter and colour as the number counts */
+  var SZ=['rgb(199, 199, 204)','rgb(199, 199, 204)','rgb(255, 230, 128)','rgb(255, 204, 0)','rgb(255, 138, 0)','rgb(229, 20, 30)','rgb(139, 44, 255)'];
+  var lum=function(c){var m=c.match(/\d+/g).slice(0,3).map(function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*m[0]+0.7152*m[1]+0.0722*m[2];};
+  var ink=function(c){var L=lum(c);return (L+0.05)/0.05>=1.05/(L+0.05)?'rgb(0, 0, 0)':'rgb(255, 255, 255)';};
+  var tint=function(el,v){var h=el.closest&&el.closest('[data-wf-sizecls]');if(!h)return;var ac=v*(parseFloat(h.getAttribute('data-wf-sizecls'))||1),n=[0.25,10,100,300,1000,5000].filter(function(x){return ac>=x;}).length,c=SZ[n],L='ABCDEFG'.charAt(n);
+    var t=h.parentNode&&h.parentNode.querySelector('[data-wf-sizetag]');if(t){if(t.textContent!==L){t.textContent=L;t.setAttribute('aria-label',(window.__wfLang==='pt'?'Classe ':'Size class ')+L);}if(t.style.background!==c){t.style.background=c;t.style.color=ink(c);}}};
   var run=function(el){var to=parseFloat(el.getAttribute('data-wf-count'));if(!isFinite(to))return;var from=el.__wfCv;el.__wfCv=to;
     if(from==null||from===to){el.textContent=fmt(to);tint(el,to);return;}cancelAnimationFrame(el.__wfCr||0);var T0=performance.now(),D=900;
     (function step(t){var k=Math.min(1,(t-T0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,cur=from+(to-from)*e;el.textContent=fmt(cur);tint(el,cur);if(k<1)el.__wfCr=requestAnimationFrame(step);})(T0);};
