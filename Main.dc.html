@@ -18,7 +18,7 @@
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792323810"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1792323810"></script>
+<script src="prefs.js?v=1792339921"></script>
 <script src="station.js?v=1792322188"></script>
 <script src="i18n.js?v=1792322188"></script>
 <script src="live.js?v=1792322188"></script>
@@ -217,6 +217,7 @@ html [data-wf-bell]{transition:opacity .25s ease}html.wf-sc2on [data-wf-bell]{op
 /* (Oct 18, 17:07) notifications open: the area header and its icons step aside (only the X stays); the panel starts at the glass's top, its title level with the X */
 html.wf-nt2on [data-wf-topwrap] > header > button,html.wf-nt2on [data-wf-topwrap] > header > [data-wf-bell]{opacity:0!important;pointer-events:none!important}
 html.wf-nt2on section[data-swipe-key="nt"]{top:var(--wf-gt, 12px)!important}
+html.wf-sc2on [data-pull-go] > span,html.wf-nt2on [data-pull-go] > span,html.wf-pm2on [data-pull-go] > span{opacity:0!important}   /* (Oct 18, 17:08) the top panel grown: only the grabber at its new foot */
 html.wf-nt2on section[data-swipe-key="nt"] > div:first-of-type{padding-top:calc(var(--wf-pm-row, 16px) + 5px)!important}
 /* (Oct 18, 17:07) the top-right X of every grown panel has no background: just the X */
 html body button[data-wf-burger][data-wf-x]:not(#wf-n1):not(#wf-n2):not(#wf-n3),html body button.wf-lix:not(#wf-n1):not(#wf-n2):not(#wf-n3){background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#3C3C43!important}   /* (Oct 18, 17:00) area picker open: no notifications, only its X */

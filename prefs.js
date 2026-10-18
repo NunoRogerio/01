@@ -345,6 +345,10 @@ window.__wfFireName = function (p, ref, id) { p = String(p || '').trim(); if (!(
     // and keeps 40px clear between it and the blade's content. gb = line at the bottom (top blades), gt = line at the top (bottom blades).
     '.wf-grab{box-sizing:border-box!important;height:53px!important;flex-shrink:0}' +
     '[style*="width: 86px; height: 3px"]{opacity:0!important}#wf-tour .tb::before{opacity:0!important}' +   /* (Oct 4) grabbers hidden everywhere; the blades keep their swipe, drag and tap behaviours */
+    /* (Oct 18, 17:08) grabbers back on every expanding panel and dialog: iOS-like, light grey, 36 x 5px, fully rounded, 24px in from the edge they drag (inside the stripe zone) */
+    '[style*="width: 86px; height: 3px"]:not([style*="background: transparent"]){opacity:1!important;width:36px!important;height:5px!important;border-radius:999px!important;background:rgba(60, 60, 67, 0.3)!important;translate:0 16px}' +
+    '[style*="width: 86px; height: 3px"][style*="margin-left: -43px"]{margin-left:-18px!important}' +
+    '[style*="width: 86px; height: 3px"][style*="bottom: calc("],[data-pull-go] > [style*="width: 86px; height: 3px"]{translate:0 -16px}' +
     '.wf-stripes{background:repeating-linear-gradient(-45deg,var(--wf-y,#E5FF00) 0 16.97px,transparent 16.97px 33.94px);opacity:.4}' +   /* the firefighter stripes, shared by every page */
     'html.wf-embed [data-wf-ttl2]{grid-row:1!important;grid-column:1 / 3!important}' +   /* (Oct 9, 12:11) in a blade the back is hidden: the title moves up */
     '*:has(> [data-wf-burger]:not(.wf-mb)),*:has(> [data-wf-burger-spot]){margin-right:-8px!important}' +

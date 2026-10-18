@@ -16,7 +16,7 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792323810"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1792323810"></script>
+<script src="prefs.js?v=1792339921"></script>
 <script src="station.js?v=1792322188"></script>
 <script src="i18n.js?v=1792322188"></script>
 <script src="live.js?v=1792322188"></script>
@@ -3144,7 +3144,7 @@ class Component extends DCLogic {
       card = sec && sec.querySelector('[data-wf-sumcard], [data-wf-sckcard], ul[data-wf-evk], [data-wf-kpicard]');
     if (!card || !card.offsetParent || Math.abs((parseFloat(card.style.opacity) || 1) - 0.6) > 0.01) return;   /* only while it peeks under the decisions (the browser keeps "0.6") */
     busy = true; const E = 'cubic-bezier(.4,0,.2,1)';
-    const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: E }, { translate: '0 -16px', opacity: 1, offset: 0.4 }, { translate: '0 -16px', opacity: 1, offset: 0.55, easing: E }, { translate: '0 0', opacity: 0.6 }], { duration: 1500 });
+    const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: E }, { translate: '0 -16px', opacity: 1, offset: 0.45 }, { translate: '0 -16px', opacity: 1, offset: 0.55, easing: E }, { translate: '0 0', opacity: 0.6 }], { duration: 750 });   /* (17:10) twice as fast; the opacity rises with the lift and falls back with the return */
     a.onfinish = a.oncancel = () => { busy = false; };
   } catch (x) { busy = false; } }, 6000);
 })();

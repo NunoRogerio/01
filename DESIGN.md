@@ -2314,3 +2314,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Metrics: the same glass panel as the incident list (12px from the screen's sides and foot, 48px foot corners), the same top, title 28px bold with a grey 15px description 4px under it, 40px to the period switcher, 16px side padding, 56px foot padding; the top panel steps aside while it's open; its X top right like every grown panel's.
 - Notifications: the area header steps aside; the panel starts at the glass's top with the bell before the title "Notifications", level with the X; a grey description under it; then To verify / Resolved and the list.
 - The X top right of every grown panel (menu, area picker, notifications, incident list, metrics) has no background: just the X, still turning a gentle quarter turn.
+
+## Oct 18 (17:08–17:10)
+- Grabbers are back on every expanding panel and dialog (supersedes the Oct 4 "grabbers hidden"): iOS-like, light grey, 36 × 5px, fully rounded, 24px in from the edge they drag, inside the stripe zone. A grown top panel shows only the grabber at its new foot.
+- The peeking card's nudge is twice as fast (0.75 s); its opacity rises with the lift to 100% and falls back with the return.
