@@ -2294,3 +2294,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Back on the area picker** uses the return arrow like every back.
 - **Map controls on every map** are the incident map's white glass round buttons (dark glass at night) with dark icons.
 - **The profile X on the sign-in** is 44px, like every round X.
+
+## Incident page: the peeking card's nudge; time centred on the size class (Oct 18, 16:48–16:51)
+- Every 8 s, the first card peeking from under the decisions (small, at 60%) rises 16px at full opacity and settles back to its peek, still small: a call to read on. A smooth rise and return with no overshoot (the no-bounce rule holds). Never while the page is touched (4 s after a touch), hidden or scrolled away from the peek.
+- The projection's time ("By 19:47") is vertically centred on the size class tag (A–G), fixed; the tag's foot stays on the area number's baseline.

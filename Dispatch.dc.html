@@ -581,7 +581,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
       <!-- (Oct 16, 15:58) the projected area, top left of the map: large regular text, the number counting to each horizon's value -->
       <!-- (Oct 16, 21:43) the projected area sits on the projection switcher, 8px above it and as wide as it: the counting number (semibold, Oct 17) on the left; on the right, right-aligned with the switcher, the time and the NWCG size class as a one-letter tag in the class colour (Oct 17), never text after the number -->
       <!-- (Oct 18, 10:07) the number, the tag's foot and the time all sit on the number's baseline (an inline-block with overflow hidden has its foot as baseline). (Oct 18, 10:01) it belongs to the projection switcher: 16px in from the switcher's sides, no text shadow; the counting number (dark grey), then 16px, then the size class tag (a plain coloured square) and the time -->
-      <div data-wf-ovl="1" aria-live="polite" style="position: absolute; left: 32px; right: 32px; bottom: 72px; z-index: 30; display: {{fac.d}}; align-items: baseline; justify-content: space-between; gap: 16px; pointer-events: none"><!-- (Oct 18, 12:12) the size class tag and the time back on the right, 16px in from the switcher's right edge; the number on the left --><span data-wf-sizecls="{{fac.k}}" style="display: block; flex-shrink: 0; font-size: 34px; font-weight: 600; line-height: 40px; color: rgb(58, 58, 60); font-variant-numeric: tabular-nums; white-space: nowrap"><span data-wf-count="{{fac.v}}"></span> {{fac.u}}</span><span style="display: block; min-width: 0; white-space: nowrap; font-size: 15px; font-weight: 600; line-height: 20px; color: rgb(58, 58, 60)"><span data-wf-sizetag="1" role="img" aria-label="{{fac.clsAria}}" style="display: inline-block; overflow: hidden; vertical-align: baseline; width: 30px; height: 30px; margin-right: 8px; border-radius: 4px; background: rgb(199, 199, 204); color: rgb(0, 0, 0); font-size: 19px; font-weight: 600; line-height: 30px; text-align: center">{{fac.cls}}</span>{{fac.when}}</span></div>
+      <div data-wf-ovl="1" aria-live="polite" style="position: absolute; left: 32px; right: 32px; bottom: 72px; z-index: 30; display: {{fac.d}}; align-items: baseline; justify-content: space-between; gap: 16px; pointer-events: none"><!-- (Oct 18, 12:12) the size class tag and the time back on the right, 16px in from the switcher's right edge; the number on the left --><span data-wf-sizecls="{{fac.k}}" style="display: block; flex-shrink: 0; font-size: 34px; font-weight: 600; line-height: 40px; color: rgb(58, 58, 60); font-variant-numeric: tabular-nums; white-space: nowrap"><span data-wf-count="{{fac.v}}"></span> {{fac.u}}</span><span style="display: block; min-width: 0; white-space: nowrap; font-size: 15px; font-weight: 600; line-height: 20px; color: rgb(58, 58, 60)"><!-- (Oct 18, 16:51) the time centred on the size class tag, fixed --><span data-wf-sizetag="1" role="img" aria-label="{{fac.clsAria}}" style="display: inline-block; overflow: hidden; vertical-align: baseline; width: 30px; height: 30px; margin-right: 8px; border-radius: 4px; background: rgb(199, 199, 204); color: rgb(0, 0, 0); font-size: 19px; font-weight: 600; line-height: 30px; text-align: center">{{fac.cls}}</span><span style="display: inline-block; overflow: hidden; vertical-align: baseline; height: 30px; line-height: 30px">{{fac.when}}</span></span></div>
       <!-- (Oct 4) The projection, laid over the map's foot: dark map-control style, 16px from the map's edges -->
       <div role="tablist" data-wf-ovl="1" aria-label="Projection" class="wf-seg wf-seg-glass" onClick="{{fp.stop}}" onPointerDown="{{fp.stop}}" onPointerMove="{{fp.stop}}" onPointerUp="{{fp.stop}}" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; display: {{fp.d}}; background: rgba(40, 40, 40, 0.62); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
         <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 4); transform: translateX({{fp.x}})"><span class="segblob"></span></span>
@@ -3126,6 +3126,22 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>/* (Oct 18, 16:48) the nudge: every 8 s, a first card peeking from under the decisions (smaller, at 60%) rises 16px at full opacity and settles back
+   to its peek, still small: a call to read on. A smooth rise and return, no overshoot. Never while the page is touched, hidden or moving. */
+(() => { let busy = false, touch = 0; const T = () => { touch = Date.now(); };
+  ['pointerdown', 'touchstart', 'wheel'].forEach((ev) => addEventListener(ev, T, { capture: true, passive: true }));
+  const shown = () => { if (document.hidden) return false; try { const fe = window.frameElement; if (fe) { const W = fe.ownerDocument.defaultView; if (!(fe.getBoundingClientRect().width > 0)) return false; let q = fe; while (q && q.nodeType === 1) { const cs = W.getComputedStyle(q); if (cs.visibility === 'hidden' || cs.display === 'none' || +cs.opacity < 0.99) return false; q = q.parentElement; } } } catch (x) {} return true; };
+  setInterval(() => { try {
+    if (busy || Date.now() - touch < 4000 || !document.documentElement.classList.contains('wf-arrived') || !shown()) return;
+    const sec = [].filter.call(document.querySelectorAll('[data-wf-arrsec]'), (e) => e.offsetParent).sort((x, y) => x.getBoundingClientRect().top - y.getBoundingClientRect().top)[0],
+      card = sec && sec.querySelector('[data-wf-sumcard], [data-wf-sckcard], ul[data-wf-evk], [data-wf-kpicard]');
+    if (!card || !card.offsetParent || card.style.opacity !== '0.600') return;   /* only while it peeks under the decisions */
+    busy = true; const E = 'cubic-bezier(.4,0,.2,1)';
+    const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: E }, { translate: '0 -16px', opacity: 1, offset: 0.4 }, { translate: '0 -16px', opacity: 1, offset: 0.55, easing: E }, { translate: '0 0', opacity: 0.6 }], { duration: 1500 });
+    a.onfinish = a.oncancel = () => { busy = false; };
+  } catch (x) { busy = false; } }, 8000);
+})();
 </script>
 </body>
 </html>
