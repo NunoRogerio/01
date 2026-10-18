@@ -1,10 +1,12 @@
 // Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE.
 /* Map tiles (Oct 4): one provider at a time, chosen in the Maps menu; kept on this phone (default MapTiler) */
+/* (Oct 18, 23:22) once on each phone: switch to Satellite so it can be tried; a later choice in Appearance or Maps stays */
+try { if (!localStorage.getItem('wf-sat-try')) { localStorage.setItem('wf-sat-try', '1'); if (localStorage.getItem('wf-maptiles') !== 'osm') localStorage.setItem('wf-maprender', 'satellite'); } } catch (e) {}
 window.__wfTiles = { list: [['maptiler', 'MapTiler'], ['osm', 'OpenStreetMap']],
   /* renders (looks) of each provider: [id, name, extension]; only what the free plans give */
   styles: { maptiler: [['openstreetmap', 'Standard', 'jpg'], ['streets-v2', 'Streets', 'png'], ['outdoor-v2', 'Outdoor', 'png'], ['topo-v2', 'Topographic', 'png'], ['satellite', 'Satellite', 'jpg'], ['hybrid', 'Satellite with labels', 'jpg']], osm: [['standard', 'Standard', 'png']] },
   get: function () { var v = ''; try { v = localStorage.getItem('wf-maptiles') || ''; } catch (e) {} return v === 'osm' ? 'osm' : 'maptiler'; },
-  style: function () { var p = this.get(), v = ''; try { v = localStorage.getItem('wf-maprender') || ''; } catch (e) {} var L = this.styles[p]; for (var i = 0; i < L.length; i++) if (L[i][0] === v) return v; return p === 'maptiler' ? 'topo-v2' : L[0][0]; },   /* (Oct 5, 07:16) Topographic is the default look */
+  style: function () { var p = this.get(), v = ''; try { v = localStorage.getItem('wf-maprender') || ''; } catch (e) {} var L = this.styles[p]; for (var i = 0; i < L.length; i++) if (L[i][0] === v) return v; return p === 'maptiler' ? 'satellite' : L[0][0]; },   /* (Oct 18, 23:22) Satellite is the default look, to try it (was Topographic, Oct 5) */
   share: function () { return 'map=' + this.get() + '&look=' + this.style(); },   /* the shared link carries the map engine and its look */
   set: function (k, st) { try { localStorage.setItem('wf-maptiles', k === 'osm' ? 'osm' : 'maptiler'); if (st) localStorage.setItem('wf-maprender', st); } catch (e) {} try { window.dispatchEvent(new Event('wf-maptiles')); } catch (e) {} },
   host: function () { return this.get() === 'osm' ? 'https://tile.openstreetmap.org/' : 'https://api.maptiler.com/maps/'; },
