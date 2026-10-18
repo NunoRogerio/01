@@ -249,7 +249,7 @@
     if (c.kind === 'cand' && !c.closed && !c.dismissed && (c.stage || 0) === 0 && M && M.key === 'ff' && mission(c) && (c.forces || []).some(function (f) { return f.st === 'onscene' && ownForce(c, f); }) && !(c.msgs || []).concat((c.queue || []).map(function (q) { return q.m; })).some(function (m) { return m && m.reqDecl && !m.done; })) {
       var v5 = ((c.forces || []).find(function (f) { return ownForce(c, f); }) || {}).veh; v5 = (v5 && v5[0]) || 'Engine';
       card(c, { req: 'decl', reqDecl: true, ask: 'ff', by: 0, tag: { en: 'Size-up · ' + v5, pt: 'Reconhecimento · ' + v5 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: evidOf(c).strong ? { en: 'On scene. Smoke and an active edge in light fuels.', pt: 'No local. Fumo e uma frente ativa em combustível ligeiro.' } : { en: 'On scene. A warm patch, no smoke yet.', pt: 'No local. Uma zona quente, ainda sem fumo.' },
-        actions: [{ key: 'reqDismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 400, 0); ch = true; }
+        actions: [{ key: 'reqDismiss', en: 'Dismiss', pt: 'Descartar' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 400, 0); ch = true; }
     { var CM = commander(c); if (CM) (c.people || []).forEach(function (p, pi) { if (p.name === CM.name && p.kind === 'lead') { if (p.roleEn !== CM.en) { p.roleEn = CM.en; p.rolePt = CM.pt; ch = true; } return; }
         if (p.kind !== 'lead' || p.roleEn) return; var f = (c.forces || []).find(function (x) { return x.coord === p.name; }), v = f && (f.veh || [])[0]; if (!v) return;   /* every other station in the chat speaks through its engine's Captain */
         p.roleEn = (isUS(c) ? 'Captain. ' : 'Crew chief. ') + v + '. ' + p.org; p.rolePt = (isUS(c) ? 'Capitão. ' : 'Chefe de equipa. ') + v + '. ' + p.org; ch = true; }); }
@@ -807,7 +807,7 @@
       push(c, { kind: 'cancelled' }, 2200, 0); return; }
     if (E.strong && meFirst(c)) {   /* you are the first engine's Captain: the call is yours */
       card(c, { req: 'decl', reqDecl: true, ask: 'ff', by: 0, tag: { en: 'Size-up · ' + v0, pt: 'Reconhecimento · ' + v0 }, tagC: '#B8360A', title: { en: 'Declare fire', pt: 'Declarar incêndio' }, body: sz,
-        actions: [{ key: 'reqDismiss', en: 'Dismiss fire', pt: 'Descartar incêndio' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 600, 0); return; }
+        actions: [{ key: 'reqDismiss', en: 'Dismiss', pt: 'Descartar' }, { key: 'reqConfirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true }] }, 600, 0); return; }
     if (E.strong) { say(c, fi, sz.en + ' Fire confirmed. I am declaring it and taking command: ' + (us ? v0 + ', ' + (c.place || 'the fire') + ' IC.' : 'I am the COS.'), sz.pt + ' Incêndio confirmado. Declaro-o e assumo o comando: ' + (us ? v0 + ', ' + (c.place || 'o incêndio') + ' IC.' : 'sou o COS.'), 600, 0);
       push(c, { kind: 'declared' }, 2200, 0); return; }
     say(c, fi, 'On scene. A warm patch of rock, no smoke and no flame. Nothing found, cancelling.', 'No local. Uma zona de rocha quente, sem fumo nem chama. Nada encontrado, cancelamos.', 600, 0);
@@ -960,7 +960,7 @@
     if (c.dismissed || c.stage === 7) return [];
     var s = c.stage, A = [];
     if (s === 0) { if (!c.flags.drone) A.push({ key: 'drone', en: 'Send drone', pt: 'Enviar drone' }); var capD = isLt() && myRank() === 'cap' && mission(c);   /* (Oct 12, 13:05) the Captain assigned to a candidate: declaring or dismissing it is his call, always at hand */
-      if (!c.flags.initial || (c.flags.arrived && meFirst(c)) || capD) { A.push({ key: 'dismiss', en: 'Dismiss fire', pt: 'Descartar incêndio', cap: capD }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true, cap: capD }); } }   /* (Oct 11, 17:05) the first Captain on scene declares; nobody else */   // Dismiss then Confirm, as everywhere
+      if (!c.flags.initial || (c.flags.arrived && meFirst(c)) || capD) { A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar', cap: capD }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true, cap: capD }); } }   /* (Oct 11, 17:05) the first Captain on scene declares; nobody else */   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
     if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if ((c.msgs || []).some(function (x) { return x.rec && !x.done && x.to === 4; })) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
@@ -1789,7 +1789,7 @@
     // (Oct 5, 09:53) the button to tap is the request's primary one (Approve), whatever its place on the card
     var who = m.by != null ? m.by : lead(c, 1), yes = m.actions.filter(function (a) { return a.primary; })[0] || m.actions[0], no = m.actions.filter(function (a) { return a !== yes; })[0], T = m.title || { en: 'this request', pt: 'este pedido' };
     if (sizeUp(m)) { var dc = dcOf(c);   /* the Captain's own size-up: the dispatch center waits for it, nobody's "request" */
-      sys(c, dc + (n ? ' still waiting for your size-up: Declare fire or Dismiss fire, on your card above.' : ' waiting for your size-up. Declare fire or Dismiss fire, on your card above.'), dc + (n ? ' continua a aguardar o seu reconhecimento: Declarar incêndio ou Descartar incêndio, no seu cartão acima.' : ' aguarda o seu reconhecimento. Declarar incêndio ou Descartar incêndio, no seu cartão acima.'), 800, 0);
+      sys(c, dc + (n ? ' still waiting for your size-up: Declare fire or Dismiss, on your card above.' : ' waiting for your size-up. Declare fire or Dismiss, on your card above.'), dc + (n ? ' continua a aguardar o seu reconhecimento: Declarar incêndio ou Descartar, no seu cartão acima.' : ' aguarda o seu reconhecimento. Declarar incêndio ou Descartar, no seu cartão acima.'), 800, 0);
       return true; }
     if (m.reqDecl) { var dz = yes.key === 'reqDismiss';
       if (!n) say(c, who, 'We still need your call. Tap Approve on my request above to ' + (dz ? 'dismiss it' : 'declare the fire') + ', or Not yet to keep watching.', 'Ainda precisamos da sua decisão. Toque em Aprovar no meu pedido acima para ' + (dz ? 'o descartar' : 'declarar o incêndio') + ', ou em Ainda não para continuar a vigiar.', 800, 2);

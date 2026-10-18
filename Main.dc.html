@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792322188"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792323810"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1792322188"></script>
+<script src="prefs.js?v=1792323810"></script>
 <script src="station.js?v=1792322188"></script>
 <script src="i18n.js?v=1792322188"></script>
 <script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792322188"></script>
+<script src="chat.js?v=1792323810"></script>
 <script src="tour.js?v=1792322188"></script>
 <script src="mapsearch.js?v=1792322188"></script>
-<script src="stats.js?v=1792322188"></script>
+<script src="stats.js?v=1792323810"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -410,7 +410,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
       <sc-if value="{{inCounties}}" hint-placeholder-val="{{ false }}">
         <div class="sqwrap" data-sel="{{allState.selA}}" style="display: flex; align-items: center; gap: 8px; margin: 0 16px 8px; padding: 16px 0 16px 16px; border-radius: var(--wf-r, 16px); border-bottom: 0; background-color: #FFFFFF; box-shadow: {{allState.selRing}}; transition: box-shadow .15s ease">
           <button type="button" class="mbtn sqback" aria-label="{{backLbl}}" onClick="{{toStates}}" style="display: {{backD}}; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; cursor: pointer">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg>
           </button>
           <button type="button" class="sqrow nosep" disabled="{{allState.dis}}" onClick="{{allState.pick}}" aria-label="{{allState.aria}}" style="display: grid; grid-template-columns: {{gridCols}}; align-items: center; align-content: center; gap: 4px 16px; min-height: 52px; padding: 0 max(8px, calc({{rowPadR}} - 16px)) 0 0; flex-grow: 1; min-width: 0; border-radius: 999px; border: 0; background-color: transparent; color: {{allState.fg}}; text-align: left; font: inherit; cursor: pointer">
             <span style="min-width: 0; line-height: 20px; font-size: 17px; font-weight: 600">{{allState.name}}</span>
@@ -889,7 +889,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <p style="display: {{aic.noteD}}; margin: 4px 0 0; font-size: 15px; line-height: 20px; color: #6E6E73">{{aic.note}}</p>
     <div class="wf-dlg-acts">
       <button type="button" class="btn wf-sec" onClick="{{aic.close}}" style="height: 48px; font-size: 17px; font-weight: 600">{{aic.cancel}}</button>
-      <button type="button" class="btn primary" data-hap="{{aic.hap}}" onClick="{{aic.confirm}}" style="height: 48px; font-size: 17px; font-weight: 600">{{aic.ok}}</button>
+      <button type="button" class="{{aic.okCls}}" data-hap="{{aic.hap}}" onClick="{{aic.confirm}}" style="display: flex; align-items: center; justify-content: center; height: 48px; padding: 0 16px; border: 0; border-radius: 999px; background: {{aic.okBg}}; color: {{aic.okFg}}; font-size: 17px; font-weight: 600">{{aic.ok}}</button>
     </div>
   </section>
 </div>
@@ -1475,7 +1475,7 @@ class Component extends DCLogic {
             L('You will need to sign in again to use the app.', 'Terá de voltar a entrar para usar a aplicação.', 'アプリを使うには再度サインインが必要です。'),
             '', L('Sign out', 'Terminar sessão', 'サインアウト')] }[k];
         const close = () => this.setState({ aiAsk: null });
-        return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
+        return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], okCls: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'wf-rm' : 'btn primary', okBg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgba(215, 0, 21, 0.09)' : 'rgb(58, 58, 60)', okFg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgb(153, 0, 14)' : 'rgb(255, 255, 255)',   /* (Oct 18) a Remove asks with the Remove look */ cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
           y: open ? '0%' : 'calc(100% + 120px)', dur: open ? '.5s' : '.4s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', close,
           hap: (k === 'on' || k === 'off' || /^ds/.test(k)) ? 'late' : 'now',   // turning role-play on/off: the vibration comes when the toggle lands
           confirm: () => { const kk = s.aiAsk; if (kk === 'out') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} close(); this.wfSignOutNow(); return; }
@@ -1935,7 +1935,7 @@ class Component extends DCLogic {
     const CHEV = 'M5 12h14M13 6l6 6-6 6',   /* forward arrow with its stem (drill in), not a chevron */ TICK = 'm5 12 5 5 9-10';
     // Counts stay dark grey: colour on numbers is only for an ignition's likelihood percentage
     const NUMC = '#3C3C43';
-    const num = (v) => ({ v, c: v > 0 ? '#000000' : '#636366' });
+    const num = (v) => ({ v, c: v > 0 ? '#000000' : 'rgb(110, 110, 115)' });   /* (Oct 18) a zero count reads in the one mid grey, as on the bottom panel */
     const rowOf = (o, selected, pick, sub, drill) => { const dis = !selected && !o.live && (o.cands || 0) + (o.fires || 0) === 0; return {
       name: o.name, sub, subD: sub ? 'block' : 'none', ...selSty(selected), dis, disA: dis ? 'true' : 'false', ...(dis ? { fg: '#AEAEB2', subC: '#C7C7CC' } : {}),
       fires: o.fires, firesC: dis ? '#AEAEB2' : NUMC, cands: o.cands, candsC: dis ? '#AEAEB2' : NUMC,
