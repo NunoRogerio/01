@@ -1476,10 +1476,11 @@ window.__wfHaloOff=function(){try{var h=document.querySelector('.wf-halo');if(!h
      C soft yellow, D strong yellow, E orange, F red, G (the last, catastrophic) electric purple; its letter black or white, whichever reads
      better on that colour. The number itself stays dark grey; the tag changes letter and colour as the number counts */
   var SZ=['rgb(199, 199, 204)','rgb(199, 199, 204)','rgb(255, 230, 128)','rgb(255, 204, 0)','rgb(255, 138, 0)','rgb(229, 20, 30)','rgb(139, 44, 255)'];
+  var TX=['rgb(72, 72, 74)','rgb(72, 72, 74)','rgb(138, 97, 0)','rgb(150, 105, 0)','rgb(181, 74, 0)','rgb(215, 0, 21)','rgb(122, 30, 230)'];
   var lum=function(c){var m=c.match(/\d+/g).slice(0,3).map(function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*m[0]+0.7152*m[1]+0.0722*m[2];};
   var ink=function(c){var L=lum(c);return (L+0.05)/0.05>=1.05/(L+0.05)?'rgb(0, 0, 0)':'rgb(255, 255, 255)';};
   var tint=function(el,v){var h=el.closest&&el.closest('[data-wf-sizecls]');if(!h)return;var ac=v*(parseFloat(h.getAttribute('data-wf-sizecls'))||1),n=[0.25,10,100,300,1000,5000].filter(function(x){return ac>=x;}).length,c=SZ[n],L='ABCDEFG'.charAt(n);
-    var t=h.parentNode&&h.parentNode.querySelector('[data-wf-sizetag]');if(t){if(t.textContent!==L){t.textContent=L;t.setAttribute('aria-label',(window.__wfLang==='pt'?'Classe ':'Size class ')+L);}if(t.style.background!==c){t.style.background=c;t.style.color=ink(c);}}};
+    var t=h.parentNode&&h.parentNode.querySelector('[data-wf-sizetag]');if(t){if(t.textContent!==L){t.textContent=L;t.setAttribute('aria-label',(window.__wfLang==='pt'?'Classe ':'Size class ')+L);}if(t.style.background!==c){t.style.background=c;t.style.color=ink(c);}}var tc=TX[n];if(h.style.color!==tc)h.style.color=tc;};   /* (Oct 18, 10:07) the number keeps its class colour too, in a darker, readable shade of the same scale */
   var run=function(el){var to=parseFloat(el.getAttribute('data-wf-count'));if(!isFinite(to))return;var from=el.__wfCv;el.__wfCv=to;
     if(from==null||from===to){el.textContent=fmt(to);tint(el,to);return;}cancelAnimationFrame(el.__wfCr||0);var T0=performance.now(),D=900;
     (function step(t){var k=Math.min(1,(t-T0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,cur=from+(to-from)*e;el.textContent=fmt(cur);tint(el,cur);if(k<1)el.__wfCr=requestAnimationFrame(step);})(T0);};
