@@ -2333,3 +2333,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Two levels to explore what was dispatched: the informative card (smoke check, initial attack) folds its units away and back, and every unit (engines, aircraft, any vehicle) folds its crew. Both chevrons sit at their card's bottom right, 4px from the bottom and right edges, down when folded, up when open.
 - Under an informative card the unit cards have square corners for continuity, the last one rounded at its foot; while they show, the informative card loses its foot corners.
 - Aircraft crews: the pilot and the helitack crew (PT: piloto, chefe de equipa, bombeiros).
+
+## Green confirm buttons (Oct 18, 19:38)
+- Dispatch and Send (smoke check, initial attack) are one green button: #248A3D with white text (the lighter green with dark text is gone; white on it would fail contrast).
