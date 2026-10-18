@@ -123,7 +123,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
     </div>
     <!-- (Oct 11, 17:45) the country first: California (default) or Portugal; the profiles below are that country's -->
     <div role="tablist" aria-label="Country" class="wf-seg" style="flex-shrink: 0; margin: 8px 16px 8px">
-      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{cty.x}})"><span class="segblob"></span></span>
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 2); transform: translateX({{cty.x}})"><span class="segblob"></span></span>
       <sc-for list="{{cty.tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}"><span style="display: inline-grid"><span style="grid-area: 1 / 1">{{tb.label}}</span><span aria-hidden="true" style="grid-area: 1 / 1; visibility: hidden; font-weight: 600">{{tb.label}}</span></span></button>
       </sc-for>

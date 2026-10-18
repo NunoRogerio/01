@@ -2152,8 +2152,10 @@
   function inScope(c, SC) { if (!SC || !SC.st || !c || !c.st) return true;
     if (c.kind === 'dm') return c.st === SC.st || (SC.st === 'US' && /^[A-Z]{2}$/.test(c.st) && c.st !== 'PT') || (SC.st === 'AMZ' && c.st === 'BRA');
     return !window.__wfInArea || window.__wfInArea({ st: c.st, co: c.reg, lat: c.lat, lon: c.lon }, SC.st, SC.co); }
+  /* (Oct 18, 09:24) Reset fires (the dispatch center's Resolved notifications): this profile's incident chats and their kept outcomes go, so every candidate starts again from zero */
+  function resetAll() { try { localStorage.removeItem(KEY); localStorage.removeItem(FINK); sessionStorage.removeItem(KEY + '-carry'); } catch (e) {} DB = { chats: {} }; LASTRAW = null; BASE = {}; emit(); }
   window.__wfChat = {
-    incCand: incCand, incFire: incFire,
+    resetAll: resetAll, incCand: incCand, incFire: incFire,
     STAGES: STAGES, ICON: ICON, L: L, hhmm: hhmm, dur: dur, clock: clock, keyOf: keyOf, stageOf: stageOf, actions: actions, unread: unread, lastMsg: lastMsg, typing: typing, fresh: fresh,
     vnow: vnow, since: since, photo: photoOf, evid: evidOf, mission: mission, assignMine: assignMine, canAct: canAct, sizeUp: sizeUp, commander: commander,
     crest: function (c, station) {   // a station of this chat, by short or full name

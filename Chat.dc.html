@@ -16,13 +16,13 @@
 <link rel="icon" href="icon-192.png?v=4">
 <link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792267002"></script>
 <script src="avatar.js?v=1791872737"></script>
-<script src="prefs.js?v=1792311324"></script>
+<script src="prefs.js?v=1792312788"></script>
 <script src="station.js?v=1792256193"></script>
 <script src="i18n.js?v=1792250842"></script>
 <script src="live.js?v=1792173262"></script>
-<script src="chat.js?v=1792256193"></script>
+<script src="chat.js?v=1792312788"></script>
 <script src="tour.js?v=1792256193"></script>
-<script src="feedcam.js?v=1792256193"></script>
+<script src="feedcam.js?v=1792312788"></script>
 <script src="trophy.js?v=1792256193"></script>
 
 <title>Chats</title>
@@ -63,7 +63,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <a href="Main.dc.html" data-wf-back="1" class="chbtn" aria-label="{{t.close}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin: 8px 0 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg></a>
     </header>
     <div role="tablist" aria-label="{{t.chats}}" class="wf-seg" style="flex-shrink: 0; margin: 0 16px 24px">
-      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 2); transform: translateX({{tabX}})"><span class="segblob"></span></span>
       <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
@@ -279,7 +279,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
     <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; padding: 16px 16px 32px; background: #F2F2F7; border-top: 0; transform: translateY({{mv.cy}}px); transition: transform {{mv.t}}">
       <span style="font-size: 15px; line-height: 20px; color: #545458; text-align: center">{{histTxt}}</span>
       <div role="tablist" aria-label="{{t.hist}}" class="wf-seg" style=""">
-      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 2); transform: translateX({{hTabX}})"><span class="segblob"></span></span>
+      <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 2); transform: translateX({{hTabX}})"><span class="segblob"></span></span>
       <sc-for list="{{hTabs}}" as="tb" hint-placeholder-count="2">
         <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="font-size: 17px">{{tb.label}}</button>
       </sc-for>
@@ -369,7 +369,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <div style="position: absolute; left: 0; top: 0; width: var(--wf-w, 390px); height: 844px; z-index: 60">
         <dc-import name="TerrainMap" on-drone="{{pj.drone}}" on-cam="{{pj.cam}}" mode="spread" fire-id="{{pj.id}}" fire-x="{{pj.x}}" fire-y="{{pj.y}}" stations-st="{{pj.st}}" fire-only="true" loader="true" no-routes="true" horizon="{{pj.hz}}" grow="{{pj.grow}}" fake-hz="{{pj.fakeHz}}" leg-now="{{pj.legNow}}" leg-grow="{{pj.legGrow}}" leg-grow-label="{{pj.legGrowL}}" w="{{pj.w}}" h="844" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" ctrl-top="60" zoom="{{pj.view.zoom}}" focus-x="{{pj.view.fx}}" focus-y="{{pj.view.fy}}" controls="side" radius="{{zero}}" attr-bottom="40" on-full="{{pj.toggleFull}}" is-full="{{yes}}" close-x="true" hint-size="390px,844px"></dc-import>
         <div role="tablist" aria-label="{{pj.hzLabel}}" class="wf-seg wf-seg-glass" style="position: absolute; left: 16px; right: 68px; bottom: 20px; z-index: 30; background: rgba(40, 40, 40, 0.62); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
-          <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
+          <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
           <sc-for list="{{pj.tabs}}" as="tb" hint-placeholder-count="4">
             <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fgD}}"><span style="position: relative">{{tb.label}}<svg aria-hidden="true" width="12" height="11" viewBox="0 0 12 11" style="display: {{tb.dotD}}; position: absolute; top: -2px; right: -14px"><path d="M6 1.6 10.6 9.4H1.4Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="2" stroke-linejoin="round"></path></svg></span></button>
           </sc-for>
@@ -391,7 +391,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
           <section aria-label="{{t.proj}}" style="position: relative; flex-shrink: 0; height: 310px; margin: 0 -16px; overflow: hidden">
             <dc-import name="TerrainMap" on-drone="{{pj.drone}}" on-cam="{{pj.cam}}" mode="spread" fire-id="{{pj.id}}" fire-x="{{pj.x}}" fire-y="{{pj.y}}" stations-st="{{pj.st}}" fire-only="true" loader="true" no-routes="true" no-title="true" leg-now="{{pj.legNow}}" leg-grow="{{pj.legGrow}}" leg-grow-label="{{pj.legGrowL}}" horizon="{{pj.hz}}" grow="{{pj.grow}}" fake-hz="{{pj.fakeHz}}" w="{{pj.w}}" h="310" clip-top="{{zero}}" clip-bleed="{{zero}}" clip-bottom="{{zero}}" locked="true" zoom="{{pj.view.zoom}}" focus-x="{{pj.view.fx}}" focus-y="{{pj.view.fy}}" radius="{{zero}}" attr-bottom="{{pj.attrB}}" on-full="{{pj.toggleFull}}" is-full="{{no}}" hint-size="390px,310px"></dc-import>
             <div role="tablist" aria-label="{{pj.hzLabel}}" class="wf-seg wf-seg-glass" style="position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 30; background: rgba(40, 40, 40, 0.62); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%)">
-              <span class="segthumb" aria-hidden="true" style="width: calc((100% - 16px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
+              <span class="segthumb" aria-hidden="true" style="width: calc((100% - 8px) / 4); transform: translateX({{pj.segX}})"><span class="segblob"></span></span>
               <sc-for list="{{pj.tabs}}" as="tb" hint-placeholder-count="4">
                 <button type="button" role="tab" class="segopt" aria-selected="{{tb.sel}}" aria-label="{{tb.aria}}" onClick="{{tb.pick}}" style="padding: 0; font-size: 17px; font-weight: {{tb.w}}; color: {{tb.fgD}}"><span style="position: relative">{{tb.label}}<svg aria-hidden="true" width="12" height="11" viewBox="0 0 12 11" style="display: {{tb.dotD}}; position: absolute; top: -2px; right: -14px"><path d="M6 1.6 10.6 9.4H1.4Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="2" stroke-linejoin="round"></path></svg></span></button>
               </sc-for>
