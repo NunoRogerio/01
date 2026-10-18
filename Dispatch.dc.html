@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">html,body{background:#F2F2F7}
+/* (Oct 18, 17:14) projection horizons: the incident's marker becomes a 4px black dot at the ignition point; other incidents' markers step aside */
+[data-wf-hzdot="1"] button.fzone > *,[data-wf-hzdot="1"] button.tipwrap > *,[data-wf-hzdot="1"] [data-wf-pin] > *{opacity:0!important;transition:opacity .3s ease}
+[data-wf-hzdot="1"] button.fzone::after,[data-wf-hzdot="1"] button.tipwrap::after,[data-wf-hzdot="1"] [data-wf-pin]::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#000000;pointer-events:none}
+[data-wf-hzdot="1"] span.tipwrap:not([data-wf-pin]),[data-wf-hzdot="1"] .wf-ctag{opacity:0!important;pointer-events:none!important;transition:opacity .3s ease}
+</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

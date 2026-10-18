@@ -2318,3 +2318,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Oct 18 (17:08–17:10)
 - Grabbers are back on every expanding panel and dialog (supersedes the Oct 4 "grabbers hidden"): iOS-like, light grey, 36 × 5px, fully rounded, 24px in from the edge they drag, inside the stripe zone. A grown top panel shows only the grabber at its new foot.
 - The peeking card's nudge is twice as fast (0.75 s); its opacity rises with the lift to 100% and falls back with the return.
+
+## Projection horizons: a dot for the ignition point (Oct 18, 17:14)
+- At +1 h, +3 h and +6 h the incident's marker gives way to a tiny black dot (4px) at the ignition point, so the eye stays on the perimeter; other incidents' markers and confidence tags step aside. Now keeps the marker as it is.

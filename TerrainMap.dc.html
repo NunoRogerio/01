@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<style id="wf-bg0">html,body{background:#F2F2F7}</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
+<style id="wf-bg0">html,body{background:#F2F2F7}
+/* (Oct 18, 17:14) projection horizons: the incident's marker becomes a 4px black dot at the ignition point; other incidents' markers step aside */
+[data-wf-hzdot="1"] button.fzone > *,[data-wf-hzdot="1"] button.tipwrap > *,[data-wf-hzdot="1"] [data-wf-pin] > *{opacity:0!important;transition:opacity .3s ease}
+[data-wf-hzdot="1"] button.fzone::after,[data-wf-hzdot="1"] button.tipwrap::after,[data-wf-hzdot="1"] [data-wf-pin]::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#000000;pointer-events:none}
+[data-wf-hzdot="1"] span.tipwrap:not([data-wf-pin]),[data-wf-hzdot="1"] .wf-ctag{opacity:0!important;pointer-events:none!important;transition:opacity .3s ease}
+</style><!-- (Oct 4, 23:41) the app surface from the very first paint, so the area under the clock is never black between screens -->
 <!-- Copyright (c) 2026 Nuno Rogerio. All rights reserved. See LICENSE. -->
 <meta name="copyright" content="© 2026 Nuno Rogerio. All rights reserved.">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -227,7 +232,7 @@ body{margin:0}
 
   <sc-if value="{{isPin}}" hint-placeholder-val="{{ false }}">
     <!-- (Oct 14, 11:50) the detection markers ride the moving map layer, so they stay locked to their place while it pans or zooms (outside it they stood still until the next redraw) -->
-    <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; --wf-gk: 1">
+    <div data-wf-gl="1" data-wf-ovl="1" data-wf-hzdot="{{hzDot}}" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; --wf-gk: 1">
     <sc-for list="{{camMarks}}" as="cm" hint-placeholder-count="3">
       <!-- (Oct 16) each detection is a small round dot (no icon): blue for civil cameras, black for the firefighters' own systems; a 32px tap area around it.
            It keeps its on-screen size while a pinch scales the moving layer (--wf-gk, set with the layer's transform) -->
@@ -283,7 +288,7 @@ body{margin:0}
     </div>
   </sc-if>
 
-  <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 2"><!-- (Oct 13, 16:46) the markers above the upright map credit -->
+  <div data-wf-gl="1" data-wf-ovl="1" data-wf-hzdot="{{hzDot}}" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 2"><!-- (Oct 13, 16:46) the markers above the upright map credit -->
   <sc-if value="{{showFire}}" hint-placeholder-val="{{ true }}">
     <sc-for list="{{fireMarks}}" as="fm" hint-placeholder-count="0">
       <button type="button" class="fzone" aria-label="{{fm.aria}}" onPointerEnter="{{fHoverOn}}" onPointerLeave="{{fHoverOff}}" onFocus="{{fHoverOn}}" onBlur="{{fHoverOff}}" onClick="{{fm.sel}}" style="filter: {{fm.selF}}; border: 0; padding: 0; cursor: pointer; position: absolute; left: {{fm.zl}}px; top: {{fm.zt}}px; width: {{fm.zw}}px; height: {{fm.zh}}px; clip-path: {{fm.clip}}; -webkit-clip-path: {{fm.clip}}; border-radius: {{fm.rad}}; cursor: pointer"><svg class="mk" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" style="display: {{fm.flameD}}; position: absolute; left: 0; top: 0; overflow: visible;"><circle cx="14" cy="14" r="16" fill="{{fm.sbg}}" style="fill-opacity: 1"></circle><circle cx="14" cy="14" r="17" fill="none" stroke="#3A3A3C" stroke-width="{{fm.bdW}}"></circle><g transform="translate(6 6) scale(0.6667)"><path d="{{fm.sic}}" fill="none" stroke="{{fm.sfg}}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></g></svg><!-- (Oct 11, 01:18) a fire: its stage icon in a 32px round of its stage colour --></button>
@@ -342,7 +347,7 @@ body{margin:0}
     </sc-for>
     <!-- a fire's map shows its perimeter only: no origin dot there -->
     <sc-if value="{{pinOn}}" hint-placeholder-val="{{ false }}">
-      <span class="tipwrap" tabindex="0" onClick="{{pinTap}}" onPointerDown="{{stop}}" style="cursor: {{pinCur}}; position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
+      <span class="tipwrap" data-wf-pin="1" tabindex="0" onClick="{{pinTap}}" onPointerDown="{{stop}}" style="cursor: {{pinCur}}; position: absolute; z-index: 24; left: {{fire.left}}px; top: {{fire.top}}px; width: 40px; height: 40px; transform: translate(-50%, -50%); transition: {{mv}}">
         <sc-if value="{{pinSt}}" hint-placeholder-val="{{ false }}">
           <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="display: block; scale: 1.1"><path transform="translate(8 8)" d="M4.6 20.9H19.4V12.3L12 3.6 4.6 12.3Z" fill="rgba(64,156,255,0.6)" stroke="#3A3A3C" stroke-width="2" stroke-linejoin="round"></path></svg>
         </sc-if>
@@ -392,7 +397,7 @@ body{margin:0}
     </sc-for>
   </div>
   </sc-if>
-  <div data-wf-gl="1" data-wf-ovl="1" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
+  <div data-wf-gl="1" data-wf-ovl="1" data-wf-hzdot="{{hzDot}}" style="position: absolute; left: 0; top: 0; width: {{w}}px; height: {{h}}px; transform-origin: {{glO}}; transform: {{glT}}; z-index: 60">
   <sc-if value="{{hasPop}}" hint-placeholder-val="{{ false }}">
   <!-- (Oct 9, 15:54) structures at risk: its own tag above the tooltip, 8px from it and as wide as it, in the normal tag size (as the stage tag) -->
   <span class="wf-ctag wf-risk-tag {{popCls}}" role="status" style="display: {{pop.riskD}}; position: absolute; z-index: 60; left: {{pop.left}}px; top: calc({{pop.top}}px - 36px); --wf-dy: {{pop.dy}}; width: {{pop.wR}}px; gap: 8px; color: rgb(190, 0, 18); background: linear-gradient(rgba(215, 0, 21, 0.1), rgba(215, 0, 21, 0.1)) rgb(255, 255, 255); box-shadow: 0 0 16px rgba(0,0,0,0.16); pointer-events: none"><svg width="18" height="16" viewBox="0 0 36 32" aria-hidden="true" style="flex-shrink: 0"><path d="M18 5 32.5 28.5H3.5Z" fill="rgb(215, 0, 21)" stroke="rgb(215, 0, 21)" stroke-width="5" stroke-linejoin="round"></path><rect x="16.5" y="11" width="3" height="10" rx="1.5" fill="rgb(255, 255, 255)"></rect><circle cx="18" cy="24.6" r="1.8" fill="rgb(255, 255, 255)"></circle></svg><span>{{pop.riskTxt}}</span></span>
@@ -1709,6 +1714,7 @@ class Component extends DCLogic {
       routeLines: this.recMode() && !(p.fireOnly === true || p.fireOnly === 'true') && !(p.noRoutes === true || p.noRoutes === 'true') ? this.nearSt().map((q) => this.routeOf(q)).filter((x) => x && !x.fail).map((x) => ({ d: x.d })) : [],
       /* (Oct 16) at +1 / +3 / +6 h the map is only the projection: the detection dots and their lines go */
       camLines: [],   /* (Oct 16, 23:05) no lines from the incident to its detections */
+      hzDot: (p.mode === 'spread' && p.horizon != null && p.horizon !== '' && Number(p.horizon) > 0) || (p.mode === 'pin' && Number(p.pinGrow) > 0) ? '1' : '0',   /* (Oct 18, 17:14) at +1 / +3 / +6 h the incident's marker gives way to a tiny black dot at the ignition point: the eye stays on the perimeter (Now keeps the marker) */
       camMarks: [],   /* (Oct 18, 11:19) the incident's map shows no detections at any horizon (Now included): no dots, triangles or lines, only the incident's marker */
       hasFull: typeof p.onFull === 'function' && (window.__wfDesk || window.innerWidth <= window.innerHeight) && !(p.markerFull === true || p.markerFull === 'true'),   // phone in landscape: no maximize / minimize button; turning the phone upright is the way back
       ...(() => {
