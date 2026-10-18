@@ -25,7 +25,7 @@
 <script src="chat.js?v=1792323810"></script>
 <script src="tour.js?v=1792322188"></script>
 <script src="mapsearch.js?v=1792322188"></script>
-<script src="stats.js?v=1792323810"></script>
+<script src="stats.js?v=1792339806"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -213,7 +213,13 @@ html.wf-pm2 [data-wf-pill] .opt{background:rgba(118,118,128,0.12)!important;colo
 html.wf-pm2 [data-wf-pill] .opt[aria-current="true"]{background:var(--wf-pri-bg, #3A3A3C)!important;color:var(--wf-pri-fg, #FFFFFF)!important}
 html.wf-pm2 [data-wf-pill] > button{margin-top:0!important}
 [data-swipe-key="sc"]::after{display:none!important}
-html [data-wf-bell]{transition:opacity .25s ease}html.wf-sc2on [data-wf-bell]{opacity:0!important;pointer-events:none!important}   /* (Oct 18, 17:00) area picker open: no notifications, only its X */
+html [data-wf-bell]{transition:opacity .25s ease}html.wf-sc2on [data-wf-bell]{opacity:0!important;pointer-events:none!important}
+/* (Oct 18, 17:07) notifications open: the area header and its icons step aside (only the X stays); the panel starts at the glass's top, its title level with the X */
+html.wf-nt2on [data-wf-topwrap] > header > button,html.wf-nt2on [data-wf-topwrap] > header > [data-wf-bell]{opacity:0!important;pointer-events:none!important}
+html.wf-nt2on section[data-swipe-key="nt"]{top:var(--wf-gt, 12px)!important}
+html.wf-nt2on section[data-swipe-key="nt"] > div:first-of-type{padding-top:calc(var(--wf-pm-row, 16px) + 5px)!important}
+/* (Oct 18, 17:07) the top-right X of every grown panel has no background: just the X */
+html body button[data-wf-burger][data-wf-x]:not(#wf-n1):not(#wf-n2):not(#wf-n3),html body button.wf-lix:not(#wf-n1):not(#wf-n2):not(#wf-n3){background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:#3C3C43!important}   /* (Oct 18, 17:00) area picker open: no notifications, only its X */
 .wf-lix{transition:transform .7s cubic-bezier(.4,0,.2,1)}.wf-lix.wf-turn{transform:rotate(90deg)}
 html .wf-panel[data-swipe-key="nt"],html .wf-panel[data-swipe-key="cb"]{bottom:0!important}   /* (Oct 18, 09:25) notifications and chats: 12px from the screen's foot (their clip), as the fixed panels */   /* (Oct 18, 09:28) the area picker lies inside the grown top panel: its stripes are the panel's own, at the foot */
 button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!important}   /* (Oct 9, 18:27) with the settings open, the X is a black round button */
@@ -495,8 +501,8 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <button type="button" data-swipe-go="1" tabindex="-1" aria-hidden="true" aria-label="Close notifications" onClick="{{nt.close}}" style="position: absolute; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none"></button>
     <!-- (Oct 18, 09:58) the notifications grow out of the top panel, as the menu and the area picker: the area stays in the header and the bell turns into the X in place, so no icon and no X of their own here -->
     <div style="display: flex; flex-direction: column; padding: 8px 16px 24px; flex-shrink: 0; opacity: {{nt.inOp}}; transition: opacity .3s ease {{nt.inDelay}}">
-        <h2 id="ntTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px">{{nt.hT}}</h2>
-        <span style="display: {{nt.hSD}}; font-size: 17px; line-height: 22px; color: #000000">{{nt.hS}}</span>
+        <!-- (Oct 18, 17:07) the bell before the title, the title level with the X: the area header steps aside while they are open --><h2 id="ntTitle" style="display: flex; align-items: center; gap: 8px; margin: 0; padding-right: 60px; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg>{{nt.hT}}</h2>
+        <span style="display: {{nt.hSD}}; margin-top: 4px; font-size: 15px; line-height: 20px; color: #6E6E73">{{nt.hS}}</span>
     </div>
     <!-- (Oct 13, 10:30) dispatch profiles: To verify / Resolved (Oct 13, 14:20), the same switcher as the chats -->
     <div role="tablist" aria-label="Notifications" class="wf-seg" style="display: {{nt.tabsD}}; flex-shrink: 0; margin: 0 16px; opacity: {{nt.inOp}}; transition: opacity .3s ease {{nt.inDelay}}">

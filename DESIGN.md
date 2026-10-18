@@ -2309,3 +2309,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Incident list panel: a round X top right, 16px from the glass's top and right edges, the same X as the menu's, turning a gentle quarter turn as the list closes; the title keeps clear of it.
 - Count badges on header icons sit 6px further right and 2px higher (top -12px, right -8px).
 - The incident's status pill (stage/confidence) in the fixed top panel is solid: 100% opaque, no glass, no shadow.
+
+## Oct 18 (17:05–17:07)
+- Metrics: the same glass panel as the incident list (12px from the screen's sides and foot, 48px foot corners), the same top, title 28px bold with a grey 15px description 4px under it, 40px to the period switcher, 16px side padding, 56px foot padding; the top panel steps aside while it's open; its X top right like every grown panel's.
+- Notifications: the area header steps aside; the panel starts at the glass's top with the bell before the title "Notifications", level with the X; a grey description under it; then To verify / Resolved and the list.
+- The X top right of every grown panel (menu, area picker, notifications, incident list, metrics) has no background: just the X, still turning a gentle quarter turn.
