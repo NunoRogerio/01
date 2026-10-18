@@ -194,6 +194,23 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 @media (prefers-reduced-motion: reduce){.wf-tdot,.wf-heli,.wf-heli-t,.wf-rot,.wf-rot2{animation:none}}
 </style>
 <style>
+/* (Oct 18, 09:27) the main screen's menu inside the grown top panel (wfPm2) */
+html.wf-pm2 [data-wf-menu]{z-index:34!important;background:transparent!important}
+html [data-wf-topwrap] > header,html [data-wf-topwrap] > p,html [data-wf-topwrap] > [data-wf-govtags]{transition:opacity .25s ease}
+html.wf-pm2on [data-wf-topwrap] > header,html.wf-pm2on [data-wf-topwrap] > p,html.wf-pm2on [data-wf-topwrap] > [data-wf-govtags]{opacity:0!important;pointer-events:none!important}
+html.wf-pm2 [data-wf-menusec]{left:calc(var(--wf-padln, 0px) + 12px)!important;right:12px!important;width:auto!important;top:var(--wf-gt, 12px)!important;bottom:12px!important;padding:calc(var(--wf-pm-row, 16px) + 44px) 0 0!important;background:transparent!important;box-shadow:none!important;border-radius:var(--wf-r, 16px) var(--wf-r, 16px) 48px 48px;overflow:hidden;opacity:0!important;transition:opacity .2s ease!important}
+html.wf-pm2on [data-wf-menusec]{opacity:1!important;transition:opacity .3s ease .18s!important}
+html.wf-pm2 [data-wf-menusec]::after,html.wf-pm2 [data-wf-menusec] [data-wf-secdim]{display:none!important}
+html.wf-pm2 #pfTitle{margin:24px 0 0!important;padding:0 16px!important}
+html.wf-pm2 [data-wf-menusec] > span[data-wf-keepsp]{padding:0 16px!important}
+html.wf-pm2 [data-wf-menusec] [data-wf-fadetop]{padding:40px 16px 56px!important}
+html.wf-pm2 [data-wf-menu] > .wf-stripes{display:none!important}
+html.wf-pm2 [data-wf-rail]{left:calc(var(--wf-padln, 0px) + 12px)!important;right:12px!important;width:auto!important;top:var(--wf-gt, 12px)!important;bottom:auto!important;height:calc(var(--wf-pm-row, 16px) + 44px)!important;opacity:0;transition:opacity .2s ease}
+html.wf-pm2on [data-wf-rail]{opacity:1;transition:opacity .3s ease .18s}
+html.wf-pm2 [data-wf-pill]{position:absolute!important;top:var(--wf-pm-row, 16px)!important;bottom:auto!important;left:16px!important;right:76px!important;width:auto!important;height:44px!important;max-height:none!important;flex-direction:row!important;justify-content:center!important;gap:16px!important;padding:0!important;border-radius:0!important;background:transparent!important;overflow:visible!important;touch-action:auto!important}
+html.wf-pm2 [data-wf-pill] .opt{background:rgba(118,118,128,0.12)!important;color:#3C3C43!important}
+html.wf-pm2 [data-wf-pill] .opt[aria-current="true"]{background:var(--wf-pri-bg, #3A3A3C)!important;color:var(--wf-pri-fg, #FFFFFF)!important}
+html.wf-pm2 [data-wf-pill] > button{margin-top:0!important}
 [data-swipe-key="sc"]::after{display:none!important}
 html .wf-panel[data-swipe-key="nt"],html .wf-panel[data-swipe-key="cb"]{bottom:0!important}   /* (Oct 18, 09:25) notifications and chats: 12px from the screen's foot (their clip), as the fixed panels */   /* (Oct 18, 09:28) the area picker lies inside the grown top panel: its stripes are the panel's own, at the foot */
 button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!important}   /* (Oct 9, 18:27) with the settings open, the X is a black round button */
@@ -361,7 +378,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
 
 
 
-  <div class="scrim {{glass}}" onClick="{{closeScope}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{scOp}}; pointer-events: {{scPE}}"></div>
+  <div class="scrim {{glass}}" onClick="{{closeTop}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 30; background: {{scrimBg}}; backdrop-filter: {{scrimBlur}}; -webkit-backdrop-filter: {{scrimBlur}}; opacity: {{topScrOp}}; pointer-events: {{topScrPE}}; transition: opacity .35s ease"></div>
   <section role="dialog" data-swipe="up" data-swipe-key="sc" aria-modal="true" aria-labelledby="scopeTitle" aria-hidden="{{scHidden}}" style="position: absolute; left: calc({{padLn}}px + 12px); right: 12px; top: {{scTop}}px; bottom: 12px; z-index: 33; display: flex; flex-direction: column; box-sizing: border-box; padding: 0 0 0 {{padL}}px; overflow: hidden; border-radius: 0 0 48px 48px; visibility: {{scVis}}; pointer-events: {{scPE}}; translate: 0 {{scDy}}px; transition: visibility 0s linear {{scVisDelay}}, translate {{scDyT}} ease">
     <button type="button" data-swipe-go="1" tabindex="-1" aria-hidden="true" aria-label="Close area picker" onClick="{{closeScope}}" style="position: absolute; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none"></button>
     <div style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; padding: 0 16px 24px; opacity: {{scInOp}}; transform: translateY({{scInY}}); transition: opacity .3s ease {{scInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{scInDelay}}">
@@ -1084,9 +1101,16 @@ class Component extends DCLogic {
   // The top blade's real height (it grows with its header: larger text, longer names, a resized screen); the panels that
   // fold into it (area picker, search) and the map's top edge follow it instead of a fixed 163px
   /* (Oct 18, 09:28) the top panel grown to the screen's foot (area picker): how far its glass reaches below the header, and where the content under the header starts */
-  wfTopGrow(on) { let g = 0, top = 0, gt = 0; try { const w = document.querySelector('[data-wf-topwrap]'), sc = document.querySelector('[data-swipe-key="sc"]'); if (w && w.parentElement) { const R = w.getBoundingClientRect(), P = w.parentElement.getBoundingClientRect(), k = (R.height / (w.offsetHeight || R.height)) || 1;
+  wfTopGrow(on) { let g = 0, top = 0, gt = 0;   /* the glass's top and the burger's, for the menu's row */ try { const tb0 = document.querySelector('[data-wf-topbg]'), bb = document.querySelector('button[data-wf-burger]'); if (tb0 && bb) document.documentElement.style.setProperty('--wf-pm-row', Math.round(bb.getBoundingClientRect().top - tb0.getBoundingClientRect().top) + 'px'); } catch (e) {} try { const w = document.querySelector('[data-wf-topwrap]'), sc = document.querySelector('[data-swipe-key="sc"]'); if (w && w.parentElement) { const R = w.getBoundingClientRect(), P = w.parentElement.getBoundingClientRect(), k = (R.height / (w.offsetHeight || R.height)) || 1;
       g = Math.max(0, Math.round((P.bottom - R.bottom) / k - 12)); const O = sc && sc.offsetParent ? sc.offsetParent.getBoundingClientRect() : P; top = Math.round((R.bottom - O.top) / k); const tb = w.querySelector('[data-wf-topbg]'); if (tb) gt = Math.round((tb.getBoundingClientRect().top - O.top) / k); } } catch (e) {}
-    return { glassTop: gt || 12, topGrowB: on ? -g + 'px' : '0px', topFootR: on ? '48px' : 'var(--wf-r, 16px)', topZ: on ? 32 : 2, topZd: on ? '0s' : '.55s', scTop: top || 160 }; }
+    try { document.documentElement.style.setProperty('--wf-gt', (gt || 12) + 'px'); } catch (e) {} return { glassTop: gt || 12, topGrowB: on ? -g + 'px' : '0px', topFootR: on ? '48px' : 'var(--wf-r, 16px)', topZ: on ? 32 : 2, topZd: on ? '0s' : '.55s', scTop: top || 160 }; }
+  /* (Oct 18, 09:27) the menu on the main screen: the top panel's glass grows to the screen's foot (as the area picker) and its content
+     becomes the menu's: the section icons in one row, level with the X (the menu button, which never moves), the open section under them.
+     Kept as a class on the page (styles below) so the menu-only copy used by the other screens keeps its own layout */
+  wfPm2(on) { const H = document.documentElement, s = this.state || {};
+    try { if (on) { clearTimeout(this._pm2T); H.classList.add('wf-pm2', 'wf-pm2on'); } else if (H.classList.contains('wf-pm2on')) { H.classList.remove('wf-pm2on'); clearTimeout(this._pm2T); this._pm2T = setTimeout(() => { if (!document.documentElement.classList.contains('wf-pm2on')) document.documentElement.classList.remove('wf-pm2'); }, 600); } } catch (e) {}
+    const any = on || !!s.scOpen;
+    return { topScrOp: any ? 1 : 0, topScrPE: any ? 'auto' : 'none', closeTop: () => { if ((this.state || {}).scOpen) this.setState({ scOpen: false }); else if ((this.state || {}).pf) this.closePrefsFn(); } }; }
   wfTopWatch() { const m = () => { const e = document.querySelector('[data-wf-topbg]'); if (!e) return; const h = Math.round((e.parentElement || e).offsetHeight) /* (Oct 17, 17:25) the card's own height, as these layouts were made for (the glass's rise above the card, added at 15:44, had pushed the legend 64px down onto the map) */; if (h > 40 && h !== this._tbh) { this._tbh = h; try { this.forceUpdate(); } catch (x) {} } };
     [0, 300, 1200].forEach((t) => setTimeout(m, t)); try { if (window.ResizeObserver) { const e = document.querySelector('[data-wf-topbg]'); if (e) new ResizeObserver(m).observe(e); else setTimeout(() => this.wfTopWatch(), 400); } } catch (x) {} window.addEventListener('resize', m); }
   // Find a place: the part of the panel the keyboard hides and the height of the note above, so the watermark sits in the
@@ -1113,7 +1137,7 @@ class Component extends DCLogic {
       const off = Math.max(0, Math.round((mid - r.height / 2 - natTop) / k));
       if (Math.abs(off - cur) > 1) g.style.marginTop = off + 'px'; } catch (e) {} }
   // (Oct 11, 21:40) dragging the icon pill up and down (a tap on an icon still picks it: the drag starts after 6px)
-  wfPillDown(e) { try { const el = e.currentTarget, nav = el && el.parentElement; if (!el || !nav) return;
+  wfPillDown(e) { if (document.documentElement.classList.contains('wf-pm2')) return; try { const el = e.currentTarget, nav = el && el.parentElement; if (!el || !nav) return;
       const K = (nav.getBoundingClientRect().height / (nav.offsetHeight || 1)) || 1, y0 = e.clientY, b0 = parseFloat(el.style.bottom) || 56, x = document.querySelector('button[data-wf-burger]');
       const xb = x ? (x.getBoundingClientRect().bottom - nav.getBoundingClientRect().top) / K : 112, maxB = Math.max(56, nav.offsetHeight - xb - 56 - el.offsetHeight);
       let drag = false, b = b0;
@@ -1265,7 +1289,7 @@ class Component extends DCLogic {
         const MSECS = window.__wfLoginMenu ? ['about', 'share', 'maps', 'chat', 'ds'] : ['profile', 'lang', 'look'];
         const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', maps: 'Maps', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
-          if (open && pmSec === k) { this.setState({ pm: 'rail' }); this.wfMenuPost('rail'); return; }
+          if (open && pmSec === k) { if (!MENU) return;   /* (Oct 18) the main screen's menu has no icon column to fold to */ this.setState({ pm: 'rail' }); this.wfMenuPost('rail'); return; }
           this.wfMenuPost('open');   // tapping the open section folds the menu to its icon column
           // switching section while open (Oct 3, 19:50): the chosen section slides in from the right, from behind the icon
           // column, and covers the current one, which stays in place underneath until it is covered
@@ -2062,7 +2086,7 @@ class Component extends DCLogic {
       ps: (() => { const P = this.wfPlaceSearch(); this._psOpen = (b) => this.wfPsFloat(b); return P; })(),   // (Oct 4) the tap opens the floating search box (no full panel)
       openStats: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} if (window.__wfStats) window.__wfStats.open(); },   /* (Oct 5) the statistics dashboard for the area */
       psFloat: (e) => { if (this._psEat && Date.now() - this._psEat < 700) return; this.wfPsFloat(e && e.currentTarget); },   // (Oct 3, 23:26) the floating search box hPs: this.wfHandle('ps', 'up', () => this.wfPlaceSearch().close()),   // the grabber: a tap or a swipe up folds Find a place
-      scopeStr: scOpen ? 'true' : 'false', ...this.wfTopGrow(scOpen), scopeRot: scOpen ? '180deg' : '0deg',
+      scopeStr: scOpen ? 'true' : 'false', ...(() => { const pmOn = !!s.pf && !window.__wfMenuOnly; return { ...this.wfTopGrow(scOpen || pmOn), ...this.wfPm2(pmOn) }; })(), scopeRot: scOpen ? '180deg' : '0deg',
       scopeAria: 'Area: ' + scope.title + ', ' + scope.parent + '. Change area',
       fireCount: NF, fireChips: FIRES.map((f) => ({ ...f, aria: 'Active fire ' + f.id + ', ' + f.place + '. ' + f.note })), fireMarks: FIRES, flN: (() => { const f = s.flip; const mv = !!f && f.n0 !== f.n1; return { still: !mv, moving: mv, from: mv ? f.n0 : N, to: N, w: mv && String(f.n0).length > String(N).length ? f.n0 : N }; })(),
       flF: (() => { const f = s.flip; const mv = !!f && f.f0 !== f.f1; return { still: !mv, moving: mv, from: mv ? f.f0 : NF, to: NF, w: mv && String(f.f0).length > String(NF).length ? f.f0 : NF }; })(),
