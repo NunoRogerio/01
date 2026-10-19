@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.12 — 2026-10-19
+
+- New theme tokens for navigation: --nav-accent (#cc0000; dark #ff6b6b), --nav-selected (#ffffff; dark #424242), --nav-selected-shadow, --nav-panel (the drill-down panel, #fbfcfc at 70%) and --nav-group-label (#b3b3b3; dark #7d7d7d). The table itself is unchanged; the Workbench's new Navigation component uses them.
+
 ## 0.4.11 — 2026-10-19
 
 - Status tags match the library tags (Status_Positive, Warning, Negative, Catastrophic, Info) exactly: the library icons at their own 16px, 7px in from the edge; the semibold label 28px in; 28px tall, 8px corners, 1px outline; the library colours.

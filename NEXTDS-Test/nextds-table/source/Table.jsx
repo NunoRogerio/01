@@ -37,6 +37,11 @@ const CSS = `
   --semantic-negative:#c82333;
   --semantic-catastrophic:#921581;
   --semantic-catastrophic-20:#f1dfec;
+  --nav-accent:#cc0000;
+  --nav-selected:#ffffff;
+  --nav-selected-shadow:rgba(34,34,34,.12);
+  --nav-panel:rgba(251,252,252,.7);
+  --nav-group-label:#b3b3b3;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
   --semantic-positive:#146c2e;
@@ -121,6 +126,11 @@ const CSS = `
   --semantic-negative:#ff8d8d;
   --semantic-catastrophic:#f0a6e4;
   --semantic-catastrophic-20:#4a2144;
+  --nav-accent:#ff6b6b;
+  --nav-selected:#424242;
+  --nav-selected-shadow:rgba(0,0,0,.4);
+  --nav-panel:rgba(28,28,28,.7);
+  --nav-group-label:#7d7d7d;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;
   --semantic-positive-20:#274511;
@@ -4647,6 +4657,64 @@ const SCREEN_CSS = `
 .hvs-input:hover{border-color:var(--cl-border-strong)}
 .hvs-input:focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
 .hvs-benchstage{display:flex;justify-content:center;margin-top:32px}
+.hvs-benchstage > .hvn-frame{width:min(1080px,100%)}
+.hvn-frame{display:flex;flex-direction:column;height:640px;border:1px solid var(--border-default);border-radius:4px;overflow:hidden;background:var(--page-background);color:var(--content-primary);font:400 14px/20px "Hitachi Sans",system-ui,sans-serif}
+.hvn-body{display:flex;flex:1;min-height:0}
+.hvn-page{flex:1;min-width:0;padding:24px}
+.hvn-page h1{margin:0;font-size:20px;line-height:28px;font-weight:600}
+.hvn-empty{margin:auto;color:var(--content-placeholder)}
+.hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--container-background);overflow:hidden;transition:width .2s ease}
+.hvn-v.is-collapsed{width:77px}
+.hvn-toggle{position:absolute;left:22px;top:17px;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
+.hvn-toggle:hover{background:var(--container-hover-background)}
+.hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
+.hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
+.hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
+.hvn-v > .hvn-list .hvn-item{margin-left:16px;width:238px;overflow:hidden}
+.hvn-v.is-collapsed > .hvn-list .hvn-item{width:44px}
+.hvn-label{transition:opacity .15s}
+.hvn-v.is-collapsed > .hvn-list .hvn-label{opacity:0}
+.hvn-item:hover{background:var(--container-hover-background)}
+.hvn-item.is-active{background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);color:var(--nav-accent)}
+.hvn-item.is-active::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
+.hvn-h{display:flex;align-items:center;gap:16px;flex:none;height:56px;padding:0 16px;border-bottom:1px solid var(--border-default);background:var(--container-background);}
+.hvn-h{overflow:visible;z-index:2}
+.hvn-h .hvn-list{flex-direction:row;padding:0}
+.hvn-h .hvn-item{flex:none}
+.hvn-h .hvn-item.is-active::before{left:14px;right:14px;top:auto;bottom:3px;width:auto;height:3px}
+.hvn-v{overflow:visible;z-index:2}
+.hvn-v.is-menu > .hvn-list .hvn-item{width:44px}
+.hvn-v.is-menu > .hvn-list .hvn-label{opacity:0}
+.hvn-item.is-open:not(.is-active){background:var(--nav-selected)}
+.hvn-panel{position:absolute;left:68px;top:72px;z-index:3;display:flex;flex-direction:column;width:186px;max-height:calc(100% - 88px);border-radius:8px;background:var(--nav-panel);overflow:hidden;animation:hvn-fade .15s ease}
+.hvn-v.is-collapsed .hvn-panel{left:85px}
+.hvn-panel.is-float{background:var(--container-secondary-background);box-shadow:0 0 8px var(--nav-selected-shadow)}
+.hvn-h .hvn-panel{left:0;top:calc(100% + 8px);max-height:520px}
+.hvn-level{display:flex;flex-direction:column;min-height:0}
+.hvn-level.is-fwd{animation:hvn-in-fwd .22s ease}
+.hvn-level.is-back{animation:hvn-in-back .22s ease}
+@keyframes hvn-fade{from{opacity:0}to{opacity:1}}
+@keyframes hvn-in-fwd{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes hvn-in-back{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hvn-panel,.hvn-level{animation:none!important}}
+.hvn-phead{display:flex;align-items:center;flex:none;box-sizing:border-box;width:100%;height:32px;padding:0 0 0 19px;border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--content-placeholder);font:inherit;text-align:left;white-space:nowrap}
+.hvn-phead.is-back{gap:13px;padding-left:7px;color:var(--content-primary);cursor:pointer}
+.hvn-phead.is-back:hover{background:var(--container-hover-background)}
+.hvn-psep{flex:none;height:4px;background:var(--container-background)}
+.hvn-plist{display:flex;flex-direction:column;gap:16px;padding:8px;overflow-y:auto;scrollbar-width:thin}
+.hvn-pitem{width:100%;padding:0 7px 0 11px}
+.hvn-pitem.is-l2{padding-left:16px}
+.hvn-pitem .hvn-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hvn-pitem.is-trail{color:var(--nav-accent)}
+.hvn-caret{margin-left:auto}
+.hvn-pgroup{display:flex;flex-direction:column;gap:16px}
+.hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
+.hvn-pgroup.has-rule.no-label{padding-top:7px}
+.hvn-pglabel{height:24px;margin-bottom:-8px;padding-left:4px;color:var(--nav-group-label);font-size:12px;line-height:24px}
+.hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
+.hvn-li{position:relative}
+.hvn-hcaret{transform:rotate(90deg);margin-left:-3px}
+.hvn-crumbs{margin-bottom:4px;color:var(--content-placeholder);font-size:12px;line-height:16px;white-space:pre}
 .hvs-benchstage > .hvt-root{width:min(720px,100%)}
 .hvs-tagrow{display:flex;flex-wrap:wrap;align-items:center;gap:16px} /* only the tags, no container behind them */
 .hvs-taggroups{display:flex;flex-direction:column;gap:24px}
@@ -5078,7 +5146,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-19 14:12"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-3"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5654,10 +5722,144 @@ function TagsBench({ theme, onTheme }) {
   );
 }
 
-/* ---------- Navigation (NAVIGATION in the library): first the controls; the component comes next ---------- */
+const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their place in the drawing; the viewBox picks the 16px square
+  toggle: { y: 25, html: `<path d="M44.5 25.6818C44.5 25.5814 44.4186 25.5 44.3182 25.5H40.5V39.5H44.3182C44.4186 39.5 44.5 39.4186 44.5 39.3182V25.6818ZM39.5 39.5V25.5H30.6818C30.5814 25.5 30.5 25.5814 30.5 25.6818V39.3182C30.5 39.4186 30.5814 39.5 30.6818 39.5H39.5ZM44.3182 24.5C44.9709 24.5 45.5 25.0291 45.5 25.6818V39.3182C45.5 39.9709 44.9709 40.5 44.3182 40.5H30.6818C30.0291 40.5 29.5 39.9709 29.5 39.3182V25.6818C29.5 25.0291 30.0291 24.5 30.6818 24.5H44.3182Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  dashboard: { y: 80, html: `<path d="M37.5692 80.0853C37.7058 80.0287 37.8522 79.9995 38 79.9995C38.1478 79.9995 38.2942 80.0287 38.4308 80.0853C38.5674 80.1419 38.6915 80.2249 38.7959 80.3295L45.0457 86.5793C45.1502 86.6838 45.2332 86.8081 45.2897 86.9447C45.3461 87.0813 45.3751 87.2276 45.375 87.3754V94.875C45.375 95.1511 45.1511 95.375 44.875 95.375H39.875C39.5989 95.375 39.375 95.1511 39.375 94.875V90.375H36.625V94.875C36.625 95.1511 36.4011 95.375 36.125 95.375H31.125C30.8489 95.375 30.625 95.1511 30.625 94.875V87.3751C30.6249 87.2275 30.6539 87.0811 30.7103 86.9447C30.7668 86.8081 30.8496 86.684 30.9541 86.5795L37.2041 80.3295C37.3085 80.2249 37.4326 80.1419 37.5692 80.0853ZM38 80.9995C37.9836 80.9995 37.9673 81.0027 37.9521 81.009C37.937 81.0153 37.9232 81.0246 37.9116 81.0362L31.6616 87.2862C31.65 87.2978 31.6408 87.3116 31.6345 87.3268C31.6282 87.3419 31.625 87.3582 31.625 87.3746L31.625 94.375H35.625V89.875C35.625 89.5989 35.8489 89.375 36.125 89.375H39.875C40.1511 89.375 40.375 89.5989 40.375 89.875V94.375H44.375V87.375C44.375 87.3586 44.3718 87.3419 44.3655 87.3268C44.3592 87.3116 44.35 87.2978 44.3384 87.2862L38.0886 81.0364C38.077 81.0247 38.063 81.0153 38.0479 81.009C38.0327 81.0027 38.0164 80.9995 38 80.9995Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  inventory: { y: 128, html: `<path d="M33.3781 130.037C32.2017 130.679 31.625 131.483 31.625 132.25C31.625 133.017 32.2017 133.821 33.3781 134.463C34.5355 135.094 36.1687 135.5 38 135.5C39.8313 135.5 41.4645 135.094 42.6219 134.463C43.7983 133.821 44.375 133.017 44.375 132.25C44.375 131.483 43.7983 130.679 42.6219 130.037C41.4645 129.406 39.8313 129 38 129C36.1687 129 34.5355 129.406 33.3781 130.037ZM32.8992 129.159C34.23 128.434 36.0343 128 38 128C39.9657 128 41.77 128.434 43.1008 129.159C44.4127 129.875 45.375 130.946 45.375 132.25C45.375 133.554 44.4127 134.625 43.1008 135.341C41.77 136.066 39.9657 136.5 38 136.5C36.0343 136.5 34.23 136.066 32.8992 135.341C31.5873 134.625 30.625 133.554 30.625 132.25C30.625 130.946 31.5873 129.875 32.8992 129.159Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M31.125 131.75C31.4011 131.75 31.625 131.974 31.625 132.25V136C31.625 136.767 32.2017 137.571 33.3781 138.213C34.5356 138.844 36.1687 139.25 38 139.25C39.8313 139.25 41.4644 138.844 42.6219 138.213C43.7983 137.571 44.375 136.767 44.375 136V132.25C44.375 131.974 44.5989 131.75 44.875 131.75C45.1511 131.75 45.375 131.974 45.375 132.25V136C45.375 137.304 44.4127 138.375 43.1008 139.091C41.7699 139.816 39.9656 140.25 38 140.25C36.0344 140.25 34.2301 139.816 32.8992 139.091C31.5873 138.375 30.625 137.304 30.625 136V132.25C30.625 131.974 30.8489 131.75 31.125 131.75Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M31.125 135.5C31.4011 135.5 31.625 135.724 31.625 136V139.75C31.625 140.517 32.2017 141.321 33.3781 141.963C34.5356 142.594 36.1687 143 38 143C39.8313 143 41.4644 142.594 42.6219 141.963C43.7983 141.321 44.375 140.517 44.375 139.75V136C44.375 135.724 44.5989 135.5 44.875 135.5C45.1511 135.5 45.375 135.724 45.375 136V139.75C45.375 141.054 44.4127 142.125 43.1008 142.841C41.7699 143.566 39.9656 144 38 144C36.0344 144 34.2301 143.566 32.8992 142.841C31.5873 142.125 30.625 141.054 30.625 139.75V136C30.625 135.724 30.8489 135.5 31.125 135.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  analytics: { y: 176, html: `<path d="M31.25 184.625C31.25 184.349 31.4739 184.125 31.75 184.125H35.5C35.7761 184.125 36 184.349 36 184.625C36 184.901 35.7761 185.125 35.5 185.125H32.25V190.25C32.25 190.526 32.0261 190.75 31.75 190.75C31.4739 190.75 31.25 190.526 31.25 190.25V184.625Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M30 190.25C30 189.974 30.2239 189.75 30.5 189.75H45.5C45.7761 189.75 46 189.974 46 190.25C46 190.526 45.7761 190.75 45.5 190.75H30.5C30.2239 190.75 30 190.526 30 190.25Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M35 180.875C35 180.599 35.2239 180.375 35.5 180.375H39.875C40.1511 180.375 40.375 180.599 40.375 180.875C40.375 181.151 40.1511 181.375 39.875 181.375H36V190.25C36 190.526 35.7761 190.75 35.5 190.75C35.2239 190.75 35 190.526 35 190.25V180.875Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M39.375 177.125C39.375 176.849 39.5989 176.625 39.875 176.625H44.25C44.5261 176.625 44.75 176.849 44.75 177.125V190.25C44.75 190.526 44.5261 190.75 44.25 190.75C43.9739 190.75 43.75 190.526 43.75 190.25V177.625H40.375V190.25C40.375 190.526 40.1511 190.75 39.875 190.75C39.5989 190.75 39.375 190.526 39.375 190.25V177.125Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  protection: { y: 224, html: `<path d="M31.75 229.375C31.681 229.375 31.625 229.431 31.625 229.5V238.25C31.625 238.319 31.681 238.375 31.75 238.375H44.25C44.319 238.375 44.375 238.319 44.375 238.25V229.5C44.375 229.431 44.319 229.375 44.25 229.375H31.75ZM30.625 229.5C30.625 228.879 31.1287 228.375 31.75 228.375H44.25C44.8713 228.375 45.375 228.879 45.375 229.5V238.25C45.375 238.871 44.8713 239.375 44.25 239.375H31.75C31.1287 239.375 30.625 238.871 30.625 238.25V229.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M38 234.5C38.3452 234.5 38.625 234.22 38.625 233.875C38.625 233.53 38.3452 233.25 38 233.25C37.6548 233.25 37.375 233.53 37.375 233.875C37.375 234.22 37.6548 234.5 38 234.5Z" fill="currentColor"/><path d="M38 223.75C37.3038 223.75 36.6361 224.027 36.1438 224.519C35.6516 225.011 35.375 225.679 35.375 226.375V228.875C35.375 229.151 35.1511 229.375 34.875 229.375C34.5989 229.375 34.375 229.151 34.375 228.875V226.375C34.375 225.414 34.7569 224.492 35.4367 223.812C36.1166 223.132 37.0386 222.75 38 222.75C38.9614 222.75 39.8834 223.132 40.5633 223.812C41.2431 224.492 41.625 225.414 41.625 226.375V228.875C41.625 229.151 41.4011 229.375 41.125 229.375C40.8489 229.375 40.625 229.151 40.625 228.875V226.375C40.625 225.679 40.3484 225.011 39.8562 224.519C39.3639 224.027 38.6962 223.75 38 223.75Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  orchestration: { y: 272, html: `<path d="M40.95 275.75C40.2873 275.75 39.75 276.287 39.75 276.95C39.75 277.613 40.2873 278.15 40.95 278.15C41.6127 278.15 42.15 277.613 42.15 276.95C42.15 276.287 41.6127 275.75 40.95 275.75ZM38.75 276.95C38.75 275.735 39.735 274.75 40.95 274.75C42.165 274.75 43.15 275.735 43.15 276.95C43.15 278.165 42.165 279.15 40.95 279.15C39.735 279.15 38.75 278.165 38.75 276.95Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M39.6697 272.017C39.8227 271.976 39.9858 272.011 40.1094 272.109L40.9421 272.775C40.9801 272.774 41.0181 272.774 41.0561 272.775L41.8889 272.11C42.0127 272.011 42.176 271.977 42.3292 272.017C42.768 272.134 43.1895 272.308 43.5824 272.536C43.7197 272.615 43.8111 272.755 43.8288 272.912L43.9478 273.972C43.975 273.998 44.0018 274.025 44.0283 274.052L45.0871 274.171C45.2445 274.189 45.3842 274.28 45.4637 274.417C45.6917 274.81 45.8664 275.231 45.9832 275.67C46.024 275.823 45.9896 275.987 45.8906 276.111L45.2252 276.944C45.2257 276.982 45.2257 277.02 45.2252 277.058L45.8902 277.89C45.9889 278.014 46.0233 278.177 45.983 278.33C45.8673 278.769 45.6939 279.19 45.4673 279.583C45.3879 279.721 45.2478 279.812 45.0899 279.83L44.0307 279.949C44.0042 279.976 43.9773 280.003 43.9501 280.03L43.8311 281.089C43.8134 281.246 43.7223 281.386 43.5853 281.465C43.1925 281.693 42.7711 281.868 42.3322 281.985C42.179 282.025 42.0154 281.991 41.8915 281.892L41.0588 281.227C41.0208 281.227 40.9828 281.227 40.9448 281.227L40.1121 281.892C39.9885 281.99 39.8255 282.025 39.6726 281.984C39.2338 281.869 38.8124 281.695 38.4193 281.469C38.2816 281.389 38.1899 281.249 38.1721 281.091L38.0532 280.032C38.0256 280.005 37.9985 279.978 37.9717 279.951L36.9105 279.826C36.7541 279.808 36.6154 279.717 36.5363 279.581C36.3083 279.188 36.1336 278.766 36.0168 278.328C35.976 278.174 36.0104 278.011 36.1094 277.887L36.7748 277.054C36.7743 277.016 36.7743 276.978 36.7748 276.94L36.1098 276.107C36.0109 275.984 35.9766 275.82 36.0172 275.667C36.1337 275.228 36.308 274.807 36.5355 274.414C36.615 274.277 36.7548 274.185 36.9124 274.167L37.9717 274.049C37.9982 274.021 38.025 273.994 38.0522 273.968L38.1712 272.909C38.1889 272.751 38.2806 272.611 38.4182 272.532C38.8107 272.305 39.2316 272.132 39.6697 272.017ZM39.1357 273.281L39.0253 274.264C39.0115 274.386 38.9528 274.5 38.8604 274.582C38.7633 274.668 38.6715 274.76 38.5854 274.857C38.5034 274.949 38.3901 275.008 38.2673 275.022L37.2838 275.132C37.1938 275.311 37.1171 275.497 37.0541 275.687L37.6717 276.461C37.7488 276.557 37.7875 276.679 37.7802 276.802C37.7725 276.932 37.7725 277.062 37.7802 277.192C37.7875 277.315 37.7488 277.437 37.6717 277.534L37.0538 278.307C37.117 278.498 37.1941 278.684 37.2845 278.863L38.2706 278.979C38.3925 278.993 38.5049 279.052 38.5864 279.143C38.6725 279.24 38.7643 279.332 38.8613 279.418C38.9537 279.5 39.0125 279.614 39.0263 279.736L39.1367 280.719C39.3159 280.809 39.5014 280.885 39.6916 280.948L40.4655 280.33C40.5621 280.253 40.6837 280.214 40.8071 280.221C40.9368 280.229 41.0669 280.229 41.1967 280.221C41.3201 280.214 41.4418 280.253 41.5383 280.33L42.3116 280.948C42.5019 280.885 42.6874 280.808 42.8665 280.718L42.977 279.734C42.9908 279.611 43.0496 279.498 43.142 279.416C43.239 279.33 43.3308 279.238 43.4169 279.141C43.4989 279.049 43.6123 278.99 43.7351 278.976L44.718 278.866C44.8074 278.686 44.8837 278.501 44.9463 278.311L44.3283 277.537C44.2512 277.44 44.2126 277.319 44.2198 277.195C44.2275 277.066 44.2275 276.935 44.2198 276.806C44.2125 276.682 44.2512 276.561 44.3284 276.464L44.9462 275.691C44.8832 275.5 44.8063 275.315 44.7162 275.136L43.7327 275.025C43.6099 275.012 43.4966 274.953 43.4146 274.86C43.3285 274.763 43.2367 274.672 43.1397 274.585C43.0472 274.503 42.9885 274.39 42.9747 274.267L42.8642 273.284C42.6849 273.194 42.4993 273.117 42.3089 273.054L41.5354 273.672C41.4389 273.749 41.3172 273.787 41.1939 273.78C41.0641 273.772 40.934 273.772 40.8043 273.78C40.6809 273.787 40.5592 273.749 40.4626 273.672L39.6888 273.053C39.4992 273.116 39.3143 273.192 39.1357 273.281Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M33.95 283.25C33.5634 283.25 33.25 283.563 33.25 283.95C33.25 284.337 33.5634 284.65 33.95 284.65C34.3366 284.65 34.65 284.337 34.65 283.95C34.65 283.563 34.3366 283.25 33.95 283.25ZM32.25 283.95C32.25 283.011 33.0111 282.25 33.95 282.25C34.8889 282.25 35.65 283.011 35.65 283.95C35.65 284.889 34.8889 285.65 33.95 285.65C33.0111 285.65 32.25 284.889 32.25 283.95Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M32.937 280.017C33.09 279.976 33.2531 280.011 33.3767 280.109L33.9936 280.602C33.9974 280.602 34.0012 280.602 34.0051 280.602L34.622 280.11C34.7458 280.011 34.9092 279.976 35.0623 280.017C35.4132 280.11 35.7501 280.25 36.0642 280.431C36.2015 280.511 36.2929 280.651 36.3106 280.808L36.3987 281.593C36.4015 281.596 36.4042 281.599 36.4069 281.601L37.1913 281.689C37.3487 281.707 37.4883 281.798 37.5679 281.935C37.7502 282.249 37.8899 282.586 37.9832 282.937C38.024 283.09 37.9896 283.254 37.8906 283.378L37.3977 283.995C37.3977 283.998 37.3977 284.002 37.3977 284.006L37.8903 284.623C37.989 284.747 38.0234 284.91 37.9831 285.063C37.8906 285.413 37.752 285.75 37.5708 286.065C37.4914 286.202 37.3514 286.294 37.1934 286.312L36.4087 286.4C36.406 286.403 36.4033 286.405 36.4005 286.408L36.3124 287.192C36.2947 287.35 36.2035 287.489 36.0666 287.569C35.7525 287.751 35.4156 287.891 35.0647 287.984C34.9115 288.025 34.748 287.991 34.6241 287.892L34.0072 287.399C34.0033 287.399 33.9995 287.399 33.9957 287.399L33.3787 287.891C33.2551 287.99 33.0921 288.025 32.9392 287.984C32.5885 287.892 32.2516 287.753 31.9373 287.572C31.7996 287.493 31.7079 287.352 31.6901 287.195L31.602 286.41C31.5989 286.407 31.5959 286.404 31.5929 286.401L30.8064 286.309C30.6499 286.29 30.5112 286.199 30.4322 286.063C30.2498 285.749 30.1102 285.412 30.0168 285.061C29.976 284.908 30.0104 284.744 30.1094 284.62L30.6023 284.004C30.6023 284 30.6023 283.996 30.6023 283.992L30.1097 283.375C30.0108 283.251 29.9764 283.088 30.0171 282.935C30.1103 282.584 30.2496 282.247 30.4315 281.933C30.5109 281.796 30.6508 281.704 30.8084 281.687L31.5931 281.598C31.5958 281.596 31.5986 281.593 31.6013 281.59L31.6894 280.806C31.7072 280.648 31.7988 280.508 31.9364 280.429C32.2502 280.248 32.5867 280.109 32.937 280.017ZM32.6536 281.181L32.5746 281.884C32.5608 282.007 32.502 282.12 32.4096 282.202C32.3374 282.266 32.2691 282.335 32.2051 282.407C32.1231 282.499 32.0097 282.558 31.887 282.572L31.1826 282.651C31.1349 282.751 31.0925 282.853 31.0558 282.957L31.4982 283.511C31.5753 283.608 31.6139 283.73 31.6066 283.853C31.6009 283.949 31.6009 284.046 31.6066 284.143C31.6139 284.266 31.5752 284.388 31.4981 284.484L31.0556 285.038C31.0926 285.143 31.1352 285.246 31.1832 285.346L31.89 285.429C32.012 285.443 32.1243 285.502 32.2058 285.593C32.2699 285.665 32.3382 285.734 32.4103 285.798C32.5027 285.88 32.5615 285.993 32.5753 286.116L32.6543 286.82C32.7541 286.867 32.8563 286.909 32.9605 286.946L33.515 286.503C33.6115 286.426 33.7332 286.387 33.8565 286.394C33.9531 286.4 34.0499 286.4 34.1464 286.394C34.2698 286.387 34.3915 286.426 34.4881 286.503L35.0419 286.946C35.1461 286.909 35.2484 286.866 35.3481 286.819L35.4273 286.114C35.4411 285.991 35.4998 285.878 35.5922 285.796C35.6644 285.732 35.7327 285.664 35.7967 285.592C35.8787 285.499 35.9921 285.44 36.1149 285.427L36.8186 285.347C36.866 285.248 36.9081 285.146 36.9446 285.041L36.5018 284.487C36.4247 284.39 36.3861 284.269 36.3934 284.145C36.3991 284.049 36.3991 283.952 36.3934 283.855C36.3861 283.732 36.4248 283.61 36.5019 283.514L36.9444 282.96C36.9076 282.856 36.8652 282.753 36.8175 282.654L36.113 282.575C35.9903 282.561 35.8769 282.502 35.7949 282.41C35.7309 282.337 35.6626 282.269 35.5904 282.205C35.498 282.123 35.4392 282.01 35.4255 281.887L35.3463 281.183C35.2465 281.135 35.1441 281.093 35.0398 281.056L34.4858 281.498C34.3892 281.575 34.2676 281.614 34.1442 281.607C34.0477 281.601 33.9509 281.601 33.8543 281.607C33.7309 281.614 33.6092 281.575 33.5127 281.498L32.9583 281.055C32.8546 281.091 32.7529 281.133 32.6536 281.181Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  monitoring: { y: 320, html: `<path d="M35.5 332.5C35.7762 332.5 36 332.724 36 333C36 333.53 36.2107 334.039 36.5858 334.414C36.9609 334.789 37.4696 335 38 335C38.5305 335 39.0392 334.789 39.4142 334.414C39.7893 334.039 40 333.53 40 333C40 332.724 40.2239 332.5 40.5 332.5C40.7762 332.5 41 332.724 41 333C41 333.796 40.684 334.559 40.1213 335.121C39.5587 335.684 38.7957 336 38 336C37.2044 336 36.4413 335.684 35.8787 335.121C35.3161 334.559 35 333.796 35 333C35 332.724 35.2239 332.5 35.5 332.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M38 321C36.6408 321 35.3372 321.54 34.3761 322.501C33.415 323.462 32.875 324.766 32.875 326.125C32.875 328.977 32.2183 331.322 31.6454 332.313C31.6345 332.332 31.6288 332.353 31.6288 332.375C31.6288 332.397 31.6345 332.418 31.6453 332.437C31.6562 332.456 31.6719 332.472 31.6908 332.483C31.7094 332.494 31.7306 332.5 31.7521 332.5H44.2488C44.2705 332.5 44.2918 332.494 44.3106 332.483C44.3295 332.472 44.3453 332.456 44.3562 332.437C44.3671 332.418 44.3728 332.397 44.3728 332.375C44.3728 332.353 44.367 332.331 44.3561 332.313C43.7823 331.321 43.125 328.978 43.125 326.125C43.125 324.766 42.5851 323.462 41.6239 322.501C40.6628 321.54 39.3593 321 38 321ZM33.669 321.794C34.8177 320.645 36.3756 320 38 320C39.6245 320 41.1824 320.645 42.3311 321.794C43.4797 322.943 44.125 324.501 44.125 326.125C44.125 328.869 44.7644 331.022 45.2218 331.812C45.3204 331.983 45.3726 332.177 45.3728 332.374C45.373 332.571 45.3214 332.765 45.2231 332.936C45.1248 333.107 44.9834 333.249 44.8129 333.348C44.6424 333.447 44.4489 333.499 44.2518 333.5L44.25 333.5H31.747C31.5501 333.499 31.357 333.446 31.1869 333.347C31.0168 333.248 30.8758 333.105 30.7778 332.935C30.6799 332.764 30.6285 332.57 30.6288 332.373C30.6291 332.176 30.6811 331.983 30.7795 331.812C31.2363 331.022 31.875 328.868 31.875 326.125C31.875 324.501 32.5203 322.943 33.669 321.794Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  chevR: { x: 223, y: 124, html: `<path d="M228.16 136.854C227.947 136.658 227.947 136.342 228.16 136.146L232.683 132L228.16 127.854C227.947 127.658 227.947 127.342 228.16 127.146C228.373 126.951 228.718 126.951 228.931 127.146L233.84 131.646C234.053 131.842 234.053 132.158 233.84 132.354L228.931 136.854C228.718 137.049 228.373 137.049 228.16 136.854Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  chevL: { x: 75, y: 80, html: `<path d="M85.8402 83.1464C86.0533 83.3417 86.0533 83.6583 85.8402 83.8536L81.3168 88L85.8402 92.1464C86.0533 92.3417 86.0533 92.6583 85.8402 92.8536C85.6272 93.0488 85.2819 93.0488 85.0689 92.8536L80.1598 88.3536C79.9467 88.1583 79.9467 87.8417 80.1598 87.6464L85.0689 83.1464C85.2819 82.9512 85.6272 82.9512 85.8402 83.1464Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  administration: { y: 368, html: `<path d="M38.05 373.425C36.6003 373.425 35.425 374.6 35.425 376.05C35.425 377.5 36.6003 378.675 38.05 378.675C39.4998 378.675 40.675 377.5 40.675 376.05C40.675 374.6 39.4998 373.425 38.05 373.425ZM34.425 376.05C34.425 374.048 36.048 372.425 38.05 372.425C40.052 372.425 41.675 374.048 41.675 376.05C41.675 378.052 40.052 379.675 38.05 379.675C36.048 379.675 34.425 378.052 34.425 376.05Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M35.9068 368.017C36.0598 367.976 36.2229 368.011 36.3465 368.109L37.8404 369.303C37.9812 369.299 38.1221 369.299 38.2629 369.303L39.7567 368.11C39.8806 368.011 40.0439 367.977 40.1971 368.018C40.9046 368.205 41.5841 368.486 42.2177 368.853C42.355 368.933 42.4464 369.073 42.4641 369.23L42.6775 371.13C42.78 371.227 42.8796 371.326 42.976 371.429L44.8754 371.642C45.0327 371.66 45.1724 371.751 45.2519 371.888C45.6196 372.521 45.9012 373.201 46.0895 373.908C46.1302 374.061 46.0959 374.225 45.9969 374.349L44.8032 375.843C44.8075 375.984 44.8075 376.124 44.8032 376.265L45.9962 377.759C46.0949 377.883 46.1293 378.046 46.0889 378.199C45.9024 378.906 45.6228 379.585 45.2574 380.219C45.178 380.357 45.038 380.449 44.88 380.466L42.9799 380.68C42.8835 380.782 42.7839 380.882 42.6814 380.978L42.468 382.878C42.4503 383.035 42.3591 383.175 42.2221 383.254C41.5889 383.622 40.9096 383.904 40.202 384.092C40.0487 384.133 39.8852 384.098 39.7613 383.999L38.2675 382.806C38.1267 382.81 37.9858 382.81 37.845 382.806L36.3511 383.999C36.2275 384.097 36.0645 384.132 35.9116 384.091C35.2042 383.905 34.5247 383.625 33.8909 383.26C33.7532 383.18 33.6615 383.04 33.6438 382.882L33.4303 380.982C33.3274 380.886 33.2276 380.786 33.1309 380.683L31.2286 380.46C31.0721 380.442 30.9334 380.351 30.8543 380.214C30.4867 379.581 30.205 378.902 30.0168 378.194C29.976 378.041 30.0104 377.877 30.1094 377.754L31.3031 376.26C31.2987 376.119 31.2987 375.978 31.3031 375.837L30.1101 374.343C30.0112 374.219 29.9769 374.056 30.0175 373.903C30.2054 373.195 30.4864 372.516 30.8532 371.882C30.9327 371.745 31.0725 371.654 31.2301 371.636L33.1303 371.423C33.2267 371.32 33.3262 371.22 33.4288 371.124L33.6422 369.225C33.6599 369.067 33.7516 368.927 33.8892 368.847C34.522 368.482 35.2005 368.203 35.9068 368.017ZM34.6071 369.593L34.4016 371.422C34.3878 371.545 34.329 371.658 34.2366 371.74C34.0637 371.894 33.9001 372.057 33.7466 372.23C33.6646 372.323 33.5513 372.382 33.4285 372.395L31.5976 372.601C31.3729 373.022 31.1901 373.464 31.052 373.92L32.2016 375.36C32.2787 375.456 32.3174 375.578 32.3101 375.701C32.2964 375.933 32.2964 376.164 32.3101 376.395C32.3174 376.519 32.2787 376.641 32.2016 376.737L31.0513 378.177C31.1899 378.633 31.3732 379.076 31.5987 379.496L33.4324 379.711C33.5543 379.725 33.6667 379.784 33.7482 379.876C33.9016 380.049 34.0653 380.212 34.2382 380.366C34.3306 380.448 34.3893 380.561 34.4031 380.684L34.6087 382.514C35.0295 382.738 35.4713 382.92 35.9276 383.057L37.3677 381.907C37.4642 381.83 37.5859 381.791 37.7092 381.799C37.9404 381.812 38.1721 381.812 38.4033 381.799C38.5267 381.791 38.6484 381.83 38.7449 381.907L40.1844 383.057C40.6408 382.919 41.0825 382.736 41.5029 382.511L41.7086 380.68C41.7224 380.557 41.7812 380.444 41.8736 380.362C42.0465 380.209 42.2101 380.045 42.3636 379.872C42.4456 379.78 42.5589 379.721 42.6817 379.707L44.512 379.501C44.7356 379.081 44.9174 378.639 45.0546 378.183L43.9046 376.742C43.8275 376.646 43.7889 376.524 43.7962 376.401C43.8099 376.17 43.8099 375.938 43.7962 375.707C43.7889 375.584 43.8275 375.462 43.9047 375.365L45.0549 373.926C44.9165 373.469 44.7334 373.028 44.5083 372.607L42.6778 372.402C42.555 372.388 42.4417 372.329 42.3597 372.237C42.2062 372.064 42.0426 371.9 41.8697 371.747C41.7772 371.665 41.7185 371.551 41.7047 371.428L41.4991 369.598C41.0783 369.373 40.6364 369.19 40.1798 369.052L38.7401 370.202C38.6436 370.279 38.5219 370.317 38.3986 370.31C38.1674 370.296 37.9357 370.296 37.7045 370.31C37.5812 370.317 37.4594 370.279 37.3629 370.202L35.9229 369.051C35.4676 369.188 35.0269 369.369 34.6071 369.593Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+};
+const NAV_ITEMS = [["dashboard", "Dashboard"], ["inventory", "Inventory"], ["analytics", "Analytics"], ["protection", "Protection"], ["orchestration", "Orchestration"], ["monitoring", "Monitoring"], ["administration", "Administration"]];
+/* the drill-down menus, as drawn in Collapse_False / Menu_Analytics (+ Health, Performance, Capacity). Groups: [label or null, items] */
+const NAV_MENUS = {
+  analytics: [
+    { t: "Health", groups: [["Storage", ["Block"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] },
+    { t: "Performance", groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] },
+    { t: "Capacity", groups: [["Storage", ["Block", "Object", "File"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Windows"]], [null, ["Switches"]]] },
+    { t: "Applications" }, { t: "Data Reduction" }, { t: "Insights" }, { t: "Reporting" }, { t: "Data Protection" },
+  ],
+};
+const navLabel = (k) => (NAV_ITEMS.find((x) => x[0] === k) || NAV_ITEMS[0])[1];
+const NavIcon = ({ k, className = "" }) => {
+  const ic = NAV_ICONS[k];
+  return <svg className={`hvn-ico ${className}`} viewBox={`${ic.x ?? 30} ${ic.y} 16 16`} fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ic.html }} />;
+};
+const samePath = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+const startsWith = (a, b) => b.every((x, i) => a[i] === x);
+/* the drill-down panel: level 1 lists the section's pages (a caret where there is a level 2); level 2 has a back row and groups */
+function NavPanel({ top, sub, dir, active, onSub, onPick, floating, style }) {
+  const items = NAV_MENUS[top];
+  const node = sub != null ? items.find((x) => x.t === sub) : null;
+  const leaf = (path, t, cls) => {
+    const on = samePath(active, path);
+    return (
+      <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}${on ? " is-active" : ""}`} aria-current={on ? "page" : undefined} onClick={() => onPick(path)}>
+        <span className="hvn-label">{t}</span>
+      </button>
+    );
+  };
+  return (
+    <div className={`hvn-panel${floating ? " is-float" : ""}`} role="menu" aria-label={node ? node.t : navLabel(top)} style={style}>
+      <div key={sub ?? "-"} className={`hvn-level${dir ? ` is-${dir}` : ""}`}>
+        {node ? (
+          <>
+            <button type="button" className="hvn-phead is-back" onClick={() => onSub(null)} aria-label={`Back to ${navLabel(top)}`}>
+              <NavIcon k="chevL" /><span>{node.t}</span>
+            </button>
+            <div className="hvn-psep" />
+            <div className="hvn-plist">
+              {node.groups.map(([g, list], i) => (
+                <div key={i} className={`hvn-pgroup${i ? " has-rule" : ""}${g ? "" : " no-label"}`} role="group" aria-label={g || undefined}>
+                  {g && <div className="hvn-pglabel">{g}</div>}
+                  {list.map((t) => leaf([top, node.t, g || "", t], t, "is-l2"))}
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="hvn-phead">{navLabel(top)}</div>
+            <div className="hvn-psep" />
+            <div className="hvn-plist">
+              {items.map((it) => it.groups ? (
+                <button key={it.t} type="button" className={`hvn-item hvn-pitem${startsWith(active, [top, it.t]) ? " is-trail" : ""}`} aria-haspopup="menu" onClick={() => onSub(it.t)}>
+                  <span className="hvn-label">{it.t}</span><NavIcon k="chevR" className="hvn-caret" />
+                </button>
+              ) : leaf([top, it.t], it.t, ""))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+/* state shared by both navigations: what is selected (a path) and which menu is open */
+function useNav() {
+  const [active, setActive] = useState(["dashboard"]);
+  const [open, setOpen] = useState(null); // { top, sub, dir, from: "v" | "h" }
+  const close = () => setOpen(null);
+  const pickTop = (k, from) => {
+    if (NAV_MENUS[k]) setOpen((o) => (o && o.top === k && o.from === from ? null : { top: k, sub: null, dir: null, from }));
+    else { setActive([k]); setOpen(null); }
+  };
+  const onSub = (sub) => setOpen((o) => ({ ...o, sub, dir: sub == null ? "back" : "fwd" }));
+  const onPick = (path) => { setActive(path); setOpen(null); };
+  return { active, open, close, pickTop, onSub, onPick };
+}
+function NavRailItems({ nav, from, collapsed, horizontal }) {
+  return NAV_ITEMS.map(([k, t]) => {
+    const isActive = nav.active[0] === k, isOpen = nav.open && nav.open.from === from && nav.open.top === k;
+    return (
+      <li key={k} className="hvn-li">
+        <button type="button" className={`hvn-item${isActive ? " is-active" : ""}${isOpen ? " is-open" : ""}`} data-nav={k}
+                aria-current={isActive ? "page" : undefined} aria-haspopup={NAV_MENUS[k] ? "menu" : undefined} aria-expanded={NAV_MENUS[k] ? !!isOpen : undefined}
+                aria-label={collapsed ? t : undefined} title={collapsed ? t : undefined} onClick={() => nav.pickTop(k, from)}>
+          <NavIcon k={k} /><span className="hvn-label">{t}</span>{horizontal && NAV_MENUS[k] && <NavIcon k="chevR" className="hvn-hcaret" />}
+        </button>
+        {horizontal && isOpen && <NavPanel {...nav.open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating />}
+      </li>
+    );
+  });
+}
+/* vertical: replicated from VSP_360_Nav_Component_1.5.svg (270px + 1px border, items 32px every 48px from y 72).
+   A section with pages opens its drill-down panel inside the rail; the rail drops to its icons meanwhile. */
+function NavVertical({ nav, collapsed, onCollapse }) {
+  const open = nav.open && nav.open.from === "v" ? nav.open : null;
+  return (
+    <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open ? " is-menu" : ""}`} aria-label="Main navigation">
+      <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} onClick={onCollapse}><NavIcon k="toggle" /></button>
+      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} /></ul>
+      {open && <NavPanel {...open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating={collapsed} />}
+    </nav>
+  );
+}
+/* horizontal: derived from the vertical one (same item; the red mark moves under it; a section with pages opens the same panel below it) */
+function NavHorizontal({ nav }) {
+  return (
+    <nav className="hvn-h" aria-label="Main navigation">
+      <ul className="hvn-list"><NavRailItems nav={nav} from="h" horizontal /></ul>
+    </nav>
+  );
+}
 function NavBench({ theme, onTheme }) {
   const [kinds, setKinds] = useState({ vertical: true, horizontal: false }); // several can be on at once
   const toggle = (k) => setKinds((x) => ({ ...x, [k]: !x[k] }));
+  const [collapsed, setCollapsed] = useState(false);
+  const nav = useNav();
+  const frame = useRef(null);
+  useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
+    if (!nav.open) return;
+    const down = (e) => { if (!e.target.closest(".hvn-v, .hvn-h")) nav.close(); };
+    const key = (e) => { if (e.key === "Escape") { const k = nav.open.top, from = nav.open.from; nav.close(); frame.current?.querySelector(`.hvn-${from} [data-nav="${k}"]`)?.focus(); } };
+    document.addEventListener("pointerdown", down); document.addEventListener("keydown", key);
+    return () => { document.removeEventListener("pointerdown", down); document.removeEventListener("keydown", key); };
+  }, [nav.open]);
+  const path = nav.active[0] === "dashboard" || nav.active.length === 1 ? [navLabel(nav.active[0])] : [navLabel(nav.active[0]), ...nav.active.slice(1).filter(Boolean)];
   return (
     <>
       <div className="hvs-ctl">
@@ -5673,6 +5875,20 @@ function NavBench({ theme, onTheme }) {
       </div>
       <div className="hvs-benchstage hvt-scope" data-theme={theme}>
         <style>{CSS}</style>
+        <div className="hvn-frame" ref={frame}>
+          {kinds.horizontal && <NavHorizontal nav={nav} />}
+          <div className="hvn-body">
+            {kinds.vertical && <NavVertical nav={nav} collapsed={collapsed} onCollapse={() => { nav.close(); setCollapsed((c) => !c); }} />}
+            <main className="hvn-page">
+              {kinds.vertical || kinds.horizontal ? (
+                <>
+                  {path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
+                  <h1>{path[path.length - 1]}</h1>
+                </>
+              ) : <p className="hvn-empty">Choose Vertical, Horizontal or both.</p>}
+            </main>
+          </div>
+        </div>
       </div>
     </>
   );

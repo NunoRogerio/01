@@ -25,6 +25,11 @@
   --semantic-negative:#c82333;
   --semantic-catastrophic:#921581;
   --semantic-catastrophic-20:#f1dfec;
+  --nav-accent:#cc0000;
+  --nav-selected:#ffffff;
+  --nav-selected-shadow:rgba(34,34,34,.12);
+  --nav-panel:rgba(251,252,252,.7);
+  --nav-group-label:#b3b3b3;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
   --semantic-positive:#146c2e;
@@ -109,6 +114,11 @@
   --semantic-negative:#ff8d8d;
   --semantic-catastrophic:#f0a6e4;
   --semantic-catastrophic-20:#4a2144;
+  --nav-accent:#ff6b6b;
+  --nav-selected:#424242;
+  --nav-selected-shadow:rgba(0,0,0,.4);
+  --nav-panel:rgba(28,28,28,.7);
+  --nav-group-label:#7d7d7d;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;
   --semantic-positive-20:#274511;
