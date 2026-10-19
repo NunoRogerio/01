@@ -5191,7 +5191,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-11"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-12"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5823,7 +5823,7 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
     const el = panelRef.current;
     if (!el || !el.animate || reduce()) return null;
     el.style.transformOrigin = origin || "0 0";
-    const k = [{ transform: "scale(.4)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }];
+    const k = floating ? [{ transform: "scale(.4)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }] : [{ opacity: 0 }, { opacity: 1 }]; // inside the rail it only fades
     return el.animate(dirIn ? k : k.reverse(), { duration: 200, easing: "cubic-bezier(.4,0,.2,1)", fill: dirIn ? "none" : "forwards" });
   };
   useLayoutEffect(() => { if (floating) fold(true); }, []);
@@ -5885,19 +5885,25 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
   );
 }
 /* state shared by both navigations: what is selected (a path) and which menu is open */
-function useNav() {
+function useNav(setCollapsed = () => {}) {
   const [active, setActive] = useState(["dashboard"]);
   const [open, setOpen] = useState(null); // { id, top, sub, dir, from: "v" | "h", floating, closing }
-  const close = (now) => setOpen((o) => (!o ? o : o.floating && !now ? { ...o, closing: true } : null)); // a floating panel folds back into its icon
+  const retract = (o) => { if (o && o.temp) setCollapsed(true); return { ...o, closing: true }; }; // opened from the collapsed bar: the bar folds back once done
+  const close = (now) => setOpen((o) => (!o ? o : (o.floating || o.temp) && !now ? retract(o) : null)); // a floating panel folds back into its icon
   const closed = () => setOpen((o) => (o && o.closing ? null : o));
   const pickTop = (k, from, floating) => {
-    if (NAV_MENUS[k]) setOpen((o) => (o && o.top === k && o.from === from && !o.closing ? (o.floating ? { ...o, closing: true } : null) : { id: Date.now(), top: k, sub: null, dir: null, from, floating }));
-    else { setActive([k]); setOpen(null); }
+    if (NAV_MENUS[k] && floating && from === "v") { // from the collapsed bar: the bar opens with this section's menu
+      setCollapsed(false);
+      setOpen({ id: Date.now(), top: k, sub: null, dir: null, from, floating: false, temp: true });
+      return;
+    }
+    if (NAV_MENUS[k]) setOpen((o) => (o && o.top === k && o.from === from && !o.closing ? (o.floating || o.temp ? retract(o) : null) : { id: Date.now(), top: k, sub: null, dir: null, from, floating, temp: !!(o && o.temp) }));
+    else { setActive([k]); setOpen((o) => { if (o && o.temp) setCollapsed(true); return null; }); }
   };
   const onSub = (sub) => setOpen((o) => ({ ...o, sub, dir: sub == null ? "back" : "fwd" }));
   const onPick = (path) => { // in the rail the panel stays where it is; a floating one acts as a dropdown: chosen on release, then it retracts
     setActive(path);
-    setOpen((o) => (o && o.floating ? { ...o, closing: true } : o));
+    setOpen((o) => (o && (o.floating || o.temp) ? retract(o) : o));
   };
   return { active, open, close, closed, pickTop, onSub, onPick };
 }
@@ -5947,7 +5953,7 @@ function NavVertical({ nav, collapsed, onCollapse }) {
   return (
     <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
       <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-tip={collapsed ? "Expand" : "Collapse"} data-tip-side={collapsed ? "right" : undefined} onClick={onCollapse}><NavIcon k="toggle" /></button>
-      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed || !!open} floating={collapsed} />{/* a tooltip wherever the label is hidden */}</ul>
+      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed && !open} floating={collapsed} />{/* a tooltip wherever the label is hidden, but none over an open menu */}</ul>
       {open && <NavPanel {...navPanelProps(nav, { floating: collapsed, origin })} />}
     </nav>
   );
@@ -5965,11 +5971,11 @@ function NavBench({ theme, onTheme }) {
   const toggle = (k) => setKinds((x) => ({ ...x, [k]: !x[k] }));
   const [collapsed, setCollapsed] = useState(false); // the Bar control and the icon on the bar change the same state
   const [show, setShow] = useState({ header: true, crumbs: true }); // several can be on at once
-  const nav = useNav();
+  const nav = useNav(setCollapsed);
   const frame = useRef(null);
   useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
     if (!nav.open || nav.open.closing) return;
-    const floating = nav.open.floating; // only a panel over the page closes on a click outside; the one inside the rail stays put
+    const floating = nav.open.floating || nav.open.temp; // only a panel over the page closes on a click outside; the one inside the rail stays put
     const down = (e) => { if (floating && !e.target.closest(".hvn-v, .hvn-h")) nav.close(); };
     const key = (e) => { if (e.key === "Escape") { const k = nav.open.top, from = nav.open.from; nav.close(); frame.current?.querySelector(`.hvn-${from} [data-nav="${k}"]`)?.focus(); } };
     document.addEventListener("pointerdown", down); document.addEventListener("keydown", key);
