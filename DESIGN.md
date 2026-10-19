@@ -2378,3 +2378,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Unit cards: crew cards 1px apart and 1px under their engine (were 2px).
 
 - (Oct 19, 11:42) Text on a coloured fill (size class tags and every tag that picks its ink) is black or white, whichever reads better, measured perceptually (APCA lightness contrast) rather than by the WCAG ratio, which favours black on mid-tones; on a near tie, white. So E (orange) now has a white letter; A to D stay black, F and G white. One shared function, window.__wfInkY (fit.js).
+
+## Oct 19 (18:00): a smoke check's confirmation makes the fire
+- Once the smoke check's captain confirms the fire on scene, the candidate is an active fire everywhere at once (header, stage tag, lists, map, counts): "<place> Fire" at Crews on scene (his engine is there), before the dispatcher sends the initial attack. The initial attack then rolls the rest of the response plan; the stage stays Crews on scene and the history goes Candidate → Crews on scene (no First alert after it). Time active and burned area read the same before and after the initial attack.
+- The Initial attack blade after a positive smoke check says its engine is already on scene ("the rest arrive within N min"), never "the first arrives in".
+- Summary card: once the fire is confirmed (captain on scene or initial attack), its verdict header ("Vegetation fire confirmed") is a full-width band in the fire's current stage colour and ink, so it stands out; 16px between the band and the lines.

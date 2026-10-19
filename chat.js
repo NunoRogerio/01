@@ -57,7 +57,7 @@
     return Object.assign({}, STAGES[0], { en: n ? n + '% confidence' : 'Candidate', pt: n ? n + '% de confiança' : 'Candidato', c: T.fg, bg: T.bg, ink: T.fg, cand: true, night: N, icD: N ? ICON.candN : ICON.cand }); }
   /* (Oct 15, 15:52) the initial attack makes a candidate a fire, everywhere (header, map, lists, chat): First alert as it is sent,
      Ongoing (the units en route) 5 s later, Crews on scene once the first unit on scene declares it; a smoke check leaves it a candidate */
-  function fireStage(c) { if (!c) return 0; var s = c.stage || 0; if (s || c.dismissed || c.kind !== 'cand' || !c.iaAt) return s; return Date.now() - c.iaAt >= 5000 ? 2 : 1; }
+  function fireStage(c) { if (!c) return 0; var s = c.stage || 0; if (s || c.dismissed || c.kind !== 'cand') return s; if (c.capVt) return 3; if (!c.iaAt) return 0; return Date.now() - c.iaAt >= 5000 ? 2 : 1; }   /* (Oct 19) a smoke check whose captain confirms the fire on scene: an active fire at once, Crews on scene (his engine is there), before the dispatcher sends the initial attack */
   function iaGo(c) { if (!c || c.iaAt || c.chk || c.kind !== 'cand') return; c.iaAt = Date.now(); c.iaVt = vnow(c); markConfirmed(c); setTimeout(function () { try { emit(); } catch (e) {} }, 5100); }
   function stageOf(ch) { var fs = fireStage(ch); return ch.dismissed ? DISMISSED : !fs ? candStage(ch.conf, ch) : STAGES[fs] || STAGES[0]; }
   /* (Oct 13, 14:10) a candidate's band shows when it was detected (as on its page), never when its chat opened */
@@ -323,7 +323,10 @@
     if (c.sum) { try { var S2 = stats(c); ["ver", "disp", "resp", "t0", "res"].forEach(function (f) { c.sum[f] = S2[f]; }); } catch (e) {} }
   }
   function noFuture(c) { if (!c || !c.vAt) return; var ahead = vnow(c) - Date.now(); if (ahead > MIN) { shiftBack(c, ahead); if (!c.closedVt) { c.vNow = Date.now(); c.vAt = Date.now(); } } }
-  function since(c) { return c.hist && c.hist.length ? c.hist[0].vt : c.vNow; }
+  function since(c) { var H = c.hist || [];
+    /* (Oct 19) a fire on the smoke check captain's word, before its declaration rewrites the history (plausibleEarly): the same 5 to 12 min of verification before his arrival */
+    if (c.capVt && !c.stage) { var want = (5 + hash((c.key || '') + 0) % 8) * MIN, t0 = H.length ? H[0].vt : c.capVt - want, gap = c.capVt - t0; return Math.abs(gap - want) > want ? c.capVt - want : t0; }
+    return H.length ? H[0].vt : c.vNow; }   /* (Oct 19) a fire on the smoke check captain's word counts from his confirmation, as after the initial attack */
   function vary(c, a, b, salt) { return a + hash(c.key + (salt || '')) % Math.max(1, b - a + 1); }   // minutes, stable per chat
 
   // ---- stations near the incident ---------------------------------------------------------------------------------
@@ -802,7 +805,7 @@
        initial attack and waits for it (the decision is the dispatcher's, on the incident page); with nothing he cancels */
     if (c.chk && dspMe()) {
       if (E.strong) { say(c, fi, sz.en + ' Fire confirmed. Requesting the initial attack.', sz.pt + ' Incêndio confirmado. Peço o ataque inicial.', 600, 0);
-        c.chkWait = true; c.dspHold = true; return; }
+        c.chkWait = true; c.dspHold = true; c.capAt = Date.now(); c.capVt = vnow(c); return; }   /* (Oct 19) his confirmation makes it a fire (fireStage): Crews on scene from his arrival */
       say(c, fi, 'On scene. A warm patch of rock, no smoke and no flame. Nothing found, cancelling.', 'No local. Uma zona de rocha quente, sem fumo nem chama. Nada encontrado, cancelamos.', 600, 0);
       push(c, { kind: 'cancelled' }, 2200, 0); return; }
     if (E.strong && meFirst(c)) {   /* you are the first engine's Captain: the call is yours */
@@ -1232,10 +1235,10 @@
   function intentOf(t) { for (var i = 0; i < INTENTS.length; i++) if (INTENTS[i][1].test(t)) return INTENTS[i][0]; return 'other'; }
   function areaNow(c) {   // hectares burning, growing until the head is held
     if (c.realHa && !/SIM-/.test(String(c.incId || c.id || c.key || ''))) return c.realHa;   // the published burnt area (a simulated fire grows towards its own)
-    var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }), held = H.find(function (h) { return h.s === 4; }), a1 = H.find(function (h) { return h.s === 1; });
+    var S = stats(c), H = c.hist || [], on = H.find(function (h) { return h.s === 3; }) || (c.capVt && !c.stage ? { s: 3, vt: c.capVt } : null), held = H.find(function (h) { return h.s === 4; }), a1 = H.find(function (h) { return h.s === 1; });
     if (c.closed || c.stage >= 4) return S.ha;
     /* (Oct 11, 00:46) the burned area keeps growing as the fire goes on: from First alert it spreads until crews are on scene, then slower until the head is held */
-    if (c.stage < 3 || !on) return Math.max(0.3, Math.round(S.ha * Math.min(0.25, 0.08 + (a1 ? (vnow(c) - a1.vt) / (60 * MIN) * 0.17 : 0)) * 10) / 10);
+    if ((c.stage < 3 && !(c.capVt && !c.stage)) || !on) return Math.max(0.3, Math.round(S.ha * Math.min(0.25, 0.08 + (a1 ? (vnow(c) - a1.vt) / (60 * MIN) * 0.17 : 0)) * 10) / 10);
     if (held) return S.ha;
     var f = Math.min(0.95, 0.25 + (vnow(c) - on.vt) / (150 * MIN));
     return Math.round(S.ha * f * 10) / 10;
@@ -1881,7 +1884,7 @@
           }
         } else if (m.kind === 'air') { if (c.air) c.air.st = m.st; }
         else if (m.kind === 'arrive') arrive(c);
-        else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { if (c.iaVt && !(c.hist || []).some(function (h) { return h.s === 1; })) { var v1 = Math.min(c.iaVt, vnow(c)); (c.hist = c.hist || []).push({ s: 1, vt: v1 }, { s: 2, vt: Math.min(v1 + 5000, vnow(c)) }); } settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
+        else if (m.kind === 'declared') { if (!c.closed && !c.dismissed && c.stage === 0) { if (c.capVt) { if (!(c.hist || []).some(function (h) { return h.s === 3; })) (c.hist = c.hist || []).push({ s: 3, vt: Math.min(c.capVt, vnow(c)) }); }   /* (Oct 19) already a fire since the smoke check's captain confirmed it: no First alert after it */ else if (c.iaVt && !(c.hist || []).some(function (h) { return h.s === 1; })) { var v1 = Math.min(c.iaVt, vnow(c)); (c.hist = c.hist || []).push({ s: 1, vt: v1 }, { s: 2, vt: Math.min(v1 + 5000, vnow(c)) }); } settleReq(c, true); markConfirmed(c); setStage(c, 3, 600, 0); commandTransfer(c); } }
         else if (m.kind === 'cancelled') { if (!c.closed && !c.dismissed && c.stage === 0) { settleReq(c, false); markDismissed(c); c.dismissed = true; c.closed = true; c.closedVt = vnow(c); sys(c, 'Candidate cancelled · the crews are back in service', 'Candidato cancelado · equipas de volta ao serviço', 600, 0); } }
         else if (m.kind === 'capt' && m.a === 'release') { (c.forces || []).forEach(function (f) { if (LIVE[f.st] && ownForce(c, f)) f.st = 'released'; }); try { localStorage.setItem('wf-asg-next', String(Date.now())); } catch (e) {} }   /* the next assignment comes on the home screen (station.js) */   /* (Oct 12, 12:40) the commander releases the Captain's engine: back in service, no assignment */
         else if (m.kind === 'capt' && m.a === 'next') { if (!c.closed && !c.dismissed && c.stage === m.from) captMove(c, m.to); }   /* (Oct 12, 12:30) the commander accepts the Captain's recommendation */
@@ -1918,7 +1921,9 @@
   // ---- resolution: stats, and the achievement that goes into each firefighter's profile ---------------------------------
   function stageDurs(c) {
     var H = c.hist || [], end = vnow(c), fs = fireStage(c);
-    if (fs > (c.stage || 0) && c.iaVt) { H = H.concat([{ s: 1, vt: Math.min(c.iaVt, end) }]); if (fs >= 2) H.push({ s: 2, vt: Math.min(c.iaVt + 5000, end) }); }
+    if (fs > (c.stage || 0) && c.capVt) H = H.concat([{ s: 3, vt: Math.min(c.capVt, end) }]);   /* (Oct 19) the smoke check's captain confirmed it */
+    else if (fs > (c.stage || 0) && c.iaVt) { H = H.concat([{ s: 1, vt: Math.min(c.iaVt, end) }]); if (fs >= 2) H.push({ s: 2, vt: Math.min(c.iaVt + 5000, end) }); }
+    H = H.filter(function (h, i) { return !i || h.s !== H[i - 1].s; });   /* one entry per stage reached: the declaration repeats the captain's Crews on scene */
     var D = H.map(function (h, i) { return { s: h.s, vt: h.vt, ms: Math.max(0, (H[i + 1] ? H[i + 1].vt : end) - h.vt), cur: !H[i + 1] && !c.closed }; });
     /* (Oct 12, 19:35) First alert is a moment (the declaration): its time, no duration. Ongoing (the crews en route) always has its time:
        when the engines rolled before the declaration (the dispatch center's initial attack), the drive is taken out of the candidate stage */
@@ -2137,7 +2142,9 @@
         var F = window.__wfLiveFires || [], r = F.find(function (q) { return q && (q[2] === raw || q[2] === 'F-' + raw || ('F-' + q[2]) === raw); }), I = (r && r[9]) || {};
         var ha2 = I.ha || (r && r[8]) || 0, ac2 = I.ac || (ha2 ? Math.round(ha2 * 2.471) : 0), t2 = I.startMs || 0, usr = !(r && r[0] === 'PT');
         return [ac2 ? (usr && !PT ? ac2 + ' ac' : (Math.round((ha2 || ac2 / 2.471) * 10) / 10) + ' ha') : '', t2 ? fmtDur(Math.max(0, Date.now() - t2)) : ''].filter(Boolean).join('. '); } catch (e) { return ''; } }
-  function stageTag(f) { if (f && f.cand) { var Cs = candStage(f.info && f.info.conf, f.cand.live || f.cand), t0 = f.info && f.info.startMs, dd = t0 ? new Date(t0) : null;   /* (Oct 11, 16:50) a candidate viewed on the incident page: its own stage */
+  function stageTag(f) { if (f && f.cand) { var cf = (function () { try { var c0 = chatFor({ kind: 'cand', id: f.cand.id }); return c0 && !c0.dismissed ? fireStage(c0) : 0; } catch (e) { return 0; } })();   /* (Oct 19) a candidate confirmed (smoke check's captain, initial attack) wears its fire stage */
+    if (cf >= 1) { var S2 = STAGES[Math.min(7, cf)]; return { i: cf, label: PT() ? S2.pt : S2.en, src: 'Confirmed', fg: S2.c, bg: S2.bg, ic: ICON[S2.icon], en: S2.en, meta: '' }; }
+    var Cs = candStage(f.info && f.info.conf, f.cand.live || f.cand), t0 = f.info && f.info.startMs, dd = t0 ? new Date(t0) : null;   /* (Oct 11, 16:50) a candidate viewed on the incident page: its own stage */
       return { i: 0, label: PT() ? Cs.pt : Cs.en, src: 'Candidate', fg: Cs.c, bg: Cs.bg, ic: Cs.icD, en: Cs.en, cand: true, meta: dd ? dd.toLocaleDateString(PT() ? 'pt-PT' : 'en-GB', { day: 'numeric', month: 'short' }).replace('.', '') + ', ' + hhmm(t0) : '' }; }
     var i = stageIdx(f), S = STAGES[i] || STAGES[2], I = (f && f.info) || {}, conf = /^Confirmed from /.test((f && f.note) || '');
     // (Oct 3, 22:23) the label is the stage's own name, so words, colour and icon always agree (the feed's wording, e.g. "Not contained", spans several stages)
@@ -2358,7 +2365,7 @@
     try { C0 = JSON.parse(sessionStorage.getItem('wf-confirmed') || '{}') || {}; } catch (e) {} try { D0 = JSON.parse(sessionStorage.getItem('wf-dismissed') || '{}') || {}; } catch (e) {}
     Object.keys(db.chats).forEach(function (k) { var c = db.chats[k]; if (!c || c.kind !== 'cand' || c.incId == null) return;
       if (c.dismissed) { if (!D0[c.incId]) { D0[c.incId] = true; add = true; } }
-      else if (fireStage(c) >= 1 && !C0[c.incId]) { C0[c.incId] = c.iaAt || (c.hist || []).filter(function (h) { return h.s === 1; }).map(function (h) { return h.vt; })[0] || Date.now(); add = true; } });
+      else if (fireStage(c) >= 1 && !(c.capVt && !c.iaAt) && !C0[c.incId]) {   /* (Oct 19) a fire on the captain's word stays on its page until the dispatcher sends the initial attack */ C0[c.incId] = c.iaAt || (c.hist || []).filter(function (h) { return h.s === 1; }).map(function (h) { return h.vt; })[0] || Date.now(); add = true; } });
     if (add) { try { sessionStorage.setItem('wf-confirmed', JSON.stringify(C0)); sessionStorage.setItem('wf-dismissed', JSON.stringify(D0)); } catch (e) {} window.__wfMem = Object.assign(window.__wfMem || {}, { confirmed: C0, dismissed: D0 }); }
   } catch (e) {} })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', offerBoot); else offerBoot();
