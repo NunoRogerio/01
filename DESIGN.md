@@ -2355,3 +2355,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 19, 10:17) The smoke check dialog: its engine wears its status tag (Available, as everywhere a unit is ready), its card is the glass of the page's unit cards (not opaque white; also the initial attack list's), and its button says Check, not Dispatch, so it never shares a word with the attack.
 
 - (Oct 19, 10:18) A unit card is a stack of glass cards 2px apart: the engine on top, then each crew member as its own card (no divider lines). Each card fades on its own as it passes under the header or the action bar. Folded crew cards take no gap.
+
+- (Oct 19, 10:22) The projected area chip is as wide as the projection switcher: swatch and area on the left, size class tag and time on the right. The candidate map frames the +6 h shape (with the ignition point) to fill about 80% of the window between the legend and the switcher, centred on the shape; one zoom for every horizon. Projection shapes are more opaque (fill 55%, was 35%). On an incident map the credit reads across, bottom right, 8px above the switcher.
