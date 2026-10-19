@@ -44,7 +44,6 @@ const CSS = `
   --nav-bar:#f4f4f4;
   --nav-logo:#0c0c0c;
   --nav-avatar:#e8e8e8;
-  --nav-group-label:#b3b3b3;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
   --semantic-positive:#146c2e;
@@ -136,7 +135,6 @@ const CSS = `
   --nav-bar:#2b2b2b;
   --nav-logo:#e6e6e6;
   --nav-avatar:#424242;
-  --nav-group-label:#7d7d7d;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;
   --semantic-positive-20:#274511;
@@ -4732,7 +4730,7 @@ const SCREEN_CSS = `
 .hvn-pgroup{display:flex;flex-direction:column;gap:16px}
 .hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
 .hvn-pgroup.has-rule.no-label{padding-top:7px}
-.hvn-pglabel{height:24px;margin-bottom:-8px;padding-left:4px;color:var(--nav-group-label);font-size:12px;line-height:24px}
+.hvn-pglabel{height:24px;margin-bottom:-8px;padding-left:4px;color:var(--content-placeholder);font-size:12px;line-height:24px}
 .hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
 .hvn-li{position:relative}
 .hvn-hcaret{transform:rotate(90deg);margin-left:-3px}
@@ -5168,7 +5166,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-13"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-14"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

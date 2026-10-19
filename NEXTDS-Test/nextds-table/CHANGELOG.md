@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.14 — 2026-10-19
+
+- Navigation group labels (Storage, Virtualization, Hosts) use the placeholder text colour (--content-placeholder); the --nav-group-label token is gone.
+
 ## 0.4.13 — 2026-10-19
 
 - More navigation tokens: --nav-bar (#f4f4f4, the header and rail background in the latest drawings; dark #2b2b2b), --nav-logo (#0c0c0c; dark #e6e6e6) and --nav-avatar (#e8e8e8; dark #424242). The table itself is unchanged.
