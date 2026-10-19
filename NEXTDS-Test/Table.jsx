@@ -5148,7 +5148,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-8"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-9"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5834,8 +5834,8 @@ function NavVertical({ nav, collapsed, onCollapse }) {
   const open = nav.open && nav.open.from === "v" ? nav.open : null;
   return (
     <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open ? " is-menu" : ""}`} aria-label="Main navigation">
-      <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-tip={collapsed ? "Expand" : undefined} data-tip-side="right" onClick={onCollapse}><NavIcon k="toggle" /></button>
-      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed} /></ul>
+      <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-tip={collapsed ? "Expand" : "Collapse"} data-tip-side={collapsed ? "right" : undefined} onClick={onCollapse}><NavIcon k="toggle" /></button>
+      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed || !!open} />{/* a tooltip wherever the label is hidden */}</ul>
       {open && <NavPanel {...open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating={collapsed} />}
     </nav>
   );
