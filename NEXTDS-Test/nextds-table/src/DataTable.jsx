@@ -1512,7 +1512,7 @@ function useTips(ref, scope) {
       const text = el.getAttribute("data-tip");
       if (!text) return;
       const r = el.getBoundingClientRect();
-      setTip({ text, x: r.left + r.width / 2, top: r.top, bottom: r.bottom });
+      setTip({ text, x: r.left + r.width / 2, top: r.top, bottom: r.bottom, right: r.right, side: el.getAttribute("data-tip-side") });
     };
     const hide = () => { clearTimeout(timer); cur = null; setTip(null); };
     const at = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest("[data-tip]") : null; };
@@ -1552,6 +1552,7 @@ function TipBubble({ tip }) {
   useLayoutEffect(() => {
     if (!tip || !ref.current) { setPos(null); return; }
     const w = ref.current.offsetWidth, h = ref.current.offsetHeight;
+    if (tip.side === "right") { setPos({ left: tip.right + 8, top: Math.round((tip.top + tip.bottom) / 2 - h / 2) }); return; } // beside the item (an icon-only rail)
     let top = tip.top - h - 8;
     if (top < 8) top = tip.bottom + 8;
     const left = Math.min(Math.max(8, tip.x - w / 2), window.innerWidth - w - 8);

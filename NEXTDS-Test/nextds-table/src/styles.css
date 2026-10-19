@@ -29,6 +29,9 @@
   --nav-selected:#ffffff;
   --nav-selected-shadow:rgba(34,34,34,.12);
   --nav-panel:rgba(251,252,252,.7);
+  --nav-bar:#f4f4f4;
+  --nav-logo:#0c0c0c;
+  --nav-avatar:#e8e8e8;
   --nav-group-label:#b3b3b3;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
@@ -118,6 +121,9 @@
   --nav-selected:#424242;
   --nav-selected-shadow:rgba(0,0,0,.4);
   --nav-panel:rgba(28,28,28,.7);
+  --nav-bar:#2b2b2b;
+  --nav-logo:#e6e6e6;
+  --nav-avatar:#424242;
   --nav-group-label:#7d7d7d;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;

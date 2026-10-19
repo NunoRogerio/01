@@ -41,6 +41,9 @@ const CSS = `
   --nav-selected:#ffffff;
   --nav-selected-shadow:rgba(34,34,34,.12);
   --nav-panel:rgba(251,252,252,.7);
+  --nav-bar:#f4f4f4;
+  --nav-logo:#0c0c0c;
+  --nav-avatar:#e8e8e8;
   --nav-group-label:#b3b3b3;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
@@ -130,6 +133,9 @@ const CSS = `
   --nav-selected:#424242;
   --nav-selected-shadow:rgba(0,0,0,.4);
   --nav-panel:rgba(28,28,28,.7);
+  --nav-bar:#2b2b2b;
+  --nav-logo:#e6e6e6;
+  --nav-avatar:#424242;
   --nav-group-label:#7d7d7d;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;
@@ -4664,7 +4670,7 @@ const SCREEN_CSS = `
 .hvn-page{flex:1;min-width:0;padding:24px}
 .hvn-page h1{margin:0;font-size:20px;line-height:28px;font-weight:600}
 .hvn-empty{margin:auto;color:var(--content-placeholder)}
-.hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--container-background);overflow:hidden;transition:width .2s ease}
+.hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--nav-bar);overflow:hidden;transition:width .2s ease}
 .hvn-v.is-collapsed{width:77px}
 .hvn-toggle{position:absolute;left:216px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
@@ -4682,7 +4688,7 @@ const SCREEN_CSS = `
 .hvn-item.is-active,.hvn-item.is-active:hover{background:transparent;color:var(--nav-accent)}
 .hvn-item.is-active::after,.hvn-item[data-unpick]::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none} /* the selected card is a layer, so it can grow and close like the dropdown selection */
 .hvn-item.is-active::before,.hvn-item[data-unpick]::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
-.hvn-h{display:flex;align-items:center;gap:16px;flex:none;height:56px;padding:0 16px;border-bottom:1px solid var(--border-default);background:var(--container-background);}
+.hvn-h{display:flex;align-items:center;gap:16px;flex:none;height:56px;padding:0 16px;border-bottom:1px solid var(--border-default);background:var(--nav-bar);}
 .hvn-h{overflow:visible;z-index:2}
 .hvn-h .hvn-list{flex-direction:row;padding:0}
 .hvn-h .hvn-item{flex:none}
@@ -4705,7 +4711,18 @@ const SCREEN_CSS = `
 .hvn-phead{display:flex;align-items:center;flex:none;box-sizing:border-box;width:100%;height:32px;padding:0 0 0 19px;border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--content-placeholder);font:inherit;text-align:left;white-space:nowrap}
 .hvn-phead.is-back{gap:13px;padding-left:7px;color:var(--content-primary);cursor:pointer}
 .hvn-phead.is-back:hover{background:var(--container-hover-background)}
-.hvn-psep{flex:none;height:4px;background:var(--container-background)}
+.hvn-psep{flex:none;height:4px;background:var(--nav-bar)}
+.hvn-hd{display:flex;align-items:center;justify-content:space-between;flex:none;height:56px;padding:0 16px;background:var(--nav-bar);box-shadow:inset 0 -1px var(--border-default);color:var(--content-primary)}
+.hvn-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.hvn-logo{display:block;flex:none;width:80px;height:14px;color:var(--nav-logo)}
+.hvn-rule{flex:none;width:1px;height:24px;background:var(--content-primary)}
+.hvn-app{margin-left:-1px;white-space:nowrap} /* 7px after the rule, as drawn */
+.hvn-actions{display:flex;align-items:center;gap:18px} /* as drawn: icons every 50px, 32px press areas */
+.hvn-act,.hvn-avatar{display:flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;border:0;border-radius:16px;background:transparent;color:var(--content-primary);font:inherit;cursor:pointer}
+.hvn-act:hover{background:var(--container-hover-background)}
+.hvn-avatar{background:var(--nav-avatar)}
+.hvn-avatar:hover{box-shadow:inset 0 0 0 1px var(--border-hover-selected)}
+
 .hvn-plist{display:flex;flex-direction:column;gap:16px;padding:8px;overflow-y:auto;scrollbar-width:thin}
 .hvn-pitem{width:100%;padding:0 7px 0 11px}
 .hvn-pitem.is-l2{padding-left:16px}
@@ -5151,7 +5168,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-10"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-11"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5861,6 +5878,26 @@ function useNav() {
   };
   return { active, open, close, closed, pickTop, onSub, onPick };
 }
+/* the app header, replicated from HEADER.svg: Hitachi logo, a 24px rule, the app name; at the right help, apps and the account */
+const HD_LOGO = `<path d="M61.4746 28.124C61.473 29.0446 61.6216 29.9589 61.9142 30.8287V30.8323C62.4609 32.4416 63.8382 33.6229 65.4295 34.1419C66.4999 34.4889 67.6153 34.6658 68.7374 34.6667C70.178 34.664 71.6035 34.3638 72.9299 33.7837C73.4952 33.5322 73.9957 33.1479 74.3916 32.6614C74.7875 32.175 75.0678 31.5999 75.2101 30.9819C75.3017 30.586 75.3569 30.182 75.375 29.7753H71.9395C71.9442 30.2447 71.8528 30.7097 71.6712 31.14C71.5368 31.4507 71.3405 31.7287 71.095 31.9558C70.8494 32.1829 70.5602 32.3541 70.2462 32.4581C69.7587 32.6199 69.2495 32.7016 68.7374 32.7003C68.1393 32.6975 67.5467 32.5835 66.9879 32.3638C66.5594 32.1972 66.1749 31.9288 65.8658 31.5802C65.5567 31.2317 65.3315 30.8129 65.2087 30.3578C65.0054 29.6328 64.8995 28.8825 64.8941 28.1279C64.8961 27.2165 65.0479 26.3121 65.3433 25.4532C65.4859 25.0251 65.7198 24.6355 66.0278 24.313C66.3358 23.9905 66.7099 23.7434 67.1227 23.59C68.1036 23.2309 69.1705 23.2071 70.1656 23.5221C70.5119 23.6301 70.8298 23.8186 71.0947 24.0729C71.3596 24.3273 71.5646 24.6408 71.6939 24.9895C71.8043 25.3034 71.8648 25.6336 71.8731 25.9674H75.2952C75.2721 25.6981 75.2331 25.4304 75.1786 25.1659C75.0484 24.5196 74.7689 23.9153 74.364 23.4041C73.9591 22.893 73.4407 22.4902 72.8527 22.2298C70.4032 21.1161 67.6283 21.037 65.123 22.0095C63.9502 22.4626 62.9627 23.3158 62.3246 24.4275C61.7247 25.5586 61.4311 26.8354 61.4746 28.124Z" fill="currentColor"/><path d="M19.2601 26.7262C19.2584 26.7638 19.2601 21.6474 19.2601 21.6474H16C16.0181 21.6474 16 34.3505 16 34.3505H19.2624C19.2615 34.3524 19.262 32.8338 19.2624 31.3792C19.2628 30.0483 19.2631 28.771 19.2624 28.7608C19.2624 28.7608 25.8456 28.7776 25.8456 28.7608V34.3505H29.108C29.1165 34.337 29.108 21.6474 29.108 21.6474H25.8433C25.8415 21.6474 25.8433 26.7446 25.8433 26.7262H19.2601Z" fill="currentColor"/><path d="M49.3541 21.6474V23.8094H44.3681V34.3505H41.1057V23.8094H36.1208C36.1208 23.8094 36.1272 21.6489 36.1208 21.6474H49.3541Z" fill="currentColor"/><path d="M80.305 21.6474V26.7262H86.8928C86.8928 26.7446 86.887 21.6474 86.8928 21.6474H90.1553C90.1553 21.6474 90.1672 34.337 90.1553 34.3505H86.8928V28.7608C86.8928 28.7776 80.305 28.7608 80.305 28.7608C80.3111 28.7821 80.305 34.3541 80.305 34.3505H77.0426C77.0426 34.3505 77.0636 21.6474 77.0426 21.6474H80.305Z" fill="currentColor"/><path d="M58.401 34.3505H62.0316L56.2766 21.6474C56.2766 21.6474 52.2763 21.6558 52.2763 21.6474L46.5236 34.3505C46.5236 34.3505 50.1557 34.3538 50.1531 34.3505C50.172 34.3541 51.2207 31.6194 51.2207 31.6194H57.3319C57.3319 31.6194 58.4065 34.3505 58.401 34.3505ZM52.0069 29.5848L54.2754 23.8094L56.5475 29.5848H52.0069Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M96 21.6474H92.7367V34.3505H96V21.6474Z" fill="currentColor"/><path d="M34.9525 21.6474H31.6935V34.3505H34.9525V21.6474Z" fill="currentColor"/>`;
+const HD_HELP = `<path d="M1788 32.6875C1788.35 32.6875 1788.62 32.4077 1788.62 32.0625C1788.62 31.7173 1788.35 31.4375 1788 31.4375C1787.65 31.4375 1787.38 31.7173 1787.38 32.0625C1787.38 32.4077 1787.65 32.6875 1788 32.6875Z" fill="currentColor"/><path d="M1785 26.4375C1785 24.8929 1786.41 23.75 1788 23.75C1789.59 23.75 1791 24.8929 1791 26.4375C1791 27.8179 1789.88 28.8774 1788.5 29.0871V29.25C1788.5 29.5261 1788.28 29.75 1788 29.75C1787.72 29.75 1787.5 29.5261 1787.5 29.25V28.625C1787.5 28.3489 1787.72 28.125 1788 28.125C1789.17 28.125 1790 27.3086 1790 26.4375C1790 25.5664 1789.17 24.75 1788 24.75C1786.83 24.75 1786 25.5664 1786 26.4375V26.75C1786 27.0261 1785.78 27.25 1785.5 27.25C1785.22 27.25 1785 27.0261 1785 26.75V26.4375Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M1788 21C1784.13 21 1781 24.134 1781 28C1781 31.866 1784.13 35 1788 35C1791.87 35 1795 31.866 1795 28C1795 24.134 1791.87 21 1788 21ZM1780 28C1780 23.5817 1783.58 20 1788 20C1792.42 20 1796 23.5817 1796 28C1796 32.4183 1792.42 36 1788 36C1783.58 36 1780 32.4183 1780 28Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>`;
+const HD_APPS = `<path d="M1830 20.5C1830 20.2239 1830.22 20 1830.5 20H1833.5C1833.78 20 1834 20.2239 1834 20.5V23.5C1834 23.7761 1833.78 24 1833.5 24H1830.5C1830.22 24 1830 23.7761 1830 23.5V20.5Z" fill="currentColor"/><path d="M1836 20.5C1836 20.2239 1836.22 20 1836.5 20H1839.5C1839.78 20 1840 20.2239 1840 20.5V23.5C1840 23.7761 1839.78 24 1839.5 24H1836.5C1836.22 24 1836 23.7761 1836 23.5V20.5Z" fill="currentColor"/><path d="M1842 20.5C1842 20.2239 1842.22 20 1842.5 20H1845.5C1845.78 20 1846 20.2239 1846 20.5V23.5C1846 23.7761 1845.78 24 1845.5 24H1842.5C1842.22 24 1842 23.7761 1842 23.5V20.5Z" fill="currentColor"/><path d="M1842 26.5C1842 26.2239 1842.22 26 1842.5 26H1845.5C1845.78 26 1846 26.2239 1846 26.5V29.5C1846 29.7761 1845.78 30 1845.5 30H1842.5C1842.22 30 1842 29.7761 1842 29.5V26.5Z" fill="currentColor"/><path d="M1836 26.5C1836 26.2239 1836.22 26 1836.5 26H1839.5C1839.78 26 1840 26.2239 1840 26.5V29.5C1840 29.7761 1839.78 30 1839.5 30H1836.5C1836.22 30 1836 29.7761 1836 29.5V26.5Z" fill="currentColor"/><path d="M1830 26.5C1830 26.2239 1830.22 26 1830.5 26H1833.5C1833.78 26 1834 26.2239 1834 26.5V29.5C1834 29.7761 1833.78 30 1833.5 30H1830.5C1830.22 30 1830 29.7761 1830 29.5V26.5Z" fill="currentColor"/><path d="M1830 32.5C1830 32.2239 1830.22 32 1830.5 32H1833.5C1833.78 32 1834 32.2239 1834 32.5V35.5C1834 35.7761 1833.78 36 1833.5 36H1830.5C1830.22 36 1830 35.7761 1830 35.5V32.5Z" fill="currentColor"/><path d="M1836 32.5C1836 32.2239 1836.22 32 1836.5 32H1839.5C1839.78 32 1840 32.2239 1840 32.5V35.5C1840 35.7761 1839.78 36 1839.5 36H1836.5C1836.22 36 1836 35.7761 1836 35.5V32.5Z" fill="currentColor"/><path d="M1842 32.5C1842 32.2239 1842.22 32 1842.5 32H1845.5C1845.78 32 1846 32.2239 1846 32.5V35.5C1846 35.7761 1845.78 36 1845.5 36H1842.5C1842.22 36 1842 35.7761 1842 35.5V32.5Z" fill="currentColor"/>`;
+function NavHeader({ app = "VSP 360", initials = "AC" }) {
+  return (
+    <header className="hvn-hd">
+      <div className="hvn-brand">
+        <svg className="hvn-logo" viewBox="16 21 80 14" fill="none" role="img" aria-label="Hitachi" dangerouslySetInnerHTML={{ __html: HD_LOGO }} />
+        <span className="hvn-rule" aria-hidden="true" />
+        <span className="hvn-app">{app}</span>
+      </div>
+      <div className="hvn-actions">
+        <button type="button" className="hvn-act" aria-label="Help" data-tip="Help"><svg className="hvn-ico" viewBox="1780 20 16 16" fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: HD_HELP }} /></button>
+        <button type="button" className="hvn-act" aria-label="Apps" data-tip="Apps"><svg className="hvn-ico" viewBox="1830 20 16 16" fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: HD_APPS }} /></button>
+        <button type="button" className="hvn-avatar" aria-label="Account" data-tip="Account">{initials}</button>
+      </div>
+    </header>
+  );
+}
 const navPanelProps = (nav, extra) => ({ key: nav.open.id, ...nav.open, active: nav.active, onSub: nav.onSub, onPick: nav.onPick, onClosed: nav.closed, ...extra });
 function NavRailItems({ nav, from, collapsed, tips, floating, horizontal }) {
   return NAV_ITEMS.map(([k, t]) => {
@@ -5904,7 +5941,7 @@ function NavBench({ theme, onTheme }) {
   const [kinds, setKinds] = useState({ vertical: true, horizontal: false }); // several can be on at once
   const toggle = (k) => setKinds((x) => ({ ...x, [k]: !x[k] }));
   const [collapsed, setCollapsed] = useState(false); // the Bar control and the icon on the bar change the same state
-  const [crumbs, setCrumbs] = useState(true);
+  const [show, setShow] = useState({ header: true, crumbs: true }); // several can be on at once
   const nav = useNav();
   const frame = useRef(null);
   useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
@@ -5928,19 +5965,25 @@ function NavBench({ theme, onTheme }) {
             </div>
           </CtlField>
           <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => { nav.close(true); setCollapsed(v === "collapsed"); }} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
-          <BenchSeg label="Breadcrumb" value={crumbs ? "show" : "hide"} onChange={(v) => setCrumbs(v === "show")} options={[["show", "Show"], ["hide", "Hide"]]} />
+          <CtlField label="Show">
+            <div className="hvs-seg" role="group" aria-label="Show (select several)">
+              <button type="button" className="hvs-segbtn" aria-pressed={show.header} onClick={() => setShow((x) => ({ ...x, header: !x.header }))}>Header</button>
+              <button type="button" className="hvs-segbtn" aria-pressed={show.crumbs} onClick={() => setShow((x) => ({ ...x, crumbs: !x.crumbs }))}>Breadcrumb</button>
+            </div>
+          </CtlField>
         </div>
       </div>
       <div className="hvs-benchstage hvt-scope" data-theme={theme}>
         <style>{CSS}</style>
         <div className="hvn-frame" ref={frame}>
+          {show.header && <NavHeader />}
           {kinds.horizontal && <NavHorizontal nav={nav} />}
           <div className="hvn-body">
             {kinds.vertical && <NavVertical nav={nav} collapsed={collapsed} onCollapse={() => { nav.close(true); setCollapsed((c) => !c); }} />}
             <main className="hvn-page">
               {kinds.vertical || kinds.horizontal ? (
                 <>
-                  {crumbs && path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
+                  {show.crumbs && path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
                   <h1>{path[path.length - 1]}</h1>
                 </>
               ) : <p className="hvn-empty">Choose Vertical, Horizontal or both.</p>}

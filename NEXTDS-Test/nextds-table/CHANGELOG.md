@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.13 — 2026-10-19
+
+- More navigation tokens: --nav-bar (#f4f4f4, the header and rail background in the latest drawings; dark #2b2b2b), --nav-logo (#0c0c0c; dark #e6e6e6) and --nav-avatar (#e8e8e8; dark #424242). The table itself is unchanged.
+
 ## 0.4.12 — 2026-10-19
 
 - New theme tokens for navigation: --nav-accent (#cc0000; dark #ff6b6b), --nav-selected (#ffffff; dark #424242), --nav-selected-shadow, --nav-panel (the drill-down panel, #fbfcfc at 70%) and --nav-group-label (#b3b3b3; dark #7d7d7d). The table itself is unchanged; the Workbench's new Navigation component uses them.
