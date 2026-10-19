@@ -4751,6 +4751,7 @@ const SCREEN_CSS = `
 .hvn-pitem.is-trail{color:var(--nav-accent)}
 .hvn-caret{margin-left:auto}
 .hvn-ext{margin-right:1px} /* as drawn: 8px from the item's edge */
+.hvn-plist.is-tight{gap:8px} /* a 2nd level without categories is one category: 8px between its pages */
 .hvn-pempty{margin:0;padding:6px 11px;color:var(--content-placeholder)}
 .hvn-pgroup{display:flex;flex-direction:column;gap:8px} /* 8px between pages of one category; categories keep their own spacing */
 .hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
@@ -5191,7 +5192,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-17"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-18"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5796,7 +5797,9 @@ const NAV_MENUS = {
   monitoring: { items: [{ t: "Storage Alerts" }, { t: "System Alerts" }, { t: "System Info" }, { t: "Jobs" }, { t: "Logs" }, { t: "Diagnostic Tool" }] },
   administration: { items: [
     { t: "Users & Access", items: [{ t: "Users" }, { t: "Groups" }, { t: "Roles" }, { t: "Service Accounts" }] },
-    { t: "Authentication", todo: true }, { t: "Operations", todo: true }, { t: "Settings", todo: true },
+    { t: "Authentication", items: [{ t: "Identity Provider" }, { t: "Active Directory" }, { t: "Certificates" }] },
+    { t: "Operations", items: [{ t: "Probes" }, { t: "Monitored Window" }, { t: "Thresholds" }, { t: "Alert Profiles" }, { t: "SMTP Notifications" }, { t: "SNMP Notifications" }] },
+    { t: "Settings", items: [{ t: "Report Parameters" }, { t: "General Settings" }, { t: "Tier Management" }] },
     { t: "Device Registry" }, { t: "Software Update" }, { t: "Backup and Restore" },
   ] },
 };
@@ -5884,7 +5887,7 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
               <NavIcon k="chevL" /><span>{node.t}</span>
             </button>
             <div className="hvn-psep" />
-            <div className="hvn-plist">{list(node, [top, node.t])}</div>
+            <div className={`hvn-plist${node.items ? " is-tight" : ""}`}>{list(node, [top, node.t])}</div>
           </>
         ) : (
           <>
