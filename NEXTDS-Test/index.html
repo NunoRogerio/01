@@ -5191,7 +5191,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-12"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-13"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5903,7 +5903,7 @@ function useNav(setCollapsed = () => {}) {
   const onSub = (sub) => setOpen((o) => ({ ...o, sub, dir: sub == null ? "back" : "fwd" }));
   const onPick = (path) => { // in the rail the panel stays where it is; a floating one acts as a dropdown: chosen on release, then it retracts
     setActive(path);
-    setOpen((o) => (o && (o.floating || o.temp) ? retract(o) : o));
+    setOpen((o) => (o && o.floating ? retract(o) : o && o.temp ? { ...o, temp: false } : o)); // opened from the collapsed bar: the bar stays open once a page is chosen
   };
   return { active, open, close, closed, pickTop, onSub, onPick };
 }
