@@ -1945,7 +1945,8 @@ class Component extends DCLogic {
       Object.assign(vf, SG ? { hBg: rgb(SG.bg), hFg: rgb(SG.c), hTm: rgb(SG.c), hM: '0px', hR: '0px', lPT: '16px' } : { hBg: 'transparent', hFg: 'rgb(0, 0, 0)', hTm: 'rgb(60, 60, 67)', hM: '0px', hR: '0px', lPT: '0px' }); }
     /* (Oct 16, 22:35) the three decisions never disappear (for now): a decision taken stays on its button, disabled with a green check at its top right;
        Smoke check sent: Smoke check done; the captain confirming the fire: No action off too; Initial attack sent: all three settled. No action keeps its own close (the whole row). */
-    if (DSP && done !== 'dismissed') { const chkSent = done === 'check' || !!VD[c.id + '^'], sent = done === 'sent', capFire = chkSent && onScene && droneStrong;
+    /* (Oct 19, 19:13) entering an already active fire, the smoke check and the initial attack are taken as done: all three decisions disabled, Check and Attack with their green check */
+    if (DSP && done !== 'dismissed') { const actF = !!frow.wasCand, chkSent = done === 'check' || !!VD[c.id + '^'] || actF, sent = done === 'sent' || actF, capFire = chkSent && onScene && droneStrong;
       const noop = () => {};
       Object.assign(vf, { decD: 'flex', doneD: 'none', sentD: 'none', othD: 'flex', cfgD: 'none',
         chkDis: chkSent || sent ? 'true' : 'false', chkOkD: chkSent ? 'flex' : 'none', dsDis: capFire || sent ? 'true' : 'false', dsOkD: 'none', iaOkD: sent ? 'flex' : 'none' });

@@ -2391,3 +2391,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The map never reloads under the person's actions: an incident visit that opened on a candidate keeps its map when the smoke check's captain or the initial attack makes it a fire (the map already shows it as a fire, with no "Loading map"). The fire's own map comes with the next entry to the incident.
 - A unit card that opens its crew rounds its last crew card's foot like the informative card above (bottom corners only, 0.32 s); folded, it is square again unless it is the last unit.
 - The Summary sits 16px above the next section (Detections), the same distance as between the cards (was 56px).
+- (Oct 19, 19:11) A disabled decision button (Dismiss, Check, Attack) draws its icon in its label's colour, not its own tint.
+- (Oct 19, 19:13) Dispatcher entering an already active fire: the smoke check and the initial attack are taken as done, so all three decisions show disabled (Check and Attack with their green check).
