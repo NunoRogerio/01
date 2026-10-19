@@ -2386,3 +2386,8 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Oct 19 (18:51): the peek bounces
 - The peeking card's arrival and its nudge share one bounce, faster and more pronounced (an exception to the no-bounce rule, for this card only): the arrival rises from below the screen, overshoots 20px past the peek, dips 5px under it and settles (0.58 s, was 0.7 s with no overshoot). Every 6 s the nudge does the same: up 20px at full opacity, a quick dip 5px under the peek, back to 60% (0.52 s, was 0.75 s).
+
+## Oct 19 (18:58–19:01)
+- The map never reloads under the person's actions: an incident visit that opened on a candidate keeps its map when the smoke check's captain or the initial attack makes it a fire (the map already shows it as a fire, with no "Loading map"). The fire's own map comes with the next entry to the incident.
+- A unit card that opens its crew rounds its last crew card's foot like the informative card above (bottom corners only, 0.32 s); folded, it is square again unless it is the last unit.
+- The Summary sits 16px above the next section (Detections), the same distance as between the cards (was 56px).
