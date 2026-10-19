@@ -4727,10 +4727,10 @@ const SCREEN_CSS = `
 .hvn-pitem .hvn-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .hvn-pitem.is-trail{color:var(--nav-accent)}
 .hvn-caret{margin-left:auto}
-.hvn-pgroup{display:flex;flex-direction:column;gap:16px}
+.hvn-pgroup{display:flex;flex-direction:column;gap:8px} /* 8px between pages of one category; categories keep their own spacing */
 .hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
 .hvn-pgroup.has-rule.no-label{padding-top:7px}
-.hvn-pglabel{height:24px;margin-bottom:-8px;padding-left:4px;color:var(--content-placeholder);font-size:12px;line-height:24px}
+.hvn-pglabel{height:24px;padding-left:4px;color:var(--content-placeholder);font-size:12px;line-height:24px}
 .hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
 .hvn-li{position:relative}
 .hvn-hcaret{transform:rotate(90deg);margin-left:-3px}
@@ -5166,7 +5166,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-14"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-15"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
