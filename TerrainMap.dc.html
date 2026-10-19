@@ -51,6 +51,8 @@ body{margin:0}
 /* iOS layer */
 .mbtn:hover{background-color:rgba(118,118,128,.12)}
 .mbtn:active{opacity:.6}
+/* (Oct 19) the map credit takes black or white, whichever contrasts more with the map under it (over the notes' grey) */
+.wf-note.wf-note-t[data-wf-ink][data-ink=b]{color:#000000!important}.wf-note.wf-note-t[data-wf-ink][data-ink=w]{color:#FFFFFF!important}
 /* (Oct 17, 10:01) street tiles at full strength: no fade into the grey (it read as a light veil, e.g. over Portugal); only the markers sit on the map */
 /* Map markers (fires, candidates, stations, units, pins) at 72% opacity; their tooltip panels stay fully opaque */
 .tipwrap svg,.fzone>svg{opacity:.72}.tipwrap [role=tooltip] svg{opacity:1}
@@ -502,13 +504,13 @@ body{margin:0}
        when the data last came in ("Updated 3 min ago"), the map credit under it so neither covers the other. The app also refreshes by itself every 5 minutes -->
   <div onPointerDown="{{stop}}" data-wf-keepsp="1" data-wf-ovl="1" style="position: absolute; z-index: 51; left: {{ctrlL}}px; bottom: {{ctrlB}}px; display: {{rf.d}}; align-items: center; gap: 8px; transition: bottom .5s cubic-bezier(.2,.8,.2,1)">
     <button type="button" class="mbtn" aria-label="{{rf.aria}}" aria-busy="{{rf.busyStr}}" onClick="{{rf.go}}" style="display: flex; flex-shrink: 0; align-items: center; justify-content: center; width: {{cb.outer}}px; height: {{cb.outer}}px; padding: 0; border: 0; border-radius: 50%; background: #3A3A3C; box-sizing: border-box; color: #FFFFFF; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.64" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: rotate({{rf.rot}}deg); transition: transform 1.2s cubic-bezier(.37,0,.63,1)"><path d="M20 12a8 8 0 1 1-2.34-5.66"></path><path d="M20 4v4.5h-4.5"></path></svg></button>
-    <span style="display: flex; flex-direction: column; gap: 0; min-width: 0; pointer-events: none; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF">
-      <span role="status" style="font-size: 15px; line-height: 20px; color: #000000; white-space: nowrap">{{rf.txt}}</span>
+    <span style="display: flex; flex-direction: column; gap: 0; min-width: 0; pointer-events: none">
+      <span role="status" data-wf-ink="rf" style="font-size: 15px; line-height: 20px; color: {{inkRf}}; white-space: nowrap; transition: color .3s">{{rf.txt}}</span>
     </span>
   </div>
   <!-- (Oct 13, 14:19) the map credit (required by the licences) runs upright along the map's left edge, centred on the visible map's height, reading bottom to top -->
   <div aria-hidden="false" style="position: absolute; z-index: 1; left: {{crL2}}; right: {{crR}}; top: {{crT}}; bottom: {{crB}}; display: flex; align-items: center; pointer-events: none">
-    <span class="wf-note wf-note-t" style="writing-mode: {{crWm}}; transform: {{crTf}}; white-space: nowrap; font-size: 13px; line-height: 18px; text-shadow: 0 0 2px #FFFFFF, 0 0 4px #FFFFFF, 0 0 8px #FFFFFF">{{crTxt}}</span>
+    <span class="wf-note wf-note-t" data-wf-ink="cr" data-ink="{{inkCrK}}" style="writing-mode: {{crWm}}; transform: {{crTf}}; white-space: nowrap; font-size: 13px; line-height: 18px; color: {{inkCr}}; transition: color .3s">{{crTxt}}</span>
   </div>
 </div>
 </x-dc>
@@ -677,7 +679,7 @@ class Component extends DCLogic {
     if (has && !this._uT) { this._u0 = Date.now(); this._uT = setInterval(() => this.forceUpdate(), 300); }
     if (!has && this._uT) { clearInterval(this._uT); this._uT = null; }
   }
-  componentDidMount() { this._rfT = setInterval(() => { if (typeof this.props.onRefresh === 'function') this.forceUpdate(); }, 20000); this._rfL = () => this.forceUpdate(); try { window.addEventListener('wf-updated', this._rfL); } catch (e) {} setTimeout(() => this.wfLblClear(), 600); this._lblI = setInterval(() => this.wfLblClear(), 1200); this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
+  componentDidMount() { setTimeout(() => this.wfInk(), 800); this._rfT = setInterval(() => { if (typeof this.props.onRefresh === 'function') this.forceUpdate(); }, 20000); this._rfL = () => this.forceUpdate(); try { window.addEventListener('wf-updated', this._rfL); } catch (e) {} setTimeout(() => this.wfLblClear(), 600); this._lblI = setInterval(() => this.wfLblClear(), 1200); this._hswT = setInterval(() => { try { this.homesSweep(); } catch (e) { window.__hswErr = String(e); } }, 1500); if (!this._homesL) { this._homesL = () => this.forceUpdate(); try { window.addEventListener('wf-homes', this._homesL); } catch (e) {} } if (!this._areaL) { this._areaL = () => this.forceUpdate(); try { window.addEventListener('wf-starea', this._areaL); } catch (e) {} } this._wfShow = () => { if ((this.state || {}).pop || (this.state || {}).popSpin) { clearTimeout(this._popT); this._popT = null; this.setState({ pop: null, popSpin: false }); } }; window.addEventListener('pageshow', this._wfShow); window.addEventListener('wf-popclose', this._wfShow);   /* (Oct 7) any return, cached or not */   /* (Oct 4) coming back (Back) to a map: no card left open */
     this._wfRail = () => { try { this.forceUpdate(); } catch (e) {} }; window.addEventListener('wf-rail', this._wfRail); this.unitTick();
     // Tooltip panel: a tap anywhere outside the map closes it (taps on the map itself are handled in onUp)
     this._popOut = (e) => { if (!(this.state || {}).pop || !this.el) return; const t = e.target; if (t && t.nodeType === 1 && this.el.contains(t)) return;
@@ -690,7 +692,40 @@ class Component extends DCLogic {
   /* (Oct 12) a place name never shows under something drawn over the map (the legend chips, the title card, the round controls): it is hidden there */
   wfLblClear() { try { const L = document.querySelectorAll('[data-wf-maplbl]'); if (!L.length) return; const ov = [].slice.call(document.querySelectorAll('[data-wf-leg] > *, [data-wf-leg] button, .mbtn, .avbtn, .wf-note-t, [style*="z-index: 50"]')).filter((e) => { const c = getComputedStyle(e); return c.visibility !== 'hidden' && +c.opacity > 0.05 && c.display !== 'none'; }).map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0 && r.width * r.height < 60000);   /* real overlays only: not the page's veils or the map's own layer */
       L.forEach((el) => { const r = el.getBoundingClientRect(), hit = ov.some((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top < q.bottom + 4 && r.bottom > q.top - 4); const v = hit ? 'hidden' : ''; if (el.style.visibility !== v) el.style.visibility = v; }); } catch (e) {} }
+  /* (Oct 19) the texts written on the map (Updated N min ago, the map credit) take black or white, whichever has more contrast
+     with the map right under them: the tiles there are sampled (a CORS copy of each, read once) and their mean luminance compared */
+  wfInkSoon() { clearTimeout(this._inkT); this._inkT = setTimeout(() => this.wfInk(), 250); }
+  wfInk() {
+    const root = this.el; if (!root) return;
+    const spans = [...root.querySelectorAll('[data-wf-ink]')].filter((e) => e.offsetWidth || e.offsetHeight);
+    if (!spans.length) return;
+    const imgs = [...root.querySelectorAll('image')].map((im) => ({ im, r: im.getBoundingClientRect(), href: im.getAttribute('href') })).filter((t) => t.href && t.r.width > 4);
+    const C = window.__wfInkC || (window.__wfInkC = new Map());
+    const pix = (href) => { let c = C.get(href); if (c) return c.data;
+      c = { data: null }; C.set(href, c); if (C.size > 400) C.delete(C.keys().next().value);
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = () => { try { const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64; const x = cv.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, 64, 64); c.data = x.getImageData(0, 0, 64, 64).data; this.wfInkSoon(); } catch (e) {} };
+      im.src = href; return null; };
+    const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const next = Object.assign({}, this._ink || {});
+    spans.forEach((sp) => {
+      const R = sp.getBoundingClientRect(); let sum = 0, n = 0;
+      for (let i = 0; i < 8; i++) for (let j = 0; j < 3; j++) {
+        const px = R.left + (i + 0.5) * R.width / 8, py = R.top + (j + 0.5) * R.height / 3;
+        for (let k = imgs.length - 1; k >= 0; k--) { const t = imgs[k], r = t.r;   /* the last drawn tile on top */
+          if (px < r.left || px >= r.right || py < r.top || py >= r.bottom) continue;
+          const d = pix(t.href); if (!d) break;
+          const u = Math.min(63, Math.floor((px - r.left) / r.width * 64)), v = Math.min(63, Math.floor((py - r.top) / r.height * 64)), o = (v * 64 + u) * 4;
+          sum += 0.2126 * lin(d[o]) + 0.7152 * lin(d[o + 1]) + 0.0722 * lin(d[o + 2]); n++; break; }
+      }
+      if (!n) return;
+      const L = sum / n, ink = (L + 0.05) / 0.05 >= 1.05 / (L + 0.05) ? '#000000' : '#FFFFFF';   /* contrast with black vs with white */
+      next[sp.getAttribute('data-wf-ink')] = ink;
+    });
+    if (JSON.stringify(next) !== JSON.stringify(this._ink || {})) { this._ink = next; this.forceUpdate(); }
+  }
   componentDidUpdate(prev) {
+    this.wfInkSoon();
     const pvPrev = this._pv; if (!this._zAnim) this._pv = null;   /* a zoom glide in progress keeps its view through the page's re-renders */ clearTimeout(this._lblT); this.wfLblClear(); this._lblT = setTimeout(() => this.wfLblClear(), 450);
     // full screen: the title box keeps clear of the legend column on the right, so it is told the column's width
     try { const full = this.props.isFull === true || this.props.isFull === 'true'; if (full) { const L = [...document.querySelectorAll('[data-wf-leg]')].find((e) => e.offsetWidth); const w = L ? Math.max(0, L.offsetWidth - 16) : 0;
@@ -1849,7 +1884,7 @@ class Component extends DCLogic {
       // The maximize button sits 16px above whatever panel covers the map's bottom edge (panels overlap the map by attrBottom - 6).
       // Full screen: the minimize button sits 24px from the bottom and 16px from the right; the map credit lines up with its middle.
       legL: ((p.mode === 'pin' || !!p.mapTitle) ? 32 : EI) + WN.l,   /* under a map title, the legend starts where the title's text does */ legR: EI + WN.r, statsD: typeof p.onStats === 'function' && !(p.isFull === true || p.isFull === 'true') ? 'flex' : 'none', statsClick: (e) => { if (typeof p.onStats === 'function') p.onStats(e); }, srchD: typeof p.onSearch === 'function' ? 'flex' : 'none', srchL: EI + WN.l, srch: (e) => { if (typeof p.onSearch === 'function') p.onSearch(e); },
-      ctrlB: (fullNow ? 24 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + EI) + (H - WN.b), ctrlR: EI + WN.r, ctrlL: EI + WN.l, crL: WN.l + 8, crTxt: String((window.__wfTiles && window.__wfTiles.credit && window.__wfTiles.credit()) || 'Map © OpenStreetMap').replace(/^Map\s*/, ''), attrL: EI + WN.l, attrR: EI + WN.r,   /* the map credit keeps the 16px edge rule */ clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), ...((p.incidentLeg === true || p.incidentLeg === 'true') && !fullNow ? { crT: 'auto', crB: (H - WN.b + 72) + 'px', crL2: 'auto', crR: (16 + WN.r) + 'px', crWm: 'horizontal-tb', crTf: 'none' } : { crT: Math.max(0, WN.t - (Number(p.clipBleed) || 0)) + 'px', crB: ((EI !== 16 ? EI + 13 : 4) + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0)) + 'px', crL2: (WN.l + 8) + 'px', crR: 'auto', crWm: 'vertical-rl', crTf: 'rotate(180deg)' }),   /* (Oct 19, 10:22) an incident's map: the area chip spans the legend row, so the credit reads across, at the window's bottom right, 8px above the projection switcher */ ldPadT: WN.t - Math.max(0, WN.t - (Number(p.clipBleed) || 0)),   /* the loader's flame and words centred in the grey that shows, not under the header */ clipB: Math.max(0, H - WN.b - (Number(p.clipBleedB) || 0)),   /* (Oct 16, 12:57) clip-bleed-b lets the map show below its framing window (the incident page's full-screen background) */ attrB: (EI !== 16 ? EI + 13 : 4) + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0),   /* in a card: the credit lines up with the middle of the round button beside it */   /* a panel covering the map's foot (main screen's bottom blade) lifts it above that panel */   // the map credit: 4px from the visible map's bottom and left edges, in the note style, everywhere
+      ctrlB: (fullNow ? 24 : Math.max(0, (Number(p.attrBottom ?? 10)) - 6) + EI) + (H - WN.b), ctrlR: EI + WN.r, ctrlL: EI + WN.l, crL: WN.l + 8, crTxt: String((window.__wfTiles && window.__wfTiles.credit && window.__wfTiles.credit()) || 'Map © OpenStreetMap').replace(/^Map\s*/, ''), inkRf: (this._ink && this._ink.rf) || '#000000', inkCr: (this._ink && this._ink.cr) || '#000000', inkCrK: (this._ink && this._ink.cr) === '#FFFFFF' ? 'w' : 'b',   /* (Oct 19) texts on the map: black or white, whichever contrasts more with the map under them (no glow) */ attrL: EI + WN.l, attrR: EI + WN.r,   /* the map credit keeps the 16px edge rule */ clipT: WN.t, clipV: Math.max(0, WN.t - (Number(p.clipBleed) || 0)), ...((p.incidentLeg === true || p.incidentLeg === 'true') && !fullNow ? { crT: 'auto', crB: (H - WN.b + 72) + 'px', crL2: 'auto', crR: (16 + WN.r) + 'px', crWm: 'horizontal-tb', crTf: 'none' } : { crT: Math.max(0, WN.t - (Number(p.clipBleed) || 0)) + 'px', crB: ((EI !== 16 ? EI + 13 : 4) + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0)) + 'px', crL2: (WN.l + 8) + 'px', crR: 'auto', crWm: 'vertical-rl', crTf: 'rotate(180deg)' }),   /* (Oct 19, 10:22) an incident's map: the area chip spans the legend row, so the credit reads across, at the window's bottom right, 8px above the projection switcher */ ldPadT: WN.t - Math.max(0, WN.t - (Number(p.clipBleed) || 0)),   /* the loader's flame and words centred in the grey that shows, not under the header */ clipB: Math.max(0, H - WN.b - (Number(p.clipBleedB) || 0)),   /* (Oct 16, 12:57) clip-bleed-b lets the map show below its framing window (the incident page's full-screen background) */ attrB: (EI !== 16 ? EI + 13 : 4) + (H - WN.b) + (Number(p.attrBottom) >= 60 ? Number(p.attrBottom) - 6 : 0),   /* in a card: the credit lines up with the middle of the round button beside it */   /* a panel covering the map's foot (main screen's bottom blade) lifts it above that panel */   // the map credit: 4px from the visible map's bottom and left edges, in the note style, everywhere
       mapTr: anim ? 'transform' + EZ : 'none', mv: 'none', mvSt: 'background-color .3s, border-color .3s',   /* (Oct 14, 18:05) markers never slide on their own: the whole picture glides (see the flip above) */
       ctrl: p.controls === 'top'
         ? { right: '12px', top: '12px', tf: 'none', dir: 'row', sepW: '1px', sepH: '24px', sepM: 'auto 2px' }

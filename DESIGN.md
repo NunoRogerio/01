@@ -2363,3 +2363,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 19, 10:45) The smoke check dialog's unit card is the initial attack's, exactly: the engine it sends (the one its line names) with its switch top right, the crew folded under it with the chevron, people with their photos (the dialog showed empty circles). Switched off, Check is disabled, as Initial attack is with no unit on.
 
 - (Oct 19, 10:47) A civil detection card's Civil tag sits in the card's bottom-right corner on the note's row, not on a row of its own: the note (e.g. "Anonymized. Only from owners who have FFW active. Simulation.") reaches the card's foot and keeps clear of the tag.
+
+- (Oct 19, 11:40) Texts written straight on a map (the refresh line "Updated N min ago" and the upright map credit) have no glow or shadow: each is black or white, whichever has more contrast with the map right under it (the tiles there are sampled and their mean luminance compared), and it changes as the map moves.
