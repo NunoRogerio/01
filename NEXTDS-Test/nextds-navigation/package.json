@@ -1,0 +1,53 @@
+{
+  "name": "@nextds/navigation",
+  "version": "0.1.0",
+  "description": "The NEXT Design System navigation for React: the vertical bar with drill-down menus (VSP 360 structure by default) and the app header; themes Dawn and Wicked.",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/styles.css",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "source",
+    "tools",
+    "docs",
+    "examples",
+    "demo/index.html",
+    "demo/main.jsx",
+    "demo/serve.mjs",
+    "build.mjs",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "scripts": {
+    "demo": "node demo/serve.mjs",
+    "extract": "node tools/extract.mjs",
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.4.0"
+  }
+}

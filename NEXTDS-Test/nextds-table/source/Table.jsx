@@ -4541,6 +4541,7 @@ export function DataTable({
   );
 }
 
+/* ==== @nextds/navigation: start (tools/extract.mjs of each package cuts here) ==== */
 /* ---------- Navigation (NAVIGATION in the library): the vertical bar with its drill-down menus, and the app header ----------
    Replicated from VSP_360_Nav_Component_1.5.svg, Collapse_False / Menu_*.svg and HEADER.svg. */
 const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their place in the drawing; the viewBox picks the 16px square
@@ -4775,6 +4776,8 @@ export function AppHeader({ app = "VSP 360", initials = "AC", onHelp, onApps, on
     </header>
   );
 }
+
+/* ==== @nextds/navigation: end ==== */
 
 /* ------------------------------------------------------------------ *
  * Customizer screen
@@ -5153,7 +5156,7 @@ const SCREEN_CSS = `
  *   --ctl-label         #666666                  #b0b0b0   (control titles: Theme, Header, Density…)
  *   --ctl-border        black 18%                white 22%
  *   --ctl-hover         black 6%                 white 10%
- *   --ctl-stripe        black 5.88%              white 11%
+ *   --ctl-stripe        #ffd400 (the WIP yellow) #ffd400
  *   --ctl-inset         black 24%                black 80%
  *   --ctl-primary       #1f1f1f                  #ececec
  *   --ctl-primary-hover #3a3a3a                  #ffffff
@@ -5161,10 +5164,10 @@ const SCREEN_CSS = `
  * ================================================================== */
 .hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-raised:#ffffff;
   --ctl-text:#222222;--ctl-text-2:#5c5c5c;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
-  --ctl-stripe:rgba(0,0,0,.0588);--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
+  --ctl-stripe:#ffd400;--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
 .hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-raised:#5a5a5a;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
-  --ctl-stripe:rgba(255,255,255,.11);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
+  --ctl-stripe:#ffd400;--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
 /* switching Dawn / Wicked: every colour eases over to the new theme (only while switching, so hovers stay quick) */
@@ -5399,7 +5402,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-19"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-21"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5768,16 +5771,18 @@ function packageFiles(src) {
 /* every publish of this page builds the React package from the latest version of the component (npm pack of
    @nextds/table: dist, src, the Workbench file, build, demo, examples, docs) and carries it in a <script id="nextds-pkg">
    block, with its file name; the button downloads that file. Without the block, the plain one-file package as a zip. */
-function embeddedPackage() {
-  const el = typeof document !== "undefined" && document.getElementById("nextds-pkg");
+/* one package per page: the Navigation page gives @nextds/navigation (block "nextds-pkg-nav"), the others @nextds/table */
+const pkgKind = (page) => (page === "navigation" ? "navigation" : "table");
+function embeddedPackage(kind = "table") {
+  const el = typeof document !== "undefined" && document.getElementById(kind === "navigation" ? "nextds-pkg-nav" : "nextds-pkg");
   if (!el || !el.textContent.trim()) return null;
   const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return { blob: new Blob([bytes], { type: "application/gzip" }), name: el.getAttribute("data-name") || "nextds-table.tgz" };
 }
-const pkgFileName = () => { const p = embeddedPackage(); return p ? p.name : "nextds-table.zip"; };
-async function downloadPackage(src) {
-  const pkg = embeddedPackage();
+const pkgFileName = (kind) => { const p = embeddedPackage(kind); return p ? p.name : "nextds-table.zip"; };
+async function downloadPackage(src, kind) {
+  const pkg = embeddedPackage(kind);
   const blob = pkg ? pkg.blob : makeZip(packageFiles(src));
   const name = pkg ? pkg.name : "nextds-table.zip";
   let downloads = null;
@@ -6578,7 +6583,7 @@ export default function App() {
               const src = pkgSource();
               if (!src) { setLast("React Package: open the page to download it"); return; }
               setPkgOpen(true);
-              try { await downloadPackage(src); setLast(`React Package → ${pkgFileName()}`); }
+              try { await downloadPackage(src, pkgKind(page)); setLast(`React Package → ${pkgFileName(pkgKind(page))}`); }
               catch (err) { setLast(err && err.code === "declined" ? "React Package: download cancelled" : "React Package: download not available here"); }
               setPkgOpen(false);
             }}><span className="hvs-pkglabel" data-busy={pkgOpen ? "" : undefined}><span className="hvs-pkgtext">React Package

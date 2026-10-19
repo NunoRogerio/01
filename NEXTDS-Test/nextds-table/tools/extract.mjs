@@ -13,10 +13,17 @@ const cut = lines.findIndex((l, i) => l.startsWith("/* ----") && (lines[i + 1] |
 must(cut > 0, "the 'Customizer screen' section");
 let comp = lines.slice(0, cut).join("\n");
 
+// 1b. the navigation lives in its own package (@nextds/navigation): leave its block out
+const n0 = comp.indexOf("/* ==== @nextds/navigation: start"), n1 = comp.indexOf("/* ==== @nextds/navigation: end ==== */");
+must(n0 > 0 && n1 > n0, "the navigation block markers");
+comp = comp.slice(0, n0) + comp.slice(n1 + "/* ==== @nextds/navigation: end ==== */".length);
+
 // 2. the CSS string becomes styles.css
 const i = comp.indexOf("const CSS = `"), j = comp.indexOf("`;", i);
 must(i >= 0 && j > i, "const CSS");
 let css = comp.slice(i + "const CSS = `".length, j);
+const navCss = css.indexOf("/* ---------- Navigation and AppHeader ---------- */");
+if (navCss >= 0) css = css.slice(0, navCss); // the navigation's styles ship with @nextds/navigation
 comp = comp.slice(0, i) + '/* styles: see styles.css (import "@nextds/table/styles.css" once in the app) */' + comp.slice(j + 2);
 css = css.replace(/\/\* Hitachi Sans embedded[^*]*\*\/\s*/, "/* Hitachi Sans (regular, semibold, bold), embedded so the table looks right without extra setup */\n");
 

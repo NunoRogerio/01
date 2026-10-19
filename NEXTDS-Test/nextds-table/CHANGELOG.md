@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0 — 2026-10-19
+
+- The navigation moved to its own package, `@nextds/navigation` (Navigation, AppHeader, VSP360_NAVIGATION, navPathLabels). This package is the table again, as in 0.4.x. If you used the navigation from 0.5.0, install `@nextds/navigation` and change the import.
+
 ## 0.5.0 — 2026-10-19
 
 - New: `Navigation` (the vertical bar with drill-down menus, VSP 360 structure by default), `AppHeader` (Hitachi logo, app name, help, apps, account), `VSP360_NAVIGATION` and `navPathLabels`. Their styles are in `styles.css`; types in `index.d.ts`. See the README, "Navigation and app header".
