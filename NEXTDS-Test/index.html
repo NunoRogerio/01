@@ -4693,7 +4693,7 @@ const SCREEN_CSS = `
 .hvn-empty{margin:auto;color:var(--content-placeholder)}
 .hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--nav-bar);overflow:hidden;transition:width .2s ease}
 .hvn-v.is-collapsed{width:77px}
-.hvn-toggle{position:absolute;left:216px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
+.hvn-toggle{position:absolute;left:222px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
@@ -5189,7 +5189,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-15"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-16"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
