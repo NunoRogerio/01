@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.10 — 2026-10-19
+
+- Pagination: changing page slides the rows sideways instead of stacking them. To a later page (Next, Last, a higher number typed) the rows slide out to the left and fade (0.16 s) and the new page's rows slide in from the right (0.22 s); to an earlier page the reverse. No bounce. Reduced motion: no movement.
+- The first-render cascade of 0.4.9 stays.
+
+## 0.4.9 — 2026-10-18
+
+- Rows in motion: when the table first shows its rows, they start stacked at the top and spread down into their places in a quick cascade (0.3 s, no bounce).
+- Pagination: rows stacked away on press and came back from a stack on release (replaced in 0.4.10).
+
 ## 0.4.8 — 2026-10-15
 
 - Comfortable density: the pagination bar is 32px tall (48px in Balanced, 40px in Compact).
@@ -10,7 +20,6 @@
 - Filter bar: removing a filter with its X slides it a little to the left and fades it out while its place closes; the filters after it move in. After the last one, "No filters applied" slides in from the left 0.2 s later.
 - Columns: `viz` draws a micro chart in each cell from a list of numbers: "trend" (a line), "area" (a line over a soft fill) or "bar" (one horizontal bar of the latest value, 0 to `vizMax`), always with its metric on its left (the latest value, through `vizFormat`), right-aligned and the same width down the column. The Workbench shows it under Row › Viz, and every sample dataset has one by default (Storage systems a trendline, Pools an area, Volumes a bar of Used, Hosts an area, Alerts a trendline).
 - Filter group panel: resizable by its edges and corners (right, bottom and their corner while joined to the Filters button; every edge once it floats). Over an edge a 64px bar shows where the pointer is, over a corner an L of 32px bars; 7px thick, in the colour of the column resize line. The size is kept when the panel opens again.
-- Pagination: changing page slides the rows: to the next page they slide out to the left and the new ones come in from the right; to the previous page the reverse.
 - Pagination: with one page only ("1 of 1", for example after a search) the pagination is off and the table ends with its rows; it comes back when there are more pages.
 - Coloured areas (the filter bar, the add / edit panel, the information banner): every button hovers alike, white at 72% with no outline, as Clear All in the filter bar.
 - Add panel: Apply is enabled only once every field is filled, and "All fields are mandatory." shows at its bottom left. Read-only columns (`editable: false`) and micro chart columns are not asked: their values come once the item exists, and a field-sized shape in a darker blue holds their place. Number fields have no up and down arrows.

@@ -2073,6 +2073,22 @@ export function DataTable({
         { duration: PAGE_SLIDE.in, easing: "cubic-bezier(0,0,.2,1)" });
     });
   }, [safePage]);
+  /* first render: the rows start stacked at the top and spread down into their places, quickly (no overshoot) */
+  const firstRows = useRef(true);
+  useLayoutEffect(() => {
+    if (!firstRows.current || loading) return;
+    const box = rowsElRef.current;
+    const groups = box ? [...box.querySelectorAll(":scope > .hvt-group:not(.hvt-skel-row)")].filter((el) => el.animate) : [];
+    if (!groups.length) return;
+    firstRows.current = false;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const bt = box.getBoundingClientRect().top, tops = groups.map((g) => g.getBoundingClientRect().top - bt);
+    const st = groups.length > 1 ? Math.min(18, 110 / (groups.length - 1)) : 0;
+    groups.forEach((g, i) => {
+      g.animate([{ transform: `translateY(${tops[0] - tops[i]}px)`, opacity: 0 }, { opacity: 1, offset: 0.35 }, { transform: "translateY(0)", opacity: 1 }],
+        { duration: 300, delay: i * st, easing: "cubic-bezier(.2,0,0,1)", fill: "backwards" });
+    });
+  }, [loading, visible.length]);
   const pnNum = parseInt(draftPage, 10);
   const pnError = draftPage !== "" && (Number.isNaN(pnNum) || pnNum < 1 || pnNum > pageCount); // typed a page that does not exist
   const commitDraft = () => {
