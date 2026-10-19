@@ -2345,3 +2345,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Appearance: the map's look (Oct 18, 23:22)
 - Appearance shows, under Theme, a "Map" radio list with the renders the current map provider offers (MapTiler: Standard, Streets, Outdoor, Topographic, Satellite, Satellite with labels; OpenStreetMap: Standard), the same list and words as in Maps. Choosing one changes the map at once.
 - Satellite is the default look for now, to try it (was Topographic). Each phone switches to it once; a later choice stays.
+
+- (Oct 19, 06:10) A fold chevron stays where it was born: on the engine row of a unit card (smoke check, initial attack, every engine), 4px from that row's bottom right. When the crew opens, it only turns up; it never travels down to the last crew member.
