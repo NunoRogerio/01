@@ -2359,3 +2359,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 19, 10:22) The projected area chip is as wide as the projection switcher: swatch and area on the left, size class tag and time on the right. The candidate map frames the +6 h shape (with the ignition point) to fill about 80% of the window between the legend and the switcher, centred on the shape; one zoom for every horizon. Projection shapes are more opaque (fill 55%, was 35%). On an incident map the credit reads across, bottom right, 8px above the switcher.
 
 - (Oct 19, 10:25) Units are listed in order of command everywhere they appear (dialog and page): battalion chief first, then engines, water tenders, hand crews, dozers, helicopter, air attack and air tankers; within each kind, the response plan's order. The initial attack dialog's green button says Initial attack (Ataque inicial), as the smoke check's says Check: each dialog's button names its decision.
+
+- (Oct 19, 10:45) The smoke check dialog's unit card is the initial attack's, exactly: the engine it sends (the one its line names) with its switch top right, the crew folded under it with the chevron, people with their photos (the dialog showed empty circles). Switched off, Check is disabled, as Initial attack is with no unit on.
+
+- (Oct 19, 10:47) A civil detection card's Civil tag sits in the card's bottom-right corner on the note's row, not on a row of its own: the note (e.g. "Anonymized. Only from owners who have FFW active. Simulation.") reaches the card's foot and keeps clear of the tag.
