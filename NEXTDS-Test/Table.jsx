@@ -3010,11 +3010,40 @@ export function DataTable({
     setExpandedIds((prev) => new Set(prev).add(id));
   };
 
+  /* changing page: the rows slide out to one side and the new page's rows slide in from the other
+     (next page: out to the left, in from the right; previous page: the reverse) */
+  const pageSlide = useRef({ busy: false, dir: 0 });
+  const PAGE_SLIDE = { dist: 64, out: 160, in: 220 };
   const goTo = (n) => {
     const next = Math.min(pageCount, Math.max(1, n));
-    setPage(next);
     setDraftPage(String(next));
+    const box = rowsElRef.current;
+    const groups = box ? Array.from(box.querySelectorAll(":scope > .hvt-group")) : [];
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (next === safePage || !groups.length || reduce || !groups[0].animate || pageSlide.current.busy) { setPage(next); return; }
+    const dir = next > safePage ? 1 : -1;
+    pageSlide.current = { busy: true, dir };
+    let done = 0;
+    groups.forEach((g) => {
+      const a = g.animate([{ transform: "translateX(0)", opacity: 1 }, { transform: `translateX(${-dir * PAGE_SLIDE.dist}px)`, opacity: 0 }],
+        { duration: PAGE_SLIDE.out, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
+      a.onfinish = a.oncancel = () => {
+        done += 1;
+        if (done === groups.length) { setPage(next); requestAnimationFrame(() => groups.forEach((x) => x.getAnimations().forEach((y) => y.cancel()))); }
+      };
+    });
   };
+  useLayoutEffect(() => {
+    const ps = pageSlide.current;
+    if (!ps.busy) return;
+    pageSlide.current = { busy: false, dir: 0 };
+    const box = rowsElRef.current;
+    if (!box) return;
+    box.querySelectorAll(":scope > .hvt-group").forEach((g) => {
+      g.animate([{ transform: `translateX(${ps.dir * PAGE_SLIDE.dist}px)`, opacity: 0 }, { transform: "translateX(0)", opacity: 1 }],
+        { duration: PAGE_SLIDE.in, easing: "cubic-bezier(0,0,.2,1)" });
+    });
+  }, [safePage]);
   const pnNum = parseInt(draftPage, 10);
   const pnError = draftPage !== "" && (Number.isNaN(pnNum) || pnNum < 1 || pnNum > pageCount); // typed a page that does not exist
   const commitDraft = () => {
@@ -5024,7 +5053,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "2026-10-16 18:50"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "2026-10-19 11:20"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
