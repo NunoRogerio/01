@@ -2375,3 +2375,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Oct 19 (11:45): stage tag without Team / Map
 - The incident's stage tag (fire or candidate) no longer says "Team" / "Map" (pt "Equipa" / "Mapa"): the label wasn't working. A tap on the tag still switches between chat and map for now; a separate way into the team chat comes later.
 - Unit cards: crew cards 1px apart and 1px under their engine (were 2px).
+
+- (Oct 19, 11:42) Text on a coloured fill (size class tags and every tag that picks its ink) is black or white, whichever reads better, measured perceptually (APCA lightness contrast) rather than by the WCAG ratio, which favours black on mid-tones; on a near tie, white. So E (orange) now has a white letter; A to D stay black, F and G white. One shared function, window.__wfInkY (fit.js).

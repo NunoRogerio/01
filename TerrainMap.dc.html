@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792361826"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792361827"></script>
 <script src="avatar.js?v=1792322188"></script>
 <script src="prefs.js?v=1792362054"></script>
 <script src="station.js?v=1792322188"></script>
@@ -719,7 +719,7 @@ class Component extends DCLogic {
           sum += 0.2126 * lin(d[o]) + 0.7152 * lin(d[o + 1]) + 0.0722 * lin(d[o + 2]); n++; break; }
       }
       if (!n) return;
-      const L = sum / n, ink = (L + 0.05) / 0.05 >= 1.05 / (L + 0.05) ? '#000000' : '#FFFFFF';   /* contrast with black vs with white */
+      const L = sum / n, ink = (window.__wfInkY ? window.__wfInkY(L) === 'white' : (L + 0.05) / 0.05 < 1.05 / (L + 0.05)) ? '#FFFFFF' : '#000000';   /* (Oct 19) black or white, whichever reads better (fit.js __wfInkY) */
       next[sp.getAttribute('data-wf-ink')] = ink;
     });
     if (JSON.stringify(next) !== JSON.stringify(this._ink || {})) { this._ink = next; this.forceUpdate(); }
