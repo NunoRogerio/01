@@ -4750,6 +4750,8 @@ const SCREEN_CSS = `
 .hvn-pitem .hvn-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .hvn-pitem.is-trail{color:var(--nav-accent)}
 .hvn-caret{margin-left:auto}
+.hvn-ext{margin-right:1px} /* as drawn: 8px from the item's edge */
+.hvn-pempty{margin:0;padding:6px 11px;color:var(--content-placeholder)}
 .hvn-pgroup{display:flex;flex-direction:column;gap:8px} /* 8px between pages of one category; categories keep their own spacing */
 .hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
 .hvn-pgroup.has-rule.no-label{padding-top:7px}
@@ -5189,7 +5191,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-16"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-17"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5775,17 +5777,28 @@ const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their p
   monitoring: { y: 320, html: `<path d="M35.5 332.5C35.7762 332.5 36 332.724 36 333C36 333.53 36.2107 334.039 36.5858 334.414C36.9609 334.789 37.4696 335 38 335C38.5305 335 39.0392 334.789 39.4142 334.414C39.7893 334.039 40 333.53 40 333C40 332.724 40.2239 332.5 40.5 332.5C40.7762 332.5 41 332.724 41 333C41 333.796 40.684 334.559 40.1213 335.121C39.5587 335.684 38.7957 336 38 336C37.2044 336 36.4413 335.684 35.8787 335.121C35.3161 334.559 35 333.796 35 333C35 332.724 35.2239 332.5 35.5 332.5Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M38 321C36.6408 321 35.3372 321.54 34.3761 322.501C33.415 323.462 32.875 324.766 32.875 326.125C32.875 328.977 32.2183 331.322 31.6454 332.313C31.6345 332.332 31.6288 332.353 31.6288 332.375C31.6288 332.397 31.6345 332.418 31.6453 332.437C31.6562 332.456 31.6719 332.472 31.6908 332.483C31.7094 332.494 31.7306 332.5 31.7521 332.5H44.2488C44.2705 332.5 44.2918 332.494 44.3106 332.483C44.3295 332.472 44.3453 332.456 44.3562 332.437C44.3671 332.418 44.3728 332.397 44.3728 332.375C44.3728 332.353 44.367 332.331 44.3561 332.313C43.7823 331.321 43.125 328.978 43.125 326.125C43.125 324.766 42.5851 323.462 41.6239 322.501C40.6628 321.54 39.3593 321 38 321ZM33.669 321.794C34.8177 320.645 36.3756 320 38 320C39.6245 320 41.1824 320.645 42.3311 321.794C43.4797 322.943 44.125 324.501 44.125 326.125C44.125 328.869 44.7644 331.022 45.2218 331.812C45.3204 331.983 45.3726 332.177 45.3728 332.374C45.373 332.571 45.3214 332.765 45.2231 332.936C45.1248 333.107 44.9834 333.249 44.8129 333.348C44.6424 333.447 44.4489 333.499 44.2518 333.5L44.25 333.5H31.747C31.5501 333.499 31.357 333.446 31.1869 333.347C31.0168 333.248 30.8758 333.105 30.7778 332.935C30.6799 332.764 30.6285 332.57 30.6288 332.373C30.6291 332.176 30.6811 331.983 30.7795 331.812C31.2363 331.022 31.875 328.868 31.875 326.125C31.875 324.501 32.5203 322.943 33.669 321.794Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
   chevR: { x: 223, y: 124, html: `<path d="M228.16 136.854C227.947 136.658 227.947 136.342 228.16 136.146L232.683 132L228.16 127.854C227.947 127.658 227.947 127.342 228.16 127.146C228.373 126.951 228.718 126.951 228.931 127.146L233.84 131.646C234.053 131.842 234.053 132.158 233.84 132.354L228.931 136.854C228.718 137.049 228.373 137.049 228.16 136.854Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
   chevL: { x: 75, y: 80, html: `<path d="M85.8402 83.1464C86.0533 83.3417 86.0533 83.6583 85.8402 83.8536L81.3168 88L85.8402 92.1464C86.0533 92.3417 86.0533 92.6583 85.8402 92.8536C85.6272 93.0488 85.2819 93.0488 85.0689 92.8536L80.1598 88.3536C79.9467 88.1583 79.9467 87.8417 80.1598 87.6464L85.0689 83.1464C85.2819 82.9512 85.6272 82.9512 85.8402 83.1464Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
+  ext: { x: 222, y: 268, html: `<path d="M237.229 268.771C237.424 268.967 237.424 269.283 237.229 269.479L230.979 275.729C230.783 275.924 230.467 275.924 230.271 275.729C230.076 275.533 230.076 275.217 230.271 275.021L236.521 268.771C236.717 268.576 237.033 268.576 237.229 268.771Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M231.375 269.125C231.375 268.849 231.599 268.625 231.875 268.625L236.874 268.626C237.15 268.626 237.374 268.85 237.374 269.126L237.375 274.125C237.375 274.401 237.151 274.625 236.875 274.625C236.599 274.625 236.375 274.401 236.375 274.125L236.374 269.626L231.875 269.625C231.599 269.625 231.375 269.401 231.375 269.125Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M223.75 272.125C223.717 272.125 223.685 272.138 223.662 272.162C223.638 272.185 223.625 272.217 223.625 272.25V282.25C223.625 282.283 223.638 282.315 223.662 282.338C223.685 282.362 223.717 282.375 223.75 282.375H233.75C233.783 282.375 233.815 282.362 233.838 282.338C233.862 282.315 233.875 282.283 233.875 282.25V276.625C233.875 276.349 234.099 276.125 234.375 276.125C234.651 276.125 234.875 276.349 234.875 276.625V282.25C234.875 282.548 234.756 282.835 234.545 283.045C234.335 283.256 234.048 283.375 233.75 283.375H223.75C223.452 283.375 223.165 283.256 222.955 283.045C222.744 282.835 222.625 282.548 222.625 282.25V272.25C222.625 271.952 222.744 271.665 222.955 271.455C223.165 271.244 223.452 271.125 223.75 271.125H229.375C229.651 271.125 229.875 271.349 229.875 271.625C229.875 271.901 229.651 272.125 229.375 272.125H223.75Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
   administration: { y: 368, html: `<path d="M38.05 373.425C36.6003 373.425 35.425 374.6 35.425 376.05C35.425 377.5 36.6003 378.675 38.05 378.675C39.4998 378.675 40.675 377.5 40.675 376.05C40.675 374.6 39.4998 373.425 38.05 373.425ZM34.425 376.05C34.425 374.048 36.048 372.425 38.05 372.425C40.052 372.425 41.675 374.048 41.675 376.05C41.675 378.052 40.052 379.675 38.05 379.675C36.048 379.675 34.425 378.052 34.425 376.05Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M35.9068 368.017C36.0598 367.976 36.2229 368.011 36.3465 368.109L37.8404 369.303C37.9812 369.299 38.1221 369.299 38.2629 369.303L39.7567 368.11C39.8806 368.011 40.0439 367.977 40.1971 368.018C40.9046 368.205 41.5841 368.486 42.2177 368.853C42.355 368.933 42.4464 369.073 42.4641 369.23L42.6775 371.13C42.78 371.227 42.8796 371.326 42.976 371.429L44.8754 371.642C45.0327 371.66 45.1724 371.751 45.2519 371.888C45.6196 372.521 45.9012 373.201 46.0895 373.908C46.1302 374.061 46.0959 374.225 45.9969 374.349L44.8032 375.843C44.8075 375.984 44.8075 376.124 44.8032 376.265L45.9962 377.759C46.0949 377.883 46.1293 378.046 46.0889 378.199C45.9024 378.906 45.6228 379.585 45.2574 380.219C45.178 380.357 45.038 380.449 44.88 380.466L42.9799 380.68C42.8835 380.782 42.7839 380.882 42.6814 380.978L42.468 382.878C42.4503 383.035 42.3591 383.175 42.2221 383.254C41.5889 383.622 40.9096 383.904 40.202 384.092C40.0487 384.133 39.8852 384.098 39.7613 383.999L38.2675 382.806C38.1267 382.81 37.9858 382.81 37.845 382.806L36.3511 383.999C36.2275 384.097 36.0645 384.132 35.9116 384.091C35.2042 383.905 34.5247 383.625 33.8909 383.26C33.7532 383.18 33.6615 383.04 33.6438 382.882L33.4303 380.982C33.3274 380.886 33.2276 380.786 33.1309 380.683L31.2286 380.46C31.0721 380.442 30.9334 380.351 30.8543 380.214C30.4867 379.581 30.205 378.902 30.0168 378.194C29.976 378.041 30.0104 377.877 30.1094 377.754L31.3031 376.26C31.2987 376.119 31.2987 375.978 31.3031 375.837L30.1101 374.343C30.0112 374.219 29.9769 374.056 30.0175 373.903C30.2054 373.195 30.4864 372.516 30.8532 371.882C30.9327 371.745 31.0725 371.654 31.2301 371.636L33.1303 371.423C33.2267 371.32 33.3262 371.22 33.4288 371.124L33.6422 369.225C33.6599 369.067 33.7516 368.927 33.8892 368.847C34.522 368.482 35.2005 368.203 35.9068 368.017ZM34.6071 369.593L34.4016 371.422C34.3878 371.545 34.329 371.658 34.2366 371.74C34.0637 371.894 33.9001 372.057 33.7466 372.23C33.6646 372.323 33.5513 372.382 33.4285 372.395L31.5976 372.601C31.3729 373.022 31.1901 373.464 31.052 373.92L32.2016 375.36C32.2787 375.456 32.3174 375.578 32.3101 375.701C32.2964 375.933 32.2964 376.164 32.3101 376.395C32.3174 376.519 32.2787 376.641 32.2016 376.737L31.0513 378.177C31.1899 378.633 31.3732 379.076 31.5987 379.496L33.4324 379.711C33.5543 379.725 33.6667 379.784 33.7482 379.876C33.9016 380.049 34.0653 380.212 34.2382 380.366C34.3306 380.448 34.3893 380.561 34.4031 380.684L34.6087 382.514C35.0295 382.738 35.4713 382.92 35.9276 383.057L37.3677 381.907C37.4642 381.83 37.5859 381.791 37.7092 381.799C37.9404 381.812 38.1721 381.812 38.4033 381.799C38.5267 381.791 38.6484 381.83 38.7449 381.907L40.1844 383.057C40.6408 382.919 41.0825 382.736 41.5029 382.511L41.7086 380.68C41.7224 380.557 41.7812 380.444 41.8736 380.362C42.0465 380.209 42.2101 380.045 42.3636 379.872C42.4456 379.78 42.5589 379.721 42.6817 379.707L44.512 379.501C44.7356 379.081 44.9174 378.639 45.0546 378.183L43.9046 376.742C43.8275 376.646 43.7889 376.524 43.7962 376.401C43.8099 376.17 43.8099 375.938 43.7962 375.707C43.7889 375.584 43.8275 375.462 43.9047 375.365L45.0549 373.926C44.9165 373.469 44.7334 373.028 44.5083 372.607L42.6778 372.402C42.555 372.388 42.4417 372.329 42.3597 372.237C42.2062 372.064 42.0426 371.9 41.8697 371.747C41.7772 371.665 41.7185 371.551 41.7047 371.428L41.4991 369.598C41.0783 369.373 40.6364 369.19 40.1798 369.052L38.7401 370.202C38.6436 370.279 38.5219 370.317 38.3986 370.31C38.1674 370.296 37.9357 370.296 37.7045 370.31C37.5812 370.317 37.4594 370.279 37.3629 370.202L35.9229 369.051C35.4676 369.188 35.0269 369.369 34.6071 369.593Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>` },
 };
 const NAV_ITEMS = [["dashboard", "Dashboard"], ["inventory", "Inventory"], ["analytics", "Analytics"], ["protection", "Protection"], ["orchestration", "Orchestration"], ["monitoring", "Monitoring"], ["administration", "Administration"]];
-/* the drill-down menus, as drawn in Collapse_False / Menu_Analytics (+ Health, Performance, Capacity). Groups: [label or null, items] */
+/* the drill-down menus, as drawn in Collapse_False / Menu_* (VSP 360). A menu is { items } or { groups: [label or null, pages] };
+   an item with items or groups drills down; todo: drawn with a caret, its pages not drawn yet; ext: opens outside the app */
 const NAV_MENUS = {
-  analytics: [
+  inventory: { groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] },
+  analytics: { items: [
     { t: "Health", groups: [["Storage", ["Block"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] },
     { t: "Performance", groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] },
     { t: "Capacity", groups: [["Storage", ["Block", "Object", "File"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Windows"]], [null, ["Switches"]]] },
     { t: "Applications" }, { t: "Data Reduction" }, { t: "Insights" }, { t: "Reporting" }, { t: "Data Protection" },
-  ],
+  ] },
+  protection: { items: [{ t: "Local Protection" }, { t: "Remote Protection" }, { t: "External Replication" }] },
+  orchestration: { items: [{ t: "Overview" }, { t: "Workflow Catalog" }, { t: "Insights" }, { t: "Ansible", ext: true }] },
+  monitoring: { items: [{ t: "Storage Alerts" }, { t: "System Alerts" }, { t: "System Info" }, { t: "Jobs" }, { t: "Logs" }, { t: "Diagnostic Tool" }] },
+  administration: { items: [
+    { t: "Users & Access", items: [{ t: "Users" }, { t: "Groups" }, { t: "Roles" }, { t: "Service Accounts" }] },
+    { t: "Authentication", todo: true }, { t: "Operations", todo: true }, { t: "Settings", todo: true },
+    { t: "Device Registry" }, { t: "Software Update" }, { t: "Backup and Restore" },
+  ] },
 };
 const navLabel = (k) => (NAV_ITEMS.find((x) => x[0] === k) || NAV_ITEMS[0])[1];
 const NavIcon = ({ k, className = "" }) => {
@@ -5796,8 +5809,8 @@ const samePath = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]
 const startsWith = (a, b) => b.every((x, i) => a[i] === x);
 /* the drill-down panel: level 1 lists the section's pages (a caret where there is a level 2); level 2 has a back row and groups */
 function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onClosed, origin, style }) {
-  const items = NAV_MENUS[top];
-  const node = sub != null ? items.find((x) => x.t === sub) : null;
+  const menu = NAV_MENUS[top];
+  const node = sub != null ? (menu.items || []).find((x) => x.t === sub) : null;
   const panelRef = useRef(null);
   const [pending, setPending] = useState(null); // on press the selection moves to the pressed page; leaving while pressed puts it back; release chooses
   const press = useRef(null);
@@ -5832,8 +5845,13 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
     a.onfinish = onClosed;
     return () => { a.onfinish = null; };
   }, [closing]);
-  const leaf = (path, t, cls) => {
+  const leaf = (path, t, cls, ext) => {
     const on = samePath(shown, path);
+    if (ext) return ( // opens outside the app: not a page here, so it never takes the selection
+      <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}`} aria-label={`${t} (opens in a new tab)`}>
+        <span className="hvn-label">{t}</span><NavIcon k="ext" className="hvn-caret hvn-ext" />
+      </button>
+    );
     return (
       <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}${on ? " is-active" : ""}`} aria-current={samePath(active, path) ? "page" : undefined}
               onPointerDown={(e) => {
@@ -5847,6 +5865,16 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
       </button>
     );
   };
+  const list = (n, pre) => n.groups ? n.groups.map(([g, l], i) => ( // grouped: labels, rules, indented pages
+    <div key={i} className={`hvn-pgroup${i ? " has-rule" : ""}${g ? "" : " no-label"}`} role="group" aria-label={g || undefined}>
+      {g && <div className="hvn-pglabel">{g}</div>}
+      {l.map((t) => leaf([...pre, g || "", t], t, "is-l2"))}
+    </div>
+  )) : n.items ? n.items.map((it) => it.items || it.groups || it.todo ? (
+    <button key={it.t} type="button" className={`hvn-item hvn-pitem${startsWith(active, [...pre, it.t]) ? " is-trail" : ""}`} aria-haspopup="menu" onClick={() => onSub(it.t)}>
+      <span className="hvn-label">{it.t}</span><NavIcon k="chevR" className="hvn-caret" />
+    </button>
+  ) : leaf([...pre, it.t], it.t, "", it.ext)) : <p className="hvn-pempty">No pages yet.</p>;
   return (
     <div ref={panelRef} className={`hvn-panel${floating ? " is-float" : ""}`} role="menu" aria-label={node ? node.t : navLabel(top)} style={style}>
       <div key={sub ?? "-"} className={`hvn-level${dir ? ` is-${dir}` : ""}`}>
@@ -5856,26 +5884,13 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onC
               <NavIcon k="chevL" /><span>{node.t}</span>
             </button>
             <div className="hvn-psep" />
-            <div className="hvn-plist">
-              {node.groups.map(([g, list], i) => (
-                <div key={i} className={`hvn-pgroup${i ? " has-rule" : ""}${g ? "" : " no-label"}`} role="group" aria-label={g || undefined}>
-                  {g && <div className="hvn-pglabel">{g}</div>}
-                  {list.map((t) => leaf([top, node.t, g || "", t], t, "is-l2"))}
-                </div>
-              ))}
-            </div>
+            <div className="hvn-plist">{list(node, [top, node.t])}</div>
           </>
         ) : (
           <>
             <div className="hvn-phead">{navLabel(top)}</div>
             <div className="hvn-psep" />
-            <div className="hvn-plist">
-              {items.map((it) => it.groups ? (
-                <button key={it.t} type="button" className={`hvn-item hvn-pitem${startsWith(active, [top, it.t]) ? " is-trail" : ""}`} aria-haspopup="menu" onClick={() => onSub(it.t)}>
-                  <span className="hvn-label">{it.t}</span><NavIcon k="chevR" className="hvn-caret" />
-                </button>
-              ) : leaf([top, it.t], it.t, ""))}
-            </div>
+            <div className="hvn-plist">{list(menu, [top])}</div>
           </>
         )}
       </div>
