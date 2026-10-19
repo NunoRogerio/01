@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.11 — 2026-10-19
+
+- Status tags match the library tags (Status_Positive, Warning, Negative, Catastrophic, Info) exactly: the library icons at their own 16px, 7px in from the edge; the semibold label 28px in; 28px tall, 8px corners, 1px outline; the library colours.
+- New status kind "catastrophic": #f1dfec fill, #921581 outline, icon and label (the dark theme uses a light magenta on a deep plum, until the library gives its own dark values).
+- Pagination: the sliding rows stay inside the rows area; they never pass over the grey padding at the table's sides.
+
 ## 0.4.10 — 2026-10-19
 
 - Pagination: changing page slides the rows sideways instead of stacking them. To a later page (Next, Last, a higher number typed) the rows slide out to the left and fade (0.16 s) and the new page's rows slide in from the right (0.22 s); to an earlier page the reverse. No bounce. Reduced motion: no movement.

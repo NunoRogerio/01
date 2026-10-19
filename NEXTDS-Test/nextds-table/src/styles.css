@@ -23,6 +23,8 @@
   --cat1-100:#98acdd;
   --semantic-informative:#bfcded;
   --semantic-negative:#c82333;
+  --semantic-catastrophic:#921581;
+  --semantic-catastrophic-20:#f1dfec;
   --base-dark:#222222;
   --semantic-negative-20:#fbe5e8;
   --semantic-positive:#146c2e;
@@ -105,6 +107,8 @@
   --border-hover-selected:#b7b7b7;
   --border-focus:#bfcded;
   --semantic-negative:#ff8d8d;
+  --semantic-catastrophic:#f0a6e4;
+  --semantic-catastrophic-20:#4a2144;
   --semantic-negative-20:#532d2d;
   --semantic-positive:#a5e07c;
   --semantic-positive-20:#274511;
@@ -237,6 +241,7 @@
 /* layout */
 .hvt-area{position:relative;display:flex;align-items:stretch}
 .hvt-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--hvt-row-gap);padding-bottom:8px}
+.hvt-rows.is-paging{clip-path:inset(-200px 0 -200px 0)} /* changing page: the rows slide only inside the rows area, never over the grey padding at the sides */
 .hvt-gutter{width:var(--hvt-tablepad);flex:none;display:flex;flex-direction:column;align-items:center}
 
 /* filter bar */
@@ -838,9 +843,9 @@
 /* TAG (Figma): Status = icon + semibold label on a tinted fill; Categorical = regular label on a category tint */
 .hvt-tag{display:flex;width:fit-content;align-items:center;height:28px;max-width:100%;box-sizing:border-box;border:1px solid var(--tag-stroke,var(--outline));
   border-radius:8px;background:var(--tag-fill,transparent);color:var(--tag-text,var(--content-primary));font-size:14px;line-height:21px;white-space:nowrap}
-.hvt-tag-ico{display:block;flex:none;width:28px;height:28px;margin:-1px 0 -1px -2px}
+.hvt-tag-ico{display:block;flex:none;width:32px;height:32px;margin:-3px -3px -3px -3px} /* the library icon at its own 16px: it starts 7px in from the tag edge, the label 28px in */
 .hvt-tag-ico svg{display:block;width:100%;height:100%}
-.hvt-tag.is-status{padding:0 9px 0 1px;font-weight:600}
+.hvt-tag.is-status{padding:0 9.6px 0 1px;font-weight:600} /* as the library tags (Status_*): icon 7px in, label 28px in, 11px after the label */
 .hvt-tag.is-cat{padding:0 9px;font-weight:400}
 .hvt-tag-label{display:grid;min-width:0;overflow:hidden}
 .hvt-tag-label > *{grid-area:1 / 1;min-width:0;white-space:nowrap}
@@ -853,6 +858,7 @@
 /* Delete, wherever it is offered (row menu, bulk bar), in the Critical red of the status tag */
 .hvt-ditem.is-danger:not(:disabled),.hvt-btn.is-danger:not(:disabled){color:var(--semantic-negative)}
 .hvt-tag.is-negative{--tag-fill:var(--semantic-negative-20);--tag-stroke:var(--semantic-negative);--tag-text:var(--semantic-negative)}
+.hvt-tag.is-catastrophic{--tag-fill:var(--semantic-catastrophic-20);--tag-stroke:var(--semantic-catastrophic);--tag-text:var(--semantic-catastrophic)} /* library Status_Catastrophic: #f1dfec fill, #921581 outline, icon and label */
 .hvt-tag.is-warning{--tag-fill:var(--semantic-warning-20);--tag-stroke:var(--semantic-warning);--tag-text:var(--semantic-warning-text)}
 .hvt-tag.is-positive{--tag-fill:var(--semantic-positive-20);--tag-stroke:var(--semantic-positive);--tag-text:var(--semantic-positive)}
 .hvt-tag.is-info{--tag-fill:var(--cat1-20);--tag-stroke:var(--cat1-140)}

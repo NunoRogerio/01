@@ -11,7 +11,7 @@ export interface TableRow {
 
 export type ColumnType = "string" | "number" | "singleSelect";
 /** Status tags (Normal, Warning, Critical…): maps a cell value to its status kind. */
-export type StatusKind = "positive" | "warning" | "negative" | "info";
+export type StatusKind = "positive" | "warning" | "negative" | "catastrophic" | "info";
 
 export interface TableColumn<R extends TableRow = TableRow> {
   /** Field of the row shown in this column. Unique per table. */
