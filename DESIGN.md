@@ -2353,3 +2353,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 19, 09:20) The projected area chip keeps one size: the number has a fixed slot wide enough for 99,999 ac, so the size class tag never moves, and the time has room for its longest label ("Até às 12:55"); everything inside is left-aligned. The incident map's legend is left-aligned at the window's top, 16px in like the header. The map credit then runs down the right edge, centred between the header and the projection switcher.
 
 - (Oct 19, 10:17) The smoke check dialog: its engine wears its status tag (Available, as everywhere a unit is ready), its card is the glass of the page's unit cards (not opaque white; also the initial attack list's), and its button says Check, not Dispatch, so it never shares a word with the attack.
+
+- (Oct 19, 10:18) A unit card is a stack of glass cards 2px apart: the engine on top, then each crew member as its own card (no divider lines). Each card fades on its own as it passes under the header or the action bar. Folded crew cards take no gap.
