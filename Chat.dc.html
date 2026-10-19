@@ -25,8 +25,8 @@
 <script src="station.js?v=1792322188"></script>
 <script src="i18n.js?v=1792322188"></script>
 <script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792323810"></script>
-<script src="tour.js?v=1792361770"></script>
+<script src="chat.js?v=1792406123"></script>
+<script src="tour.js?v=1792406123"></script>
 <script src="feedcam.js?v=1792361770"></script>
 <script src="trophy.js?v=1792322188"></script>
 
@@ -133,7 +133,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
       <div data-wf-stband="1" style="display: {{c.stateD}}; align-items: stretch; gap: 8px; margin: 16px 0 0; min-width: 0"><!-- (Oct 7) the structures-at-risk badge anchored to the right of the stage band, as tall as it --><!-- (Oct 9, 09:03) the stage band is the way into the incident's page (a blade over the chat); stages move from the chat's cards and chips --><button type="button" class="chrow" data-wf-stband="1" onClick="{{hdInc.go}}" aria-label="{{hdInc.aria}}" style="display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 8px; margin: 0; padding: 0; border: 0; border-radius: var(--wf-r, 16px); background: transparent; color: #000000; font: inherit; text-align: left; cursor: pointer">
         <!-- (Oct 18, 17:03) the status pill: solid, 100% opaque, no glass, no shadow --><span style="animation: {{c.flip}}; display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{c.bg}}; box-shadow: none; color: {{c.stC}}; font-size: 17px; line-height: 22px; white-space: nowrap; transition: background-color .6s ease">
           <span aria-hidden="true" style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex-shrink: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.ic.d}}"></path></svg></span>
-          <span style="flex: 0 1 auto; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span><!-- (Oct 13, 13:56) the band jumps to the incident's map; the chat and the map are interchangeable: "Map" says where it leads --><span style="display: {{c.goD}}; align-items: center; gap: 0; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 400">{{c.goT}}</span>
+          <span style="flex: 0 1 auto; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.st}}</span><!-- (Oct 13, 13:56) the band jumps to the incident's map; the chat and the map are interchangeable. (Oct 19) no "Team" / "Map" label on it for now; the tap still switches --><span style="display: {{c.goD}}; align-items: center; gap: 0; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 400">{{c.goT}}</span>
           <span style="display: {{c.forD}}; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: auto; font-size: 16px; line-height: 20px; font-weight: 400; font-variant-numeric: tabular-nums">{{c.forT}}</span><!-- (Oct 9, 16:06) "Visit fire" in annotation size, 16px before a 20% larger chevron --><span style="flex-shrink: 0; margin-left: {{c.arML}}; font-size: 16px; line-height: 20px; font-weight: 400">{{c.visit}}</span>
         </span>
         <span style="display: grid; grid-template-rows: {{c.tmRows}}; width: 100%; margin-top: {{c.tmMt}}; transition: grid-template-rows .4s cubic-bezier(.2,.8,.2,1), margin-top .4s cubic-bezier(.2,.8,.2,1)"><span style="min-height: 0; overflow: hidden; border-radius: 8px; background: {{c.bg}}">
@@ -242,7 +242,7 @@ body{margin:0;background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'S
                   </li>
                 </sc-for>
               </ul>
-              <span style="display: {{m.evNoteD}}; margin: 0 16px 16px; font-size: 13px; line-height: 18px; color: #545458">{{m.evNote}}</span>
+              <span style="display: {{m.evNoteD}}; margin: 0 16px 16px; font-size: 14px; line-height: 18px; color: #545458">{{m.evNote}}</span>
             </sc-if>
             <sc-if value="{{m.hasRows}}" hint-placeholder-val="{{ false }}">
               <ul style="display: flex; flex-direction: column; margin: 0; padding: 0 0 {{m.rowsPb}}; list-style: none; border-top: 0">
@@ -1367,7 +1367,7 @@ class Component extends DCLogic {
         flip: (() => { /* (Oct 12, 21:00) the stage moves forward: the stage button flips over (0.99 s, as the duty card) */ const L0 = this._stLast = this._stLast || {}; if (L0[c.key] != null && c.stage > L0[c.key]) { const t = this._stFlipAt = Date.now(); setTimeout(() => { if (this._stFlipAt === t) this.forceUpdate(); }, 1050); } L0[c.key] = c.stage; return Date.now() - (this._stFlipAt || 0) < 1000 ? 'wf-hflip .99s cubic-bezier(.2,.8,.2,1) both' : 'none'; })(),
         st: this.wfNA(c) ? L('Incident closed', 'Incidente encerrado') : T(S), stC: this.wfNA(c) ? 'rgb(58, 58, 60)' : tone(S).c, bg: this.wfNA(c) ? 'rgb(229, 229, 234)' : tone(S).bg, ic: this.wfNA(c) ? 'M5 12.5l4.5 4.5L19 7.5' : iconFor(S), summary, bar,   /* (Oct 16, 13:00) No action: the band turns grey, "Incident closed", nothing else */
         ...(() => { const ms = c.closed || !cur ? 0 : cur.ms || 0, m0 = Math.floor(ms / 60000), d = ms > 0 ? (m0 >= 1440 ? Math.floor(m0 / 1440) + ' d' : m0 >= 60 ? Math.floor(m0 / 60) + ' h' : Math.max(1, m0) + ' min') : '';
-          return { forT: d || '', forD: 'none', arML: 'auto', goD: c.kind === 'dm' ? 'none' : 'inline-flex', goT: (this.state || {}).mv ? L('Team', 'Equipa') : L('Map', 'Mapa'), visit: (c.kind === 'fire' || (C.fireStage ? C.fireStage(c) : c.stage) >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : (!c.dismissed && C.candMeta && C.candMeta(c)) || L('View', 'Ver'),   /* (Oct 11, 07:11) a candidate: when it was detected */ ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
+          return { forT: d || '', forD: 'none', arML: 'auto', goD: 'none', goT: (this.state || {}).mv ? L('Team', 'Equipa') : L('Map', 'Mapa'), visit: (c.kind === 'fire' || (C.fireStage ? C.fireStage(c) : c.stage) >= 1) && !c.dismissed && C.fireMeta ? (C.fireMeta(c.incId || c.id, c) || L('View', 'Ver')) : (!c.dismissed && C.candMeta && C.candMeta(c)) || L('View', 'Ver'),   /* (Oct 11, 07:11) a candidate: when it was detected */ ttlArrD: 'none' }   /* (Oct 7) the name returns to the main screen: no open arrow */; })(),   /* as the fire page's tag: "for 2 d" */
         ...(this.wfNA(c) ? { goD: 'none', visit: '', forD: 'none', forT: '' } : {}),
         ...(() => { const ex = false;   /* (Oct 9, 09:03) the band no longer unfolds: it opens the incident */ return { expStr: ex ? 'true' : 'false', chevRot: ex ? '180deg' : '0deg', tmRows: ex ? '1fr' : '0fr', tmMt: ex ? '0' : '-8px', tmPb: '16px',
           /* Oct 3: the state card is where the status changes: expanded, it offers "Move to <next stage>" (the stage's own step) */

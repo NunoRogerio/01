@@ -71,7 +71,7 @@ body{margin:0}
 @media (hover:none){.tip,.igpill{display:none!important}}
 .ighide .igpill{opacity:0!important;visibility:hidden!important;transition:opacity .12s ease}
 .wf-pinpulse{transform-box:fill-box;transform-origin:center;animation:wfPinPulse 1.6s linear infinite}@keyframes wfPinPulse{0%{transform:scale(1);opacity:1}100%{transform:scale(2.31);opacity:0}}
-[data-wf-pop] .wf-title-xs{font-size:18px!important;line-height:24px!important}
+[data-wf-pop] .wf-title-xs{font-size:17px!important;line-height:22px!important}
 </style>
 </helmet>
 <div ref="{{setEl}}" data-wf-maproot="1" data-wf-isfull="{{fullAttr}}" role="application" aria-label="Map. Drag to pan, pinch or scroll to zoom." onPointerDown="{{onDown}}" onClickCapture="{{onRootClick}}" onLostPointerCapture="{{onLost}}" onPointerMove="{{onMove}}" onPointerUp="{{onUp}}" onPointerCancel="{{onUp}}" style="position: relative; width: {{w}}px; height: {{h}}px; overflow: hidden; background: #F2F2F7; border-radius: {{radius}}px; clip-path: inset({{clipV}}px 0 {{clipB}}px 0); transition: clip-path .5s cubic-bezier(.2,.8,.2,1); touch-action: {{rootTA}}; user-select: none; cursor: {{cursor}}; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif; color: #000000">

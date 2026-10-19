@@ -662,7 +662,7 @@
   function evidRequest(c) {
     var E = evidOf(c), P = c.people || [], by = 0, who = P[by] ? P[by].name : 'Crew coordinator';
     return { req: 'decl', reqDecl: true, by: by, tag: { en: 'Request · ' + who, pt: 'Pedido · ' + who }, tagC: '#B8360A',
-      title: E.strong ? { en: 'Declare fire', pt: 'Declarar incêndio' } : { en: 'Dismiss fire', pt: 'Descartar incêndio' },
+      title: E.strong ? { en: 'Declare fire', pt: 'Declarar incêndio' } : { en: 'Dismiss', pt: 'Descartar' },
       body: E.strong ? { en: 'The drone feed and the satellite pass agree: smoke and a hot spot.', pt: 'A imagem do drone e a passagem do satélite coincidem: fumo e um ponto quente.' }
         : { en: 'No smoke or flame on the drone feed.', pt: 'Sem fumo nem chama na imagem do drone.' },
       actions: [{ key: 'reqNo', en: 'Not yet', pt: 'Ainda não' }, { key: E.strong ? 'reqConfirm' : 'reqDismiss', en: 'Approve', pt: 'Aprovar', primary: true }] };
@@ -1022,10 +1022,10 @@
       var co = String(c.reg || c.co || '').replace(/\s+County$/i, ''), rg = OAREG[co], ic = (c.people[icOf(c)] || {}).name || '';
       if (us) card(c, { govOnly: true, ma: true, tag: { en: 'Mutual aid request · ' + (co ? co + ' Operational Area' : 'Operational Area'), pt: 'Pedido de ajuda mútua · ' + (co ? 'Área Operacional de ' + co : 'Área Operacional') }, tagC: '#0A66CC',
           title: { en: '2 strike teams, Type 3 engines', pt: '2 strike teams de autobombas tipo 3' }, body: { en: (rg ? 'Through Cal OES Region ' + rg + '. ' : '') + 'Ordered by ' + (ic || 'the incident commander') + ' for the ' + fireNm(c) + ': the local resources are committed and the fire is still growing.', pt: (rg ? 'Pela Região ' + rg + ' do Cal OES. ' : '') + 'Pedido por ' + (ic || 'o comandante do incidente') + ' para ' + fireNm(c) + ': os meios locais estão empenhados e o incêndio continua a crescer.' },
-          actions: [{ key: 'maHold', en: 'Not now', pt: 'Agora não' }, { key: 'maFill', en: 'Fill request', pt: 'Satisfazer pedido', primary: true }] }, 600, 0);
+          actions: [{ key: 'maHold', en: 'Not yet', pt: 'Ainda não' }, { key: 'maFill', en: 'Fill request', pt: 'Satisfazer pedido', primary: true }] }, 600, 0);
       else card(c, { govOnly: true, ma: true, tag: { en: 'Reinforcement request · CSREPC', pt: 'Pedido de reforço · CSREPC' }, tagC: '#0A66CC',
           title: { en: '1 national reinforcement group (GRIR)', pt: '1 Grupo de Reforço para Incêndios Rurais (GRIR)' }, body: { en: 'The sub-regional command asks the national command (CNEPC) for a GRIR for ' + fireNm(c) + (ic ? ', requested by the COS, ' + ic : '') + '.', pt: 'O comando sub-regional pede ao comando nacional (CNEPC) um GRIR para ' + fireNm(c) + (ic ? ', a pedido do COS, ' + ic : '') + '.' },
-          actions: [{ key: 'maHold', en: 'Not now', pt: 'Agora não' }, { key: 'maFill', en: 'Send GRIR', pt: 'Empenhar GRIR', primary: true }] }, 600, 0); }
+          actions: [{ key: 'maHold', en: 'Not yet', pt: 'Ainda não' }, { key: 'maFill', en: 'Send GRIR', pt: 'Empenhar GRIR', primary: true }] }, 600, 0); }
     return ch; }
   /* the government's own actions in a chat: none of the commander's chips; in California, the FMAG request once the fire is on the line */
   function govActions(c) { if (c.kind === 'dm' || c.closed || c.dismissed || !isUS(c)) return []; return c.stage >= 3 && c.stage <= 5 && !c.flags.fmag ? [{ key: 'fmag', en: 'Request FMAG', pt: 'Pedir FMAG', primary: true }] : []; }

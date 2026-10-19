@@ -2354,7 +2354,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 - (Oct 19, 10:17) The smoke check dialog: its engine wears its status tag (Available, as everywhere a unit is ready), its card is the glass of the page's unit cards (not opaque white; also the initial attack list's), and its button says Check, not Dispatch, so it never shares a word with the attack.
 
-- (Oct 19, 10:18) A unit card is a stack of glass cards 2px apart: the engine on top, then each crew member as its own card (no divider lines). Each card fades on its own as it passes under the header or the action bar. Folded crew cards take no gap.
+- (Oct 19, 10:18) A unit card is a stack of glass cards: the engine on top, then each crew member as its own card (no divider lines); crew cards sit 1px apart and 1px under their engine (Oct 19, 11:30; were 2px). Each card fades on its own as it passes under the header or the action bar. Folded crew cards take no gap.
 
 - (Oct 19, 10:22) The projected area chip is as wide as the projection switcher: swatch and area on the left, size class tag and time on the right. The candidate map frames the +6 h shape (with the ignition point) to fill about 80% of the window between the legend and the switcher, centred on the shape; one zoom for every horizon. Projection shapes are more opaque (fill 55%, was 35%). On an incident map the credit reads across, bottom right, 8px above the switcher.
 
@@ -2365,3 +2365,13 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - (Oct 19, 10:47) A civil detection card's Civil tag sits in the card's bottom-right corner on the note's row, not on a row of its own: the note (e.g. "Anonymized. Only from owners who have FFW active. Simulation.") reaches the card's foot and keeps clear of the tag.
 
 - (Oct 19, 11:40) Texts written straight on a map (the refresh line "Updated N min ago" and the upright map credit) have no glow or shadow: each is black or white, whichever has more contrast with the map right under it (the tiles there are sampled and their mean luminance compared), and it changes as the map moves.
+
+## Oct 19 (morning consistency pass)
+- The coordinator's request card in the chat says "Dismiss" / "Descartar" like the chips (was "Dismiss fire"); the tour looks for the same word.
+- Mutual aid and GRIR requests say "Not yet" / "Ainda não" like every other request card (was "Not now").
+- The map's look list is "Map" / "Mapa" in Maps too, as in Appearance (was "Look" / "Aspeto"): one name, the shortest.
+- Back to the type scale: Theme switcher options and the slide-to-dispatch bar 17px (were 18px); the login's username, the drone's chart tip value and the full-screen map's small popup title 17px (were 18px); the incident header's subtitle and the chat's evidence note 14px Footnote (were 13px).
+
+## Oct 19 (11:45): stage tag without Team / Map
+- The incident's stage tag (fire or candidate) no longer says "Team" / "Map" (pt "Equipa" / "Mapa"): the label wasn't working. A tap on the tag still switches between chat and map for now; a separate way into the team chat comes later.
+- Unit cards: crew cards 1px apart and 1px under their engine (were 2px).

@@ -25,7 +25,7 @@
 <script src="station.js?v=1792322188"></script>
 <script src="i18n.js?v=1792322188"></script>
 <script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792323810"></script>
+<script src="chat.js?v=1792406123"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -55,7 +55,7 @@
   location.replace('Chat.dc.html');
 } catch (e) {} })();
 </script>
-<script src="tour.js?v=1792361770"></script>
+<script src="tour.js?v=1792406123"></script>
 <script src="trophy.js?v=1792322188"></script>
 <script src="feedcam.js?v=1792361770"></script>
 <script src="menu.js?v=1792322188"></script>
@@ -124,14 +124,14 @@ html.wf-dark [data-wf-band] div[data-wf-ovl][data-wf-keepsp][style*="z-index: 51
 /* (Oct 15, 15:05) the safety pin and Send share one striped track: the stripe pattern over its full height, a subtle inner shadow (blur only) */
 .wf-ul{background-color:rgba(118,118,128,0.12);background-image:repeating-linear-gradient(-60deg,rgba(0,0,0,0.07) 0 8.49px,transparent 8.49px 16.97px)}
 html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:repeating-linear-gradient(-60deg,rgba(255,255,255,0.09) 0 8.49px,transparent 8.49px 16.97px)}
-.wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
+.wf-ul .wf-ulb{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;margin:0;padding:0 16px;border:0;border-radius:999px;font:inherit;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .3s ease,color .3s ease}
 .wf-ul .wf-ulu{position:absolute;left:64px;right:64px;top:8px;height:48px;border-radius:999px;background:var(--wf-page,#F2F2F7);pointer-events:none}   /* an opaque underlay: no stripes through the faded Send */
 .wf-ul .wf-ulb>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 :root .wf-ul .wf-ulb.on{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;cursor:pointer;pointer-events:auto}
 .wf-ul .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,opacity .3s ease .35s}
 .wf-ul.full .wf-ulp{transition:transform .45s cubic-bezier(.45,0,.2,1),background-color .3s ease,opacity .16s ease 0s}
 /* (Oct 15, 15:22) the green Send rides with the pin: it waits just past the track's right end, 8px right of the pin, and the pin drags it in over the faded Send (supersedes the 15:15 reveal) */
-.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
+.wf-ul .wf-ulg{position:absolute;left:64px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border-radius:999px;background:#248A3D;color:#FFFFFF;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;overflow:hidden;pointer-events:none;transform:translateX(calc(100% + 64px));transition:transform .45s cubic-bezier(.45,0,.2,1)}
 .wf-ul.unl .wf-ulg{transform:none}
 :root .wf-iadone,:root .wf-iadone:hover{background:#248A3D!important;color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;border-color:transparent!important;cursor:pointer}   /* the sent attack, green, back to the map */
 /* (Oct 15, 15:22) locked, the track wears the unlocked grey stripe pattern 15% darker (20% until 15:31) (the yellow hazard stripes were dropped); right of
@@ -153,7 +153,7 @@ html.wf-dark .wf-ul{background-color:rgba(118,118,128,0.24);background-image:rep
 /* (Oct 15, 15:25) locked, no faded Send: an instruction with an arrow in its place ("← Swipe to send"), dark grey on the
    darker stripes, from 16px to the pin; the pin drags the green Send in over it */
 .wf-ul:not(.unl) .wf-ulb,.wf-ul:not(.unl) .wf-ulu{display:none}
-.wf-ul .wf-ull{position:absolute;left:16px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:#3A3A3C;font-size:18px;font-weight:600;line-height:24px;white-space:nowrap;pointer-events:none}
+.wf-ul .wf-ull{position:absolute;left:16px;right:64px;top:8px;height:48px;display:flex;align-items:center;justify-content:center;gap:8px;color:#3A3A3C;font-size:17px;font-weight:600;line-height:22px;white-space:nowrap;pointer-events:none}
 .wf-ul .wf-ull>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .wf-ul .wf-ull{transition:transform .45s cubic-bezier(.45,0,.2,1)}.wf-ul.snap .wf-ull{transition-duration:.12s;transition-timing-function:cubic-bezier(.2,0,0,1)}   /* (Oct 16, 07:26) the instruction travels left with the pin and returns with it */
 .wf-ul .wf-ull>svg{flex:none}
@@ -347,7 +347,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <a href="Main.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" onClick="{{hdBack}}" style="grid-column: 1; grid-row: 1; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
     <span data-wf-ttl2="1" style="grid-column: 1 / -1; grid-row: 2; display: flex; flex-direction: column; min-width: 0; margin-top: 0">
       <span style="display: flex; align-items: baseline; gap: 8px; min-width: 0"><h1 style="flex: 1 1 auto; min-width: 0; margin: 0; font-size: 34px; font-weight: 700; letter-spacing: 0.01em; line-height: 41px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; hyphens: none; color: {{hd.c}}">{{hd.title}}</h1></span>
-      <span data-wf-hmin="1" style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: -3px"><span title="{{hd.sub}}" style="flex: 1 1 auto; min-width: 0; font-size: 13px; font-weight: 400; line-height: 18px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span></span><!-- (Oct 6) after Understood, houses in reach: a small tag in the warning's red at the end of the place line -->
+      <span data-wf-hmin="1" style="display: flex; align-items: baseline; gap: 8px; min-width: 0; margin-top: -3px"><span title="{{hd.sub}}" style="flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 400; line-height: 18px; color: #6E6E73; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hd.sub}}</span></span><!-- (Oct 6) after Understood, houses in reach: a small tag in the warning's red at the end of the place line -->
     </span>
     <span data-wf-hmin="1" style="grid-column: 1 / -1; grid-row: 3; margin-top: 8px; display: flex; flex-direction: column; min-width: 0; padding: 0"><!-- (Oct 11, 00:50) the stage tag 16px under the title block, as the chat's band under its header -->
       <a href="Main.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" onClick="{{hdBack}}" style="display: none; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-top: 0px; align-self: flex-start; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
@@ -2098,7 +2098,7 @@ class Component extends DCLogic {
              down when folded, up when open), the same in the page's cards and in the dispatch panel; aircraft carry no crew list */
           o.ia.rows = [].concat(...o.ia.rows.map((r) => { const u = r._u, i = r._i; delete r._u; delete r._i; if (!u || !u.ic) return [r]; const air = u.ic === IC.heli || /heli|air|aéreo|avião|plane|tanker/i.test(u.name); const key = cid + '|' + u.name, crO = !!(this._iaCrO || {})[key];
             const head = Object.assign(r, { role: 'button', expStr: crO ? 'true' : 'false', tap: () => { this._iaCrO = Object.assign({}, this._iaCrO, { [key]: !crO }); try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} this.forceUpdate(); }, cur: 'pointer', chevD: 'block', chevRot: crO ? '180deg' : '0deg' });
-            return [head].concat(this.wfChkCrew(cid, ptc, u, i ? '|' + u.name : '', air).map((pp) => ({ ic: '', icD: 'none', imgD: pp.img ? 'block' : 'none', img: pp.img, name: pp.name, sub: pp.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: crO ? '2px' : '0', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px',
+            return [head].concat(this.wfChkCrew(cid, ptc, u, i ? '|' + u.name : '', air).map((pp) => ({ ic: '', icD: 'none', imgD: pp.img ? 'block' : 'none', img: pp.img, name: pp.name, sub: pp.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: crO ? '1px' : '0', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px',
               role: null, expStr: null, tap: null, mh: crO ? '96px' : '0px', pad: crO ? '16px' : '0px', op: crO ? '1' : '0', cur: 'auto', chevD: 'none', chevRot: '0deg' }))); }));
           /* (Oct 14, 17:25) the blade: the units (switches before sending, their status after), Send initial attack at its foot; once sent, the
              choice alone in the past tense. After sending, the units' status also shows on the page, first under the map */
@@ -2161,7 +2161,7 @@ class Component extends DCLogic {
               const CK = Object.assign({}, { d: 'flex', ttl: PTl ? 'Reconhecimento' : 'Smoke check', sub: (PTl ? 'Enviado às ' : 'Sent at ') + this.wfStoryHM(cid, chkAt) + (PTl ? '. 1 meio.' : '. 1 unit.'),
                 rows: [{ ic: u.ic, icD: 'block', imgD: 'none', img: '', name: u.name, sub: String(u.where).replace(/\.+$/, '') + '. ' + u.eta + '\u00a0min', tag: TG[k][0], tagBg: TG[k][1], tagFg: TG[k][2], bt: '0', tagD: 'block', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '#3A3A3C', swX: '24px',
                   role: 'button', expStr: crO ? 'true' : 'false', tap: () => { this._chkCrO = Object.assign({}, this._chkCrO, { [cid]: !crO }); this.forceUpdate(); }, mh: 'none', pad: '16px', op: '1', cur: 'pointer', chevD: 'block', chevRot: crO ? '180deg' : '0deg' }]
-                  .concat(this.wfChkCrew(cid, ptc, u).map((p) => ({ ic: '', icD: 'none', imgD: p.img ? 'block' : 'none', img: p.img, name: p.name, sub: p.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: crO ? '2px' : '0', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px',
+                  .concat(this.wfChkCrew(cid, ptc, u).map((p) => ({ ic: '', icD: 'none', imgD: p.img ? 'block' : 'none', img: p.img, name: p.name, sub: p.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: crO ? '1px' : '0', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px',
                     role: null, expStr: null, tap: null, mh: crO ? '96px' : '0px', pad: crO ? '16px' : '0px', op: crO ? '1' : '0', cur: 'auto', chevD: 'none', chevRot: '0deg' }))) });
               CK.sub = CK.sub.replace(/\.$/, '') + '. ' + (CK.rows.length - 1) + (PTl ? ' pessoas.' : ' people.'); CK.note = NR.loading ? '' : (PTl ? 'Tempos estimados. Números dos meios e nomes simulados.' : 'Estimated times. Unit numbers and names simulated.');
               /* (Oct 16, 22:34) the smoke check is a detection: its card (the engine, its status and crew) is the first in Detections, and stays there after the initial attack; the top section is the initial attack's only */

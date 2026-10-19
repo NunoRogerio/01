@@ -527,7 +527,7 @@ class Component extends DCLogic {
       pDelay: s.phase === 'in' ? '.12s' : '0s', pDelay2: s.phase === 'in' ? '.18s' : '0s',
       xRot: s.spin ? '90deg' : '0deg', padB: s.padB || 32,
       dOp: 1, dOpT: s.phase === 'out' ? '.75s cubic-bezier(.4,0,.2,1) .3s' : '0s', clipDur: s.phase === 'out' ? '.6s' : '.5s',
-      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#3A3A3C', userFs: '18px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
+      userTxt: sel ? sel[3] : 'Username', userC: sel ? '#000000' : '#3A3A3C', userFs: '17px', userFw: sel ? 600 : 400, userPad: sel ? '12px 0' : '0', goB: sel ? 'block' : 'none', pwDis: !sel, pwDisA: sel ? 'false' : 'true', pwCls: sel ? 'pw' : 'pw off', pwTab: sel ? '0' : '-1', pwPE: sel ? 'auto' : 'none',
       pwBlur: (e) => { if (!sel) { try { e.target.blur(); } catch (x) {} } },
       pw: sel ? 'demo-' + sel[0] + '-2026' : '', pwLs: sel ? '0.12em' : '0',
       hint: sel ? sel[3] + (sel[4] ? '. ' + sel[4] : '') + '. ' + (sel[7] ? sel[7] + ' ' : '') + 'Access: ' + ({ design: 'all countries and regions', admin: 'all countries and regions', pt: 'Portugal only', ca: 'California only', nv: 'Nevada only', amz: 'Amazônia Legal only' })[sel[9] || sel[0]] + '.' : 'Tap username to choose a demo profile.',
