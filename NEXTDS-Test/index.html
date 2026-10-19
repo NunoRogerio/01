@@ -5169,7 +5169,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-3"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-4"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5831,7 +5831,7 @@ function useNav() {
     else { setActive([k]); setOpen(null); }
   };
   const onSub = (sub) => setOpen((o) => ({ ...o, sub, dir: sub == null ? "back" : "fwd" }));
-  const onPick = (path) => { setActive(path); setOpen(null); };
+  const onPick = (path) => setActive(path); // the panel stays where it is: the column keeps showing the level you chose from
   return { active, open, close, pickTop, onSub, onPick };
 }
 function NavRailItems({ nav, from, collapsed, horizontal }) {
@@ -5877,11 +5877,12 @@ function NavBench({ theme, onTheme }) {
   const frame = useRef(null);
   useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
     if (!nav.open) return;
-    const down = (e) => { if (!e.target.closest(".hvn-v, .hvn-h")) nav.close(); };
+    const floating = nav.open.from === "h" || collapsed; // only a panel over the page closes on a click outside; the one inside the rail stays put
+    const down = (e) => { if (floating && !e.target.closest(".hvn-v, .hvn-h")) nav.close(); };
     const key = (e) => { if (e.key === "Escape") { const k = nav.open.top, from = nav.open.from; nav.close(); frame.current?.querySelector(`.hvn-${from} [data-nav="${k}"]`)?.focus(); } };
     document.addEventListener("pointerdown", down); document.addEventListener("keydown", key);
     return () => { document.removeEventListener("pointerdown", down); document.removeEventListener("keydown", key); };
-  }, [nav.open]);
+  }, [nav.open, collapsed]);
   const path = nav.active[0] === "dashboard" || nav.active.length === 1 ? [navLabel(nav.active[0])] : [navLabel(nav.active[0]), ...nav.active.slice(1).filter(Boolean)];
   return (
     <>
