@@ -2347,3 +2347,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - Satellite is the default look for now, to try it (was Topographic). Each phone switches to it once; a later choice stays.
 
 - (Oct 19, 06:10) A fold chevron stays where it was born: on the engine row of a unit card (smoke check, initial attack, every engine), 4px from that row's bottom right. When the crew opens, it only turns up; it never travels down to the last crew member.
+
+- (Oct 19, 06:57) An incident's map (candidate or fire) has no Active fires chip. Its legend sits centred at the top of the map's window, under the header, and wraps onto a second row when it does not fit. The projected area is a legend chip there, first in the row: the shape's swatch in the size class colours, the counting number, the NWCG size class tag and the time ("By 12:55"). The chip's glass keeps it readable over the satellite map; the old large number over the switcher is gone. The candidate's framing keeps the shape below that row.
