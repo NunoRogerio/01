@@ -4695,13 +4695,16 @@ const SCREEN_CSS = `
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
 .hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
-.hvn-v > .hvn-list .hvn-item{margin-left:16px;width:238px;overflow:hidden}
+.hvn-v > .hvn-list .hvn-item{margin-left:16px;width:238px}
+.hvn-v > .hvn-list .hvn-label{min-width:0;overflow:hidden}
 .hvn-v.is-collapsed > .hvn-list .hvn-item{width:44px}
 .hvn-label{transition:opacity .15s}
 .hvn-v.is-collapsed > .hvn-list .hvn-label{opacity:0}
 .hvn-item:hover{background:var(--container-hover-background)}
-.hvn-item.is-active{background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);color:var(--nav-accent)}
-.hvn-item.is-active::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
+.hvn-item{isolation:isolate}
+.hvn-item.is-active,.hvn-item.is-active:hover{background:transparent;color:var(--nav-accent)}
+.hvn-item.is-active::after,.hvn-item[data-unpick]::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none} /* the selected card is a layer, so it can grow and close like the dropdown selection */
+.hvn-item.is-active::before,.hvn-item[data-unpick]::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
 .hvn-h{display:flex;align-items:center;gap:16px;flex:none;height:56px;padding:0 16px;border-bottom:1px solid var(--border-default);background:var(--container-background);}
 .hvn-h{overflow:visible;z-index:2}
 .hvn-h .hvn-list{flex-direction:row;padding:0}
@@ -5171,7 +5174,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-9"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-10"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5777,19 +5780,60 @@ const NavIcon = ({ k, className = "" }) => {
 const samePath = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
 const startsWith = (a, b) => b.every((x, i) => a[i] === x);
 /* the drill-down panel: level 1 lists the section's pages (a caret where there is a level 2); level 2 has a back row and groups */
-function NavPanel({ top, sub, dir, active, onSub, onPick, floating, style }) {
+function NavPanel({ top, sub, dir, active, onSub, onPick, floating, closing, onClosed, origin, style }) {
   const items = NAV_MENUS[top];
   const node = sub != null ? items.find((x) => x.t === sub) : null;
+  const panelRef = useRef(null);
+  const [pending, setPending] = useState(null); // on press the selection moves to the pressed page; leaving while pressed puts it back; release chooses
+  const press = useRef(null);
+  const shown = pending || active;
+  const reduce = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  useLayoutEffect(() => { // the selection grows from a line on the pressed item while the old one closes, as in the dropdowns (no overshoot)
+    const p = press.current; press.current = null;
+    if (!p || !p.to.animate || reduce()) return;
+    const line = (el) => Math.min(1, 2 / Math.max(1, el.offsetHeight));
+    const opt = { duration: 360, easing: "cubic-bezier(.3,0,.2,1)" };
+    try {
+      ["::after", "::before"].forEach((pe) => p.to.animate([{ transform: `scaleY(${line(p.to)})`, opacity: 0.6 }, { transform: "scaleY(1)", opacity: 1 }], { ...opt, pseudoElement: pe }));
+      if (p.from && p.from !== p.to && p.from.isConnected) {
+        const old = p.from; old.setAttribute("data-unpick", "");
+        const anims = ["::after", "::before"].map((pe) => old.animate([{ transform: "scaleY(1)", opacity: 1 }, { transform: `scaleY(${line(old)})`, opacity: 0 }], { ...opt, pseudoElement: pe, fill: "forwards" }));
+        anims[0].onfinish = anims[0].oncancel = () => { old.removeAttribute("data-unpick"); anims.forEach((a) => a.cancel()); };
+      }
+    } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
+  }, [pending]);
+  const fold = (dirIn) => { // a floating panel grows out of the icon that opened it and folds back into it
+    const el = panelRef.current;
+    if (!el || !el.animate || reduce()) return null;
+    el.style.transformOrigin = origin || "0 0";
+    const k = [{ transform: "scale(.4)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }];
+    return el.animate(dirIn ? k : k.reverse(), { duration: 200, easing: "cubic-bezier(.4,0,.2,1)", fill: dirIn ? "none" : "forwards" });
+  };
+  useLayoutEffect(() => { if (floating) fold(true); }, []);
+  useEffect(() => {
+    if (!closing) return undefined;
+    const a = fold(false);
+    if (!a) { onClosed(); return undefined; }
+    a.onfinish = onClosed;
+    return () => { a.onfinish = null; };
+  }, [closing]);
   const leaf = (path, t, cls) => {
-    const on = samePath(active, path);
+    const on = samePath(shown, path);
     return (
-      <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}${on ? " is-active" : ""}`} aria-current={on ? "page" : undefined} onClick={() => onPick(path)}>
+      <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}${on ? " is-active" : ""}`} aria-current={samePath(active, path) ? "page" : undefined}
+              onPointerDown={(e) => {
+                if (e.button !== 0 || samePath(shown, path)) return;
+                press.current = { from: panelRef.current && panelRef.current.querySelector(".hvn-pitem.is-active"), to: e.currentTarget };
+                setPending(path);
+              }}
+              onPointerLeave={(e) => { if (pending && samePath(pending, path) && e.buttons) setPending(null); }}
+              onClick={() => { setPending(null); onPick(path); }}>
         <span className="hvn-label">{t}</span>
       </button>
     );
   };
   return (
-    <div className={`hvn-panel${floating ? " is-float" : ""}`} role="menu" aria-label={node ? node.t : navLabel(top)} style={style}>
+    <div ref={panelRef} className={`hvn-panel${floating ? " is-float" : ""}`} role="menu" aria-label={node ? node.t : navLabel(top)} style={style}>
       <div key={sub ?? "-"} className={`hvn-level${dir ? ` is-${dir}` : ""}`}>
         {node ? (
           <>
@@ -5826,40 +5870,48 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, floating, style }) {
 /* state shared by both navigations: what is selected (a path) and which menu is open */
 function useNav() {
   const [active, setActive] = useState(["dashboard"]);
-  const [open, setOpen] = useState(null); // { top, sub, dir, from: "v" | "h" }
-  const close = () => setOpen(null);
-  const pickTop = (k, from) => {
-    if (NAV_MENUS[k]) setOpen((o) => (o && o.top === k && o.from === from ? null : { top: k, sub: null, dir: null, from }));
+  const [open, setOpen] = useState(null); // { id, top, sub, dir, from: "v" | "h", floating, closing }
+  const close = (now) => setOpen((o) => (!o ? o : o.floating && !now ? { ...o, closing: true } : null)); // a floating panel folds back into its icon
+  const closed = () => setOpen((o) => (o && o.closing ? null : o));
+  const pickTop = (k, from, floating) => {
+    if (NAV_MENUS[k]) setOpen((o) => (o && o.top === k && o.from === from && !o.closing ? (o.floating ? { ...o, closing: true } : null) : { id: Date.now(), top: k, sub: null, dir: null, from, floating }));
     else { setActive([k]); setOpen(null); }
   };
   const onSub = (sub) => setOpen((o) => ({ ...o, sub, dir: sub == null ? "back" : "fwd" }));
-  const onPick = (path) => setActive(path); // the panel stays where it is: the column keeps showing the level you chose from
-  return { active, open, close, pickTop, onSub, onPick };
+  const onPick = (path) => { // in the rail the panel stays where it is; a floating one acts as a dropdown: chosen on release, then it retracts
+    setActive(path);
+    setOpen((o) => (o && o.floating ? { ...o, closing: true } : o));
+  };
+  return { active, open, close, closed, pickTop, onSub, onPick };
 }
-function NavRailItems({ nav, from, collapsed, tips, horizontal }) {
+const navPanelProps = (nav, extra) => ({ key: nav.open.id, ...nav.open, active: nav.active, onSub: nav.onSub, onPick: nav.onPick, onClosed: nav.closed, ...extra });
+function NavRailItems({ nav, from, collapsed, tips, floating, horizontal }) {
   return NAV_ITEMS.map(([k, t]) => {
-    const isActive = nav.active[0] === k, isOpen = nav.open && nav.open.from === from && nav.open.top === k;
+    const isActive = nav.active[0] === k, isOpen = nav.open && nav.open.from === from && nav.open.top === k && !nav.open.closing;
     return (
       <li key={k} className="hvn-li">
         <button type="button" className={`hvn-item${isActive ? " is-active" : ""}${isOpen ? " is-open" : ""}`} data-nav={k}
                 aria-current={isActive ? "page" : undefined} aria-haspopup={NAV_MENUS[k] ? "menu" : undefined} aria-expanded={NAV_MENUS[k] ? !!isOpen : undefined}
-                aria-label={collapsed ? t : undefined} data-tip={tips ? t : undefined} data-tip-side="right" onClick={() => nav.pickTop(k, from)}>
+                aria-label={collapsed ? t : undefined} data-tip={tips ? t : undefined} data-tip-side="right" onClick={() => nav.pickTop(k, from, floating)}>
           <NavIcon k={k} /><span className="hvn-label">{t}</span>{horizontal && NAV_MENUS[k] && <NavIcon k="chevR" className="hvn-hcaret" />}
         </button>
-        {horizontal && isOpen && <NavPanel {...nav.open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating />}
+        {horizontal && nav.open && nav.open.from === from && nav.open.top === k && <NavPanel {...navPanelProps(nav, { floating: true, origin: "24px -24px" })} />}
       </li>
     );
   });
 }
 /* vertical: replicated from VSP_360_Nav_Component_1.5.svg (270px + 1px border, items 32px every 48px from y 72).
-   A section with pages opens its drill-down panel inside the rail; the rail drops to its icons meanwhile. */
+   A section with pages opens its drill-down panel inside the rail; the rail drops to its icons meanwhile.
+   Collapsed, the panel floats beside the rail, growing out of its icon and folding back into it. */
 function NavVertical({ nav, collapsed, onCollapse }) {
   const open = nav.open && nav.open.from === "v" ? nav.open : null;
+  const at = open ? NAV_ITEMS.findIndex((x) => x[0] === open.top) : 0;
+  const origin = `${38 - 85}px ${72 + 48 * at + 16 - 72}px`; // the opener icon's centre, from the panel's corner
   return (
-    <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open ? " is-menu" : ""}`} aria-label="Main navigation">
+    <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
       <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-tip={collapsed ? "Expand" : "Collapse"} data-tip-side={collapsed ? "right" : undefined} onClick={onCollapse}><NavIcon k="toggle" /></button>
-      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed || !!open} />{/* a tooltip wherever the label is hidden */}</ul>
-      {open && <NavPanel {...open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating={collapsed} />}
+      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed || !!open} floating={collapsed} />{/* a tooltip wherever the label is hidden */}</ul>
+      {open && <NavPanel {...navPanelProps(nav, { floating: collapsed, origin })} />}
     </nav>
   );
 }
@@ -5879,8 +5931,8 @@ function NavBench({ theme, onTheme }) {
   const nav = useNav();
   const frame = useRef(null);
   useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
-    if (!nav.open) return;
-    const floating = nav.open.from === "h" || collapsed; // only a panel over the page closes on a click outside; the one inside the rail stays put
+    if (!nav.open || nav.open.closing) return;
+    const floating = nav.open.floating; // only a panel over the page closes on a click outside; the one inside the rail stays put
     const down = (e) => { if (floating && !e.target.closest(".hvn-v, .hvn-h")) nav.close(); };
     const key = (e) => { if (e.key === "Escape") { const k = nav.open.top, from = nav.open.from; nav.close(); frame.current?.querySelector(`.hvn-${from} [data-nav="${k}"]`)?.focus(); } };
     document.addEventListener("pointerdown", down); document.addEventListener("keydown", key);
@@ -5898,7 +5950,7 @@ function NavBench({ theme, onTheme }) {
               <button type="button" className="hvs-segbtn" aria-pressed={kinds.horizontal} disabled title="Not ready yet" onClick={() => toggle("horizontal")}>Horizontal</button>{/* not ready: off until the horizontal design exists */}
             </div>
           </CtlField>
-          <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => { nav.close(); setCollapsed(v === "collapsed"); }} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
+          <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => { nav.close(true); setCollapsed(v === "collapsed"); }} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
           <BenchSeg label="Breadcrumb" value={crumbs ? "show" : "hide"} onChange={(v) => setCrumbs(v === "show")} options={[["show", "Show"], ["hide", "Hide"]]} />
         </div>
       </div>
@@ -5907,7 +5959,7 @@ function NavBench({ theme, onTheme }) {
         <div className="hvn-frame" ref={frame}>
           {kinds.horizontal && <NavHorizontal nav={nav} />}
           <div className="hvn-body">
-            {kinds.vertical && <NavVertical nav={nav} collapsed={collapsed} onCollapse={() => { nav.close(); setCollapsed((c) => !c); }} />}
+            {kinds.vertical && <NavVertical nav={nav} collapsed={collapsed} onCollapse={() => { nav.close(true); setCollapsed((c) => !c); }} />}
             <main className="hvn-page">
               {kinds.vertical || kinds.horizontal ? (
                 <>
