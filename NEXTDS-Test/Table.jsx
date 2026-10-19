@@ -2499,7 +2499,7 @@ function useTips(ref, scope) {
       const text = el.getAttribute("data-tip");
       if (!text) return;
       const r = el.getBoundingClientRect();
-      setTip({ text, x: r.left + r.width / 2, top: r.top, bottom: r.bottom });
+      setTip({ text, x: r.left + r.width / 2, top: r.top, bottom: r.bottom, right: r.right, side: el.getAttribute("data-tip-side") });
     };
     const hide = () => { clearTimeout(timer); cur = null; setTip(null); };
     const at = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest("[data-tip]") : null; };
@@ -2539,6 +2539,7 @@ function TipBubble({ tip }) {
   useLayoutEffect(() => {
     if (!tip || !ref.current) { setPos(null); return; }
     const w = ref.current.offsetWidth, h = ref.current.offsetHeight;
+    if (tip.side === "right") { setPos({ left: tip.right + 8, top: Math.round((tip.top + tip.bottom) / 2 - h / 2) }); return; } // beside the item (an icon-only rail)
     let top = tip.top - h - 8;
     if (top < 8) top = tip.bottom + 8;
     const left = Math.min(Math.max(8, tip.x - w / 2), window.innerWidth - w - 8);
@@ -5147,7 +5148,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-6"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-8"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5812,14 +5813,14 @@ function useNav() {
   const onPick = (path) => setActive(path); // the panel stays where it is: the column keeps showing the level you chose from
   return { active, open, close, pickTop, onSub, onPick };
 }
-function NavRailItems({ nav, from, collapsed, horizontal }) {
+function NavRailItems({ nav, from, collapsed, tips, horizontal }) {
   return NAV_ITEMS.map(([k, t]) => {
     const isActive = nav.active[0] === k, isOpen = nav.open && nav.open.from === from && nav.open.top === k;
     return (
       <li key={k} className="hvn-li">
         <button type="button" className={`hvn-item${isActive ? " is-active" : ""}${isOpen ? " is-open" : ""}`} data-nav={k}
                 aria-current={isActive ? "page" : undefined} aria-haspopup={NAV_MENUS[k] ? "menu" : undefined} aria-expanded={NAV_MENUS[k] ? !!isOpen : undefined}
-                aria-label={collapsed ? t : undefined} title={collapsed ? t : undefined} onClick={() => nav.pickTop(k, from)}>
+                aria-label={collapsed ? t : undefined} data-tip={tips ? t : undefined} data-tip-side="right" onClick={() => nav.pickTop(k, from)}>
           <NavIcon k={k} /><span className="hvn-label">{t}</span>{horizontal && NAV_MENUS[k] && <NavIcon k="chevR" className="hvn-hcaret" />}
         </button>
         {horizontal && isOpen && <NavPanel {...nav.open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating />}
@@ -5833,8 +5834,8 @@ function NavVertical({ nav, collapsed, onCollapse }) {
   const open = nav.open && nav.open.from === "v" ? nav.open : null;
   return (
     <nav className={`hvn-v${collapsed ? " is-collapsed" : ""}${open ? " is-menu" : ""}`} aria-label="Main navigation">
-      <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} onClick={onCollapse}><NavIcon k="toggle" /></button>
-      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} /></ul>
+      <button type="button" className="hvn-toggle" aria-expanded={!collapsed} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"} data-tip={collapsed ? "Expand" : undefined} data-tip-side="right" onClick={onCollapse}><NavIcon k="toggle" /></button>
+      <ul className="hvn-list"><NavRailItems nav={nav} from="v" collapsed={collapsed || !!open} tips={collapsed} /></ul>
       {open && <NavPanel {...open} active={nav.active} onSub={nav.onSub} onPick={nav.onPick} floating={collapsed} />}
     </nav>
   );
@@ -5850,7 +5851,8 @@ function NavHorizontal({ nav }) {
 function NavBench({ theme, onTheme }) {
   const [kinds, setKinds] = useState({ vertical: true, horizontal: false }); // several can be on at once
   const toggle = (k) => setKinds((x) => ({ ...x, [k]: !x[k] }));
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false); // the Bar control and the icon on the bar change the same state
+  const [crumbs, setCrumbs] = useState(true);
   const nav = useNav();
   const frame = useRef(null);
   useEffect(() => { // a click outside the navigation, or Esc, closes an open menu
@@ -5873,6 +5875,8 @@ function NavBench({ theme, onTheme }) {
               <button type="button" className="hvs-segbtn" aria-pressed={kinds.horizontal} disabled title="Not ready yet" onClick={() => toggle("horizontal")}>Horizontal</button>{/* not ready: off until the horizontal design exists */}
             </div>
           </CtlField>
+          <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => { nav.close(); setCollapsed(v === "collapsed"); }} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
+          <BenchSeg label="Breadcrumb" value={crumbs ? "show" : "hide"} onChange={(v) => setCrumbs(v === "show")} options={[["show", "Show"], ["hide", "Hide"]]} />
         </div>
       </div>
       <div className="hvs-benchstage hvt-scope" data-theme={theme}>
@@ -5884,7 +5888,7 @@ function NavBench({ theme, onTheme }) {
             <main className="hvn-page">
               {kinds.vertical || kinds.horizontal ? (
                 <>
-                  {path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
+                  {crumbs && path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
                   <h1>{path[path.length - 1]}</h1>
                 </>
               ) : <p className="hvn-empty">Choose Vertical, Horizontal or both.</p>}
