@@ -5402,7 +5402,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-23"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-24"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5749,8 +5749,8 @@ function makeZip(files) {
   const enc = new TextEncoder(), parts = [], central = [];
   let offset = 0;
   const u16 = (v) => [v & 0xff, (v >>> 8) & 0xff], u32 = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
-  files.forEach(({ name, text }) => {
-    const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db);
+  files.forEach(({ name, text }) => { // text, or bytes (e.g. the .tgz inside the zip)
+    const nb = enc.encode(name), db = files.find((x) => x.name === name).bytes || enc.encode(text), crc = crc32(db);
     const head = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0)]);
     parts.push(head, nb, db);
     central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]), nb);
@@ -5778,7 +5778,10 @@ function embeddedPackage(kind = "table") {
   if (!el || !el.textContent.trim()) return null;
   const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return { blob: new Blob([bytes], { type: "application/gzip" }), name: el.getAttribute("data-name") || "nextds-table.tgz" };
+  const tgz = el.getAttribute("data-name") || "nextds-table.tgz";
+  /* claude.ai downloads take .zip, not .tgz: the .tgz goes inside a .zip with the install steps */
+  const steps = `# ${tgz}\n\nThe React package, as delivered to the developers.\n\n1. Keep ${tgz} in your project, e.g. in vendor/.\n2. npm install ./vendor/${tgz}\n3. Read the README inside the package (node_modules/@nextds/…/README.md), or unpack it: tar -xzf ${tgz}\n`;
+  return { blob: makeZip([{ name: tgz, bytes }, { name: "INSTALL.md", text: steps }]), name: tgz.replace(/\.tgz$/, ".zip") };
 }
 const pkgFileName = (kind) => { const p = embeddedPackage(kind); return p ? p.name : "nextds-table.zip"; };
 async function downloadPackage(src, kind) {
