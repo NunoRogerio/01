@@ -19,7 +19,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792361827"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script>/* (Oct 19, 18:51) the peek's bounce, shared by the arrival and the nudge: faster, with a pronounced, quick bounce (the user's exception to the
+   no-bounce rule, for this card only). The arrival rises from below the screen, overshoots 20px past its peek, dips 5px under it and settles (0.58 s). */
+window.__wfPeekIn = (el, from) => el.animate([
+  { translate: from, easing: 'cubic-bezier(.3,0,.2,1)' },
+  { translate: '0 -20px', offset: 0.55, easing: 'cubic-bezier(.4,0,.6,1)' },
+  { translate: '0 5px', offset: 0.8, easing: 'cubic-bezier(.4,0,.6,1)' },
+  { translate: '0 0' }], { duration: 580 });
+</script>
+<script src="fit.js?v=1792361827"></script>
 <script src="avatar.js?v=1792322188"></script>
 <script src="prefs.js?v=1792362054"></script>
 <script src="station.js?v=1792322188"></script>
@@ -1296,14 +1304,14 @@ class Component extends DCLogic {
           const D = (() => { try { const r = sum.getBoundingClientRect(), h = sum.offsetHeight || r.height, top = r.top - (h - r.height) / 2, ab = document.querySelector('[data-wf-actbar] .wf-decrow'), q = ab && ab.offsetParent ? ab.getBoundingClientRect() : null, lnB = q && q.height ? q.top : sc.getBoundingClientRect().bottom, pk = Math.max(16, Math.min(72, 0.4 * h - 8)); return Math.min(D0, Math.round(top - pre - (lnB - pk - 0.1 * h))); } catch (x) { return D0; } })();
           /* already high enough to peek where it is: it rises from below the screen to that place, the last thing to move */
           /* (Oct 17, 20:27) it lands exactly at its peek, never further: the space above it takes up the difference (less or more than its laid-out place) */
-          if (this._shPre) { this._shPre = null; const mt = -D; if (Math.abs(mt) >= 1) { sec.style.marginTop = mt + 'px'; TR('0 ' + (Math.round(parseFloat(String(sec.style.translate).split(' ')[1]) || 0) + D) + 'px'); } document.documentElement.classList.add('wf-arrived'); const t0v = sec.style.translate; SECS.forEach((e) => e.animate([{ translate: t0v }, { translate: '0 0' }], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' })); TR(''); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 760) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
+          if (this._shPre) { this._shPre = null; const mt = -D; if (Math.abs(mt) >= 1) { sec.style.marginTop = mt + 'px'; TR('0 ' + (Math.round(parseFloat(String(sec.style.translate).split(' ')[1]) || 0) + D) + 'px'); } document.documentElement.classList.add('wf-arrived'); const t0v = sec.style.translate; SECS.forEach((e) => window.__wfPeekIn(e, t0v)); TR(''); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 620) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
           /* (Oct 19, 15:46) every incident, app-wide: a Summary already laid out above its peek (D < 0, e.g. French Camp) is pushed down to it too,
              rising from below the screen, so scrolling back down always lands it at the peek; before, it kept its old full place */
           if (Math.abs(D) < 1) { document.documentElement.classList.add('wf-arrived'); return; }
-          if (D < 0) { const mt0 = parseFloat(sec.style.marginTop) || 0; sec.style.marginTop = (mt0 - D) + 'px'; void sec.offsetHeight; const dd = Math.max(0, Math.round(sc.getBoundingClientRect().bottom - sec.getBoundingClientRect().top + 24)); document.documentElement.classList.add('wf-arrived'); if (dd > 0) SECS.forEach((e) => e.animate([{ translate: '0 ' + dd + 'px' }, { translate: '0 0' }], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' })); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 760) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
+          if (D < 0) { const mt0 = parseFloat(sec.style.marginTop) || 0; sec.style.marginTop = (mt0 - D) + 'px'; void sec.offsetHeight; const dd = Math.max(0, Math.round(sc.getBoundingClientRect().bottom - sec.getBoundingClientRect().top + 24)); document.documentElement.classList.add('wf-arrived'); if (dd > 0) SECS.forEach((e) => window.__wfPeekIn(e, '0 ' + dd + 'px')); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 620) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
           /* (Oct 18, 09:32) the peek is the page's first position: the cards rise to it by giving up the space above them (not by scrolling), so
              pushing them back down always lands them at the peek, smaller, faded and darker, never full and opaque under the projection */
-          { const mt0 = parseFloat(sec.style.marginTop) || 0; sec.style.marginTop = (mt0 - D) + 'px'; document.documentElement.classList.add('wf-arrived'); SECS.forEach((e) => e.animate([{ translate: '0 ' + D + 'px' }, { translate: '0 0' }], { duration: 700, easing: 'cubic-bezier(.2,.8,.2,1)' })); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 760) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
+          { const mt0 = parseFloat(sec.style.marginTop) || 0; sec.style.marginTop = (mt0 - D) + 'px'; document.documentElement.classList.add('wf-arrived'); SECS.forEach((e) => window.__wfPeekIn(e, '0 ' + D + 'px')); const t1 = performance.now(), pump = () => { try { sc.dispatchEvent(new Event('scroll')); } catch (x) {} if (performance.now() - t1 < 620) requestAnimationFrame(pump); }; requestAnimationFrame(pump); return; }
         const max = sc.scrollHeight - sc.clientHeight, to = Math.min(max, D), ov = Math.min(8, Math.round(to * 0.12)), y0 = sc.scrollTop, T1 = 550, T2 = 210, a0 = performance.now();
         const io = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2), oo = (k) => 1 - Math.pow(1 - k, 3);
         const step = (now) => { if (this._shTouched) return; const e = now - a0; let y;
@@ -3187,7 +3195,7 @@ class Component extends DCLogic {
       card = sec && sec.querySelector('[data-wf-sumcard], [data-wf-sckcard], ul[data-wf-evk], [data-wf-kpicard]');
     if (!card || !card.offsetParent || Math.abs((parseFloat(card.style.opacity) || 1) - 0.6) > 0.01) return;   /* only while it peeks under the decisions (the browser keeps "0.6") */
     busy = true; const E = 'cubic-bezier(.4,0,.2,1)';
-    const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: E }, { translate: '0 -16px', opacity: 1, offset: 0.45 }, { translate: '0 -16px', opacity: 1, offset: 0.55, easing: E }, { translate: '0 0', opacity: 0.6 }], { duration: 750 });   /* (17:10) twice as fast; the opacity rises with the lift and falls back with the return */
+    const a = card.animate([{ translate: '0 0', opacity: 0.6, easing: 'cubic-bezier(.3,0,.2,1)' }, { translate: '0 -20px', opacity: 1, offset: 0.45, easing: 'cubic-bezier(.4,0,.6,1)' }, { translate: '0 5px', opacity: 0.85, offset: 0.75, easing: 'cubic-bezier(.4,0,.6,1)' }, { translate: '0 0', opacity: 0.6 }], { duration: 520 });   /* (Oct 19, 18:51) the arrival's bounce: up 20px at full opacity, a quick dip 5px under the peek, settle (0.52 s) */   /* (17:10) twice as fast; the opacity rises with the lift and falls back with the return */
     a.onfinish = a.oncancel = () => { busy = false; };
   } catch (x) { busy = false; } }, 6000);
 })();
