@@ -11,7 +11,7 @@ The NEXT Design System table for React. Search, filters (Group or MUI style), so
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-table-0.4.14.tgz
+npm install ./vendor/nextds-table-0.5.0.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -183,6 +183,33 @@ The query the table sends:
 - If two requests overlap, keep only the answer to the latest one.
 - Selecting all rows selects the rows on the page.
 
+## Navigation and app header
+
+The package also has the NEXT navigation of VSP 360: `Navigation`, the vertical bar with its drill-down menus, and `AppHeader`, the 56px header with the Hitachi logo. Both use the same `styles.css`.
+
+```jsx
+import { AppHeader, Navigation, navPathLabels } from "@nextds/table";
+import "@nextds/table/styles.css";
+
+function Shell({ children }) {
+  const [page, setPage] = useState(["dashboard"]);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      <AppHeader app="VSP 360" initials="NR" onHelp={openHelp} />
+      <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
+        <Navigation value={page} onNavigate={setPage} />
+        <main style={{ flex: 1 }}>{navPathLabels(page).join(" › ")}</main>
+      </div>
+    </div>
+  );
+}
+```
+
+- `items`: the sections, by default `VSP360_NAVIGATION` (as drawn). A section is `{ key, label, icon, menu? }`; a menu is `{ items }` or `{ groups: [[label, pages]] }`; a page with `items` or `groups` drills down to a 2nd level; `external: true` marks a page that opens outside the app (it calls `onExternal`, never takes the selection).
+- `value` / `onNavigate`: the selected page as a path, e.g. `["analytics", "Capacity", "Storage", "Block"]`.
+- `collapsed` / `onCollapsedChange` (or `defaultCollapsed`): 271px open, 77px collapsed. A section clicked on the collapsed bar opens the bar with its menu; Esc or a click outside before choosing folds it back.
+- Tooltips wherever a label is hidden; `theme`: "dawn" or "wicked".
+
 ## Theme and styles
 
 `theme="dawn"` (default) or `theme="wicked"`. The colours are the NEXT library tokens (v6.3.2.1) as CSS variables on the table; override any of them with the `tokens` prop or in your CSS:
@@ -224,7 +251,7 @@ This package is the reference for how the NEXT table looks and behaves. Your tea
 ### Run it and change it
 
 ```bash
-tar -xzf nextds-table-0.4.14.tgz && cd package   # the file from the React Package button
+tar -xzf nextds-table-0.5.0.tgz && cd package   # the file from the React Package button
 npm install          # dev tools only: esbuild, React, TypeScript
 npm run demo         # http://localhost:5173: client mode, server mode, custom cells, Dawn / Wicked
 ```

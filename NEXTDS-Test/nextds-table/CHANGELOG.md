@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0 — 2026-10-19
+
+- New: `Navigation` (the vertical bar with drill-down menus, VSP 360 structure by default), `AppHeader` (Hitachi logo, app name, help, apps, account), `VSP360_NAVIGATION` and `navPathLabels`. Their styles are in `styles.css`; types in `index.d.ts`. See the README, "Navigation and app header".
+
 ## 0.4.14 — 2026-10-19
 
 - Navigation group labels (Storage, Virtualization, Hosts) use the placeholder text colour (--content-placeholder); the --nav-group-label token is gone.

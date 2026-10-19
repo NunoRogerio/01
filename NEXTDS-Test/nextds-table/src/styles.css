@@ -953,3 +953,67 @@
 .hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{content:"";position:absolute;z-index:2;top:0;bottom:0;left:var(--hvt-fix-l,0px);right:var(--hvt-fix-r,0px);
   border-radius:var(--component-containerradius);box-shadow:inset 0 0 0 1px var(--border-hover-selected);pointer-events:none}
 .hvt-root.has-hscroll .hvt-group.is-delete-target > .hvt-row--body::after{box-shadow:inset 0 0 0 2px var(--semantic-negative)}
+/* ---------- Navigation and AppHeader ---------- */
+.hvn-root{box-sizing:border-box;font:400 14px/20px "Hitachi Sans",system-ui,sans-serif;color:var(--content-primary)}
+.hvn-navroot{display:flex;flex:none;min-height:0}
+.hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--nav-bar);overflow:hidden;transition:width .2s ease}
+.hvn-v.is-collapsed{width:77px}
+.hvn-toggle{position:absolute;left:222px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
+.hvn-v.is-collapsed .hvn-toggle{left:22px}
+.hvn-toggle:hover{background:var(--container-hover-background)}
+.hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
+.hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
+.hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
+.hvn-v > .hvn-list .hvn-item{margin-left:16px;width:238px}
+.hvn-v > .hvn-list .hvn-label{min-width:0;overflow:hidden}
+.hvn-v.is-collapsed > .hvn-list .hvn-item{width:44px}
+.hvn-label{transition:opacity .15s}
+.hvn-v.is-collapsed > .hvn-list .hvn-label{opacity:0}
+.hvn-item:hover{background:var(--container-hover-background)}
+.hvn-item{isolation:isolate}
+.hvn-item.is-active,.hvn-item.is-active:hover{background:transparent;color:var(--nav-accent)}
+.hvn-item.is-active::after,.hvn-item[data-unpick]::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none} /* the selected card is a layer, so it can grow and close like the dropdown selection */
+.hvn-item.is-active::before,.hvn-item[data-unpick]::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
+.hvn-v{overflow:visible;z-index:2}
+.hvn-v.is-menu > .hvn-list .hvn-item{width:44px}
+.hvn-v.is-menu > .hvn-list .hvn-label{opacity:0}
+.hvn-item.is-open:not(.is-active){background:var(--nav-selected)}
+.hvn-panel{position:absolute;left:68px;top:72px;z-index:3;display:flex;flex-direction:column;width:186px;max-height:calc(100% - 88px);border-radius:8px;background:var(--nav-panel);overflow:hidden;animation:hvn-fade .15s ease}
+.hvn-v.is-collapsed .hvn-panel{left:85px}
+.hvn-panel.is-float{background:var(--container-secondary-background);box-shadow:0 0 8px var(--nav-selected-shadow)}
+.hvn-level{display:flex;flex-direction:column;min-height:0}
+.hvn-level.is-fwd{animation:hvn-in-fwd .22s ease}
+.hvn-level.is-back{animation:hvn-in-back .22s ease}
+@keyframes hvn-fade{from{opacity:0}to{opacity:1}}
+@keyframes hvn-in-fwd{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes hvn-in-back{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.hvn-panel,.hvn-level{animation:none!important}}
+.hvn-phead{display:flex;align-items:center;flex:none;box-sizing:border-box;width:100%;height:32px;padding:0 0 0 19px;border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--content-placeholder);font:inherit;text-align:left;white-space:nowrap}
+.hvn-phead.is-back{gap:13px;padding-left:7px;color:var(--content-primary);cursor:pointer}
+.hvn-phead.is-back:hover{background:var(--container-hover-background)}
+.hvn-psep{flex:none;height:4px;background:var(--nav-bar)}
+.hvn-hd{display:flex;align-items:center;justify-content:space-between;flex:none;height:56px;padding:0 16px;background:var(--nav-bar);box-shadow:inset 0 -1px var(--border-default);color:var(--content-primary)}
+.hvn-brand{display:flex;align-items:center;gap:8px;min-width:0}
+.hvn-logo{display:block;flex:none;width:80px;height:14px;color:var(--nav-logo)}
+.hvn-rule{flex:none;width:1px;height:24px;background:var(--content-primary)}
+.hvn-app{margin-left:-1px;white-space:nowrap} /* 7px after the rule, as drawn */
+.hvn-actions{display:flex;align-items:center;gap:18px} /* as drawn: icons every 50px, 32px press areas */
+.hvn-act,.hvn-avatar{display:flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;padding:0;border:0;border-radius:16px;background:transparent;color:var(--content-primary);font:inherit;cursor:pointer}
+.hvn-act:hover{background:var(--container-hover-background)}
+.hvn-avatar{background:var(--nav-avatar)}
+.hvn-avatar:hover{box-shadow:inset 0 0 0 1px var(--border-hover-selected)}
+.hvn-plist{display:flex;flex-direction:column;gap:16px;padding:8px;overflow-y:auto;scrollbar-width:thin}
+.hvn-pitem{width:100%;padding:0 7px 0 11px}
+.hvn-pitem.is-l2{padding-left:16px}
+.hvn-pitem .hvn-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hvn-pitem.is-trail{color:var(--nav-accent)}
+.hvn-caret{margin-left:auto}
+.hvn-ext{margin-right:1px} /* as drawn: 8px from the item's edge */
+.hvn-plist.is-tight{gap:8px} /* a 2nd level without categories is one category: 8px between its pages */
+.hvn-pempty{margin:0;padding:6px 11px;color:var(--content-placeholder)}
+.hvn-pgroup{display:flex;flex-direction:column;gap:8px} /* 8px between pages of one category; categories keep their own spacing */
+.hvn-pgroup.has-rule{margin-top:8px;border-top:1px solid var(--container-disabled-background)}
+.hvn-pgroup.has-rule.no-label{padding-top:7px}
+.hvn-pglabel{height:24px;padding-left:4px;color:var(--content-placeholder);font-size:12px;line-height:24px}
+.hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
+.hvn-li{position:relative}
