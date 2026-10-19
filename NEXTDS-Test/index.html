@@ -4581,7 +4581,7 @@ const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their p
 };
 /* the VSP 360 navigation as drawn. An item: { key, label, icon, menu? }; a menu is { items } or { groups: [[label or null, pages]] };
    a menu item with items or groups drills down to a 2nd level; external: opens outside the app (never selected) */
-export const VSP360_NAVIGATION = [
+const VSP360_NAVIGATION = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "inventory", label: "Inventory", icon: "inventory", menu: { groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] } },
   { key: "analytics", label: "Analytics", icon: "analytics", menu: { items: [
@@ -4603,7 +4603,7 @@ export const VSP360_NAVIGATION = [
 ];
 const navTop = (items, k) => items.find((x) => x.key === k) || null;
 /* the labels of a path, e.g. ["analytics", "Capacity", "Storage", "Block"] → Analytics, Capacity, Storage, Block */
-export const navPathLabels = (path, items = VSP360_NAVIGATION) => { const t = navTop(items, path[0]); return [t ? t.label : path[0], ...path.slice(1).filter(Boolean)]; };
+const navPathLabels = (path, items = VSP360_NAVIGATION) => { const t = navTop(items, path[0]); return [t ? t.label : path[0], ...path.slice(1).filter(Boolean)]; };
 const NavIcon = ({ k, className = "" }) => {
   const ic = NAV_ICONS[k];
   if (!ic) return null;
@@ -4726,7 +4726,7 @@ function useNav({ items, active, setActive, setCollapsed }) {
 }
 /* Navigation: the vertical bar (271px open, 77px collapsed). A section with pages opens its drill-down menu inside the bar,
    the bar dropping to its icons meanwhile; tooltips wherever a label is hidden. Controlled or not: value / onNavigate, collapsed / onCollapsedChange. */
-export function Navigation({
+function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
   collapsed, defaultCollapsed = false, onCollapsedChange, theme = "dawn", className = "", style,
 }) {
@@ -4779,7 +4779,7 @@ const HD_LOGO = `<path d="M61.4746 28.124C61.473 29.0446 61.6216 29.9589 61.9142
 const HD_HELP = `<path d="M1788 32.6875C1788.35 32.6875 1788.62 32.4077 1788.62 32.0625C1788.62 31.7173 1788.35 31.4375 1788 31.4375C1787.65 31.4375 1787.38 31.7173 1787.38 32.0625C1787.38 32.4077 1787.65 32.6875 1788 32.6875Z" fill="currentColor"/><path d="M1785 26.4375C1785 24.8929 1786.41 23.75 1788 23.75C1789.59 23.75 1791 24.8929 1791 26.4375C1791 27.8179 1789.88 28.8774 1788.5 29.0871V29.25C1788.5 29.5261 1788.28 29.75 1788 29.75C1787.72 29.75 1787.5 29.5261 1787.5 29.25V28.625C1787.5 28.3489 1787.72 28.125 1788 28.125C1789.17 28.125 1790 27.3086 1790 26.4375C1790 25.5664 1789.17 24.75 1788 24.75C1786.83 24.75 1786 25.5664 1786 26.4375V26.75C1786 27.0261 1785.78 27.25 1785.5 27.25C1785.22 27.25 1785 27.0261 1785 26.75V26.4375Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/><path d="M1788 21C1784.13 21 1781 24.134 1781 28C1781 31.866 1784.13 35 1788 35C1791.87 35 1795 31.866 1795 28C1795 24.134 1791.87 21 1788 21ZM1780 28C1780 23.5817 1783.58 20 1788 20C1792.42 20 1796 23.5817 1796 28C1796 32.4183 1792.42 36 1788 36C1783.58 36 1780 32.4183 1780 28Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"/>`;
 const HD_APPS = `<path d="M1830 20.5C1830 20.2239 1830.22 20 1830.5 20H1833.5C1833.78 20 1834 20.2239 1834 20.5V23.5C1834 23.7761 1833.78 24 1833.5 24H1830.5C1830.22 24 1830 23.7761 1830 23.5V20.5Z" fill="currentColor"/><path d="M1836 20.5C1836 20.2239 1836.22 20 1836.5 20H1839.5C1839.78 20 1840 20.2239 1840 20.5V23.5C1840 23.7761 1839.78 24 1839.5 24H1836.5C1836.22 24 1836 23.7761 1836 23.5V20.5Z" fill="currentColor"/><path d="M1842 20.5C1842 20.2239 1842.22 20 1842.5 20H1845.5C1845.78 20 1846 20.2239 1846 20.5V23.5C1846 23.7761 1845.78 24 1845.5 24H1842.5C1842.22 24 1842 23.7761 1842 23.5V20.5Z" fill="currentColor"/><path d="M1842 26.5C1842 26.2239 1842.22 26 1842.5 26H1845.5C1845.78 26 1846 26.2239 1846 26.5V29.5C1846 29.7761 1845.78 30 1845.5 30H1842.5C1842.22 30 1842 29.7761 1842 29.5V26.5Z" fill="currentColor"/><path d="M1836 26.5C1836 26.2239 1836.22 26 1836.5 26H1839.5C1839.78 26 1840 26.2239 1840 26.5V29.5C1840 29.7761 1839.78 30 1839.5 30H1836.5C1836.22 30 1836 29.7761 1836 29.5V26.5Z" fill="currentColor"/><path d="M1830 26.5C1830 26.2239 1830.22 26 1830.5 26H1833.5C1833.78 26 1834 26.2239 1834 26.5V29.5C1834 29.7761 1833.78 30 1833.5 30H1830.5C1830.22 30 1830 29.7761 1830 29.5V26.5Z" fill="currentColor"/><path d="M1830 32.5C1830 32.2239 1830.22 32 1830.5 32H1833.5C1833.78 32 1834 32.2239 1834 32.5V35.5C1834 35.7761 1833.78 36 1833.5 36H1830.5C1830.22 36 1830 35.7761 1830 35.5V32.5Z" fill="currentColor"/><path d="M1836 32.5C1836 32.2239 1836.22 32 1836.5 32H1839.5C1839.78 32 1840 32.2239 1840 32.5V35.5C1840 35.7761 1839.78 36 1839.5 36H1836.5C1836.22 36 1836 35.7761 1836 35.5V32.5Z" fill="currentColor"/><path d="M1842 32.5C1842 32.2239 1842.22 32 1842.5 32H1845.5C1845.78 32 1846 32.2239 1846 32.5V35.5C1846 35.7761 1845.78 36 1845.5 36H1842.5C1842.22 36 1842 35.7761 1842 35.5V32.5Z" fill="currentColor"/>`;
 /* AppHeader: 56px; the Hitachi logo, a 24px rule and the app name; at the right help, apps and the account (initials) */
-export function AppHeader({ app = "VSP 360", initials = "AC", onHelp, onApps, onAccount, theme = "dawn", className = "", style }) {
+function AppHeader({ app = "VSP 360", initials = "AC", onHelp, onApps, onAccount, theme = "dawn", className = "", style }) {
   const rootRef = useRef(null);
   const tip = useTips(rootRef, ".hvn-root");
   return (
