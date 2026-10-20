@@ -2393,3 +2393,6 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The Summary sits 16px above the next section (Detections), the same distance as between the cards (was 56px).
 - (Oct 19, 19:11) A disabled decision button (Dismiss, Check, Attack) draws its icon in its label's colour, not its own tint.
 - (Oct 19, 19:13) Dispatcher entering an already active fire: the smoke check and the initial attack are taken as done, so all three decisions show disabled (Check and Attack with their green check).
+
+## Oct 20 (morning consistency pass)
+- Back to the type scale: the incident and station mini cards' tag and secondary line, the Tour label under the helicopter and the chat's small map credit are 14px Footnote (were 13px).
