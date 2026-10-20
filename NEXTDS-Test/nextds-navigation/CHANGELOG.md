@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 — 2026-10-20
+
+- Fix: the collapse / expand button did not respond in 0.1.1 and 0.1.2 (the list of sections covered it).
+
 ## 0.1.2 — 2026-10-20
 
 - Menu pages: with nothing selected in the menu, the selection appears on press; with a page already selected, the selection moves on release: the new page's block opens while the old one closes (the select animation in reverse).

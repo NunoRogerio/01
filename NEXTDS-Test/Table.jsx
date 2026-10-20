@@ -1038,6 +1038,7 @@ const CSS = `
 .hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
 .hvn-li{position:relative}
 .hvn-v > .hvn-list{position:relative}
+.hvn-v > .hvn-toggle{z-index:2} /* above the list, which starts at the top of the bar */
 .hvn-v > .hvn-list > .hvn-li{z-index:1} /* the icons sit above the travelling card */
 .hvn-v > .hvn-list .hvn-item.is-active::after,.hvn-v > .hvn-list .hvn-item.is-active::before{display:none} /* the bar shows its selection with the card below */
 .hvn-railmark{position:absolute;left:16px;top:72px;z-index:0;width:238px;height:32px;border-radius:4px;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),width .2s ease}
@@ -5449,7 +5450,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "wicked-sel-1"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-tgl-fix"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

@@ -1,6 +1,6 @@
 {
   "name": "@nextds/navigation",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "The NEXT Design System navigation for React: the vertical bar with drill-down menus (VSP 360 structure by default) and the app header; themes Dawn and Wicked.",
   "license": "UNLICENSED",
   "private": true,

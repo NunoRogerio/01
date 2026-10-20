@@ -223,6 +223,7 @@
 .hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
 .hvn-li{position:relative}
 .hvn-v > .hvn-list{position:relative}
+.hvn-v > .hvn-toggle{z-index:2} /* above the list, which starts at the top of the bar */
 .hvn-v > .hvn-list > .hvn-li{z-index:1} /* the icons sit above the travelling card */
 .hvn-v > .hvn-list .hvn-item.is-active::after,.hvn-v > .hvn-list .hvn-item.is-active::before{display:none} /* the bar shows its selection with the card below */
 .hvn-railmark{position:absolute;left:16px;top:72px;z-index:0;width:238px;height:32px;border-radius:4px;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),width .2s ease}
