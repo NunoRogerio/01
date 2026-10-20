@@ -625,8 +625,9 @@ const CSS = `
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
 .hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px}
-.hvt-fg-titlebar.is-adv{justify-content:flex-start} /* Advanced on: it sits after the title, Match all / any at the far right */
-.hvt-fg-match{margin-left:auto;padding:0 12px;animation:hvt-fade .2s ease}
+.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)} /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
+.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-match{justify-self:end;padding:0 12px;animation:hvt-fade .2s ease}
 @keyframes hvt-fade{from{opacity:0}to{opacity:1}}
 .hvt-fg-matchtxt{display:inline-grid} /* both labels take the same cell: the button keeps the width of the longer one */
 .hvt-fg-matchtxt > span{grid-area:1/1;transition:opacity .15s}
@@ -1733,7 +1734,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
      shows an L; both in the colour and weight of the column resize line */
   const rzRef = useRef(null);
   const [resizing, setResizing] = useState(false);
-  /* Advanced slides from the right end of the title bar to its place after the title (and back); no bounce */
+  /* Advanced slides from the right end of the title bar to its centre (and back); no bounce */
   const advRef = useRef(null), advFrom = useRef(null);
   useLayoutEffect(() => {
     const el = advRef.current, from = advFrom.current; advFrom.current = null;
@@ -5420,7 +5421,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fg-match-1"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fg-match-2"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

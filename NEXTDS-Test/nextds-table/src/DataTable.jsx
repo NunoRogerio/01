@@ -672,7 +672,7 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
      shows an L; both in the colour and weight of the column resize line */
   const rzRef = useRef(null);
   const [resizing, setResizing] = useState(false);
-  /* Advanced slides from the right end of the title bar to its place after the title (and back); no bounce */
+  /* Advanced slides from the right end of the title bar to its centre (and back); no bounce */
   const advRef = useRef(null), advFrom = useRef(null);
   useLayoutEffect(() => {
     const el = advRef.current, from = advFrom.current; advFrom.current = null;

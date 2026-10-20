@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 — 2026-10-20
+
+- Filter group panel: with Advanced on, Advanced moves to the centre of the title bar (not right after the title).
+
 ## 0.6.1 — 2026-10-20
 
 - Filter group panel: with Advanced on, Advanced sits right after the column title (it slides there) and a Match all / Match any button sits at the far right of the title bar: one click switches how the conditions combine. The Match dropdown in the panel's footer is gone.

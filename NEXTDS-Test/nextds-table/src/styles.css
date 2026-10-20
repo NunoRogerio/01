@@ -613,8 +613,9 @@
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
 .hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px}
-.hvt-fg-titlebar.is-adv{justify-content:flex-start} /* Advanced on: it sits after the title, Match all / any at the far right */
-.hvt-fg-match{margin-left:auto;padding:0 12px;animation:hvt-fade .2s ease}
+.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)} /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
+.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-match{justify-self:end;padding:0 12px;animation:hvt-fade .2s ease}
 @keyframes hvt-fade{from{opacity:0}to{opacity:1}}
 .hvt-fg-matchtxt{display:inline-grid} /* both labels take the same cell: the button keeps the width of the longer one */
 .hvt-fg-matchtxt > span{grid-area:1/1;transition:opacity .15s}
