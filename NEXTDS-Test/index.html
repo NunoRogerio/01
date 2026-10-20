@@ -5087,6 +5087,8 @@ const SCREEN_CSS = `
 .hvs-paneltgl-chev{transform-origin:8px 9.5px;transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed .hvs-paneltgl-chev,.hvs.is-ctl-folding .hvs-paneltgl-chev{transform:rotate(180deg)} /* close panel: the chevron points up; open panel: it turns to point down */
 .hvs.is-ctl-closed .hvs-ctl{display:none}
+.hvs .hvs-ctl.hvs-abctl{display:inline-flex !important;width:auto;margin:0 0 0 12px;padding:0;z-index:auto;font-weight:400} /* the AB test switch, beside the page name; stays when the controls are closed */
+.hvs-abctl .hvs-seg{margin-right:0}
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
@@ -5445,7 +5447,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fg-match-2"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "ab-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6123,6 +6125,7 @@ function SearchBench({ theme, onTheme }) {
 function App() {
   const [cfg, setCfg] = useState(DEFAULT_CFG);
   const [page, setPage] = useState("table");
+  const [abTest, setAbTest] = useState(false); // Table page: AB test shows only the filter choice
   /* the control panel folds up into the top bar and opens again from it; only the open-panel icon and the title stay */
   const [ctlOpen, setCtlOpen] = useState(true);
   const benchRef = useRef(null);
@@ -6159,7 +6162,7 @@ function App() {
   useLayoutEffect(() => {
     const root = benchRef.current;
     if (!root || typeof ResizeObserver === "undefined") return undefined;
-    const head = root.querySelector(".hvs-head"), ctl = root.querySelector(".hvs-ctl");
+    const head = root.querySelector(".hvs-head"), ctl = root.querySelector(".hvs-ctl:not(.hvs-abctl)");
     const fit = () => {
       const top = root.getBoundingClientRect().top;
       const el = ctl && ctl.offsetParent ? ctl : head;
@@ -6257,7 +6260,7 @@ function App() {
     const o = ctlOpening.current;
     if (!ctlOpen || !o) return;
     ctlOpening.current = null;
-    const e2 = benchRef.current && benchRef.current.querySelector(".hvs-ctl");
+    const e2 = benchRef.current && benchRef.current.querySelector(".hvs-ctl:not(.hvs-abctl)");
     if (!e2) { ctlBusy.current = false; return; }
     const c2 = getComputedStyle(e2);
     const to = { height: `${e2.offsetHeight}px`, paddingTop: c2.paddingTop, paddingBottom: c2.paddingBottom, marginBottom: c2.marginBottom, opacity: 1 };
@@ -6267,7 +6270,7 @@ function App() {
   }, [ctlOpen]);
   const toggleCtl = () => {
     if (ctlBusy.current) return;
-    const root = benchRef.current, el = root && root.querySelector(".hvs-ctl");
+    const root = benchRef.current, el = root && root.querySelector(".hvs-ctl:not(.hvs-abctl)");
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!el || !el.animate || reduce) { setCtlOpen((o) => !o); return; }
     const ease = { duration: 320, easing: "cubic-bezier(.4,0,.2,1)" };
@@ -6622,6 +6625,14 @@ function App() {
               <path className="hvs-paneltgl-chev" d="M5.75 10.5 8 8.5l2.25 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           Workbench: <PageSwitch page={page} onPick={setPage} />
+          {page === "table" && ( /* AB test: the same table with only the filter choice (Group or MUI); a multibutton on the WIP stripes */
+            <span className="hvs-ctl hvs-abctl">
+              <span className="hvs-seg" role="group" aria-label="AB test">
+                <button type="button" className="hvs-segbtn" aria-pressed={abTest} data-tip={abTest ? "Back to all the controls" : "The table with only the filter choice"}
+                        onClick={() => setAbTest((x) => !x)}>AB test</button>
+              </span>
+            </span>
+          )}
         </h1>
         <div className="hvs-headacts">
             <span className="hvs-wip" role="note" data-tip="Work in progress">WIP</span>{/* on every page */}
@@ -6643,6 +6654,18 @@ function App() {
 
         <main className="hvs-main">
           <section className="hvs-sec" aria-label="Configuration">
+          {abTest ? (
+          <div className="hvs-ctl">
+            <div className="hvs-databar" role="toolbar" aria-label="AB test controls">
+              <CtlField label="Filter">
+                <div className="hvs-seg" role="group" aria-label="Filter">
+                  <FilterHeaderBtn on={!!cfg.showFilterButton && !cfg.noHeader} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true, noHeader: false })}
+                                   onPick={(v) => set({ showFilterButton: true, filterUi: v, noHeader: false })} />
+                </div>
+              </CtlField>
+            </div>
+          </div>
+          ) : (
           <div className="hvs-ctl">
             <div className="hvs-databar" role="toolbar" aria-label="Table controls">
               {/* environment: how the table is shown and fed */}
@@ -6738,6 +6761,7 @@ function App() {
               <button type="button" className="hvt-btn hvs-resetbtn" aria-label="Reset settings" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
+          )}
           </section>
 
 
