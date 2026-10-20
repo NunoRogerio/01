@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 — 2026-10-20
+
+- Back row of the 2nd level: half the space between the chevron and the name.
+
 ## 0.1.4 — 2026-10-20
 
 - Menu titles (the section name at level 1, the back row at level 2) are 12px, the size of the category labels (Storage, Virtualization…).
