@@ -5008,7 +5008,8 @@ const SCREEN_CSS = `
 /* 18px above the 28px title row: its icon and text start 24px below the bar edge, the same as the 24px under the last controls */
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
-.hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#000;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
+.hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;position:relative;isolation:isolate;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#ffd400;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
+.hvs-wip::before{content:"";position:absolute;inset:4px;z-index:-1;background:#000} /* a black box 4px inside the striped tag, WIP in the yellow */
 .hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
 .hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:32px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
@@ -5069,12 +5070,12 @@ const SCREEN_CSS = `
 .hvs-abctl .hvs-seg{margin-right:0}
 .hvs .hvs-ctl.hvs-abctl.is-choice{margin-left:24px} /* 24px between control blocks */
 .hvs-ctl .hvs-seglabel{position:relative;isolation:isolate;display:inline-flex;align-items:center;height:24px;padding:0 12px;color:#000;font-weight:600;cursor:default}
-.hvs-ctl .hvs-seglabel::before{content:"";position:absolute;inset:2px;z-index:-1;background:#ffd400;border:1px solid #ffd400;box-shadow:0 1px 2px rgba(0,0,0,.08)} /* the same box as a chosen option, 6px inside the track */ /* locked: the block of a chosen option, in the WIP yellow; it cannot be changed */
+.hvs-ctl .hvs-seglabel::before{content:"";position:absolute;inset:0;z-index:-1;background:#ffd400;border:1px solid #ffd400;box-shadow:0 1px 2px rgba(0,0,0,.08)} /* the same box as a chosen option, 4px inside the track */ /* locked: the block of a chosen option, in the WIP yellow; it cannot be changed */
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]:disabled:not([data-unpick])::before{display:none} /* chosen but disabled: no block */
-.hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:2px;z-index:-1;border-radius:inherit;pointer-events:none;
+.hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
   background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:24px;margin-bottom:24px} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
@@ -5428,7 +5429,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fb-speed-1"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "stripes-3"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
