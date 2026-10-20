@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 — 2026-10-20
+
+- Menu titles (the section name at level 1, the back row at level 2) are 12px, the size of the category labels (Storage, Virtualization…).
+
 ## 0.1.3 — 2026-10-20
 
 - Fix: the collapse / expand button did not respond in 0.1.1 and 0.1.2 (the list of sections covered it).

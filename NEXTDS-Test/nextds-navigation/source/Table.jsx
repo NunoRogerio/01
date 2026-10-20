@@ -1008,7 +1008,7 @@ const CSS = `
 @keyframes hvn-in-fwd{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @keyframes hvn-in-back{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.hvn-panel,.hvn-level{animation:none!important}}
-.hvn-phead{display:flex;align-items:center;flex:none;box-sizing:border-box;width:100%;height:32px;padding:0 0 0 19px;border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--content-placeholder);font:inherit;text-align:left;white-space:nowrap}
+.hvn-phead{display:flex;align-items:center;flex:none;box-sizing:border-box;width:100%;height:32px;padding:0 0 0 19px;border:0;border-radius:8px 8px 0 0;background:transparent;color:var(--content-placeholder);font:inherit;text-align:left;white-space:nowrap;font-size:12px;line-height:18px}
 .hvn-phead.is-back{gap:13px;padding-left:7px;color:var(--content-primary);cursor:pointer}
 .hvn-phead.is-back:hover{background:var(--container-hover-background)}
 .hvn-psep{flex:none;height:4px;background:var(--nav-bar)}
@@ -5450,7 +5450,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "sel-container"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-head12"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
