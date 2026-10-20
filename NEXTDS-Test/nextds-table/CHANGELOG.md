@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4 — 2026-10-20
+
+- Column drag and drop: the landing area has the same 8px corners as the dragged column (it had 4px); the empty drop area of the column settings too.
+
 ## 0.6.3 — 2026-10-20
 
 - The filter bar opens and closes 30% quicker (0.28 s instead of 0.4 s).

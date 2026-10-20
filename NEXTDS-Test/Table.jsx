@@ -370,7 +370,7 @@ const CSS = `
   box-shadow:0 0 0 3px var(--cat1-100),0 6px 16px rgba(0,0,0,.14),inset 0 8px 8px -8px rgba(0,0,0,.18),inset 0 -8px 8px -8px rgba(0,0,0,.18)} /* the lifted column: the full height of the table, 8px corners, a 3px outline all around, a subtle drop shadow and a soft inner shadow at the top and bottom */
 .hvt-dragcol.is-settling{transition:transform .2s cubic-bezier(.2,.8,.2,1)}
 .hvt-dropzone{position:absolute;top:0;bottom:0;z-index:1;pointer-events:none;background:var(--container-edit);
-  border:1px dashed var(--cat1-100);border-radius:4px;transition:left .2s cubic-bezier(.2,.8,.2,1)}
+  border:1px dashed var(--cat1-100);border-radius:8px;transition:left .2s cubic-bezier(.2,.8,.2,1)} /* the same 8px corners as the lifted column */
 .hvt-dropzone.is-settle{border:2px solid var(--cat1-100)}
 @media (prefers-reduced-motion:reduce){.hvt-cell.is-shifting,.hvt-cell.is-lifted.is-settling,.hvt-dropzone,.hvt-dragcol.is-settling{transition:none}}
 .hvt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -865,7 +865,7 @@ const CSS = `
   box-shadow:0 4px 12px rgba(0,0,0,.2),0 0 0 1px var(--cat1-100)}
 .hvt-cfg-line{position:absolute;left:0;right:0;height:var(--hvt-guide-w);margin-top:calc(var(--hvt-guide-w) / -2);border-radius:999px;background:var(--cat1-100);pointer-events:none;z-index:2}
 .hvt-cfg-empty{display:flex;align-items:center;justify-content:center;height:48px;border:1px dashed var(--cat1-100);
-  border-radius:4px;background:var(--container-edit);font-size:12px;line-height:20px}
+  border-radius:8px;background:var(--container-edit);font-size:12px;line-height:20px}
 .hvt-cfg-empty.is-over{border:2px solid var(--cat1-100)}
 .hvt-cfg-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;margin:0 -16px -16px;padding:8px 16px;
   border-top:1px solid var(--border-default)}
@@ -5210,10 +5210,10 @@ const SCREEN_CSS = `
  *   --ctl-primary-hover #3a3a3a                  #ffffff
  *   --ctl-on-primary    #ffffff                  #141414
  * ================================================================== */
-.hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-seg:#ffd400;--ctl-raised:#ffffff;
+.hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-seg:#ffd400;--ctl-raised:#f0f0f0;
   --ctl-text:#222222;--ctl-text-2:#454545;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
   --ctl-stripe:#ffe566;--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
-.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-seg:#ffd400;--ctl-raised:#101010;
+.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-seg:#ffd400;--ctl-raised:#2b2b2b;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
   --ctl-stripe:#ffe566;--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
@@ -5450,7 +5450,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-tgl-fix"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "sel-container"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
