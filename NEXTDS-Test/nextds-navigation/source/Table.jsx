@@ -624,7 +624,13 @@ const CSS = `
 .hvt-fg-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--content-primary)} /* a filter is applied to this column: a dot, no count */
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
-.hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px}
+.hvt-fg-titlebar.is-adv{justify-content:flex-start} /* Advanced on: it sits after the title, Match all / any at the far right */
+.hvt-fg-match{margin-left:auto;padding:0 12px;animation:hvt-fade .2s ease}
+@keyframes hvt-fade{from{opacity:0}to{opacity:1}}
+.hvt-fg-matchtxt{display:inline-grid} /* both labels take the same cell: the button keeps the width of the longer one */
+.hvt-fg-matchtxt > span{grid-area:1/1;transition:opacity .15s}
+.hvt-fg-matchtxt[data-on="all"] > span:last-child,.hvt-fg-matchtxt[data-on="any"] > span:first-child{opacity:0}
 .hvt-fg-note{margin:0;font-size:12px;line-height:18px;color:var(--content-placeholder)}
 .hvt-switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:21px;cursor:pointer;white-space:nowrap}
 .hvt-switch input{position:absolute;opacity:0;width:1px;height:1px}
@@ -1727,6 +1733,14 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
      shows an L; both in the colour and weight of the column resize line */
   const rzRef = useRef(null);
   const [resizing, setResizing] = useState(false);
+  /* Advanced slides from the right end of the title bar to its place after the title (and back); no bounce */
+  const advRef = useRef(null), advFrom = useRef(null);
+  useLayoutEffect(() => {
+    const el = advRef.current, from = advFrom.current; advFrom.current = null;
+    if (!el || from == null || !el.animate || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    const dx = from - el.getBoundingClientRect().left;
+    if (dx) el.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)" });
+  }, [advanced]);
   const rzDown = (e, side) => {
     if (!onSize || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.stopPropagation(); e.preventDefault();
@@ -1898,13 +1912,20 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         </div>
         <div className="hvt-fg-pane">
           {col && (
-            <div className="hvt-fg-titlebar">
+            <div className={`hvt-fg-titlebar${advanced ? " is-adv" : ""}`}>
               <div className="hvt-fg-title">{col.filterLabel || col.title}</div>
-              <label className="hvt-switch">
-                <input type="checkbox" role="switch" checked={advanced} onChange={(e) => onAdvancedChange && onAdvancedChange(e.target.checked)} />
+              <label className="hvt-switch" ref={advRef}>
+                <input type="checkbox" role="switch" checked={advanced} onChange={(e) => { advFrom.current = advRef.current && advRef.current.getBoundingClientRect().left; if (onAdvancedChange) onAdvancedChange(e.target.checked); }} />
                 <span className="hvt-switch-track" aria-hidden="true"><i /></span>
                 <span>Advanced</span>
               </label>
+              {advanced && ( /* how the conditions combine: one click switches all / any; at the far right, apart from Advanced */
+                <button type="button" className="hvt-btn hvt-fg-match" aria-label={`${draft.logicOperator === "or" ? "Match any condition" : "Match all conditions"}. Switch to ${draft.logicOperator === "or" ? "match all" : "match any"}`}
+                        data-tip={draft.logicOperator === "or" ? "Match any condition. Click for all" : "Match all conditions. Click for any"}
+                        onClick={() => setDraft((d) => ({ ...d, logicOperator: d.logicOperator === "or" ? "and" : "or" }))}>
+                  <span className="hvt-fg-matchtxt" data-on={draft.logicOperator === "or" ? "any" : "all"}><span>Match all</span><span>Match any</span></span>
+                </button>
+              )}
             </div>
           )}
           {!advanced && col && (
@@ -1935,9 +1956,6 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         </div>
       </div>
       <div className="hvt-fg-foot">
-        <MenuButton variant="ghost" role="listbox" ariaLabel="Match" label={draft.logicOperator === "or" ? "Match any" : "Match all"} value={draft.logicOperator}
-                    items={[{ value: "and", label: "Match all conditions" }, { value: "or", label: "Match any condition" }]} minWidth={200}
-                    onSelect={(it) => setDraft((d) => ({ ...d, logicOperator: it.value }))} />
         <span className="hvt-grow" />
         <button type="button" className="hvt-btn" disabled={draft.items.length === 0} onClick={() => setDraft((d) => ({ ...d, items: [] }))}>Clear All</button>
         <button type="button" className="hvt-btn hvt-btn--secondary" onClick={onClose}>Cancel</button>
@@ -5156,7 +5174,7 @@ const SCREEN_CSS = `
  *   --ctl-label         #666666                  #b0b0b0   (control titles: Theme, Header, Density…)
  *   --ctl-border        black 18%                white 22%
  *   --ctl-hover         black 6%                 white 10%
- *   --ctl-stripe        #ffd400 (the WIP yellow) #ffd400
+ *   --ctl-stripe        WIP yellow at 90%  WIP yellow at 25% (text #c4c4c4 on it: 5.4:1)
  *   --ctl-inset         black 24%                black 80%
  *   --ctl-primary       #1f1f1f                  #ececec
  *   --ctl-primary-hover #3a3a3a                  #ffffff
@@ -5164,10 +5182,10 @@ const SCREEN_CSS = `
  * ================================================================== */
 .hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-raised:#ffffff;
   --ctl-text:#222222;--ctl-text-2:#5c5c5c;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
-  --ctl-stripe:#ffd400;--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
+  --ctl-stripe:rgba(255,212,0,.9);--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
 .hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-raised:#5a5a5a;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
-  --ctl-stripe:#ffd400;--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
+  --ctl-stripe:rgba(255,212,0,.25);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
 /* switching Dawn / Wicked: every colour eases over to the new theme (only while switching, so hovers stay quick) */
@@ -5402,7 +5420,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-21"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fg-match-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -5749,8 +5767,8 @@ function makeZip(files) {
   const enc = new TextEncoder(), parts = [], central = [];
   let offset = 0;
   const u16 = (v) => [v & 0xff, (v >>> 8) & 0xff], u32 = (v) => [v & 0xff, (v >>> 8) & 0xff, (v >>> 16) & 0xff, (v >>> 24) & 0xff];
-  files.forEach(({ name, text }) => {
-    const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db);
+  files.forEach(({ name, text }) => { // text, or bytes (e.g. the .tgz inside the zip)
+    const nb = enc.encode(name), db = files.find((x) => x.name === name).bytes || enc.encode(text), crc = crc32(db);
     const head = new Uint8Array([...u32(0x04034b50), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0)]);
     parts.push(head, nb, db);
     central.push(new Uint8Array([...u32(0x02014b50), ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(db.length), ...u32(db.length), ...u16(nb.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]), nb);
@@ -5778,7 +5796,10 @@ function embeddedPackage(kind = "table") {
   if (!el || !el.textContent.trim()) return null;
   const bin = atob(el.textContent.trim()), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return { blob: new Blob([bytes], { type: "application/gzip" }), name: el.getAttribute("data-name") || "nextds-table.tgz" };
+  const tgz = el.getAttribute("data-name") || "nextds-table.tgz";
+  /* claude.ai downloads take .zip, not .tgz: the .tgz goes inside a .zip with the install steps */
+  const steps = `# ${tgz}\n\nThe React package, as delivered to the developers.\n\n1. Keep ${tgz} in your project, e.g. in vendor/.\n2. npm install ./vendor/${tgz}\n3. Read the README inside the package (node_modules/@nextds/…/README.md), or unpack it: tar -xzf ${tgz}\n`;
+  return { blob: makeZip([{ name: tgz, bytes }, { name: "INSTALL.md", text: steps }]), name: tgz.replace(/\.tgz$/, ".zip") };
 }
 const pkgFileName = (kind) => { const p = embeddedPackage(kind); return p ? p.name : "nextds-table.zip"; };
 async function downloadPackage(src, kind) {

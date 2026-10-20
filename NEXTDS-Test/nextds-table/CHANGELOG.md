@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1 — 2026-10-20
+
+- Filter group panel: with Advanced on, Advanced sits right after the column title (it slides there) and a Match all / Match any button sits at the far right of the title bar: one click switches how the conditions combine. The Match dropdown in the panel's footer is gone.
+
 ## 0.6.0 — 2026-10-19
 
 - The navigation moved to its own package, `@nextds/navigation` (Navigation, AppHeader, VSP360_NAVIGATION, navPathLabels). This package is the table again, as in 0.4.x. If you used the navigation from 0.5.0, install `@nextds/navigation` and change the import.

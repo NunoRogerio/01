@@ -672,6 +672,14 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
      shows an L; both in the colour and weight of the column resize line */
   const rzRef = useRef(null);
   const [resizing, setResizing] = useState(false);
+  /* Advanced slides from the right end of the title bar to its place after the title (and back); no bounce */
+  const advRef = useRef(null), advFrom = useRef(null);
+  useLayoutEffect(() => {
+    const el = advRef.current, from = advFrom.current; advFrom.current = null;
+    if (!el || from == null || !el.animate || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    const dx = from - el.getBoundingClientRect().left;
+    if (dx) el.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], { duration: 240, easing: "cubic-bezier(.4,0,.2,1)" });
+  }, [advanced]);
   const rzDown = (e, side) => {
     if (!onSize || (e.pointerType === "mouse" && e.button !== 0)) return;
     e.stopPropagation(); e.preventDefault();
@@ -843,13 +851,20 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         </div>
         <div className="hvt-fg-pane">
           {col && (
-            <div className="hvt-fg-titlebar">
+            <div className={`hvt-fg-titlebar${advanced ? " is-adv" : ""}`}>
               <div className="hvt-fg-title">{col.filterLabel || col.title}</div>
-              <label className="hvt-switch">
-                <input type="checkbox" role="switch" checked={advanced} onChange={(e) => onAdvancedChange && onAdvancedChange(e.target.checked)} />
+              <label className="hvt-switch" ref={advRef}>
+                <input type="checkbox" role="switch" checked={advanced} onChange={(e) => { advFrom.current = advRef.current && advRef.current.getBoundingClientRect().left; if (onAdvancedChange) onAdvancedChange(e.target.checked); }} />
                 <span className="hvt-switch-track" aria-hidden="true"><i /></span>
                 <span>Advanced</span>
               </label>
+              {advanced && ( /* how the conditions combine: one click switches all / any; at the far right, apart from Advanced */
+                <button type="button" className="hvt-btn hvt-fg-match" aria-label={`${draft.logicOperator === "or" ? "Match any condition" : "Match all conditions"}. Switch to ${draft.logicOperator === "or" ? "match all" : "match any"}`}
+                        data-tip={draft.logicOperator === "or" ? "Match any condition. Click for all" : "Match all conditions. Click for any"}
+                        onClick={() => setDraft((d) => ({ ...d, logicOperator: d.logicOperator === "or" ? "and" : "or" }))}>
+                  <span className="hvt-fg-matchtxt" data-on={draft.logicOperator === "or" ? "any" : "all"}><span>Match all</span><span>Match any</span></span>
+                </button>
+              )}
             </div>
           )}
           {!advanced && col && (
@@ -880,9 +895,6 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
         </div>
       </div>
       <div className="hvt-fg-foot">
-        <MenuButton variant="ghost" role="listbox" ariaLabel="Match" label={draft.logicOperator === "or" ? "Match any" : "Match all"} value={draft.logicOperator}
-                    items={[{ value: "and", label: "Match all conditions" }, { value: "or", label: "Match any condition" }]} minWidth={200}
-                    onSelect={(it) => setDraft((d) => ({ ...d, logicOperator: it.value }))} />
         <span className="hvt-grow" />
         <button type="button" className="hvt-btn" disabled={draft.items.length === 0} onClick={() => setDraft((d) => ({ ...d, items: [] }))}>Clear All</button>
         <button type="button" className="hvt-btn hvt-btn--secondary" onClick={onClose}>Cancel</button>
