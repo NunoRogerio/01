@@ -5065,6 +5065,7 @@ const SCREEN_CSS = `
 .hvs.is-ctl-closed .hvs-ctl{display:none}
 .hvs .hvs-ctl.hvs-abctl{display:inline-flex !important;width:auto;margin:0 0 0 12px;padding:0;z-index:auto;font-weight:400} /* the AB test switch, beside the page name; stays when the controls are closed */
 .hvs-abctl .hvs-seg{margin-right:0}
+.hvs-ctl .hvs-seglabel{display:inline-flex;align-items:center;height:24px;padding:0 4px 0 8px;color:var(--cl-text);font-weight:400} /* a label inside a track: no block, not a button */
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
@@ -5423,7 +5424,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "ab-1"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "ab-2"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6605,7 +6606,7 @@ export default function App() {
             <span className="hvs-ctl hvs-abctl">
               <span className="hvs-seg" role="group" aria-label="AB test">
                 <button type="button" className="hvs-segbtn" aria-pressed={abTest} data-tip={abTest ? "Back to all the controls" : "The table with only the filter choice"}
-                        onClick={() => setAbTest((x) => !x)}>AB test</button>
+                        onClick={() => { if (!abTest) set({ showFilterButton: true, filterUi: "group", noHeader: false }); setAbTest((x) => !x); }}>AB test</button>
               </span>
             </span>
           )}
@@ -6633,10 +6634,14 @@ export default function App() {
           {abTest ? (
           <div className="hvs-ctl">
             <div className="hvs-databar" role="toolbar" aria-label="AB test controls">
-              <CtlField label="Filter">
-                <div className="hvs-seg" role="group" aria-label="Filter">
-                  <FilterHeaderBtn on={!!cfg.showFilterButton && !cfg.noHeader} type={cfg.filterUi} onOff={() => set({ showFilterButton: false })} onOn={() => set({ showFilterButton: true, noHeader: false })}
-                                   onPick={(v) => set({ showFilterButton: true, filterUi: v, noHeader: false })} />
+              <CtlField label={"\u00a0"}>{/* the track says "Filter" itself: no label above it */}
+                <div className="hvs-seg" role="group" aria-label="Filter type">
+                  {/* AB test: "Filter" is a label in the track (no block), its two types are exposed, no dropdown */}
+                  <span className="hvs-seglabel" aria-hidden="true">Filter</span>
+                  {FILTER_TYPES.map(([v, t]) => (
+                    <button key={v} type="button" className="hvs-segbtn" aria-pressed={cfg.filterUi === v}
+                            onClick={() => set({ showFilterButton: true, filterUi: v, noHeader: false })}>{t}</button>
+                  ))}
                 </div>
               </CtlField>
             </div>
