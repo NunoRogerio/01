@@ -5090,7 +5090,7 @@ const SCREEN_CSS = `
 .hvs .hvs-ctl.hvs-abctl{display:inline-flex !important;width:auto;margin:0 0 0 12px;padding:0;z-index:auto;font-weight:400} /* the AB test switch, beside the page name; stays when the controls are closed */
 .hvs-abctl .hvs-seg{margin-right:0}
 .hvs .hvs-ctl.hvs-abctl.is-choice{margin-left:24px} /* 24px between control blocks */
-.hvs-ctl .hvs-seglabel{position:relative;isolation:isolate;display:inline-flex;align-items:center;height:24px;padding:0 12px;color:#ffffff;font-weight:600;cursor:default}
+.hvs-ctl .hvs-seglabel{position:relative;isolation:isolate;display:inline-flex;align-items:center;height:24px;padding:0 8px;color:#ffffff;font-weight:600;cursor:default}
 .hvs-ctl .hvs-seglabel::before{content:"";position:absolute;inset:0;z-index:-1;background:#000;border:1px solid #000;border-radius:999px;box-shadow:0 1px 2px rgba(0,0,0,.08)} /* the same box as a chosen option, 4px inside the track */ /* locked (read only), like WIP: a black pill with white text; it cannot be changed */
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
@@ -5450,7 +5450,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "ro-pill"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "ro-pad8"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
