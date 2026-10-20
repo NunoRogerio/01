@@ -12,7 +12,7 @@ The NEXT Design System navigation for React, as designed for VSP 360:
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-navigation-0.1.1.tgz
+npm install ./vendor/nextds-navigation-0.1.2.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -105,7 +105,7 @@ The full list, with types, is in `dist/index.d.ts`.
 
 - **Sections with pages** open their menu inside the bar; the bar shows its icons only while a menu is open. The menu stays open after a page is chosen. Clicking the section again, or Esc, closes it.
 - **2nd level**: a page with a caret drills down; the back row (‹ and the name) returns. The level slides in from the right going down and from the left going back. No bounce.
-- **Choosing a page**: the selection moves to the page on press and is confirmed on release; moving off while pressed puts it back (as in the NEXT dropdowns).
+- **Choosing a page**: with nothing selected in the menu, the selection appears on press (moving off while pressed takes it back); with a page already selected, it moves on release: the new block opens while the old one closes.
 - **Collapsed bar**: a section with pages opens the bar with its menu. Esc or a click outside before choosing folds it back; once a page is chosen, the bar stays open.
 - **Tooltips** wherever a label is hidden (collapsed bar, header actions), after 0.5 s; on keyboard focus too.
 - **Focus rings** only with the keyboard (Tab), never with the mouse.
@@ -120,7 +120,7 @@ The **Hitachi Sans** font (regular, semibold, bold) is embedded in `styles.css`.
 ## A starting point for your app
 
 ```bash
-tar -xzf nextds-navigation-0.1.1.tgz && cd package   # the file from the React Package button (Navigation page)
+tar -xzf nextds-navigation-0.1.2.tgz && cd package   # the file from the React Package button (Navigation page)
 npm install          # dev tools only: esbuild, React, TypeScript
 npm run demo         # http://localhost:5174: header, bar, Dawn / Wicked
 ```

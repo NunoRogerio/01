@@ -4639,7 +4639,7 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, onExternal, floating, 
         anims[0].onfinish = anims[0].oncancel = () => { old.removeAttribute("data-unpick"); anims.forEach((a) => a.cancel()); };
       }
     } catch (err) { /* no pseudo-element animation here: the selection just moves */ }
-  }, [pending]);
+  }, [pending, active]);
   const fold = (dirIn) => { // a floating panel grows out of the icon that opened it and folds back into it; inside the bar it fades
     const el = panelRef.current;
     if (!el || !el.animate || navReduce()) return null;
@@ -4663,13 +4663,17 @@ function NavPanel({ top, sub, dir, active, onSub, onPick, onExternal, floating, 
     );
     return (
       <button key={t} type="button" className={`hvn-item hvn-pitem ${cls}${samePath(shown, path) ? " is-active" : ""}`} aria-current={samePath(active, path) ? "page" : undefined}
-              onPointerDown={(e) => {
+              onPointerDown={(e) => { // with nothing selected here, the selection appears on press; with a selection, it moves on release
                 if (e.button !== 0 || samePath(shown, path)) return;
-                press.current = { from: panelRef.current && panelRef.current.querySelector(".hvn-pitem.is-active"), to: e.currentTarget };
+                if (panelRef.current && panelRef.current.querySelector(".hvn-pitem.is-active")) return;
+                press.current = { from: null, to: e.currentTarget };
                 setPending(path);
               }}
               onPointerLeave={(e) => { if (pending && samePath(pending, path) && e.buttons) setPending(null); }}
-              onClick={() => { setPending(null); onPick(path); }}>
+              onClick={(e) => {
+                if (!pending && !samePath(active, path)) press.current = { from: panelRef.current && panelRef.current.querySelector(".hvn-pitem.is-active"), to: e.currentTarget }; // the old one closes as the new one opens
+                setPending(null); onPick(path);
+              }}>
         <span className="hvn-label">{t}</span>
       </button>
     );
@@ -5440,7 +5444,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "nav-mark-1"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-rel-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
