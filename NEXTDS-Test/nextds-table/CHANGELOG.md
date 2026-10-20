@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 — 2026-10-20
+
+- The filter bar opens and closes 30% quicker (0.28 s instead of 0.4 s).
+
 ## 0.6.2 — 2026-10-20
 
 - Filter group panel: with Advanced on, Advanced moves to the centre of the title bar (not right after the title).

@@ -779,7 +779,8 @@ const CSS = `
 .hvt-banner-clip{min-height:0;overflow:hidden}
 .hvt-banner-wrap.is-closed > .hvt-banner-clip{visibility:hidden;transition:visibility 0s .4s}
 .hvt-banner-wrap.is-settled > .hvt-banner-clip{overflow:visible}
-.hvt-banner-wrap.is-flat{margin-bottom:0}
+.hvt-banner-wrap.is-flat{margin-bottom:0;transition-duration:.28s} /* the filter bar: 30% quicker than the banners (0.4 s) */
+.hvt-banner-wrap.is-flat.is-closed > .hvt-banner-clip{transition-delay:.28s}
 .hvt-gbtn[aria-pressed="true"]{background:var(--container-hover-background)}
 /* a banner takes its space from the rows: the table keeps its size and the rows pushed past the bottom are cut off */
 .hvt-rows.has-banner{max-height:calc(var(--hvt-rows-page-h) + var(--hvt-max-extra,0px));overflow:hidden}
@@ -2524,7 +2525,7 @@ function Reveal({ open, children, instant = false, flat = false }) {
   useEffect(() => { const id = requestAnimationFrame(() => setShown(true)); return () => cancelAnimationFrame(id); }, []);
   useEffect(() => {
     if (!(open && shown)) { setSettled(false); return undefined; }
-    const t = setTimeout(() => setSettled(true), 420); // once open, menus inside may go past the edge
+    const t = setTimeout(() => setSettled(true), flat ? 300 : 420); // once open, menus inside may go past the edge
     return () => clearTimeout(t);
   }, [open, shown]);
   return (
@@ -3198,7 +3199,7 @@ export function DataTable({
     clearTimeout(fbTimer.current);
     fbFirst.current = false;
     if (v) { setFbMounted(true); setFbOpen(true); }
-    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 430); }
+    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 310); }
   };
   useEffect(() => { if (showFilterBar !== fbOpen) applyFilterBar(showFilterBar); }, [showFilterBar]); // eslint-disable-line
   const toggleFilterBar = () => { const v = !fbOpen; applyFilterBar(v); if (onFilterBarChange) onFilterBarChange(v); };
@@ -5427,7 +5428,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "stripes-2"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fb-speed-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

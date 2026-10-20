@@ -1462,7 +1462,7 @@ function Reveal({ open, children, instant = false, flat = false }) {
   useEffect(() => { const id = requestAnimationFrame(() => setShown(true)); return () => cancelAnimationFrame(id); }, []);
   useEffect(() => {
     if (!(open && shown)) { setSettled(false); return undefined; }
-    const t = setTimeout(() => setSettled(true), 420); // once open, menus inside may go past the edge
+    const t = setTimeout(() => setSettled(true), flat ? 300 : 420); // once open, menus inside may go past the edge
     return () => clearTimeout(t);
   }, [open, shown]);
   return (
@@ -2136,7 +2136,7 @@ export function DataTable({
     clearTimeout(fbTimer.current);
     fbFirst.current = false;
     if (v) { setFbMounted(true); setFbOpen(true); }
-    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 430); }
+    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 310); }
   };
   useEffect(() => { if (showFilterBar !== fbOpen) applyFilterBar(showFilterBar); }, [showFilterBar]); // eslint-disable-line
   const toggleFilterBar = () => { const v = !fbOpen; applyFilterBar(v); if (onFilterBarChange) onFilterBarChange(v); };

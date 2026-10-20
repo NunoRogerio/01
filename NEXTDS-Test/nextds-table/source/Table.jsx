@@ -779,7 +779,8 @@ const CSS = `
 .hvt-banner-clip{min-height:0;overflow:hidden}
 .hvt-banner-wrap.is-closed > .hvt-banner-clip{visibility:hidden;transition:visibility 0s .4s}
 .hvt-banner-wrap.is-settled > .hvt-banner-clip{overflow:visible}
-.hvt-banner-wrap.is-flat{margin-bottom:0}
+.hvt-banner-wrap.is-flat{margin-bottom:0;transition-duration:.28s} /* the filter bar: 30% quicker than the banners (0.4 s) */
+.hvt-banner-wrap.is-flat.is-closed > .hvt-banner-clip{transition-delay:.28s}
 .hvt-gbtn[aria-pressed="true"]{background:var(--container-hover-background)}
 /* a banner takes its space from the rows: the table keeps its size and the rows pushed past the bottom are cut off */
 .hvt-rows.has-banner{max-height:calc(var(--hvt-rows-page-h) + var(--hvt-max-extra,0px));overflow:hidden}
@@ -2524,7 +2525,7 @@ function Reveal({ open, children, instant = false, flat = false }) {
   useEffect(() => { const id = requestAnimationFrame(() => setShown(true)); return () => cancelAnimationFrame(id); }, []);
   useEffect(() => {
     if (!(open && shown)) { setSettled(false); return undefined; }
-    const t = setTimeout(() => setSettled(true), 420); // once open, menus inside may go past the edge
+    const t = setTimeout(() => setSettled(true), flat ? 300 : 420); // once open, menus inside may go past the edge
     return () => clearTimeout(t);
   }, [open, shown]);
   return (
@@ -3198,7 +3199,7 @@ export function DataTable({
     clearTimeout(fbTimer.current);
     fbFirst.current = false;
     if (v) { setFbMounted(true); setFbOpen(true); }
-    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 430); }
+    else { setFbOpen(false); setPanel((pn) => (pn && pn.anchor === "bar" ? null : pn)); fbTimer.current = setTimeout(() => setFbMounted(false), 310); }
   };
   useEffect(() => { if (showFilterBar !== fbOpen) applyFilterBar(showFilterBar); }, [showFilterBar]); // eslint-disable-line
   const toggleFilterBar = () => { const v = !fbOpen; applyFilterBar(v); if (onFilterBarChange) onFilterBarChange(v); };
@@ -4940,7 +4941,7 @@ const SCREEN_CSS = `
 .hvs-side{background:var(--cl-panel);border:1px solid var(--cl-border);border-radius:12px}
 .hvs-side :is(button,input,select,textarea):focus-visible,.hvs-ctl :is(button,input,select,textarea):focus-visible{outline:2px solid var(--cl-focus);outline-offset:1px}
 /* multibutton: a quiet track with the chosen option raised */
-.hvs-side .hvs-seg,.hvs-ctl .hvs-seg{display:flex;flex-wrap:nowrap;gap:2px;padding:3px;background:var(--cl-track);border:0;border-radius:10px}
+.hvs-side .hvs-seg,.hvs-ctl .hvs-seg{display:flex;flex-wrap:nowrap;gap:2px;padding:3px;background:var(--ctl-seg,var(--cl-track));border:0;border-radius:10px}
 .hvs-ctl .hvs-seg{display:inline-flex;margin-right:8px;gap:8px} /* options 8px apart; Filter: and its type stay 2px apart (one pair) */
 .hvs-side .hvs-segbtn,.hvs-ctl .hvs-segbtn{flex:1 1 auto;min-width:0;height:28px;padding:0 6px;border:1px solid transparent;border-radius:7px;background:transparent;
   color:var(--cl-text-2);font-family:var(--cl-font);font-size:13px;font-weight:500;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none}
@@ -5007,7 +5008,7 @@ const SCREEN_CSS = `
 /* 18px above the 28px title row: its icon and text start 24px below the bar edge, the same as the 24px under the last controls */
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
-.hvs-wip{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:4px;background:#ffd400;color:#000;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
+.hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#000;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
 .hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
 .hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:32px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
@@ -5043,7 +5044,8 @@ const SCREEN_CSS = `
    The title row and the controls row share one background, so they read as one bar. */
 .hvs{--hvs-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--hvs-sp:rgba(0,0,0,.07);--hvs-sp2:rgba(0,0,0,.0588);--hvs-insh:rgba(0,0,0,.24)}
 .hvs[data-theme="wicked"]{--hvs-sp:rgba(255,255,255,.09);--hvs-sp2:rgba(255,255,255,.0756);--hvs-insh:rgba(0,0,0,.65)} /* sp2: inside the multibuttons and dropdowns, 16% fainter */
-.hvs-head{position:relative;z-index:10;margin:-24px -24px 0;padding:18px 24px 8px;background:transparent}
+.hvs-head{position:relative;z-index:10;margin:-24px -24px 0;padding:24px 24px 8px;background:transparent} /* 24px above, as below the controls */
+.hvs-head:has(.hvs-abctl.is-choice){padding-bottom:24px} /* AB test: the head is the whole container */
 .hvs-ctl{width:auto;margin:0 -24px 24px;padding:8px 24px 24px;background:transparent;isolation:isolate}
 /* the control panel is one container: a single grey layer behind the title row and the controls, as tall as both (measured in App) */
 .hvs{position:relative}
@@ -5063,14 +5065,19 @@ const SCREEN_CSS = `
 .hvs-paneltgl-chev{transform-origin:8px 9.5px;transition:transform .32s cubic-bezier(.4,0,.2,1)}
 .hvs.is-ctl-closed .hvs-paneltgl-chev,.hvs.is-ctl-folding .hvs-paneltgl-chev{transform:rotate(180deg)} /* close panel: the chevron points up; open panel: it turns to point down */
 .hvs.is-ctl-closed .hvs-ctl{display:none}
+.hvs .hvs-ctl.hvs-abctl{display:inline-flex !important;width:auto;margin:0 0 0 12px;padding:0;z-index:auto;font-weight:400} /* the AB test switch, beside the page name; stays when the controls are closed */
+.hvs-abctl .hvs-seg{margin-right:0}
+.hvs .hvs-ctl.hvs-abctl.is-choice{margin-left:24px} /* 24px between control blocks */
+.hvs-ctl .hvs-seglabel{position:relative;isolation:isolate;display:inline-flex;align-items:center;height:24px;padding:0 12px;color:#000;font-weight:600;cursor:default}
+.hvs-ctl .hvs-seglabel::before{content:"";position:absolute;inset:2px;z-index:-1;background:#ffd400;border:1px solid #ffd400;box-shadow:0 1px 2px rgba(0,0,0,.08)} /* the same box as a chosen option, 6px inside the track */ /* locked: the block of a chosen option, in the WIP yellow; it cannot be changed */
 /* a multibutton choice: its white block is a layer under the label, so it can grow on its own (see the observer in App) */
 .hvs-ctl .hvs-segbtn{position:relative;isolation:isolate}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"],.hvs-ctl .hvs-segbtn[aria-pressed="true"]:hover:not(:disabled){background:transparent;border-color:transparent;box-shadow:none}
 .hvs-ctl .hvs-segbtn[aria-pressed="true"]:disabled:not([data-unpick])::before{display:none} /* chosen but disabled: no block */
-.hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:-1px;z-index:-1;border-radius:inherit;pointer-events:none;
+.hvs-ctl .hvs-segbtn[aria-pressed="true"]::before,.hvs-ctl .hvs-segbtn[data-unpick]::before{content:"";position:absolute;inset:2px;z-index:-1;border-radius:inherit;pointer-events:none;
   background:var(--cl-raised);border:1px solid var(--cl-border);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .hvs-head{transition:padding-bottom .32s cubic-bezier(.4,0,.2,1),margin-bottom .32s cubic-bezier(.4,0,.2,1)}
-.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:16px;margin-bottom:24px} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
+.hvs.is-ctl-closed .hvs-head,.hvs.is-ctl-folding .hvs-head{padding-bottom:24px;margin-bottom:24px} /* folded, the grey bar goes too: only the open-panel icon, the title and the buttons stay, on the page */ /* closed, the bar is just the title row */
 .hvs-fwrap{position:relative;display:inline-flex}
 .hvs-fpop{position:absolute;z-index:60;top:100%;right:0;margin-top:4px;display:flex;flex-direction:column;gap:2px;min-width:140px;padding:4px;
   background:var(--cl-track);border:0;box-shadow:var(--cl-shadow)} /* no border, 4px inside; aligned to the right of the block that opens it */
@@ -5175,18 +5182,18 @@ const SCREEN_CSS = `
  *   --ctl-label         #666666                  #b0b0b0   (control titles: Theme, Header, Density…)
  *   --ctl-border        black 18%                white 22%
  *   --ctl-hover         black 6%                 white 10%
- *   --ctl-stripe        WIP yellow at 90%  WIP yellow at 25% (text #c4c4c4 on it: 5.4:1)
+ *   --ctl-seg/--ctl-stripe  #ffd400 / #e6bd00 (the WIP pattern)   yellow 25% / 15% on #161616 (text #c4c4c4 on it: 5.4:1)
  *   --ctl-inset         black 24%                black 80%
  *   --ctl-primary       #1f1f1f                  #ececec
  *   --ctl-primary-hover #3a3a3a                  #ffffff
  *   --ctl-on-primary    #ffffff                  #141414
  * ================================================================== */
-.hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-raised:#ffffff;
-  --ctl-text:#222222;--ctl-text-2:#5c5c5c;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
-  --ctl-stripe:rgba(255,212,0,.9);--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
-.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-raised:#5a5a5a;
+.hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-seg:#ffd400;--ctl-raised:#ffffff;
+  --ctl-text:#222222;--ctl-text-2:#454545;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
+  --ctl-stripe:#e6bd00;--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
+.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-seg:color-mix(in srgb,#ffd400 25%,#161616);--ctl-raised:#5a5a5a;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
-  --ctl-stripe:rgba(255,212,0,.25);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
+  --ctl-stripe:color-mix(in srgb,#ffd400 15%,#161616);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
 /* switching Dawn / Wicked: every colour eases over to the new theme (only while switching, so hovers stay quick) */
@@ -5421,7 +5428,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fg-match-2"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fb-speed-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6099,6 +6106,7 @@ function SearchBench({ theme, onTheme }) {
 export default function App() {
   const [cfg, setCfg] = useState(DEFAULT_CFG);
   const [page, setPage] = useState("table");
+  const [abTest, setAbTest] = useState(false); // Table page: AB test shows only the filter choice
   /* the control panel folds up into the top bar and opens again from it; only the open-panel icon and the title stay */
   const [ctlOpen, setCtlOpen] = useState(true);
   const benchRef = useRef(null);
@@ -6135,7 +6143,7 @@ export default function App() {
   useLayoutEffect(() => {
     const root = benchRef.current;
     if (!root || typeof ResizeObserver === "undefined") return undefined;
-    const head = root.querySelector(".hvs-head"), ctl = root.querySelector(".hvs-ctl");
+    const head = root.querySelector(".hvs-head"), ctl = root.querySelector(".hvs-ctl:not(.hvs-abctl)");
     const fit = () => {
       const top = root.getBoundingClientRect().top;
       const el = ctl && ctl.offsetParent ? ctl : head;
@@ -6143,8 +6151,8 @@ export default function App() {
     };
     fit();
     const ro = new ResizeObserver(fit);
-    if (head) ro.observe(head);
-    if (ctl) ro.observe(ctl);
+    if (head) ro.observe(head, { box: "border-box" }); // padding changes count too
+    if (ctl) ro.observe(ctl, { box: "border-box" });
     window.addEventListener("resize", fit);
     return () => { ro.disconnect(); window.removeEventListener("resize", fit); };
   }); // every render: the page and its controls may have changed
@@ -6233,7 +6241,7 @@ export default function App() {
     const o = ctlOpening.current;
     if (!ctlOpen || !o) return;
     ctlOpening.current = null;
-    const e2 = benchRef.current && benchRef.current.querySelector(".hvs-ctl");
+    const e2 = benchRef.current && benchRef.current.querySelector(".hvs-ctl:not(.hvs-abctl)");
     if (!e2) { ctlBusy.current = false; return; }
     const c2 = getComputedStyle(e2);
     const to = { height: `${e2.offsetHeight}px`, paddingTop: c2.paddingTop, paddingBottom: c2.paddingBottom, marginBottom: c2.marginBottom, opacity: 1 };
@@ -6243,7 +6251,7 @@ export default function App() {
   }, [ctlOpen]);
   const toggleCtl = () => {
     if (ctlBusy.current) return;
-    const root = benchRef.current, el = root && root.querySelector(".hvs-ctl");
+    const root = benchRef.current, el = root && root.querySelector(".hvs-ctl:not(.hvs-abctl)");
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!el || !el.animate || reduce) { setCtlOpen((o) => !o); return; }
     const ease = { duration: 320, easing: "cubic-bezier(.4,0,.2,1)" };
@@ -6598,6 +6606,25 @@ export default function App() {
               <path className="hvs-paneltgl-chev" d="M5.75 10.5 8 8.5l2.25 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           Workbench: <PageSwitch page={page} onPick={setPage} />
+          {page === "table" && ( /* AB test: the same table with only the filter choice (Group or MUI); a multibutton on the WIP stripes */
+            <span className="hvs-ctl hvs-abctl">
+              <span className="hvs-seg" role="group" aria-label="AB test">
+                <button type="button" className="hvs-segbtn" aria-pressed={abTest} data-tip={abTest ? "Back to all the controls" : "The table with only the filter choice"}
+                        onClick={() => { if (!abTest) set({ showFilterButton: true, filterUi: "group", noHeader: false }); setAbTest((x) => !x); }}>AB test</button>
+              </span>
+            </span>
+          )}
+          {page === "table" && abTest && ( /* the AB test's only choice, at its right: "Filter" is a label in the track, its two types exposed */
+            <span className="hvs-ctl hvs-abctl is-choice">
+              <span className="hvs-seg" role="group" aria-label="Filter type">
+                <span className="hvs-seglabel" data-tip="Locked in the AB test">Filter</span>
+                {FILTER_TYPES.map(([v, t]) => (
+                  <button key={v} type="button" className="hvs-segbtn" aria-pressed={cfg.filterUi === v}
+                          onClick={() => set({ showFilterButton: true, filterUi: v, noHeader: false })}>{t}</button>
+                ))}
+              </span>
+            </span>
+          )}
         </h1>
         <div className="hvs-headacts">
             <span className="hvs-wip" role="note" data-tip="Work in progress">WIP</span>{/* on every page */}
@@ -6619,6 +6646,7 @@ export default function App() {
 
         <main className="hvs-main">
           <section className="hvs-sec" aria-label="Configuration">
+          {abTest ? null : ( /* AB test: no controls here; its Filter choice sits beside the AB test switch */
           <div className="hvs-ctl">
             <div className="hvs-databar" role="toolbar" aria-label="Table controls">
               {/* environment: how the table is shown and fed */}
@@ -6714,6 +6742,7 @@ export default function App() {
               <button type="button" className="hvt-btn hvs-resetbtn" aria-label="Reset settings" onClick={reset} onPointerDown={(e) => playIcon(e.currentTarget.querySelector(".hvs-resetico"), "reset")}><span className="hvs-pkgtext">Reset<svg className="hvs-resetico" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4.4 1.8v2.7h2.7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span></button>
             </div>
           </div>
+          )}
           </section>
 
 

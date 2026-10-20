@@ -767,7 +767,8 @@
 .hvt-banner-clip{min-height:0;overflow:hidden}
 .hvt-banner-wrap.is-closed > .hvt-banner-clip{visibility:hidden;transition:visibility 0s .4s}
 .hvt-banner-wrap.is-settled > .hvt-banner-clip{overflow:visible}
-.hvt-banner-wrap.is-flat{margin-bottom:0}
+.hvt-banner-wrap.is-flat{margin-bottom:0;transition-duration:.28s} /* the filter bar: 30% quicker than the banners (0.4 s) */
+.hvt-banner-wrap.is-flat.is-closed > .hvt-banner-clip{transition-delay:.28s}
 .hvt-gbtn[aria-pressed="true"]{background:var(--container-hover-background)}
 /* a banner takes its space from the rows: the table keeps its size and the rows pushed past the bottom are cut off */
 .hvt-rows.has-banner{max-height:calc(var(--hvt-rows-page-h) + var(--hvt-max-extra,0px));overflow:hidden}
