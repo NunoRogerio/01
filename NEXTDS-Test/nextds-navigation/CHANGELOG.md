@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-10-20
+
+- The bar's selection is one card that travels (0.3 s, no bounce) from the previous section to the new one, under the icons, when a page in another section is chosen.
+
 ## 0.1.0 — 2026-10-19
 
 - First release, cut from the Workbench (Navigation page). Before, the same components were in `@nextds/table` 0.5.0.

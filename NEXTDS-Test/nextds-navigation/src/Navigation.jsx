@@ -265,6 +265,10 @@ export function Navigation({
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
                 data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
         <ul className="hvn-list">
+          {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */
+            const at = items.findIndex((it) => it.key === active[0]);
+            return at < 0 ? null : <li className="hvn-railmark" aria-hidden="true" style={{ transform: `translateY(${at * 48}px)` }} />;
+          })()}
           {items.map((it) => {
             const k = it.key, isActive = active[0] === k, isOpen = open && open.top === k && !open.closing;
             const hidden = isCol || !!open; // the label is hidden: collapsed, or a menu is open

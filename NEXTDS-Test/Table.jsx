@@ -1037,6 +1037,13 @@ const CSS = `
 .hvn-pglabel{height:24px;padding-left:4px;color:var(--content-placeholder);font-size:12px;line-height:24px}
 .hvn-pgroup.has-rule .hvn-pglabel{margin-top:-1px}
 .hvn-li{position:relative}
+.hvn-v > .hvn-list{position:relative}
+.hvn-v > .hvn-list > .hvn-li{z-index:1} /* the icons sit above the travelling card */
+.hvn-v > .hvn-list .hvn-item.is-active::after,.hvn-v > .hvn-list .hvn-item.is-active::before{display:none} /* the bar shows its selection with the card below */
+.hvn-railmark{position:absolute;left:16px;top:72px;z-index:0;width:238px;height:32px;border-radius:4px;background:var(--nav-selected);box-shadow:0 0 8px var(--nav-selected-shadow);pointer-events:none;transition:transform .3s cubic-bezier(.4,0,.2,1),width .2s ease}
+.hvn-railmark::before{content:"";position:absolute;left:4px;top:6px;width:3px;height:20px;border-radius:1.5px;background:var(--nav-accent)}
+.hvn-v.is-collapsed .hvn-railmark,.hvn-v.is-menu .hvn-railmark{width:44px}
+@media (prefers-reduced-motion:reduce){.hvn-railmark{transition:none}}
 `;
 
 /* ---------- icons: exported from the Figma file (library "v6.3.2.1"), 32px frames ---------- */
@@ -4753,6 +4760,10 @@ export function Navigation({
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
                 data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
         <ul className="hvn-list">
+          {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */
+            const at = items.findIndex((it) => it.key === active[0]);
+            return at < 0 ? null : <li className="hvn-railmark" aria-hidden="true" style={{ transform: `translateY(${at * 48}px)` }} />;
+          })()}
           {items.map((it) => {
             const k = it.key, isActive = active[0] === k, isOpen = open && open.top === k && !open.closing;
             const hidden = isCol || !!open; // the label is hidden: collapsed, or a menu is open
@@ -5429,7 +5440,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "stripes-3"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "nav-mark-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
