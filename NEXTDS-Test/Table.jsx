@@ -5025,6 +5025,11 @@ const SCREEN_CSS = `
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
 .hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;position:relative;isolation:isolate;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#ffffff;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
 .hvs-wip::before{content:"";position:absolute;inset:4px;z-index:-1;background:#000} /* a black box 4px inside the striped tag, WIP in white */
+.hvs[data-theme="wicked"] .hvs-wip{color:#000}
+.hvs[data-theme="wicked"] .hvs-wip::before{background:#fff} /* Wicked: the inverse, a white box with black text */
+.hvs[data-theme="wicked"] .hvs-ctl .hvs-seg .hvs-segbtn:not([aria-pressed="true"]),.hvs[data-theme="wicked"] .hvs-ctl .hvs-seg .hvs-segbtn:not([aria-pressed="true"]):hover:not(:disabled){color:#000} /* on the yellow stripes the text is black */
+.hvs[data-theme="wicked"] .hvs-ctl .hvs-seglabel{color:#000}
+.hvs[data-theme="wicked"] .hvs-ctl .hvs-seglabel::before{background:#fff;border-color:#fff} /* locked, like WIP: white in Wicked */
 .hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
 .hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:32px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
@@ -5198,7 +5203,7 @@ const SCREEN_CSS = `
  *   --ctl-label         #666666                  #b0b0b0   (control titles: Theme, Header, Density…)
  *   --ctl-border        black 18%                white 22%
  *   --ctl-hover         black 6%                 white 10%
- *   --ctl-seg/--ctl-stripe  #ffd400 / #e6bd00 (the WIP pattern)   yellow 25% / 15% on #161616 (text #c4c4c4 on it: 5.4:1)
+ *   --ctl-seg/--ctl-stripe  #ffd400 / #e6bd00 (the WIP pattern), both themes; Wicked: chosen block black, other options black text (text #c4c4c4 on it: 5.4:1)
  *   --ctl-inset         black 24%                black 80%
  *   --ctl-primary       #1f1f1f                  #ececec
  *   --ctl-primary-hover #3a3a3a                  #ffffff
@@ -5207,9 +5212,9 @@ const SCREEN_CSS = `
 .hvs{--ctl-bar:color-mix(in srgb,var(--content-primary) 5%,var(--page-background));--ctl-track:#e0e0e0;--ctl-seg:#ffd400;--ctl-raised:#ffffff;
   --ctl-text:#222222;--ctl-text-2:#454545;--ctl-text-3:#8a8a8a;--ctl-border:rgba(0,0,0,.18);--ctl-hover:rgba(0,0,0,.06);
   --ctl-stripe:#e6bd00;--ctl-inset:rgba(0,0,0,.24);--ctl-label:#666666;--ctl-primary:#1f1f1f;--ctl-primary-hover:#3a3a3a;--ctl-on-primary:#ffffff;--ctl-pop-border:transparent}
-.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-seg:color-mix(in srgb,#ffd400 25%,#161616);--ctl-raised:#5a5a5a;
+.hvs[data-theme="wicked"]{--ctl-bar:#383838;--ctl-track:#161616;--ctl-seg:#ffd400;--ctl-raised:#000000;
   --ctl-text:#f0f0f0;--ctl-text-2:#c4c4c4;--ctl-text-3:#9a9a9a;--ctl-border:rgba(255,255,255,.22);--ctl-hover:rgba(255,255,255,.1);
-  --ctl-stripe:color-mix(in srgb,#ffd400 15%,#161616);--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
+  --ctl-stripe:#e6bd00;--ctl-inset:rgba(0,0,0,.8);--ctl-label:#b0b0b0;--ctl-primary:#ececec;--ctl-primary-hover:#ffffff;--ctl-on-primary:#141414;--ctl-pop-border:rgba(255,255,255,.2)}
 .hvs,.hvs[data-theme="wicked"]{--hvs-bar:var(--ctl-bar);--cl-track:var(--ctl-track);--cl-raised:var(--ctl-raised);--cl-text:var(--ctl-text);--cl-text-2:var(--ctl-text-2);
   --cl-text-3:var(--ctl-text-3);--cl-border:var(--ctl-border);--cl-hover:var(--ctl-hover);--hvs-sp2:var(--ctl-stripe);--hvs-insh:var(--ctl-inset)}
 /* switching Dawn / Wicked: every colour eases over to the new theme (only while switching, so hovers stay quick) */
@@ -5444,7 +5449,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "ab-5"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "wicked-y-1"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
