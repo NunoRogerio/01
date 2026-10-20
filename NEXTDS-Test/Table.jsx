@@ -5023,8 +5023,8 @@ const SCREEN_CSS = `
 /* 18px above the 28px title row: its icon and text start 24px below the bar edge, the same as the 24px under the last controls */
 .hvs-headacts{display:flex;align-items:center;gap:8px;margin-left:auto} /* Reset settings and React Package sit on the title row, on the right */
 .hvs-headacts .hvt-btn{height:28px;padding:0 12px;font-size:12px;line-height:18px}
-.hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;position:relative;isolation:isolate;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#ffd400;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
-.hvs-wip::before{content:"";position:absolute;inset:4px;z-index:-1;background:#000} /* a black box 4px inside the striped tag, WIP in the yellow */
+.hvs-wip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:0;position:relative;isolation:isolate;background:repeating-linear-gradient(-60deg,#e6bd00 0 3.74px,transparent 3.74px 7.49px) #ffd400;color:#ffffff;font-family:var(--cl-font);font-size:12px;font-weight:700;line-height:18px;letter-spacing:.02em} /* work in progress: strong bright yellow, black text, in both themes */
+.hvs-wip::before{content:"";position:absolute;inset:4px;z-index:-1;background:#000} /* a black box 4px inside the striped tag, WIP in white */
 .hvs-ctl .hvs-databar--parts{margin-top:16px} /* environment controls on the first line, component parts on the second, 16px apart */
 .hvs-ctl .hvs-resetbtn{margin-left:auto;align-self:flex-end;height:32px;padding:0 12px;font-weight:400 !important} /* normal text, like React Package */
 .hvs-resetico{width:14px;height:14px;flex:none;transition:transform .5s cubic-bezier(.4,0,.2,1)}
