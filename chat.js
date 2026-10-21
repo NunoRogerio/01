@@ -16,8 +16,7 @@
   var KEY = 'wf-chats3-' + (role || 'anon') + (/^(ecc|ptecc)$/.test(cust0) ? '-' + cust0 : ''), ACH = 'wf-achv';
   var PT = function () { return window.__wfLang === 'pt'; };
   // The language the role-played crews write in: the app's language (Oct 3, 18:13: more languages)
-  var LNAME = function (full) { var l = window.__wfLang || 'en', M = { pt: ['European Portuguese (pt-PT)', 'Portuguese bombeiros'], es: ['Spanish (es-ES)', 'Spanish bomberos'], fr: ['French (fr-FR)', 'French sapeurs-pompiers'],
-      de: ['German (de-DE)', 'German Feuerwehr'], ja: ['Japanese (ja-JP)', 'Japanese fire services'] }, m = M[l];
+  var LNAME = function (full) { var l = window.__wfLang || 'en', M = { pt: ['European Portuguese (pt-PT)', 'Portuguese bombeiros'] }, m = M[l];   /* (Oct 21) English and Portuguese only */
     return m ? m[0] + (full ? ', fireground vocabulary used by ' + m[1] : '') : 'English'; };
   var L = function (en, pt) { return PT() && pt ? pt : (window.__wfJA ? window.__wfJA(en) : en); };
   var MIN = 60000;

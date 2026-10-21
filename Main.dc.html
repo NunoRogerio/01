@@ -20,9 +20,9 @@
 <script src="avatar.js?v=1792322188"></script>
 <script src="prefs.js?v=1792563502"></script>
 <script src="station.js?v=1792322188"></script>
-<script src="i18n.js?v=1792563502"></script>
+<script src="i18n.js?v=1792581760"></script>
 <script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792563502"></script>
+<script src="chat.js?v=1792581760"></script>
 <script src="tour.js?v=1792563502"></script>
 <script src="mapsearch.js?v=1792361770"></script>
 <script src="stats.js?v=1792361770"></script>
@@ -2134,11 +2134,11 @@ class Component extends DCLogic {
         const col = (S, key, def) => ({ aria: S.d > 0 ? 'ascending' : 'descending', op: 1, rot: S.d > 0 ? (def > 0 ? '0deg' : '180deg') : (def > 0 ? '180deg' : '0deg'), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ [key]: { k: S.k, d: -S.d } }); } });
         const lsort = { lik: col(LS, 'liSort', -1), st: col(FS, 'fiSort', 1) };
         const SGx = (L0) => L0.map((x) => Object.assign({}, x, { s1: window.__wfSegs ? window.__wfSegs(x.sub) : { a0: x.sub || '' }, s2: window.__wfSegs ? window.__wfSegs(x.sub2) : { a0: x.sub2 || '' } }));   /* (Oct 10, 21:42) never cut, values in bold */
-        return { lsort, ignShown: SGx(ignList), fireShown: SGx(fireList), noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' ignition candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' fire' + (fireListAll.length === 1 ? '' : 's'),
-        /* the counts in bold: number, words, number, words */ incN1: String(ignListAll.length), incW1: ignListAll.length === 1 ? 'ignition candidate.' : 'ignition candidates.', incN2: String(fireListAll.length), incW2: fireListAll.length === 1 ? 'fire' : 'fires' }; })(ignList, fireList),
+        return { lsort, ignShown: SGx(ignList), fireShown: SGx(fireList), noCands: K1 !== 'fire' && !ignList.length, noFires: K1 !== 'ign' && !fireList.length, incTitle: scope && scope.title ? scope.title : 'Incidents', incSub: ignListAll.length + ' detection candidate' + (ignListAll.length === 1 ? '' : 's') + '. ' + fireListAll.length + ' confirmed fire' + (fireListAll.length === 1 ? '' : 's'),   /* (Oct 21) the bottom panel's words */
+        /* the counts in bold: number, words, number, words */ incN1: String(ignListAll.length), incW1: ignListAll.length === 1 ? 'detection candidate.' : 'detection candidates.', incN2: String(fireListAll.length), incW2: fireListAll.length === 1 ? 'confirmed fire' : 'confirmed fires' }; })(ignList, fireList),
       ff,
-      listTitle: N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
-      cardTitle: (N === 1 && NF === 0) ? 'Ignition candidate' : N + ' ignition candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' fire' + (NF === 1 ? '' : 's'),
+      listTitle: N + ' detection candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' confirmed fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
+      cardTitle: (N === 1 && NF === 0) ? 'Detection candidate' : N + ' detection candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' confirmed fire' + (NF === 1 ? '' : 's'),
       cardSub: N === 0 ? 'Nothing to review' : (N > 1 || NF > 0 ? 'Top: ' + top.place + ' · ' + top.conf + '%' : top.place + ' · ' + top.ago),
       stackAria: N + ' ignition candidates and ' + NF + ' active fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
       openList: () => { this.wfListFlag(false); this.setState({ list: true }); }, closeList: () => { this.wfListFlag(false); this.setState({ list: false }); }, closeListX: (e) => { const b = e && e.currentTarget; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (b) { b.classList.add('wf-turn'); setTimeout(() => b.classList.remove('wf-turn'), 800); } this.wfListFlag(false); this.setState({ list: false }); }, navHome: () => { this.wfListFlag(false); this.setState({ list: false, scOpen: false }); },

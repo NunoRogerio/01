@@ -2405,3 +2405,5 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Full-screen title box:** when its longest word does not fit beside the legend, the title takes the full width and the legend column moves 8px under it; a name is never split mid-word.
 - Back to the type scale: the decision squares' labels (Dismiss, Check, Attack) and the incident page's notes, the drone's "Estimate" note and the map's vertical credit are 14px Footnote (were 13px).
 - The incident page's recommendation pill swells on press (data-round), like every pill.
+- **Languages (Oct 21, Nuno):** English and Portuguese only. Spanish, French, German and Japanese are removed (picker, dictionaries, data/i18n files, Japanese place names); a saved choice of a removed language falls back to the profile's default.
+- The incidents list and the stacked card use the bottom panel's words too: "N detection candidates. N confirmed fires" (PT: candidatos de deteção, incêndios confirmados).
