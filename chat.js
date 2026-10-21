@@ -930,8 +930,8 @@
   function recCard(c, nx, delay) {
     var R = REC[nx]; if (!R || hasOpenRec(c) || openReq(c)) return;   /* (Oct 11, 07:04) never while a request waits for an answer: the pace brings it later */
     if (nx === 7) { card(c, closeCard(c, true), delay, 0); return; }
-    R = recTxt(c, nx) || R; card(c, { rec: true, to: nx, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
-      actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'next', en: 'Move to ' + STAGES[nx].en, pt: 'Passar a ' + STAGES[nx].pt }] }, delay, 0);   /* (Oct 9, 09:05) Not yet + Move to, as buttons */
+    R = recTxt(c, nx) || R; card(c, { rec: true, to: nx, tag: { en: 'Recommendation', pt: 'Recomendação' }, tagC: '#3A3A3C', title: nx === 7 ? { en: 'Close fire', pt: 'Encerrar incêndio' } : { en: 'To ' + STAGES[nx].en, pt: 'Para ' + STAGES[nx].pt }, body: { en: R[0], pt: R[1] },
+      actions: [{ key: 'stayStage', en: 'Not yet', pt: 'Ainda não' }, { key: 'next', en: 'To ' + STAGES[nx].en, pt: 'Para ' + STAGES[nx].pt }] }, delay, 0);   /* (Oct 9, 09:05) Not yet + Move to, as buttons */
   }
   // A crew message that says the fire is ready for the next stage always comes with the confirmation card, never only the chip
   function recFromMsg(c, m) {
@@ -966,7 +966,7 @@
       if (!c.flags.initial || (c.flags.arrived && meFirst(c)) || capD) { A.push({ key: 'dismiss', en: 'Dismiss', pt: 'Descartar', cap: capD }); A.push({ key: 'confirm', en: 'Declare fire', pt: 'Declarar incêndio', primary: true, cap: capD }); } }   /* (Oct 11, 17:05) the first Captain on scene declares; nobody else */   // Dismiss then Confirm, as everywhere
     if (s === 1 && !c.flags.dispatched) { A.push({ key: 'dispatch', en: 'Configure dispatch', pt: 'Configurar despacho', primary: true }); if (c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Call another station', pt: 'Chamar outro quartel' }); }
     if (s === 2) A.push({ key: 'update', en: 'Ask for an update', pt: 'Pedir ponto de situação' });
-    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if ((c.msgs || []).some(function (x) { return x.rec && !x.done && x.to === 4; })) A.push({ key: 'next', en: 'Move to Resolving', pt: 'Passar a Em resolução', primary: true }); }
+    if (s === 3) { if (!c.flags.air) A.push({ key: 'approveAir', en: 'Air support', pt: 'Meio aéreo' }); if (!c.flags.evac) A.push({ key: 'evac', en: 'Evacuation order', pt: 'Ordem de evacuação', danger: true }); if (!c.flags.drone3) A.push({ key: 'drone3', en: 'Drone', pt: 'Drone' }); if ((c.msgs || []).some(function (x) { return x.rec && !x.done && x.to === 4; })) A.push({ key: 'next', en: 'To Resolving', pt: 'Para Em resolução', primary: true }); }
     if (s >= 2 && s <= 4 && c.reserve && !c.flags.more) A.push({ key: 'more', en: 'Ask dispatch for more', pt: 'Pedir mais meios' });
     if (s >= 4 && s <= 6 && (c.forces || []).filter(function (f) { return f.st === 'onscene'; }).length > 1) A.push({ key: 'recall', en: 'Recall a crew', pt: 'Recolher uma equipa' });
     /* (Oct 11, 17:50) the line's own tools: the Captain asks the commander for more; the crew checks in (on the line, water, injury) */

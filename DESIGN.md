@@ -2396,3 +2396,12 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 
 ## Oct 20 (morning consistency pass)
 - Back to the type scale: the incident and station mini cards' tag and secondary line, the Tour label under the helicopter and the chat's small map credit are 14px Footnote (were 13px).
+
+## Oct 21 (morning consistency pass; Nuno's decisions)
+- **Remove (supersedes Oct 1 and Oct 18):** solid red #D70015 with a white label, day and night (white on #D70015 keeps 5.3:1; white on the night red #FF453A would fail contrast). Label just "Remove"; it still asks first with the shared confirm dialog; its place in the row is unchanged (first, beside the action it pairs with).
+- **Map controls stay 16px apart** (round, bottom right, 16px from the edge), as on Oct 3.
+- **One name for the main screen's numbers:** the legend chips say "Detection candidates" and "Confirmed fires" (PT: Candidatos de deteção, Incêndios confirmados), as the bottom panel's counts.
+- **Stage moves say "To <stage>"** (PT "Para <stage>") on the card, its button and its confirmation ("To Resolving?"), like the chips (was "Move to").
+- **Full-screen title box:** when its longest word does not fit beside the legend, the title takes the full width and the legend column moves 8px under it; a name is never split mid-word.
+- Back to the type scale: the decision squares' labels (Dismiss, Check, Attack) and the incident page's notes, the drone's "Estimate" note and the map's vertical credit are 14px Footnote (were 13px).
+- The incident page's recommendation pill swells on press (data-round), like every pill.

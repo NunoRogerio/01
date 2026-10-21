@@ -19,14 +19,14 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792361827"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792563502"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1792481141"></script>
+<script src="prefs.js?v=1792563502"></script>
 <script src="station.js?v=1792322188"></script>
-<script src="i18n.js?v=1792322188"></script>
+<script src="i18n.js?v=1792563502"></script>
 <script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792430554"></script>
-<script src="tour.js?v=1792406123"></script>
+<script src="chat.js?v=1792563502"></script>
+<script src="tour.js?v=1792563502"></script>
 <script src="feedcam.js?v=1792361770"></script>
 <script src="trophy.js?v=1792322188"></script>
 
@@ -1183,7 +1183,7 @@ class Component extends DCLogic {
             go: () => { if (m.done) return; const NEG = ['reqNo', 'declineAir', 'stayStage', 'evacNo', 'helpNo', 'sreqNo'], OPEN = ['dispatch', 'drone', 'drone3', 'respond'];   /* answering a dispatch order needs no second confirmation */
               if (NEG.indexOf(a.key) >= 0 || OPEN.indexOf(a.key) >= 0 || !window.__wfConfirm) { run(a.key, m.id); return; }
               const lbl = mv ? L(String(a.en).replace(/^Move to /, 'To '), String(a.pt).replace(/^Passar a /, 'Para ')) : L(a.en, a.pt), subj = m.title ? T(m.title) : lbl;
-              window.__wfConfirm({ title: a.key === 'next' ? L('Move to ' + C.STAGES[Math.min(7, (c.stage || 0) + 1)].en + '?', 'Passar a ' + C.STAGES[Math.min(7, (c.stage || 0) + 1)].pt + '?') : a.key === 'close' ? L('Close the fire?', 'Encerrar o incêndio?') : subj + '?', body: m.body ? T(m.body) : '', cancel: L('Cancel', 'Cancelar'), ok: L('Confirm', 'Confirmar'), onOk: () => run(a.key, m.id) }); } };
+              window.__wfConfirm({ title: a.key === 'next' ? L('To ' + C.STAGES[Math.min(7, (c.stage || 0) + 1)].en + '?', 'Para ' + C.STAGES[Math.min(7, (c.stage || 0) + 1)].pt + '?') : a.key === 'close' ? L('Close the fire?', 'Encerrar o incêndio?') : subj + '?', body: m.body ? T(m.body) : '', cancel: L('Cancel', 'Cancelar'), ok: L('Confirm', 'Confirmar'), onOk: () => run(a.key, m.id) }); } };
         });
         const toSheet = !!m.fire && !c.closed;
         /* (Oct 9, 08:58) a card waiting for my answer (approve, move on, dispatch) never gets lost up the chat: see pinCheck */

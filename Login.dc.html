@@ -13,9 +13,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792361827"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792563502"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="i18n.js?v=1792322188"></script>
+<script src="i18n.js?v=1792563502"></script>
 <script src="menu.js?v=1792322188"></script>
 
 <title>Log in</title>
@@ -214,7 +214,7 @@ html.wf-lgbusy .wf-mb{opacity:0!important;pointer-events:none!important}
         </label>
       </div>
       <!-- Editing: Remove (left) and Save (right) share one row, 24px apart; Remove asks first with the shared confirmation dialog (fit.js, __wfConfirm) -->
-      <div style="display: flex; gap: 24px; flex-shrink: 0; margin-top: -32px"><button type="button" class="wf-rm" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgba(215,0,21,0.10); color: #99000E; -webkit-text-fill-color: #99000E; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button><button type="button" class="btn primary" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button></div>
+      <div style="display: flex; gap: 24px; flex-shrink: 0; margin-top: -32px"><button type="button" class="wf-rm" onClick="{{cp.rmAsk}}" style="display: {{cp.rmD}}; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: rgb(215, 0, 21); color: rgb(255, 255, 255); -webkit-text-fill-color: rgb(255, 255, 255); font: inherit; font-size: 17px; font-weight: 600; cursor: pointer">{{cp.rmLbl}}</button><button type="button" class="btn primary" onClick="{{cp.create}}" aria-disabled="{{cp.offStr}}" style="display: flex; flex: 1 1 0; min-width: 0; align-items: center; justify-content: center; height: 48px; border: 0; border-radius: 999px; background: var(--wf-pri-bg, #3A3A3C); color: var(--wf-pri-fg, #FFFFFF); font: inherit; font-size: 17px; font-weight: 600; opacity: {{cp.btnOp}}; cursor: pointer">{{cp.btn}}</button></div>
       <p style="margin: -8px 4px 0; font-size: 15px; line-height: 20px; color: #545458">{{cp.note}}</p>
     </div>
   </div>

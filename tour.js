@@ -819,7 +819,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   // a chat still left as a candidate (an earlier tour) is confirmed first. Never Dismiss or anything else.
   function autoNext() {
     var g0 = get(), st1 = g0 && S[g0.i], noClose = st1 && st1.noClose;
-    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar|Move to|Passar a)/.test(t) && !/Closed|Encerrad/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });   /* (Oct 9, 16:30) the team's recommendation card moves the fire on */
+    var b = q('article.chmsg [data-fitrow] > button.chbtn:not(.wf-sec)', function (x) { var t = txt(x); return !x.disabled && (/^(Approve|Aprovar|Move to|Passar a|To |Para )/.test(t) && !/Closed|Encerrad/.test(t) || (!noClose && /^(Close fire|Encerrar incêndio)/.test(t))); });   /* (Oct 9, 16:30) the team's recommendation card moves the fire on */
     if (b) return b;
     var W = ['Declare fire', 'Declarar incêndio', 'Move to', 'Passar a', 'Air support', 'Meio aéreo'].concat(noClose ? [] : ['Close fire', 'Encerrar incêndio']);
     W = W.concat(['To ', 'Para ']); return q('button.chbtn', function (x) { if (!x.parentElement || !(x.parentElement.classList.contains('wf-chips') || x.parentElement.style.maxHeight === '88px')) return false; var t = txt(x); if (noClose && /Closed|Encerrad/.test(t)) return false; return W.some(function (w) { return t.indexOf(w) === 0; }); });
