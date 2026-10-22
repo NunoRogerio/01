@@ -985,8 +985,8 @@ const CSS = `
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .3s cubic-bezier(.65,0,.35,1)} /* eases in and out */ /* the chevron points to where the bar goes: left to collapse, right to expand */
 .hvn-v.is-collapsed .hvn-toggle .hvn-chev{transform:rotate(180deg)}
-.hvn-greet{position:absolute;left:30px;top:24px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
-.hvn-v.is-collapsed .hvn-greet{opacity:0}
+.hvn-greet{position:absolute;left:30px;top:24px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s cubic-bezier(.65,0,.35,1) .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
+.hvn-v.is-collapsed .hvn-greet{opacity:0;transition-delay:0s} /* the sentence fades out over the first half of the bar's animation and back in over the second half, easing in and out */
 .hvn-v.is-fixed-toggle .hvn-greet{left:57px;width:198px} /* fixed toggle: the sentence moves right of it, aligned with the labels */ /* stays while navigating; hidden only when collapsed */
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
@@ -4761,7 +4761,7 @@ export function Navigation({
   const tip = useTips(rootRef, ".hvn-root");
   useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]);
   const greetFirst = useRef(true);
-  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar collapses or expands // collapsing or opening the bar from outside closes a menu
+  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } if (!isCol) setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar opens again (changed while it is still invisible) // collapsing or opening the bar from outside closes a menu
   useEffect(() => { // Esc closes an open menu; a click outside closes one opened from the collapsed bar
     if (!nav.open || nav.open.closing) return undefined;
     const down = (e) => { if (nav.open.temp && rootRef.current && !rootRef.current.contains(e.target)) nav.close(); };
@@ -5459,7 +5459,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "bar-ease"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "greet-mid"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

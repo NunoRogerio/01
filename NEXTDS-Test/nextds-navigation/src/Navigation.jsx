@@ -258,7 +258,7 @@ export function Navigation({
   const tip = useTips(rootRef, ".hvn-root");
   useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]);
   const greetFirst = useRef(true);
-  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar collapses or expands // collapsing or opening the bar from outside closes a menu
+  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } if (!isCol) setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar opens again (changed while it is still invisible) // collapsing or opening the bar from outside closes a menu
   useEffect(() => { // Esc closes an open menu; a click outside closes one opened from the collapsed bar
     if (!nav.open || nav.open.closing) return undefined;
     const down = (e) => { if (nav.open.temp && rootRef.current && !rootRef.current.contains(e.target)) nav.close(); };

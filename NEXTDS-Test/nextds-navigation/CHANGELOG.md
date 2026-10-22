@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.16 — 2026-10-22
+
+- The greeting fades with an ease-in-out curve at the middle of the bar animation: out over the first half when collapsing, in over the second half when expanding. A new sentence is picked when the bar opens again, while it is still invisible.
+
 ## 0.1.15 — 2026-10-22
 
 - The bar opens and closes with the same ease-in-out curve as the chevron (0.3s): bar width, toggle position and item widths.
