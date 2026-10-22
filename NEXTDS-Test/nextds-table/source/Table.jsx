@@ -980,12 +980,13 @@ const CSS = `
 .hvn-v.is-collapsed{width:77px}
 /* the toggle icon 16px from the top of the bar */
 .hvn-toggle{position:absolute;left:222px;top:8px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
-.hvn-v.is-collapsed .hvn-toggle{left:22px}
+.hvn-v.is-collapsed .hvn-toggle,.hvn-v.is-fixed-toggle .hvn-toggle{left:22px} /* fixed: the toggle stays in the icons' column when expanded too */
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .2s ease} /* the chevron points to where the bar goes: left to collapse, right to expand */
 .hvn-v.is-collapsed .hvn-toggle .hvn-chev{transform:rotate(180deg)}
 .hvn-greet{position:absolute;left:30px;top:24px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
-.hvn-v.is-collapsed .hvn-greet{opacity:0} /* stays while navigating; hidden only when collapsed */
+.hvn-v.is-collapsed .hvn-greet{opacity:0}
+.hvn-v.is-fixed-toggle .hvn-greet{left:57px;width:198px} /* fixed toggle: the sentence moves right of it, aligned with the labels */ /* stays while navigating; hidden only when collapsed */
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
 .hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
@@ -4744,7 +4745,7 @@ function useNav({ items, active, setActive, setCollapsed }) {
    the bar dropping to its icons meanwhile; tooltips wherever a label is hidden. Controlled or not: value / onNavigate, collapsed / onCollapsedChange. */
 export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
-  collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
+  collapsed, defaultCollapsed = false, onCollapsedChange, toggle = "moving", greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
   const pickGreet = (not) => { if (!Array.isArray(greeting)) return greeting; const pool = greeting.length > 1 ? greeting.filter((g) => g !== not) : greeting; return pool[Math.floor(Math.random() * pool.length)]; };
   const [greet, setGreet] = useState(() => pickGreet()); // one of the sentences, at random
@@ -4771,9 +4772,9 @@ export function Navigation({
   const top = open ? navTop(items, open.top) : null;
   return (
     <div ref={rootRef} className={`hvt-scope hvn-root hvn-navroot ${className}`} data-theme={theme} style={style}>
-      <nav className={`hvn-v${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
+      <nav className={`hvn-v${toggle === "fixed" ? " is-fixed-toggle" : ""}${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
-                data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
+                data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol || toggle === "fixed" ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
         {greet ? <p className="hvn-greet" aria-hidden={isCol || undefined}>{greet}</p> : null}
         <ul className="hvn-list">
           {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */
@@ -5457,7 +5458,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "tog-top16"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "tog-fixed"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6041,6 +6042,7 @@ function TagsBench({ theme, onTheme }) {
 /* ---------- Navigation page of the Workbench: the Navigation and AppHeader components with their controls ---------- */
 function NavBench({ theme, onTheme }) {
   const [collapsed, setCollapsed] = useState(false); // the Bar control and the icon on the bar change the same state
+  const [toggle, setToggle] = useState("moving"); // where the collapse/expand icon sits when the bar is expanded
   const [show, setShow] = useState({ header: true, crumbs: true }); // several can be on at once
   const [active, setActive] = useState(["dashboard"]);
   const path = navPathLabels(active);
@@ -6056,6 +6058,7 @@ function NavBench({ theme, onTheme }) {
             </div>
           </CtlField>
           <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => setCollapsed(v === "collapsed")} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
+          <BenchSeg label="Toggle" value={toggle} onChange={setToggle} options={[["fixed", "Fixed"], ["moving", "Moving"]]} />
           <CtlField label="Show">
             <div className="hvs-seg" role="group" aria-label="Show (select several)">
               <button type="button" className="hvs-segbtn" aria-pressed={show.header} onClick={() => setShow((x) => ({ ...x, header: !x.header }))}>Header</button>
@@ -6069,7 +6072,7 @@ function NavBench({ theme, onTheme }) {
         <div className="hvn-frame">
           {show.header && <AppHeader theme={theme} />}
           <div className="hvn-body">
-            <Navigation theme={theme} value={active} onNavigate={setActive} collapsed={collapsed} onCollapsedChange={setCollapsed} />
+            <Navigation theme={theme} value={active} onNavigate={setActive} collapsed={collapsed} onCollapsedChange={setCollapsed} toggle={toggle} />
             <main className="hvn-page">
               {show.crumbs && path.length > 1 && <div className="hvn-crumbs">{path.slice(0, -1).join("  ›  ")}</div>}
               <h1>{path[path.length - 1]}</h1>

@@ -243,7 +243,7 @@ function useNav({ items, active, setActive, setCollapsed }) {
    the bar dropping to its icons meanwhile; tooltips wherever a label is hidden. Controlled or not: value / onNavigate, collapsed / onCollapsedChange. */
 export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
-  collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
+  collapsed, defaultCollapsed = false, onCollapsedChange, toggle = "moving", greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
   const pickGreet = (not) => { if (!Array.isArray(greeting)) return greeting; const pool = greeting.length > 1 ? greeting.filter((g) => g !== not) : greeting; return pool[Math.floor(Math.random() * pool.length)]; };
   const [greet, setGreet] = useState(() => pickGreet()); // one of the sentences, at random
@@ -270,9 +270,9 @@ export function Navigation({
   const top = open ? navTop(items, open.top) : null;
   return (
     <div ref={rootRef} className={`hvt-scope hvn-root hvn-navroot ${className}`} data-theme={theme} style={style}>
-      <nav className={`hvn-v${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
+      <nav className={`hvn-v${toggle === "fixed" ? " is-fixed-toggle" : ""}${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
-                data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
+                data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol || toggle === "fixed" ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
         {greet ? <p className="hvn-greet" aria-hidden={isCol || undefined}>{greet}</p> : null}
         <ul className="hvn-list">
           {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */

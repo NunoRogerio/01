@@ -38,6 +38,8 @@ export interface NavigationProps {
   onCollapsedChange?: (collapsed: boolean) => void;
   /** The sentence left of the toggle, introducing the menu. An array: one at random per visit. false: none. Default NAV_GREETINGS. */
   greeting?: string | string[] | false;
+  /** Where the collapse/expand icon sits with the bar expanded: "moving" (default) at the top right of the bar; "fixed" stays in the icons' column, the greeting moves to its right. */
+  toggle?: "moving" | "fixed";
   theme?: Theme;
   className?: string;
   style?: CSSProperties;
