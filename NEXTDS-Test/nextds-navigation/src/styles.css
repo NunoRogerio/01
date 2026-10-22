@@ -166,7 +166,8 @@
 .hvn-toggle{position:absolute;left:222px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
-.hvn-toggle svg{transform:scaleX(-1)} /* mirrored: the panel line sits on the left, on the side of the bar */
+.hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .2s ease} /* the chevron points to where the bar goes: left to collapse, right to expand */
+.hvn-v.is-collapsed .hvn-toggle .hvn-chev{transform:rotate(180deg)}
 .hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
 .hvn-v.is-collapsed .hvn-greet{opacity:0} /* stays while navigating; hidden only when collapsed */
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}

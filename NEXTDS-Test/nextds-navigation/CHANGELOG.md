@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.11 — 2026-10-22
+
+- New collapse/expand icon (panel with a chevron). The chevron turns 180° with the bar: left when expanded (collapse), right when collapsed (expand).
+
 ## 0.1.10 — 2026-10-22
 
 - Greeting in the normal text colour; it stays while a menu is open; a different sentence each time the bar collapses or expands.
