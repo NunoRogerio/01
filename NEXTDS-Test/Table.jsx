@@ -978,12 +978,13 @@ const CSS = `
 .hvn-navroot{display:flex;flex:none;min-height:0}
 .hvn-v{position:relative;flex:none;box-sizing:border-box;width:271px;border-right:1px solid var(--border-default);background:var(--nav-bar);overflow:hidden;transition:width .2s ease}
 .hvn-v.is-collapsed{width:77px}
-.hvn-toggle{position:absolute;left:222px;top:17px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
+/* the toggle icon 16px from the top of the bar */
+.hvn-toggle{position:absolute;left:222px;top:8px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .2s ease} /* the chevron points to where the bar goes: left to collapse, right to expand */
 .hvn-v.is-collapsed .hvn-toggle .hvn-chev{transform:rotate(180deg)}
-.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
+.hvn-greet{position:absolute;left:30px;top:24px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
 .hvn-v.is-collapsed .hvn-greet{opacity:0} /* stays while navigating; hidden only when collapsed */
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
@@ -5456,7 +5457,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "tog-chev"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "tog-top16"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.12 — 2026-10-22
+
+- The collapse/expand icon sits 16px from the top of the bar (was 25px); the greeting follows it.
+
 ## 0.1.11 — 2026-10-22
 
 - New collapse/expand icon (panel with a chevron). The chevron turns 180° with the bar: left when expanded (collapse), right when collapsed (expand).
