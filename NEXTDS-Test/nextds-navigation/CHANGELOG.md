@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 — 2026-10-22
+
+- Collapse/expand icon mirrored: the panel line sits on the left, the side of the bar.
+
 ## 0.1.5 — 2026-10-20
 
 - Back row of the 2nd level: half the space between the chevron and the name.
