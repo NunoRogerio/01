@@ -36,6 +36,8 @@ export interface NavigationProps {
   collapsed?: boolean;
   defaultCollapsed?: boolean;
   onCollapsedChange?: (collapsed: boolean) => void;
+  /** The sentence left of the toggle, introducing the menu. An array: one at random per visit. false: none. Default NAV_GREETINGS. */
+  greeting?: string | string[] | false;
   theme?: Theme;
   className?: string;
   style?: CSSProperties;
@@ -60,5 +62,7 @@ export declare function AppHeader(props: AppHeaderProps): ReactElement;
 
 /** The VSP 360 navigation, as drawn. */
 export declare const VSP360_NAVIGATION: NavItem[];
+/** The five sentences that introduce the menu; Navigation shows one at random. */
+export declare const NAV_GREETINGS: string[];
 /** The labels of a path, for a breadcrumb or a title. */
 export declare function navPathLabels(path: NavPath, items?: NavItem[]): string[];

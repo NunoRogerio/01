@@ -91,6 +91,7 @@ const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their p
 };
 /* the VSP 360 navigation as drawn. An item: { key, label, icon, menu? }; a menu is { items } or { groups: [[label or null, pages]] };
    a menu item with items or groups drills down to a 2nd level; external: opens outside the app (never selected) */
+export const NAV_GREETINGS = ["What will we explore today?", "Where to today?", "Where shall we start?", "What are we working on today?", "Where do you want to go?"];
 export const VSP360_NAVIGATION = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "inventory", label: "Inventory", icon: "inventory", menu: { groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] } },
@@ -242,8 +243,9 @@ function useNav({ items, active, setActive, setCollapsed }) {
    the bar dropping to its icons meanwhile; tooltips wherever a label is hidden. Controlled or not: value / onNavigate, collapsed / onCollapsedChange. */
 export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
-  collapsed, defaultCollapsed = false, onCollapsedChange, theme = "dawn", className = "", style,
+  collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
+  const [greet] = useState(() => Array.isArray(greeting) ? greeting[Math.floor(Math.random() * greeting.length)] : greeting); // one of the sentences, at random, per visit
   const [valueIn, setValueIn] = useState(defaultValue || [items[0] ? items[0].key : ""]);
   const active = value || valueIn;
   const setActive = (p) => { if (value === undefined) setValueIn(p); if (onNavigate) onNavigate(p); };
@@ -268,6 +270,7 @@ export function Navigation({
       <nav className={`hvn-v${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
                 data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
+        {greet ? <p className="hvn-greet" aria-hidden={isCol || undefined}>{greet}</p> : null}
         <ul className="hvn-list">
           {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */
             const at = items.findIndex((it) => it.key === active[0]);

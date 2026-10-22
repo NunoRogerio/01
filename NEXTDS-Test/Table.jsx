@@ -982,6 +982,8 @@ const CSS = `
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle svg{transform:scaleX(-1)} /* mirrored: the panel line sits on the left, on the side of the bar */
+.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-placeholder);font:inherit;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons */
+.hvn-v.is-collapsed .hvn-greet,.hvn-v.is-menu .hvn-greet{opacity:0}
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
 .hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
@@ -4588,6 +4590,7 @@ const NAV_ICONS = { // paths from VSP_360_Nav_Component_1.5.svg, kept at their p
 };
 /* the VSP 360 navigation as drawn. An item: { key, label, icon, menu? }; a menu is { items } or { groups: [[label or null, pages]] };
    a menu item with items or groups drills down to a 2nd level; external: opens outside the app (never selected) */
+export const NAV_GREETINGS = ["What will we explore today?", "Where to today?", "Where shall we start?", "What are we working on today?", "Where do you want to go?"];
 export const VSP360_NAVIGATION = [
   { key: "dashboard", label: "Dashboard", icon: "dashboard" },
   { key: "inventory", label: "Inventory", icon: "inventory", menu: { groups: [["Storage", ["Block", "Object", "File", "SDS"]], ["Virtualization", ["VMware", "Hyper-V"]], ["Hosts", ["Linux", "Windows"]], [null, ["Switches"]]] } },
@@ -4739,8 +4742,9 @@ function useNav({ items, active, setActive, setCollapsed }) {
    the bar dropping to its icons meanwhile; tooltips wherever a label is hidden. Controlled or not: value / onNavigate, collapsed / onCollapsedChange. */
 export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
-  collapsed, defaultCollapsed = false, onCollapsedChange, theme = "dawn", className = "", style,
+  collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
+  const [greet] = useState(() => Array.isArray(greeting) ? greeting[Math.floor(Math.random() * greeting.length)] : greeting); // one of the sentences, at random, per visit
   const [valueIn, setValueIn] = useState(defaultValue || [items[0] ? items[0].key : ""]);
   const active = value || valueIn;
   const setActive = (p) => { if (value === undefined) setValueIn(p); if (onNavigate) onNavigate(p); };
@@ -4765,6 +4769,7 @@ export function Navigation({
       <nav className={`hvn-v${isCol ? " is-collapsed" : ""}${open && !open.closing ? " is-menu" : ""}`} aria-label="Main navigation">
         <button type="button" className="hvn-toggle" aria-expanded={!isCol} aria-label={isCol ? "Expand navigation" : "Collapse navigation"}
                 data-tip={isCol ? "Expand" : "Collapse"} data-tip-side={isCol ? "right" : undefined} onClick={() => { nav.close(true); setCol(!isCol); }}><NavIcon k="toggle" /></button>
+        {greet ? <p className="hvn-greet" aria-hidden={isCol || undefined}>{greet}</p> : null}
         <ul className="hvn-list">
           {(() => { /* the selection is one card that travels, under the icons, from the old section to the new one */
             const at = items.findIndex((it) => it.key === active[0]);
@@ -5447,7 +5452,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "open-hover"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "greet"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

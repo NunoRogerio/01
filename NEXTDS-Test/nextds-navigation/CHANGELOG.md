@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 — 2026-10-22
+
+- New `greeting` prop and `NAV_GREETINGS` export: a sentence left of the toggle introducing the menu (one of five, at random). Hidden when collapsed or with a menu open.
+
 ## 0.1.7 — 2026-10-22
 
 - The rail section whose menu is open (not the current page) uses the hover state instead of the white selection card.
