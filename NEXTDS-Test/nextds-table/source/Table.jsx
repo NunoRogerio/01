@@ -982,7 +982,7 @@ const CSS = `
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle svg{transform:scaleX(-1)} /* mirrored: the panel line sits on the left, on the side of the bar */
-.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-placeholder);font:inherit;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons */
+.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-placeholder);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
 .hvn-v.is-collapsed .hvn-greet,.hvn-v.is-menu .hvn-greet{opacity:0}
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
@@ -5452,7 +5452,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "greet"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "greet12"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9 — 2026-10-22
+
+- The greeting uses the small text of the menu titles and categories (12px/18px): every sentence fits one line.
+
 ## 0.1.8 — 2026-10-22
 
 - New `greeting` prop and `NAV_GREETINGS` export: a sentence left of the toggle introducing the menu (one of five, at random). Hidden when collapsed or with a menu open.
