@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 — 2026-10-22
+
+- The rail section whose menu is open (not the current page) uses the hover state instead of the white selection card.
+
 ## 0.1.6 — 2026-10-22
 
 - Collapse/expand icon mirrored: the panel line sits on the left, the side of the bar.

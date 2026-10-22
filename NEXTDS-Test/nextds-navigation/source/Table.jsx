@@ -998,7 +998,7 @@ const CSS = `
 .hvn-v{overflow:visible;z-index:2}
 .hvn-v.is-menu > .hvn-list .hvn-item{width:44px}
 .hvn-v.is-menu > .hvn-list .hvn-label{opacity:0}
-.hvn-item.is-open:not(.is-active){background:var(--nav-selected)}
+.hvn-item.is-open:not(.is-active){background:var(--container-hover-background)} /* the section whose menu is open wears the hover state, not the selection card */
 .hvn-panel{position:absolute;left:68px;top:72px;z-index:3;display:flex;flex-direction:column;width:186px;max-height:calc(100% - 88px);border-radius:8px;background:var(--nav-panel);overflow:hidden;animation:hvn-fade .15s ease}
 .hvn-v.is-collapsed .hvn-panel{left:85px}
 .hvn-panel.is-float{background:var(--container-secondary-background);box-shadow:0 0 8px var(--nav-selected-shadow)}
@@ -5447,7 +5447,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "tog-mirror"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "open-hover"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
