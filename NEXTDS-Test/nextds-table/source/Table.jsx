@@ -982,7 +982,7 @@ const CSS = `
 .hvn-toggle{position:absolute;left:222px;top:8px;transition:left .2s ease;display:flex;width:32px;height:32px;padding:8px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);cursor:pointer}
 .hvn-v.is-collapsed .hvn-toggle,.hvn-v.is-fixed-toggle .hvn-toggle{left:22px} /* fixed: the toggle stays in the icons' column when expanded too */
 .hvn-toggle:hover{background:var(--container-hover-background)}
-.hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .2s ease} /* the chevron points to where the bar goes: left to collapse, right to expand */
+.hvn-toggle .hvn-chev{transform-box:fill-box;transform-origin:center;transition:transform .3s cubic-bezier(.65,0,.35,1)} /* eases in and out */ /* the chevron points to where the bar goes: left to collapse, right to expand */
 .hvn-v.is-collapsed .hvn-toggle .hvn-chev{transform:rotate(180deg)}
 .hvn-greet{position:absolute;left:30px;top:24px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
 .hvn-v.is-collapsed .hvn-greet{opacity:0}
@@ -5458,7 +5458,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "tog-fixed"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "chev-ease"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6041,7 +6041,7 @@ function TagsBench({ theme, onTheme }) {
 
 /* ---------- Navigation page of the Workbench: the Navigation and AppHeader components with their controls ---------- */
 function NavBench({ theme, onTheme }) {
-  const [collapsed, setCollapsed] = useState(false); // the Bar control and the icon on the bar change the same state
+  const [collapsed, setCollapsed] = useState(false); // changed by the icon on the bar (no control for it)
   const [toggle, setToggle] = useState("moving"); // where the collapse/expand icon sits when the bar is expanded
   const [show, setShow] = useState({ header: true, crumbs: true }); // several can be on at once
   const [active, setActive] = useState(["dashboard"]);
@@ -6057,7 +6057,6 @@ function NavBench({ theme, onTheme }) {
               <button type="button" className="hvs-segbtn" aria-pressed={false} disabled title="Not ready yet">Horizontal</button>{/* not ready: off until the horizontal design exists */}
             </div>
           </CtlField>
-          <BenchSeg label="Bar" value={collapsed ? "collapsed" : "expanded"} onChange={(v) => setCollapsed(v === "collapsed")} options={[["expanded", "Expanded"], ["collapsed", "Collapsed"]]} />
           <BenchSeg label="Toggle" value={toggle} onChange={setToggle} options={[["fixed", "Fixed"], ["moving", "Moving"]]} />
           <CtlField label="Show">
             <div className="hvs-seg" role="group" aria-label="Show (select several)">

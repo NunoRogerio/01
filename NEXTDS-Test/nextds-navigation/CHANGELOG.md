@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.14 — 2026-10-22
+
+- The toggle chevron turns with an ease-in-out curve (0.3s).
+
 ## 0.1.13 — 2026-10-22
 
 - New `toggle` prop: `"moving"` (default, as before) or `"fixed"`, where the collapse/expand icon stays in the icons' column with the bar expanded and the greeting sits right of it.
