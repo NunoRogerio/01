@@ -12,7 +12,7 @@ The NEXT Design System navigation for React, as designed for VSP 360:
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-navigation-0.1.14.tgz
+npm install ./vendor/nextds-navigation-0.1.15.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -122,7 +122,7 @@ The **Hitachi Sans** font (regular, semibold, bold) is embedded in `styles.css`.
 ## A starting point for your app
 
 ```bash
-tar -xzf nextds-navigation-0.1.14.tgz && cd package   # the file from the React Package button (Navigation page)
+tar -xzf nextds-navigation-0.1.15.tgz && cd package   # the file from the React Package button (Navigation page)
 npm install          # dev tools only: esbuild, React, TypeScript
 npm run demo         # http://localhost:5174: header, bar, Dawn / Wicked
 ```

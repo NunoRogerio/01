@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.15 — 2026-10-22
+
+- The bar opens and closes with the same ease-in-out curve as the chevron (0.3s): bar width, toggle position and item widths.
+
 ## 0.1.14 — 2026-10-22
 
 - The toggle chevron turns with an ease-in-out curve (0.3s).
