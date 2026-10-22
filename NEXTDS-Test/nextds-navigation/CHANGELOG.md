@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10 — 2026-10-22
+
+- Greeting in the normal text colour; it stays while a menu is open; a different sentence each time the bar collapses or expands.
+
 ## 0.1.9 — 2026-10-22
 
 - The greeting uses the small text of the menu titles and categories (12px/18px): every sentence fits one line.

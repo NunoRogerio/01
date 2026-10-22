@@ -245,7 +245,8 @@ export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
   collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
-  const [greet] = useState(() => Array.isArray(greeting) ? greeting[Math.floor(Math.random() * greeting.length)] : greeting); // one of the sentences, at random, per visit
+  const pickGreet = (not) => { if (!Array.isArray(greeting)) return greeting; const pool = greeting.length > 1 ? greeting.filter((g) => g !== not) : greeting; return pool[Math.floor(Math.random() * pool.length)]; };
+  const [greet, setGreet] = useState(() => pickGreet()); // one of the sentences, at random
   const [valueIn, setValueIn] = useState(defaultValue || [items[0] ? items[0].key : ""]);
   const active = value || valueIn;
   const setActive = (p) => { if (value === undefined) setValueIn(p); if (onNavigate) onNavigate(p); };
@@ -255,7 +256,9 @@ export function Navigation({
   const nav = useNav({ items, active, setActive, setCollapsed: setCol });
   const rootRef = useRef(null);
   const tip = useTips(rootRef, ".hvn-root");
-  useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]); // collapsing or opening the bar from outside closes a menu
+  useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]);
+  const greetFirst = useRef(true);
+  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar collapses or expands // collapsing or opening the bar from outside closes a menu
   useEffect(() => { // Esc closes an open menu; a click outside closes one opened from the collapsed bar
     if (!nav.open || nav.open.closing) return undefined;
     const down = (e) => { if (nav.open.temp && rootRef.current && !rootRef.current.contains(e.target)) nav.close(); };

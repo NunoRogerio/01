@@ -982,8 +982,8 @@ const CSS = `
 .hvn-v.is-collapsed .hvn-toggle{left:22px}
 .hvn-toggle:hover{background:var(--container-hover-background)}
 .hvn-toggle svg{transform:scaleX(-1)} /* mirrored: the panel line sits on the left, on the side of the bar */
-.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-placeholder);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
-.hvn-v.is-collapsed .hvn-greet,.hvn-v.is-menu .hvn-greet{opacity:0}
+.hvn-greet{position:absolute;left:30px;top:33px;transform:translateY(-50%);width:184px;margin:0;color:var(--content-primary);font:inherit;font-size:12px;line-height:18px;text-wrap:balance;transition:opacity .15s;pointer-events:none} /* the sentence introducing the menu, left of the toggle, aligned with the icons; the small text of the menu titles and categories */
+.hvn-v.is-collapsed .hvn-greet{opacity:0} /* stays while navigating; hidden only when collapsed */
 .hvn-ico{display:block;flex:none;width:16px;height:16px;overflow:visible}
 .hvn-list{list-style:none;margin:0;padding:72px 0 0;display:flex;flex-direction:column;gap:16px}
 .hvn-item{position:relative;display:flex;align-items:center;gap:11px;box-sizing:border-box;height:32px;padding:0 14px;border:0;border-radius:4px;background:transparent;color:var(--content-primary);font:inherit;text-align:left;white-space:nowrap;cursor:pointer;transition:width .2s ease,background-color .12s}
@@ -4744,7 +4744,8 @@ export function Navigation({
   items = VSP360_NAVIGATION, value, defaultValue, onNavigate, onExternal,
   collapsed, defaultCollapsed = false, onCollapsedChange, greeting = NAV_GREETINGS, theme = "dawn", className = "", style,
 }) {
-  const [greet] = useState(() => Array.isArray(greeting) ? greeting[Math.floor(Math.random() * greeting.length)] : greeting); // one of the sentences, at random, per visit
+  const pickGreet = (not) => { if (!Array.isArray(greeting)) return greeting; const pool = greeting.length > 1 ? greeting.filter((g) => g !== not) : greeting; return pool[Math.floor(Math.random() * pool.length)]; };
+  const [greet, setGreet] = useState(() => pickGreet()); // one of the sentences, at random
   const [valueIn, setValueIn] = useState(defaultValue || [items[0] ? items[0].key : ""]);
   const active = value || valueIn;
   const setActive = (p) => { if (value === undefined) setValueIn(p); if (onNavigate) onNavigate(p); };
@@ -4754,7 +4755,9 @@ export function Navigation({
   const nav = useNav({ items, active, setActive, setCollapsed: setCol });
   const rootRef = useRef(null);
   const tip = useTips(rootRef, ".hvn-root");
-  useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]); // collapsing or opening the bar from outside closes a menu
+  useEffect(() => { if (nav.open && !nav.open.temp) nav.close(true); }, [isCol]);
+  const greetFirst = useRef(true);
+  useEffect(() => { if (greetFirst.current) { greetFirst.current = false; return; } setGreet((g) => pickGreet(g)); }, [isCol]); // a different sentence each time the bar collapses or expands // collapsing or opening the bar from outside closes a menu
   useEffect(() => { // Esc closes an open menu; a click outside closes one opened from the collapsed bar
     if (!nav.open || nav.open.closing) return undefined;
     const down = (e) => { if (nav.open.temp && rootRef.current && !rootRef.current.contains(e.target)) nav.close(); };
@@ -5452,7 +5455,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "greet12"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "greet-cycle"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

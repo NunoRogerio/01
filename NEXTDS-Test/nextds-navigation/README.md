@@ -12,7 +12,7 @@ The NEXT Design System navigation for React, as designed for VSP 360:
 The package is delivered as a file. Keep it in the project (for example in `vendor/`) and install it:
 
 ```bash
-npm install ./vendor/nextds-navigation-0.1.9.tgz
+npm install ./vendor/nextds-navigation-0.1.10.tgz
 ```
 
 To update, replace the file and run the same command with the new version.
@@ -86,7 +86,7 @@ Built-in icons: `dashboard`, `inventory`, `analytics`, `protection`, `orchestrat
 | `items` | `VSP360_NAVIGATION` | The sections and their menus. |
 | `value`, `defaultValue`, `onNavigate` | first section | The selected page (a path). |
 | `onExternal` | | A page marked `external` was clicked (it never takes the selection). |
-| `greeting` | `NAV_GREETINGS` | The sentence left of the toggle, introducing the menu, in the small text of the menu titles (12px, placeholder colour). An array shows one at random per visit; a string always that one; `false` none. Hidden when the bar is collapsed or a menu is open. |
+| `greeting` | `NAV_GREETINGS` | The sentence left of the toggle, introducing the menu: 12px, normal text colour. An array shows one at random, a different one each time the bar collapses or expands; a string always that one; `false` none. Hidden only when the bar is collapsed (it stays while a menu is open). |
 | `collapsed`, `defaultCollapsed`, `onCollapsedChange` | `false` | 271px open or 77px collapsed. The button at the top right of the bar toggles it. |
 | `theme` | `"dawn"` | `"dawn"` or `"wicked"`. |
 | `className`, `style` | | On the root element. |
@@ -121,7 +121,7 @@ The **Hitachi Sans** font (regular, semibold, bold) is embedded in `styles.css`.
 ## A starting point for your app
 
 ```bash
-tar -xzf nextds-navigation-0.1.9.tgz && cd package   # the file from the React Package button (Navigation page)
+tar -xzf nextds-navigation-0.1.10.tgz && cd package   # the file from the React Package button (Navigation page)
 npm install          # dev tools only: esbuild, React, TypeScript
 npm run demo         # http://localhost:5174: header, bar, Dawn / Wicked
 ```
