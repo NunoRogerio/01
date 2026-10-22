@@ -16,16 +16,16 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792563502"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792679688"></script>
 <script src="avatar.js?v=1792322188"></script>
 <script src="prefs.js?v=1792563502"></script>
-<script src="station.js?v=1792322188"></script>
-<script src="i18n.js?v=1792581760"></script>
-<script src="live.js?v=1792322188"></script>
-<script src="chat.js?v=1792581760"></script>
-<script src="tour.js?v=1792563502"></script>
+<script src="station.js?v=1792679688"></script>
+<script src="i18n.js?v=1792679688"></script>
+<script src="live.js?v=1792679688"></script>
+<script src="chat.js?v=1792679688"></script>
+<script src="tour.js?v=1792679688"></script>
 <script src="mapsearch.js?v=1792361770"></script>
-<script src="stats.js?v=1792361770"></script>
+<script src="stats.js?v=1792679688"></script>
 
 <title>Incidents</title>
 <script src="./support.js"></script>
@@ -313,7 +313,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     <button type="button" data-swipe-go="1" tabindex="-1" aria-hidden="true" onClick="{{closeList}}" style="position: absolute; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none"></button>
     <div aria-hidden="{{listHidden}}" style="display: flex; flex-direction: column; flex-grow: 1; min-height: 0; visibility: {{listVis}}; opacity: {{liInOp}}; transform: translateY({{liInY}}); transition: opacity .3s ease {{liInDelay}}, transform .5s cubic-bezier(.2,.8,.2,1) {{liInDelay}}, visibility 0s linear {{listVisDelay}}">
       <div role="button" tabindex="0" aria-label="Close" onPointerDown="{{hList.down}}" onPointerMove="{{hList.move}}" onPointerUp="{{hList.up}}" onPointerCancel="{{hList.cancel}}" onKeyDown="{{hList.key}}" class="wf-grab gt" style="display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; margin-bottom: -25px; padding-top: 8px; flex-shrink: 0; cursor: grab; touch-action: none"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: transparent"></span></div>
-      <!-- Incidents: one table for ignition candidates, one for fires with their state -->
+      <!-- Incidents: one table for detection candidates, one for fires with their state -->
       <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; padding: 0 60px 40px 16px">
         <span class="wf-title-m" style="font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px">{{incTitle}}</span>
         <!-- The counts live on the switcher (All, Candidates, Fires): the title only says what to do -->
@@ -1083,7 +1083,7 @@ class Component extends DCLogic {
     this.wfHomeReset();
     try { window.dispatchEvent(new Event('wf-sync')); } catch (e) {}
   }
-  /* (Oct 18, 09:24) Reset fires: every ignition candidate the dispatcher decided on (declared, smoke-checked, sent or dismissed) goes back to
+  /* (Oct 18, 09:24) Reset fires: every detection candidate the dispatcher decided on (declared, smoke-checked, sent or dismissed) goes back to
      the map undecided, with its incident chat started over; the rest of the demo (profile, scope, map, preferences) stays */
   wfFiresReset() {
     try { ['wf-dismissed', 'wf-confirmed', 'wf-verify', 'wf-capfire', 'wf-ia-off', 'wf-sit-seen', 'wf-fire-cur', 'wf-fireview', 'wf-focus', 'wf-flip'].forEach((k) => window.sessionStorage.removeItem(k)); } catch (e) {}
@@ -1401,7 +1401,7 @@ class Component extends DCLogic {
         const stEx = () => { const D = window.__wfStFile || {}; for (const k in D) { const r = (D[k].rows || []).find((q) => q[4]); if (r) return { k: 'station', title: r[4], sub: Math.abs(r[2]).toFixed(2) + '°' + (r[2] < 0 ? 'S' : 'N') + ' ' + Math.abs(r[3]).toFixed(2) + '°' + (r[3] < 0 ? 'W' : 'E'), tag: '', tagFg: '', tagBg: '' }; } return null; };
         const wxNames = ['Low', 'Moderate', 'High', 'Very high', 'Maximum'];
         const SH = {
-          cand: [['cand', 'Ignition candidate markers', 'Marcadores de candidatos a ignição'], ['night', 'A moon when the heat was seen at night', 'Uma lua quando o calor foi visto de noite'], ['pill', 'Confidence tags', 'Etiquetas de confiança']],
+          cand: [['cand', 'Detection candidate markers', 'Marcadores de candidatos de deteção'], ['night', 'A moon when the heat was seen at night', 'Uma lua quando o calor foi visto de noite'], ['pill', 'Confidence tags', 'Etiquetas de confiança']],
           fire: [['fire', 'Active fire markers', 'Marcadores de incêndios ativos'], ['pill', 'Stage tags', 'Etiquetas de fase'], ['poly', 'Burned area on the map', 'Área ardida no mapa']]
         };
         const best = (f) => LC.filter(f).sort((x, y) => y[4] - x[4])[0];
@@ -1463,7 +1463,7 @@ class Component extends DCLogic {
       aic: (() => { const k = s.aiAsk || this._aiAskLast || 'off', open = !!s.aiAsk, A = window.__wfChat && window.__wfChat.ai, pt = lang === 'pt', ja = lang === 'ja';
         if (s.aiAsk) this._aiAskLast = s.aiAsk;
         const L = (en, p, j) => (ja ? j : pt ? p : en);
-        const nm = s.aiAskName || '', dsk = /^ds(on|off):/.test(k) ? k.replace(/^ds(on|off):/, '') : null, what = dsk === 'SAT' ? L('ignition candidates', 'candidatos a ignição', '発火候補') : L('fires', 'incêndios', '火災');
+        const nm = s.aiAskName || '', dsk = /^ds(on|off):/.test(k) ? k.replace(/^ds(on|off):/, '') : null, what = dsk === 'SAT' ? L('detection candidates', 'candidatos de deteção', '発火候補') : L('fires', 'incêndios', '火災');
         const dsT = dsk ? (/^dsoff/.test(k)
           ? [L('Turn off ' + nm + '?', 'Desligar ' + nm + '?', nm + 'をオフにしますか?'), L('Its ' + what + ' are hidden from the map and the lists.', 'Os ' + what + ' desta fonte deixam de aparecer no mapa e nas listas.', 'この' + what + 'は地図とリストに表示されなくなります。'), L('Nothing is deleted: turn it on again to see them.', 'Nada é apagado: volte a ligar para os ver.', '削除はされません。再びオンにすると表示されます。'), L('Turn off', 'Desligar', 'オフにする')]
           : [L('Turn on ' + nm + '?', 'Ligar ' + nm + '?', nm + 'をオンにしますか?'), L('Its ' + what + ' show again on the map and in the lists.', 'Os ' + what + ' desta fonte voltam a aparecer no mapa e nas listas.', 'この' + what + 'が再び地図とリストに表示されます。'), '', L('Turn on', 'Ligar', 'オンにする')]) : null;
@@ -1743,7 +1743,7 @@ class Component extends DCLogic {
     const goFire = (f) => () => { this.wfListFlag(true); this.wfSetFireView(f); };
     const out = [], resOut = [], LL = (en, pt) => (window.__wfLang === 'pt' ? pt : en);
     const cs = CANDS.slice().sort((a, b) => b.conf - a.conf);
-    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', nl: cs[0].live, title: 'New ignition detection', text: cs[0].place + '. ' + cs[0].conf + '% confidence. ' + (cs[0].srcList || cs[0].src || ''), href: 'Dispatch.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
+    if (cs[0]) out.push({ t: T0 - 3 * 60000, kind: 'ign', nl: cs[0].live, title: 'New detection candidate', text: cs[0].place + '. ' + cs[0].conf + '% confidence. ' + (cs[0].srcList || cs[0].src || ''), href: 'Dispatch.dc.html', pick: listFocus(cs[0].id), c: confC(cs[0].conf) });
     // One notification per place: two fires with the same name read as a duplicate
     const used = new Set(), pickF = (L) => { const f = L.find((q) => !used.has(q.place)); if (f) used.add(f.place); return f; };
     const fireSt = FIRES.filter((f) => f.info && f.info.stEn);
@@ -1774,7 +1774,7 @@ class Component extends DCLogic {
         out.push({ t: c.updated || T0, kind: (CHm.fireStage ? CHm.fireStage(c) : c.stage) > 0 ? 'fire' : 'ign', stage: S.en, title: (d.acked ? '' : 'Deployment. ') + (CHm && CHm.nameOf ? CHm.nameOf(c) : c.place), text: (d.acked ? (S.en || '') + '. ' : 'Dispatched. Respond. ') + (d.f.veh || []).join(', ') + '.', href: 'Dispatch.dc.html',
           pick: () => { if (c.kind === 'fire') this.wfSetFireView({ id: c.incId, place: c.place, note: c.note, x: c.x, y: c.y }); else this.wfSetFocus(c.incId); } }); });
       else { CANDS.forEach((cd) => { const ll = cd.live && cd.live.lat != null ? [cd.live.lat, cd.live.lon] : window.__wfIncLatLon(cd.x, cd.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k) return;
-          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', nl: cd.live, title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New ignition detection', text: cd.place + '. ' + cd.conf + '% confidence. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
+          out.push({ t: (cd.live && cd.live.simAt) || T0 - 3 * 60000, kind: 'ign', nl: cd.live, title: (k === 'aid' ? 'Mutual aid. ' : '') + 'New detection candidate', text: cd.place + '. ' + cd.conf + '% confidence. ' + (cd.srcList || cd.src || ''), href: 'Dispatch.dc.html', pick: listFocus(cd.id), c: confC(cd.conf) }); });
         FIRES.forEach((f) => { if (f.x == null) return; const ll = window.__wfIncLatLon(f.x, f.y), k = window.__wfIncidentFor(ll[0], ll[1], ST); if (!k || !f.info || !f.info.stEn || (f.info.sim && f.info.resolved)) return; try { if (CHm.find && CHm.find({ id: f.id, kind: 'fire' })) return; } catch (e) {}   /* (Oct 8, 23:09) a fire with a chat speaks through its chat's notice (its own stage), not the feed's */
           out.push({ t: f.info.simAt || T0 - 11 * 60000, kind: 'fire', stage: f.info.stEn, title: (k === 'aid' ? 'Mutual aid. ' : '') + f.place + ': ' + f.info.stEn, text: 'Stage changed. ' + (f.info.src || '') + '.', href: 'Dispatch.dc.html', pick: goFire(f) }); });
         CHm.list().filter((c) => c && !c.closed && !c.dismissed && c.kind !== 'dm' && own(c) && (!window.__wfChatAllowed || window.__wfChatAllowed(c))).forEach((c) => { const S = CHm.stageOf(c) || {}, lm = CHm.lastMsg(c), who = lm && lm.kind === 'msg' && lm.from !== 'me' ? ((c.people[lm.from] || {}).name || '') : '';
@@ -1785,7 +1785,7 @@ class Component extends DCLogic {
       if (MINE.level !== 'lead') { let HO = null; try { HO = JSON.parse(localStorage.getItem('wf-help-offer') || 'null'); } catch (e) {}
         if (HO && HO.rn) out.push({ t: T0 - 5 * 60000, kind: 'st', unit: 'crew', title: 'Mutual aid. ' + (HO.place || 'Fire') + ', ' + HO.km + ' km', text: 'Outside our area. Ask ' + HO.rn + ' if they need help.', href: 'Station.dc.html?home=1', pick: () => { try { sessionStorage.setItem('wf-help-go', '1'); } catch (e) {} } }); }
       out.sort((a, b) => b.t - a.t); }
-    /* (Oct 13, 08:35) the dispatch profiles (ECC / CSREPC): their notifications are the ignition candidates themselves, one each,
+    /* (Oct 13, 08:35) the dispatch profiles (ECC / CSREPC): their notifications are the detection candidates themselves, one each,
        newest detection first, by the satellite's own time; the place as the title, the likelihood and source under it */
     const DSPn = (() => { try { return /^(ecc|ptecc)$/.test(localStorage.getItem('wf-custom') || ''); } catch (e) { return false; } })();
     if (DSPn) { out.length = 0;
@@ -1812,7 +1812,7 @@ class Component extends DCLogic {
     const items = shownOut.map((n, i) => {
       const un = isUn(n);
       const ic = n.kind === 'ign' ? [CIR, 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', '#3A3A3C'] : n.kind === 'fire' ? [CIR, '#E8590C', 'none'] : [SQ, 'rgba(64,156,255,0.6)', '#3A3A3C'];
-      // The type, as an icon in its own round (like the chat timeline): the ignition candidate's marker, the fire's stage icon (in the stage's colour), the station's house
+      // The type, as an icon in its own round (like the chat timeline): the detection candidate's marker, the fire's stage icon (in the stage's colour), the station's house
       const CH = window.__wfChat, SG = n.kind === 'fire' && CH && CH.STAGES ? CH.STAGES.find((q) => String(n.stage || '').toLowerCase().indexOf(q.en.toLowerCase()) >= 0 || q.en.toLowerCase().indexOf(String(n.stage || '').toLowerCase()) >= 0) : null;
       const ty = n.kind === 'ign' && CH && CH.ICON ? { vb: '0 0 24 24', d: window.__wfCandNight && window.__wfCandNight(n.nl) ? CH.ICON.candN : CH.ICON.cand, f: 'none', s: '#3A3A3C', sw: 1.8, bg: window.__wfIgn ? window.__wfIgn(n.conf || +((String(n.title) + ' ' + String(n.text)).match(/(\d+)%/) || [])[1] || 70).fill : '#FFD600' }   /* (Oct 11, 01:05) the candidate's heat point on its likelihood yellow */
         : n.kind === 'ign' ? { vb: '0 0 14 14', d: CIR, f: 'color-mix(in srgb, var(--wf-y, #E5FF00) 80%, transparent)', s: '#3A3A3C', sw: 1.6, bg: '#ECECEF' }
@@ -1829,7 +1829,7 @@ class Component extends DCLogic {
     });
     const where = MINE ? ((() => { try { return sessionStorage.getItem('wf-home-title') || ''; } catch (e) { return ''; } })() || (MINE.rank === 'bc' ? 'Battalion ' + (MINE.batt || '') : String(MINE.station.name).replace(/^.*\b(Station\s*#?\s*\d+)\b.*$/i, '$1').replace('#', '')) || 'Station') : DSPn ? (this.wfScope().st === 'PT' ? 'CSREPC ' + ((scope && scope.title) || '') : 'SCU ECC') : ((scope && scope.title) || 'All areas');   /* (Oct 13, 14:20) a dispatch center's panel is titled as its header (SCU ECC) */ /* (Oct 12) the same name as the home it opens from (Battalion 15 for the Battalion Chief, the crew for a Captain) */
     return {
-      items, none: items.length === 0, resetD: rsTab && resOut.length ? 'flex' : 'none', resetTxt: LL('Reset fires', 'Repor incêndios'), resetGo: () => this.wfFiresReset(), mine: mn, mineD: MINE || mn.gov || DSPn ? 'none' : 'flex', noneTxt: DSPn ? (rsTab ? LL('Nothing resolved yet.', 'Ainda nada resolvido.') : LL('No ignition candidates to verify.', 'Sem candidatos de ignição por verificar.')) : MINE ? (MINE.level === 'lead' ? 'No deployments so far.' : 'No updates in the station area so far.') : mn.on ? 'No updates on your incidents so far.' : 'No updates in this area so far.', quiet: ['All is quiet.', 'Quiet so far.', 'All calm out there.', 'Nothing on the radio.', 'Steady and quiet.'][this._ntQ == null ? (this._ntQ = Math.floor(Math.random() * 5)) : this._ntQ], listD: items.length ? 'flex' : 'none', ulPt: DSPn ? '0px' : '16px', lsMt: DSPn ? '24px' : '0px', tabsD: DSPn ? 'grid' : 'none', tabX: rsTab ? '100%' : '0%',
+      items, none: items.length === 0, resetD: rsTab && resOut.length ? 'flex' : 'none', resetTxt: LL('Reset fires', 'Repor incêndios'), resetGo: () => this.wfFiresReset(), mine: mn, mineD: MINE || mn.gov || DSPn ? 'none' : 'flex', noneTxt: DSPn ? (rsTab ? LL('Nothing resolved yet.', 'Ainda nada resolvido.') : LL('No detection candidates to verify.', 'Sem candidatos de deteção por verificar.')) : MINE ? (MINE.level === 'lead' ? 'No deployments so far.' : 'No updates in the station area so far.') : mn.on ? 'No updates on your incidents so far.' : 'No updates in this area so far.', quiet: ['All is quiet.', 'Quiet so far.', 'All calm out there.', 'Nothing on the radio.', 'Steady and quiet.'][this._ntQ == null ? (this._ntQ = Math.floor(Math.random() * 5)) : this._ntQ], listD: items.length ? 'flex' : 'none', ulPt: DSPn ? '0px' : '16px', lsMt: DSPn ? '24px' : '0px', tabsD: DSPn ? 'grid' : 'none', tabX: rsTab ? '100%' : '0%',
       tabs: [['active', LL('To verify', 'Por verificar'), out.length], ['resolved', LL('Resolved', 'Resolvidos'), resOut.length]].map(([k, label, n]) => ({ label, n: n ? String(n) : '', nD: n ? 'inline-flex' : 'none', aria: label + (n ? ', ' + n : ''), sel: String((k === 'resolved') === !!rsTab), pick: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ ntTab: k }); } })),
       title: where, sub: 'Notifications' + (unread ? '. ' + unread + ' unread' : items.length ? '. ' + items.length + (items.length === 1 ? ' update' : ' updates') : '') + '.',   /* (Oct 8) empty: the empty state says it, the subtitle does not repeat it */ unread: unread > 20 ? '20+' : String(unread), badgeD: unread && !open ? 'block' : 'none',
       ring: 'none',   // the bell stays still; the yellow count badge alone shows unread updates
@@ -1969,7 +1969,7 @@ class Component extends DCLogic {
       fires: o.fires, firesC: dis ? '#AEAEB2' : NUMC, cands: o.cands, candsC: dis ? '#AEAEB2' : NUMC,
       bd: selected ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: selected ? 'rgba(0,122,255,0.14)' : '#FFFFFF',
       end: drill ? CHEV : '', endD: drill ? 'flex' : 'none', numRow: drill ? '1 / span 2' : '1', subCol: drill ? '1' : '1 / span 3', endC: selected ? '#C7C7CC' : '#C4C4C7', endW: 2,
-      aria: o.name + ', ' + o.fires + ' active fires, ' + o.cands + ' ignition candidates' + (drill ? (o.drillLbl || '. Show counties') : (selected ? ', selected' : '')),
+      aria: o.name + ', ' + o.fires + ' confirmed fires, ' + o.cands + ' detection candidates' + (drill ? (o.drillLbl || '. Show counties') : (selected ? ', selected' : '')),
       pick: dis ? null : pick
     }; };
     const SK = s.sortK || 'cands', SD = s.sortD || (SK === 'name' ? 1 : -1);
@@ -2021,15 +2021,15 @@ class Component extends DCLogic {
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
     let allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: unitN(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: NUMC, candsC: NUMC,
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
-      aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' ignition candidates',
+      aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' detection candidates',
       pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + (usD.length === 1 ? ' state' : ' states'), ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: NUMC, candsC: NUMC,
-      bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' active fires, ' + t.cands + ' ignition candidates. Show the whole country',
+      bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' confirmed fires, ' + t.cands + ' detection candidates. Show the whole country',
       pick: () => { this.wfSetScope({ st: 'US', co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false }; })() : { dis: true, name: '', nCounties: 0, nLbl: '', risk: 0, riskC: '', fires: 0, cands: 0, firesC: '', candsC: '', bd: '', bg: '', tick: 0, aria: '', pick: null };
     const dspSet = (co) => { try { if (co) sessionStorage.setItem('wf-dsp-co', co); else sessionStorage.removeItem('wf-dsp-co'); } catch (e) {} this.wfListFlag(false); this.setState({ scOpen: false, list: false, q: '' }); };
     if (DSPu && brObj) { rows.length = 0; brObj.counties.filter((c) => DSPu.indexOf(c.name) >= 0).sort(cmp).forEach((c) => rows.push(rowOf({ ...c, live: true }, selCounty === c.name, () => dspSet(c.name), '', false)));
       const on = selCounty === DSPb.co, uc = SC.count(DSPb.st, DSPb.co), un = window.__wfUnitName ? window.__wfUnitName(DSPb.st, DSPb.co) : 'Santa Clara Unit';
       allState = { ...allState, name: un, nCounties: DSPu.length, nLbl: DSPu.length + ' counties', ...selSty(on), fires: uc.fires, cands: uc.cands, bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0,
-        aria: un + ', ' + uc.fires + ' active fires, ' + uc.cands + ' ignition candidates. The whole unit', pick: () => dspSet(null), dis: false }; }
+        aria: un + ', ' + uc.fires + ' confirmed fires, ' + uc.cands + ' detection candidates. The whole unit', pick: () => dspSet(null), dis: false }; }
     const M = N + NF;
     const listOpen = !!s.list && M > 0;
     const focus = (id) => () => this.wfSetFocus(id);
@@ -2140,7 +2140,7 @@ class Component extends DCLogic {
       listTitle: N + ' detection candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' confirmed fire' + (NF === 1 ? '' : 's'), single: N === 1 && NF === 0, stacked: M > 1 || (N === 0 && NF === 1), layers, ignList, ign: CANDS,
       cardTitle: (N === 1 && NF === 0) ? 'Detection candidate' : N + ' detection candidate' + (N === 1 ? '' : 's') + ' and ' + NF + ' confirmed fire' + (NF === 1 ? '' : 's'),
       cardSub: N === 0 ? 'Nothing to review' : (N > 1 || NF > 0 ? 'Top: ' + top.place + ' · ' + top.conf + '%' : top.place + ' · ' + top.ago),
-      stackAria: N + ' ignition candidates and ' + NF + ' active fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
+      stackAria: N + ' detection candidates and ' + NF + ' confirmed fires, ' + (N + NF) + ' incidents in total. Show all', topPick: focus(top.id),
       openList: () => { this.wfListFlag(false); this.setState({ list: true }); }, closeList: () => { this.wfListFlag(false); this.setState({ list: false }); }, closeListX: (e) => { const b = e && e.currentTarget; try { if (navigator.vibrate) navigator.vibrate(8); } catch (x) {} if (b) { b.classList.add('wf-turn'); setTimeout(() => b.classList.remove('wf-turn'), 800); } this.wfListFlag(false); this.setState({ list: false }); }, navHome: () => { this.wfListFlag(false); this.setState({ list: false, scOpen: false }); },
       listStr: listOpen ? 'true' : 'false', listHidden: listOpen ? 'false' : 'true', listOp: listOpen ? 1 : 0, listOpN: listOpen ? 1 : 0, listPE: listOpen ? 'auto' : 'none',
       liTop: L.side ? 88 : ((window.__wfTOP === 0 ? 60 : 52) + 16) /* the open list rises to 16px under the status bar */, barHNow: listOpen ? 24 : L.barH, barOp: listOpen ? 0 : 1 /* open, the summary under the list goes: the list takes its room */, listVis: listOpen ? 'visible' : 'hidden', liClip: listOpen ? (this.wfDrag('li').y ? this.wfDrag('li').y + 'px' : '0px') : Math.max(0, L.vh - (L.side ? 88 : ((window.__wfTOP === 0 ? 60 : 52) + 16)) - L.barH) + 'px', listVisDelay: listOpen ? '0s' : '.55s', liInOp: listOpen ? 1 : 0, liInY: listOpen ? '0px' : '16px', liInDelay: listOpen ? '.18s' : '0s', barRot: listOpen ? '0deg' : '180deg', barGrabOp: listOpen ? 0 : 1,

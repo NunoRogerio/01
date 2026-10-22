@@ -66,12 +66,12 @@
   // Names that belong to the profile station: the incident chats never give them to anyone else
   window.__wfReservedNames = function () { var R = { 'Frank Ortiz': 1 }; CREW11.concat(CREW11B).forEach(function (n) { R[n] = 1; }); FLEET11.forEach(function (u) { u.crew.forEach(function (n) { R[n] = 1; }); }); try { (JSON.parse(localStorage.getItem('wf-st-reserved') || '[]') || []).forEach(function (n) { R[n] = 1; }); } catch (e) {} return R; };
   // (Oct 8, 14:35) Simulated incidents in the station's area, so the captain and the team lead always have a story to work:
-  // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one ignition candidate
+  // one fire (a copy of a real Los Angeles County fire's data, moved into the area and renamed) and one detection candidate
   // (a copy of a real satellite detection, moved into the area). Marked sim: shown with the simulation star. Station profiles only.
   var SIMF = { id: 'SIM-ST11-F1', name: 'Temecula Canyon Fire', near: 'Temecula Canyon, southwest of Old Town', lat: 33.4700, lon: -117.1750, ac: 38, pc: 0, minAgo: 52 };   /* (Oct 11, 17:40) Temecula places */
   var SIMC = { lat: 33.4850, lon: -117.1650, place: 'Temecula', near: '2 km southwest of Old Town Temecula', conf: 88, minAgo: 12 };
   /* (Oct 8, 22:21; 22:48) New simulated incidents in the area: when the station's To do has no incident and the screen has been
-     left alone for 5 s, a new round comes up: 1 to 2 fires (at First alert) and 1 to 3 ignition candidates, picked at random
+     left alone for 5 s, a new round comes up: 1 to 2 fires (at First alert) and 1 to 3 detection candidates, picked at random
      from the places below, with a notification banner for each. Rounds are kept on this phone (wf-sim-rounds); round 0 is the
      Rubio Fire and the Altadena candidate. Each fire follows its own lifecycle from the captain's dispatch. */
   var PF = [
@@ -223,7 +223,7 @@
       b.style.cssText = 'pointer-events:auto;display:flex;align-items:center;gap:16px;padding:16px;border-radius:var(--wf-r, 16px);background:rgba(255, 255, 255, 0.62);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:0 0 16px rgba(0,0,0,0.16);transform:translateY(-140%);opacity:0;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s ease;cursor:pointer;touch-action:none';
       var mk = fire ? '<circle cx="7" cy="7" r="4.8" fill="#E8590C"></circle>' : '<circle cx="7" cy="7" r="6.2" fill="' + ((window.__wfIgn && window.__wfIgn(d.conf || 70, d.live).fill) || '#FFE680') + '"></circle><g transform="translate(2.8 2.8) scale(.35)"><path d="' + ((window.__wfIgn && window.__wfIgn(d.conf || 70, d.live).dash) || window.__wfIgnDash || '') + '" fill="none" stroke="#3A3A3C" stroke-width="2.6" stroke-linecap="round"></path></g>';
       var hq = it.kind === 'help', hc = it.c || {}, hp = (hc.people || [])[0] || {};
-      var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? (CUR === 'pt' ? ': Despacho de 1.º alerta' : ': Primeiro alerta') : ': First alert') : (PT ? 'Nova deteção de ignição' : 'New ignition detection');
+      var ttl = hq ? (PT ? 'Pedido de ajuda. ' : 'Help request. ') + (hc.reg || hp.name || '') : fire ? d.name + (PT ? (CUR === 'pt' ? ': Despacho de 1.º alerta' : ': Primeiro alerta') : ': First alert') : (PT ? 'Novo candidato de deteção' : 'New detection candidate');
       var txt = hq ? hp.name + ': ' + (PT ? 'Podem enviar um veículo e uma equipa para o ' : 'Could you send an engine and a crew to the ') + ((hc.topic || {}).place || '') + '?' : fire ? d.near + '. ' + (CUR === 'pt' ? (Math.round(d.ac * 0.4047 * 10) / 10) + ' ha.' : d.ac + ' ac.') :   /* (Oct 11, 19:20) Portugal measures in hectares */ (d.place || 'Altadena') + '. ' + d.conf + (PT ? '% de confiança. ' : '% confidence. ') + d.near + '.';
       if (it.kind === 'asg') { ttl = PT ? 'Nova atribuição' : 'New assignment'; txt = it.txt || ''; }   /* (Oct 12, 12:50) the crew's next assignment */
       var S1 = C && C.STAGES ? C.STAGES[1] : null;   /* (Oct 11, 01:18) the incident's round: a candidate's dot and strokes on its likelihood yellow; a new fire's First alert icon on its stage colour */

@@ -162,7 +162,7 @@
     return { peak: (bi * 2) + ':00 to ' + (bi * 2 + 2) + ':00', h: '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Candidates by time of day and confidence" style="display:block">' + o + ty(rh / 2, '100%') + ty(rows * rh - rh / 2, '0%') + lbl + '</svg>' + leg };
   }
 
-  // ---- real data (Oct 12): the live feeds' fires and ignition candidates in the selected area and period ----------------
+  // ---- real data (Oct 12): the live feeds' fires and detection candidates in the selected area and period ----------------
   function scopeNow() { var sc = null, role = ''; try { role = localStorage.getItem('wf-role') || ''; } catch (e) {} try { sc = JSON.parse(sessionStorage.getItem('wf-scope') || 'null'); } catch (e) {}
     sc = sc || (window.__wfMem || {}).scope || null; var lk = ({ pt: 'PT', ca: 'CA', nv: 'NV', amz: 'AMZ' })[role] || null; if (lk && (!sc || sc.st !== lk)) sc = { st: lk, co: null }; return sc && sc.st ? sc : { st: 'CA', co: null }; }
   var SPAN = { day: 864e5, week: 6048e5, month: 2592e6 };
@@ -178,7 +178,7 @@
     return { sc: sc, us: us, au: us ? 'ac' : 'ha', ak: us ? 2.4711 : 1, fires: F.filter(inP), firesNow: F, cands: C.filter(inP), bucket: bucket, src: Object.keys(srcs) };
   }
   /* (Oct 12) the panel's own words in Portuguese too (the cards are built as text, so they are translated here) */
-  var PTW = { 'Ignition candidates vs burned area': 'Candidatos a ignição e área ardida', 'Burned area': 'Área ardida', 'Top 5 fires by area burned': 'Os 5 maiores incêndios', 'Fastest time to containment': 'Dominados mais depressa',
+  var PTW = { 'Detection candidates vs burned area': 'Candidatos de deteção e área ardida', 'Burned area': 'Área ardida', 'Top 5 fires by area burned': 'Os 5 maiores incêndios', 'Fastest time to containment': 'Dominados mais depressa',
     'Fires by size class': 'Incêndios por classe de área', 'Fires by stage': 'Incêndios por fase', 'Resources on fires now': 'Meios nos incêndios agora', 'Detection sources': 'Fontes de deteção', 'Night vs day detections': 'Deteções de noite e de dia',
     'Time of day vs confidence': 'Hora do dia e confiança', 'Detections by hour of the day': 'Deteções por hora do dia', candidates: 'candidatos', candidate: 'candidato', fire: 'incêndio', fires: 'incêndios', 'fire now': 'incêndio agora', 'fires now': 'incêndios agora',
     people: 'pessoas', source: 'fonte', sources: 'fontes', 'busiest slot': 'período com mais', 'busiest hour': 'hora com mais', 'Local time.': 'Hora local.', People: 'Pessoas', Vehicles: 'Veículos', Aircraft: 'Meios aéreos', Night: 'Noite', Day: 'Dia', Others: 'Outras',
@@ -186,7 +186,7 @@
     'A is under 0.25 ac. G is over 5,000 ac.': 'A é menos de 0,1 ha. G é mais de 2000 ha.', 'A is under 0.1 ha. G is over 2,000 ha.': 'A é menos de 0,1 ha. G é mais de 2000 ha.',
     'No burned area reported for fires that started in this period.': 'Sem área ardida indicada para os incêndios iniciados neste período.', 'No fire with a reported size started in this period.': 'Nenhum incêndio com área indicada começou neste período.',
     'No fire in this period reports when it was contained.': 'Nenhum incêndio deste período indica quando foi dominado.', 'No fires in this area right now.': 'Sem incêndios nesta área agora.', 'No active fires in this area right now.': 'Sem incêndios ativos nesta área agora.',
-    'The feeds for this area do not report crews or vehicles.': 'As fontes desta área não indicam meios.', 'No ignition candidates in this period.': 'Sem candidatos a ignição neste período.', 'Partly contained': 'Parcialmente dominado', Unknown: 'Sem fase', Metrics: 'Indicadores', Charts: 'Gráficos', 'Drag to reorder. + to add or remove charts.': 'Arraste para reordenar. + para pôr ou tirar gráficos.', 'Show or hide charts.': 'Mostre ou esconda gráficos.', '1 month': '1 mês', '6 months': '6 meses', '1 year': '1 ano', 'Drag to reorder.': 'Arraste para reordenar.' };
+    'The feeds for this area do not report crews or vehicles.': 'As fontes desta área não indicam meios.', 'No detection candidates in this period.': 'Sem candidatos de deteção neste período.', 'Partly contained': 'Parcialmente dominado', Unknown: 'Sem fase', Metrics: 'Indicadores', Charts: 'Gráficos', 'Drag to reorder. + to add or remove charts.': 'Arraste para reordenar. + para pôr ou tirar gráficos.', 'Show or hide charts.': 'Mostre ou esconda gráficos.', '1 month': '1 mês', '6 months': '6 meses', '1 year': '1 ano', 'Drag to reorder.': 'Arraste para reordenar.' };
   var PTR = [[/^By start date\. (\d+) fires? with a reported size\.$/, function (m, n) { return 'Pela data de início. ' + n + (n === '1' ? ' incêndio' : ' incêndios') + ' com área indicada.'; }],
     [/^([\d.,]+) (ha|ac) burned by (\d+) fires?\.$/, function (m, v, u, n) { return v + ' ' + u + ' ardidos em ' + n + (n === '1' ? ' incêndio.' : ' incêndios.'); }],
     [/^As reported for (\d+) active fires?\.$/, function (m, n) { return 'Como indicado para ' + n + (n === '1' ? ' incêndio ativo.' : ' incêndios ativos.'); }],
@@ -194,17 +194,17 @@
   function PTL() { return window.__wfLang === 'pt'; }
   function tr(t) { if (!PTL() || t == null) return t; t = String(t); if (PTW[t]) return PTW[t]; for (var i = 0; i < PTR.length; i++) if (PTR[i][0].test(t)) return t.replace(PTR[i][0], PTR[i][1]); return t; }
   var EXPL_PT = {
-    region: 'Onde foram detetados candidatos a ignição em {r} {p} (na cor principal) e onde ardem os incêndios que começaram nesse tempo (cinzento escuro, maior nos incêndios maiores). {v} candidatos ao todo.',
+    region: 'Onde foram detetados candidatos de deteção em {r} {p} (na cor principal) e onde ardem os incêndios que começaram nesse tempo (cinzento escuro, maior nos incêndios maiores). {v} candidatos ao todo.',
     burned: 'Área ardida pelos incêndios que começaram em {r} {p}, somada pela data de início, como a fonte oficial de cada um indica. {v} {u} ao todo.',
     top5: 'Os cinco maiores incêndios que começaram {p}, como as suas fontes os indicam. Juntos arderam {v} {u}.',
     mitig: 'Os incêndios que começaram {p} e indicam quando foram dominados, do mais rápido ao mais lento. O mais rápido levou {v} h.',
     size: 'Os incêndios que começaram {p}, por área indicada, da classe A (menores) à G (maiores).',
     stage: 'Todos os incêndios em {r} agora, pela fase que a sua fonte oficial lhes dá: {v} ao todo.',
     res: 'Pessoas, veículos e meios aéreos que as fontes indicam nos incêndios ativos em {r} agora. Incêndios sem essa indicação não contam (sem estimativas).',
-    src: 'O satélite que detetou cada candidato a ignição em {r} {p} (NASA FIRMS).',
-    night: 'Os candidatos a ignição {p}, consoante foram detetados de noite ou de dia: {v} ao todo. Os incêndios noturnos são mais difíceis de ver e de alcançar.',
-    tod: 'Quando foram detetados os candidatos a ignição, em hora local, e a confiança de serem incêndios reais. Quadrados maiores e mais escuros têm mais candidatos; o período com mais começa às {v}.',
-    hour: 'Os candidatos a ignição pela hora do dia em que foram detetados, em hora local. A hora com mais começa às {v}.' };
+    src: 'O satélite que detetou cada candidato de deteção em {r} {p} (NASA FIRMS).',
+    night: 'Os candidatos de deteção {p}, consoante foram detetados de noite ou de dia: {v} ao todo. Os incêndios noturnos são mais difíceis de ver e de alcançar.',
+    tod: 'Quando foram detetados os candidatos de deteção, em hora local, e a confiança de serem incêndios reais. Quadrados maiores e mais escuros têm mais candidatos; o período com mais começa às {v}.',
+    hour: 'Os candidatos de deteção pela hora do dia em que foram detetados, em hora local. A hora com mais começa às {v}.' };
   function none(t) { return { v: '', u: '', n: t, h: '' }; }   /* says plainly there is no data: no number, no chart */
   var CLS = [['A', 0.25], ['B', 10], ['C', 100], ['D', 300], ['E', 1000], ['F', 5000], ['G', Infinity]];   // NWCG size classes, in acres
   function locHour(c) { var d = new Date(c.t); return ((d.getUTCHours() + Math.round((+c.lon || 0) / 15)) % 24 + 24) % 24; }
@@ -212,7 +212,7 @@
   // ---- the charts on offer -----------------------------------------------------------------------------------------------
   // each returns { v: big value, u: its unit, n: note under it, h: the chart's html }
   var DEFS = [
-    { k: 'region', t: 'Ignition candidates vs burned area', on: 1, f: function (R, rg, X) { var D = X.D, b = D.fires.reduce(function (a, f) { return a + f.ha * D.ak; }, 0);
+    { k: 'region', t: 'Detection candidates vs burned area', on: 1, f: function (R, rg, X) { var D = X.D, b = D.fires.reduce(function (a, f) { return a + f.ha * D.ak; }, 0);
         return { v: fmt(D.cands.length), u: D.cands.length === 1 ? 'candidate' : 'candidates', n: fmtA(b) + ' ' + D.au + ' burned by ' + D.fires.length + ' fire' + (D.fires.length === 1 ? '' : 's') + '.', h: regionHeat(rg, X, D) }; } },
     { k: 'burned', t: 'Burned area', on: 1, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < rg.n; i++) s.push(0); var known = D.fires.filter(function (f) { return f.hasHa; });
         if (!known.length) return none('No burned area reported for fires that started in this period.');
@@ -236,15 +236,15 @@
         var it = [{ l: tr('People'), v: m }, { l: tr('Vehicles'), v: t }, { l: tr('Aircraft'), v: a }];
         return { v: fmt(m), u: 'people', n: 'As reported for ' + rep.length + ' active fire' + (rep.length === 1 ? '' : 's') + '.', h: hbars(it.map(function (x) { return { l: x.l, v: x.v, t: fmt(x.v) }; }), Math.max(1, m, t, a), 0) }; } },
     { k: 'src', t: 'Detection sources', on: 1, f: function (R, rg, X) { var D = X.D, m = {}; D.cands.forEach(function (c) { var k = c.src || 'Unknown'; m[k] = (m[k] || 0) + 1; });
-        var p = Object.keys(m).map(function (k) { return { n: k, v: m[k] }; }).sort(function (a, b) { return b.v - a.v; }); if (!p.length) return none('No ignition candidates in this period.');
+        var p = Object.keys(m).map(function (k) { return { n: k, v: m[k] }; }).sort(function (a, b) { return b.v - a.v; }); if (!p.length) return none('No detection candidates in this period.');
         if (p.length > 5) { var rest = p.slice(4).reduce(function (a, x) { return a + x.v; }, 0); p = p.slice(0, 4).concat([{ n: tr('Others'), v: rest }]); }
         return { v: p.length, u: p.length === 1 ? 'source' : 'sources', n: 'Which satellite saw each candidate.', h: donut(p, true) }; } },
     { k: 'night', t: 'Night vs day detections', on: 1, top: 1, f: function (R, rg, X) { var D = X.D, k = D.cands.filter(function (c) { return c.night != null || (window.__wfNightAt && c.lat != null); });
-        if (!k.length) return none('No ignition candidates in this period.');
+        if (!k.length) return none('No detection candidates in this period.');
         var ni = k.filter(function (c) { return c.night != null ? !!c.night : window.__wfNightAt(c.t, c.lat, c.lon); }).length;
         return { v: fmt(k.length), u: k.length === 1 ? 'candidate' : 'candidates', n: '', h: donut([{ n: tr('Night'), v: ni, c: INK }, { n: tr('Day'), v: k.length - ni, c: LIME }], true) }; } },
-    { k: 'tod', t: 'Time of day vs confidence', on: 1, top: 1, f: function (R, rg, X) { if (!X.D.cands.length) return none('No ignition candidates in this period.'); var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Local time.', h: b.h }; } },
-    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < 24; i++) s.push(0); if (!D.cands.length) return none('No ignition candidates in this period.');
+    { k: 'tod', t: 'Time of day vs confidence', on: 1, top: 1, f: function (R, rg, X) { if (!X.D.cands.length) return none('No detection candidates in this period.'); var b = bubbles(R, X); return { v: b.peak.split(' to ')[0], u: 'busiest slot', n: 'Local time.', h: b.h }; } },
+    { k: 'hour', t: 'Detections by hour of the day', on: 0, f: function (R, rg, X) { var D = X.D, s = []; for (var i = 0; i < 24; i++) s.push(0); if (!D.cands.length) return none('No detection candidates in this period.');
         D.cands.forEach(function (c) { s[locHour(c)]++; }); var pk = s.indexOf(Math.max.apply(null, s));
         return { v: pk + ':00', u: 'busiest hour', n: 'Local time.', h: columns(s, [], -1, 'detections', [[0, '0 h'], [6, '6 h'], [12, '12 h'], [18, '18 h'], [23, '23 h']]) }; } }
   ];
@@ -303,17 +303,17 @@
   function chev() { return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'; }
   // (Oct 6) the back of each card (long press): its title, then 8px, then a short paragraph (body text, not a description) explaining the chart's data ({v} {u} the headline, {p} the period, {r} the area)
   var EXPL = {
-    region: 'Where ignition candidates were detected in {r} over {p} (the primary colour), and where the fires that started then are burning (dark grey, bigger for larger fires). {v} candidates in all.',
+    region: 'Where detection candidates were detected in {r} over {p} (the primary colour), and where the fires that started then are burning (dark grey, bigger for larger fires). {v} candidates in all.',
     burned: 'Area burned by the fires that started in {r} over {p}, added up by start date, as each fire\'s official feed reports its size. {v} {u} in total.',
     top5: 'The five largest fires that started over {p}, as their feeds report them. Together they burned {v} {u}.',
     mitig: 'The fires that started over {p} and report a containment time, fastest first, from start to contained. The quickest took {v} h.',
     size: 'Fires that started over {p}, sorted by reported size from class A (smallest) to G (largest), the national size classes.',
     stage: 'Every fire in {r} now, by the stage its official feed gives it: {v} in all.',
     res: 'People, vehicles and aircraft that the feeds report on the active fires in {r} now. Fires without a report are not counted (no estimates).',
-    src: 'Which satellite detected each ignition candidate in {r} over {p} (NASA FIRMS).',
-    night: 'Ignition candidates over {p} split by whether they were detected at night or by day: {v} in all. Night fires are harder to see and to reach.',
-    tod: 'When ignition candidates were detected, in local time, against the confidence that they are real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
-    hour: 'Ignition candidates by the hour of the day they were detected, in local time. The busiest hour starts at {v}.'
+    src: 'Which satellite detected each detection candidate in {r} over {p} (NASA FIRMS).',
+    night: 'Detection candidates over {p} split by whether they were detected at night or by day: {v} in all. Night fires are harder to see and to reach.',
+    tod: 'When detection candidates were detected, in local time, against the confidence that they are real fires. Bigger, darker squares hold more candidates; the busiest slot starts at {v}.',
+    hour: 'Detection candidates by the hour of the day they were detected, in local time. The busiest hour starts at {v}.'
   };
   function explain(d, rg, o) { var t = (PTL() && EXPL_PT[d.k]) || EXPL[d.k]; if (!t) return ''; if (PTL()) return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, tr(o.u)).replace(/\{p\}/g, ({ m: 'no último mês', h: 'nos últimos 6 meses', y: 'no último ano' })[rg.id] || '').replace(/\{r\}/g, regionName());
     return t.replace(/\{v\}/g, o.v).replace(/\{u\}/g, o.u).replace(/\{p\}/g, 'the ' + rg.word.charAt(0).toLowerCase() + rg.word.slice(1)).replace(/\{r\}/g, regionName()); }   /* (Oct 6) no 'Simulated data.': the * and the * Simulation footnote already say it */
@@ -332,7 +332,7 @@
   }
 
   // the header: the selected region's shape in light grey with two blurred heat layers on it (simulated):
-  // lime where ignition candidates appear, dark grey where the burned area is
+  // lime where detection candidates appear, dark grey where the burned area is
   // Outlines the map does not draw: the map's own shapes cover the western United States only, other countries have just a box,
   // drawn as a plain rectangle (never an oval: a round shape reads as a made-up region).
   // Mainland Portugal, simplified (lat, lon), drawn clockwise from the Minho mouth.
@@ -356,12 +356,12 @@
     var hotC = (D ? D.cands : []).map(at).filter(Boolean).map(function (q) { return [q[0], q[1], mxd * 0.012, 0.75]; }), hotB = (D ? D.fires : []).map(function (f) { var q = at(f); return q ? [q[0], q[1], mxd * Math.min(0.05, 0.008 + 0.0009 * Math.sqrt(f.ha || 0)), 0.8] : null; }).filter(Boolean), cl = 'wfhc' + (seedOf(S.region) % 9999), blur = mxd * 0.0065, hh = Math.min(300, Math.round(326 * vh / vw));
     var blobs = function (a, col) { return a.map(function (q) { return '<circle class="an-p" data-o="' + q[3].toFixed(2) + '" cx="' + q[0].toFixed(0) + '" cy="' + q[1].toFixed(0) + '" r="' + q[2].toFixed(0) + '" style="fill:' + col + '" fill-opacity="' + q[3].toFixed(2) + '"/>'; }).join(''); };
     var shape = g.d ? '<path d="' + g.d + '"/>' : '<rect x="' + b[0] + '" y="' + b[1] + '" width="' + bw + '" height="' + bh + '"/>';
-    var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Ignition candidates and burned area across ' + esc(regionLabel()) + '" style="display:block">' +
+    var svg = '<svg viewBox="' + vx.toFixed(0) + ' ' + vy.toFixed(0) + ' ' + vw.toFixed(0) + ' ' + vh.toFixed(0) + '" width="100%" height="' + hh + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Detection candidates and burned area across ' + esc(regionLabel()) + '" style="display:block">' +
       '<defs><clipPath id="' + cl + '">' + shape + '</clipPath><filter id="' + cl + 'b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="' + blur.toFixed(0) + '"/></filter></defs>' +
       '<g fill="#DADADF" stroke="#C7C7CC" stroke-width="' + (Math.max(bw, bh) / 400).toFixed(1) + '" stroke-linejoin="round">' + shape + '</g>' +
       '<g clip-path="url(#' + cl + ')"><g filter="url(#' + cl + 'b)">' + (S.lay.b ? blobs(hotB, INK) : '') + (S.lay.c ? blobs(hotC, LIME) : '') + '</g></g></svg>';
     var key = function (k, c, t) { var on = S.lay[k]; return '<button type="button" data-lg="' + k + '" aria-pressed="' + (!!on) + '" style="display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 16px 0 12px;border:0;border-radius:999px;background:rgba(118,118,128,.12);font:inherit;font-size:16px;line-height:20px;color:' + (on ? '#3A3A3C' : '#8E8E93') + ';cursor:pointer"><span aria-hidden="true" style="width:12px;height:12px;border-radius:50%;box-sizing:border-box;background:' + (on ? c : 'transparent') + ';border:' + (on ? '0' : '1.5px solid #8E8E93') + '"></span>' + t + (NUM && NUM[k] ? '<b style="font-weight:600;margin-left:4px">' + NUM[k] + '</b>' : '') + '</button>'; };
-    return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Ignition candidates') + key('b', INK, 'Burned area') + '</div>';
+    return svg + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">' + key('c', LIME, 'Detection candidates') + key('b', INK, 'Burned area') + '</div>';
   }
   function ctxX(rg) { PTS = ptLabels(rg); var D = real(rg); return { x: xLabels(rg), D: D, au: D.au }; }
   function render(keepScroll) {

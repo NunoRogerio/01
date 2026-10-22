@@ -2,7 +2,7 @@
 // Incident chats (demonstration). One chat per incident gathers you, the fire owner, and the crew coordinator of each
 // fire station involved. The system posts a card at every change of state; scripted coordinators answer your messages
 // and your actions in character (each with their own voice, reading what you wrote and the state of the fire), and
-// report progress on their own as the fire evolves, so it can be followed from ignition candidate to closed.
+// report progress on their own as the fire evolves, so it can be followed from detection candidate to closed.
 // Simulated clock: replies arrive in seconds but are stamped minutes later, and a change of state jumps the fire's
 // clock by the hours or days such a stage plausibly takes, so the timeline of the fire reads like a real one.
 // Chats are kept on this phone, per signed-in profile. Stations are real (OpenStreetMap); people, vehicles, times and
@@ -38,7 +38,7 @@
   // 24-unit stroke icons (the candidate is an outline circle, like its map marker)
   var ICON = {
     cand: 'M12 5.5v13 M6.37 8.75l11.26 6.5 M6.37 15.25l11.26-6.5',   /* (Oct 11, 17:20) a day candidate: the asterisk; a night candidate: the crescent moon, filled (candN) */
-    candN: 'M11.66 3A9 9 0 1 0 18.68 18.04A8.3 8.3 0 0 1 11.66 3Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the ignition candidate: an asterisk */
+    candN: 'M11.66 3A9 9 0 1 0 18.68 18.04A8.3 8.3 0 0 1 11.66 3Z',   /* (Oct 11, 12:52) a night candidate: the moon */   /* (Oct 11, 08:37) the detection candidate: an asterisk */
     alert: 'M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15Z M10 20.5a2 2 0 0 0 4 0',
     route: 'M2.5 7h11v9.5h-11Z M13.5 10h4l3 3.2v3.3h-7 M5.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0 M15.3 18.6a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
     flame: 'M12 2.8c1.2 3.6 5.2 5.6 5.2 10.4a5.2 5.2 0 0 1-10.4 0c0-2.6 1.4-3.8 2-5.2c.9 1.5 1.5 2 2.5 2.1c-.1-2.6-.4-4.6.7-7.3Z',
@@ -532,7 +532,7 @@
     // Detection
     var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Fire reported', pt: 'Incêndio reportado' }; c0.title = { en: c.place, pt: c.place };
     /* (Oct 10, 23:41) no opening card repeating the fire's name and source: the header and stage band say it */
-    { var cc0 = stageCard(c, 0); cc0.kind = 'card'; cc0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' }; add(cc0, at(0)); }   /* (Oct 11, 00:20) the story starts with the ignition candidate */
+    { var cc0 = stageCard(c, 0); cc0.kind = 'card'; cc0.tag = { en: 'Detection candidate', pt: 'Candidato de deteção' }; add(cc0, at(0)); }   /* (Oct 11, 00:20) the story starts with the detection candidate */
     add({ kind: 'sys', en: 'Called you and the officers of the nearest stations', pt: 'Chamados: o próprio e os chefes dos quartéis mais próximos' }, at(0) + MIN);   /* (Oct 10, 23:42) the stations are named on the card that follows: not repeated here */
     msg(0, 'Seen. Crew of 5 and ' + (us ? 'an engine' : 'one fire engine') + ' ready at ' + (P[0] || {}).org + '.', 'Visto. Equipa de 5 e um veículo prontos em ' + (P[0] || {}).org + '.', at(0) + 3 * MIN);
     if (P[2]) msg(2, 'Smoke visible from the station, looks like it is growing.', 'Fumo visível do quartel, parece estar a crescer.', at(0) + 5 * MIN);
@@ -638,7 +638,7 @@
     return c.key;
   }
 
-  // (Oct 5, 09:51) Every ignition candidate gets an automatic drone scan: the nearest station sends its surveillance drone
+  // (Oct 5, 09:51) Every detection candidate gets an automatic drone scan: the nearest station sends its surveillance drone
   // as soon as the candidate is detected, and the drone feed counts as evidence beside the satellite pass (simulated).
   // strong: the drone sees smoke and a hot spot (likelihood 50% or more); otherwise only a warm patch, no smoke
   function evidOf(c) {
@@ -740,8 +740,8 @@
     save(); emit();
   }
   function fireStart(c) { var s = c.stage;
-    /* (Oct 11, 00:19) the story from its start: the ignition candidate (the detection), then the call, then the fire's stage */
-    var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Ignition candidate', pt: 'Candidato a ignição' };
+    /* (Oct 11, 00:19) the story from its start: the detection candidate (the detection), then the call, then the fire's stage */
+    var c0 = stageCard(c, 0); c0.kind = 'card'; c0.tag = { en: 'Detection candidate', pt: 'Candidato de deteção' };
     if (c.asgMine) { holdFor(c, c0); save(); emit(); return; }   /* (Oct 12, 20:45) a crew's new assignment waits for the Captain's response */
     if (s >= 1) card(c, c0, 200, 0);
     fireRest(c); }
@@ -1477,7 +1477,7 @@
     say(ch, 0, g ? 'Hello! All good, the command team is here. How can we help?' : 'Hello! All good here. How can I help?', g ? 'Olá! Tudo bem, está cá a equipa de comando. Em que podemos ser úteis?' : 'Olá! Tudo bem por aqui. Em que posso ser útil?', 2200, 1);
     db.chats[k] = ch; save(); emit(); return ch;
   }
-  // ---- direct chats: the topic is the incident being talked about (a fire or an ignition candidate within 50 km) -------
+  // ---- direct chats: the topic is the incident being talked about (a fire or an detection candidate within 50 km) -------
   function kmBetween(a, b) { var R0 = 6371, t = Math.PI / 180, dLa = (b.lat - a.lat) * t, dLo = (b.lon - a.lon) * t, x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a.lat * t) * Math.cos(b.lat * t) * Math.sin(dLo / 2) * Math.sin(dLo / 2); return 2 * R0 * Math.asin(Math.min(1, Math.sqrt(x))); }
   function nearby(c, maxKm) {
     maxKm = maxKm || 50; var me = { lat: +c.lat, lon: +c.lon }; if (!isFinite(me.lat) || !isFinite(me.lon) || (!me.lat && !me.lon)) return [];
@@ -1493,7 +1493,7 @@
     var fire = inc.kind === 'fire', P = c.people[0] || {};
     c.topic = { id: inc.id, kind: inc.kind, place: inc.place, reg: inc.reg || '', st: inc.st || '', lat: inc.lat, lon: inc.lon, conf: inc.conf || null, x: inc.x, y: inc.y };
     mine(c, 'Topic: ' + inc.place + '.', 'Tópico: ' + inc.place + '.');
-    card(c, { topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: (fire ? 'Fire. ' : 'Ignition candidate. ') + inc.place, pt: (fire ? 'Incêndio. ' : 'Candidato a ignição. ') + inc.place },
+    card(c, { topic: true, tag: { en: 'Topic', pt: 'Tópico' }, tagC: '#3A3A3C', title: { en: (fire ? 'Fire. ' : 'Detection candidate. ') + inc.place, pt: (fire ? 'Incêndio. ' : 'Candidato de deteção. ') + inc.place },
       body: { en: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km from the station' + (!fire && inc.conf ? '. ' + inc.conf + '% confidence' : ''), pt: (inc.reg ? inc.reg + '. ' : '') + Math.round(kmBetween({ lat: +c.lat, lon: +c.lon }, inc)) + ' km do quartel' + (!fire && inc.conf ? '. ' + inc.conf + '% de confiança' : '') },
       link: { en: 'View', pt: 'Ver' }, inc: c.topic }, 300, 0);
     say(c, 0, fire ? 'Copy, ' + inc.place + '. We know the area, tell us what you need there.' : 'Copy, the candidate at ' + inc.place + '. We can go and check it if you want.',
@@ -1655,7 +1655,7 @@
       if (m.kind === 'card') return at + 'CARD: ' + [m.tag && m.tag.en, m.title && m.title.en, m.body && m.body.en].filter(Boolean).join(' · ');
       return '';
     }).filter(Boolean).join('\n');
-    return 'Incident: ' + (c.kind === 'cand' && c.stage === 0 ? 'ignition candidate' : 'wildfire') + ' near ' + c.place + (c.reg ? ', ' + c.reg : '') + ' (' + (us ? 'United States: use miles/acres only if natural, crews say "engine", "brush", "hose lay"' : 'use km and hectares') + ').\n' +
+    return 'Incident: ' + (c.kind === 'cand' && c.stage === 0 ? 'detection candidate' : 'wildfire') + ' near ' + c.place + (c.reg ? ', ' + c.reg : '') + ' (' + (us ? 'United States: use miles/acres only if natural, crews say "engine", "brush", "hose lay"' : 'use km and hectares') + ').\n' +
       'Current stage: ' + STAGES[c.stage].en + '. Fire clock now: ' + hhmm(vnow(c)) + ', ' + dur(vnow(c) - since(c)) + ' since the first detection.\n' +
       'Stage timeline: ' + tl + '.\n' +
       'Burnt area now: about ' + areaTxt(c) + '. Wind from the south-west, about 18 km/h gusting 30; the head runs north-east; homes about 1 km north-east.\n' +
@@ -1936,7 +1936,7 @@
   function stats(c) {
     var H = c.hist || [], at = function (s) { var x = H.find(function (h) { return h.s === s; }); return x ? x.vt : null; };
     var t0 = since(c), end = vnow(c), h = hash(c.key);
-    /* (Oct 9) dispatch and response are timed from the moment the fire is declared (First alert), not from the ignition candidate's detection:
+    /* (Oct 9) dispatch and response are timed from the moment the fire is declared (First alert), not from the detection candidate's detection:
        response time = fire declared to crews on scene */
     var tF = at(1) != null ? at(1) : t0;
     var ha = c.drill && c.drill.ha ? Math.round(c.drill.ha * Math.min(2.2, Math.max(0.45, Math.pow(((at(3) != null ? at(3) - tF : 0) || c.drill.resp || 1) / (c.drill.resp || 1), 0.7))) * (c.flags.air ? 0.85 : c.flags.airNo ? 1.3 : 1.1) * 10) / 10

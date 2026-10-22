@@ -36,6 +36,7 @@ Shape with it: status tags are capsules (12px side padding); stage bands are 44p
 - **Save space whenever possible:** put things on one line when they fit (a band and its tag, two actions), drop repeats. When Claude spots such a chance it applies it and says so in one line.
 - **Hierarchy follows the references** (user preferences, map tooltips, ignition detail): conclusion first (the KPI and state a firefighter acts on), then where, then evidence and detail, then actions. Every screen should help a Portuguese or Californian firefighter decide faster and better.
 - **Case:** sentence case everywhere. No all caps.
+- **One term: detection candidate (Oct 22, Nuno; supersedes "ignition candidate" in every earlier entry):** a satellite detection not yet confirmed is a "detection candidate" (PT "candidato de deteção") on every screen, chat, notification ("New detection candidate"), statistic, tour step and spoken label; a confirmed one is a fire ("confirmed fires" in counts). "Ignition" stays only for the event itself (ignition point, from ignition, night ignition report). One term everywhere keeps the app easy to maintain and adjust.
 - **Middle dots:** none between topics; use a full stop ("All features. All regions."). Any " · " is turned into a full stop at display time (i18n.js).
 - **Counts stay black, a zero count is mid grey** (rgb(110, 110, 115); Oct 18, extends the bottom panel's Oct 17 choice to every count: area picker numbers included); never green ("No ignition candidates" is not green).
 - **Descriptions stay grey** (`#545458`), yours included: "Captain. Station 11. You" in the team list reads like every other member's role, not green (Oct 9). Green text is kept for status tags.
@@ -2400,10 +2401,15 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ## Oct 21 (morning consistency pass; Nuno's decisions)
 - **Remove (supersedes Oct 1 and Oct 18):** solid red #D70015 with a white label, day and night (white on #D70015 keeps 5.3:1; white on the night red #FF453A would fail contrast). Label just "Remove"; it still asks first with the shared confirm dialog; its place in the row is unchanged (first, beside the action it pairs with).
 - **Map controls stay 16px apart** (round, bottom right, 16px from the edge), as on Oct 3.
-- **One name for the main screen's numbers:** the legend chips say "Detection candidates" and "Confirmed fires" (PT: Candidatos de deteção, Incêndios confirmados), as the bottom panel's counts.
+- **One name for the main screen's numbers:** the legend chips say "Detection candidates" and "Confirmed fires" (PT: Candidatos de deteção, Incêndios confirmados), as the bottom panel's counts. (Oct 22: the term is now app-wide, see "One term" at the top.)
 - **Stage moves say "To <stage>"** (PT "Para <stage>") on the card, its button and its confirmation ("To Resolving?"), like the chips (was "Move to").
 - **Full-screen title box:** when its longest word does not fit beside the legend, the title takes the full width and the legend column moves 8px under it; a name is never split mid-word.
 - Back to the type scale: the decision squares' labels (Dismiss, Check, Attack) and the incident page's notes, the drone's "Estimate" note and the map's vertical credit are 14px Footnote (were 13px).
 - The incident page's recommendation pill swells on press (data-round), like every pill.
 - **Languages (Oct 21, Nuno):** English and Portuguese only. Spanish, French, German and Japanese are removed (picker, dictionaries, data/i18n files, Japanese place names); a saved choice of a removed language falls back to the profile's default.
 - The incidents list and the stacked card use the bottom panel's words too: "N detection candidates. N confirmed fires" (PT: candidatos de deteção, incêndios confirmados).
+
+## Oct 22 (morning consistency pass; Nuno's go-ahead)
+- **Detection candidate everywhere** (Nuno: always the same term): every "ignition candidate" / "candidato a ignição" in screens, chats, notifications, statistics, tour and spoken labels now reads "detection candidate" / "candidato de deteção"; the notification title is "New detection candidate" (PT "Novo candidato de deteção"). The main screen's spoken area and stack labels say "confirmed fires" with it.
+- The incidents list's empty line: "No detection candidates to verify." (PT "Sem candidatos de deteção por verificar.").
+- **Candidate page line under the title:** "Detection candidate. Santa Clara", the word the main screen's card uses, so the card and the page it opens match; a full stop, never "•".

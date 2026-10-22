@@ -177,9 +177,9 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
   function reqApprove() { return q('article.chmsg [data-fitrow] > button.chbtn', function (b) { return !b.disabled && /^(Approve|Aprovar)/.test(txt(b)) && /Declare fire|Declarar incêndio/.test((b.closest('article') || {}).textContent || ''); }); }
   function stExpand() { var c = q('button.chrow[data-wf-stband][aria-expanded="false"]'); if (c) { selfTap = true; try { c.click(); } catch (e) {} selfTap = false; } }
   // the candidate was confirmed: its Confirm / Dismiss suggestions are gone (checked a moment after the step began)
-  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss', 'Descartar']) && (function () { var b = q('button.chrow[data-wf-stband]'); return !!b && !/Ignition candidate|Candidato a ignição|Candidato/i.test(txt(b)); })(); }   /* (Oct 9, 16:28) the stage band no longer folds (no aria-expanded): the fire counts as declared once its band leaves Ignition candidate */
+  function confirmedHere() { return !!seen && Date.now() - seen > 1200 && !chip(['Declare fire', 'Declarar incêndio', '宣言']) && !chip(['Dismiss', 'Descartar']) && (function () { var b = q('button.chrow[data-wf-stband]'); return !!b && !/Detection candidate|Candidato de deteção|Candidato/i.test(txt(b)); })(); }   /* (Oct 9, 16:28) the stage band no longer folds (no aria-expanded): the fire counts as declared once its band leaves Detection candidate */
   function topMarker() {
-    var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="ignition candidate"]')), best = null, bp = -1;
+    var L = [].slice.call(document.querySelectorAll('[data-wf-maproot] button.tipwrap[aria-label*="detection candidate"]')), best = null, bp = -1;
     L.forEach(function (b) { if (shown(b) !== true) return; var m = /(\d+) percent/.exec(b.getAttribute('aria-label') || ''), v = m ? +m[1] : 0; if (v > bp) { bp = v; best = b; } });
     return best;
   }
@@ -756,7 +756,7 @@ if (WF_TOUR_ON && !window.__wfMenuOnly) (function () {   // never inside the men
       if (!jumped) { jumped = true; var k = i + 1, grp = 0, pg = st.page; while (k < S.length && grp < 2) { if (S[k].page !== pg) { pg = S[k].page; grp++; if (pg === PAGE) break; } k++; } if (S[k] && S[k].page === PAGE && grp <= 2) { put({ i: k, max: Math.max(k, s.max || 0) }); seen = 0; scrolled = false; ran = false; return tick(); } }   /* (Oct 6) up to two screens ahead: e.g. the fire declared straight from the candidate page lands on the fire page, skipping the chat's steps */
       // (Oct 6) never a silent dead end: the tour is waiting on another screen, so the card says where and takes you back there
       if (INFRAME) { if (root) { root.remove(); root = null; lastKey = ''; } return; }
-      var NM = { 'Main.dc.html': ['the main screen', 'o ecrã principal'], 'Dispatch.dc.html': ['the ignition candidate', 'o candidato a ignição'], 'Chat.dc.html': ['the team chat', 'o chat da equipa'], 'Dispatch.dc.html': ['the fire page', 'a página do incêndio'] }[st.page] || ['the previous screen', 'o ecrã anterior'];
+      var NM = { 'Main.dc.html': ['the main screen', 'o ecrã principal'], 'Dispatch.dc.html': ['the detection candidate', 'o candidato de deteção'], 'Chat.dc.html': ['the team chat', 'o chat da equipa'], 'Dispatch.dc.html': ['the fire page', 'a página do incêndio'] }[st.page] || ['the previous screen', 'o ecrã anterior'];
       var LOST = { page: PAGE, mode: 'next', next: ['Continue', 'Continuar'], t: ['The tour is waiting', 'A visita está à espera'],
         b: ['This step happens in ' + NM[0] + '. Tap Continue to go back there.', 'Este passo acontece n' + (NM[1].charAt(0) === 'a' ? 'a ' + NM[1].slice(2) : 'o ' + NM[1].slice(2)) + '. Toque em Continuar para voltar lá.'] };
       curEl = null; draw(i, LOST, null, false, true);

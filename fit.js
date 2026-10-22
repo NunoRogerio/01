@@ -651,7 +651,7 @@ window.__wfBlink=function(path,dur){
   document.addEventListener('touchend',end,{capture:true});document.addEventListener('touchcancel',end,{capture:true});
 })();
 
-// Confirmation dialog, the app's one shared model (as "Confirm fire?" on the ignition candidate): a panel rising from the
+// Confirmation dialog, the app's one shared model (as "Confirm fire?" on the detection candidate): a panel rising from the
 // bottom edge over a dark scrim, 28px top corners, the panel shadow, 30px top / 24px sides / 32px (+48px clear of the home
 // indicator) bottom; title (17px semibold) and text (17px regular), 24px, then two pill buttons side by side, 48px tall:
 // secondary (dark, hi-vis text) to step back and the primary (hi-vis) to go ahead. Tap the scrim or swipe down to cancel.
@@ -1067,7 +1067,7 @@ window.__wfVerTxt=function(t,lang){var d=new Date(t*1000);if(isNaN(d))return '';
   function emit() { try { window.dispatchEvent(new Event('wf-homes')); } catch (e) {} }
   function load(id) { try { var v = JSON.parse(localStorage.getItem(LK + id) || 'null'); if (v && Date.now() - v.t < TTL) return v; } catch (e) {} return null; }
   // id: the fire; ll: its current outline [[lat, lon]…] when mapped; px: else the map's illustrative outline in map pixels
-  // RR: the shapes themselves ({ 0, 1, 3, 6 } in [lat, lon]) when the caller draws its own (an ignition candidate's projection)
+  // RR: the shapes themselves ({ 0, 1, 3, 6 } in [lat, lon]) when the caller draws its own (an detection candidate's projection)
   window.__wfHomesCheck = function (id, ll, px, RR) {
     if (!id) return null; if (RR && RR[0] && RR[6]) (window.__wfHomesRR || (window.__wfHomesRR = {}))[id] = RR;   /* (Oct 11, 22:50) the shapes as drawn now, so the red only marks what they reach */
     var sig = RR && RR[6] ? 'r' + RR[6].length + ':' + RR[6][0].map(function (v) { return v.toFixed(4); }).join(',') + ':' + RR[6][Math.floor(RR[6].length / 2)].map(function (v) { return v.toFixed(4); }).join(',') : (ll && ll.length ? 'l' + ll.length + ':' + ll[0].join(',') : 'p' + (px && px.length ? px[0].join(',') : ''));

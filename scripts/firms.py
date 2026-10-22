@@ -6,7 +6,7 @@ Writes two files the app reads from its own site:
   data/regions.json   every country's regions (US: states with their counties) for Europe + the Americas
   data/hotspots.json  NASA FIRMS VIIRS hotspots from the last 24 h, clustered and tagged with
                       country/region (US: state/county) and the nearest named place (GeoNames),
-                      used as satellite ignition candidates
+                      used as satellite detection candidates
 
 Needs FIRMS_MAP_KEY (free: https://firms.modaps.eosdis.nasa.gov/api/map_key/).
 Without it only regions.json is written and the app keeps its sample candidates.

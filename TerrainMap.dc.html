@@ -19,12 +19,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792563502"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1792679688"></script>
 <script src="avatar.js?v=1792322188"></script>
 <script src="prefs.js?v=1792563502"></script>
-<script src="station.js?v=1792322188"></script>
-<script src="i18n.js?v=1792581760"></script>
-<script src="live.js?v=1792322188"></script>
+<script src="station.js?v=1792679688"></script>
+<script src="i18n.js?v=1792679688"></script>
+<script src="live.js?v=1792679688"></script>
 
 <title>Terrain map</title>
 <script src="./support.js"></script>
@@ -111,7 +111,7 @@ body{margin:0}
       <!-- (Oct 16) water is not fuel: every fire shape (outline, spread, projections) is masked by the water around the incident (OpenStreetMap lakes and the sea), so it stops at the shore -->
       <defs><mask id="{{wm.id}}" maskUnits="userSpaceOnUse" x="-3000000" y="-3000000" width="6000000" height="6000000"><rect x="-3000000" y="-3000000" width="6000000" height="6000000" fill="#FFFFFF"></rect><path d="{{wm.lakes}}" fill="#000000" fill-rule="evenodd"></path><path d="{{wm.sea}}" fill="#000000" shape-rendering="crispEdges"></path></mask></defs>
       <g mask="{{wm.url}}">
-      <!-- Ignition candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
+      <!-- Detection candidate projection (+1 / +3 / +6 h): the shape it would burn as a fire, grown from the marker by the forecast
            wind and temperature there; lime at 50% with the dashed orange edge of the fire projection. The marker stays on top. -->
       <sc-if value="{{pgOn}}" hint-placeholder-val="{{ false }}">
         <path d="{{pgD}}" fill="{{pgFill}}" fill-opacity="0.55" stroke="{{pgStroke}}" stroke-opacity="1" style="transition: fill .6s ease, stroke .6s ease" stroke-dasharray="{{pgDash}}" stroke-width="{{pgW}}" stroke-linejoin="round"></path>
@@ -1171,9 +1171,9 @@ class Component extends DCLogic {
     const out = Object.assign(d, v || {});
     // Every legend chip toggles its layer, on every map (nothing is forced on: a chip that does nothing reads as broken)
     if (this.props.fireOnly === true || this.props.fireOnly === 'true') out.stations = false;   // a fire's detail map: only its perimeter (no stations chip there)
-    // The overview maps (main, station homes) open with only the ignition candidates showing; Active fires, Resolved fires and
+    // The overview maps (main, station homes) open with only the detection candidates showing; Active fires, Resolved fires and
     // Fire stations chips show those layers (each with its own main-map setting, so other maps keep theirs)
-    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = out[k + 'Main'] === true; });   // (Oct 13, 09:01) opens with only the ignition candidates showing; every other chip off until tapped
+    else if ((this.props.mode || 'risk') === 'risk') ['fires', 'resolved', 'stations'].forEach((k) => { out[k] = out[k + 'Main'] === true; });   // (Oct 13, 09:01) opens with only the detection candidates showing; every other chip off until tapped
     return out;
   }
   toggleLayer(k) {
@@ -1191,7 +1191,7 @@ class Component extends DCLogic {
   // Weather at the centre of the map, in legend-style containers under the legend: only once the map covers less than
   // ~100 km across (a district or county, or closer), where one reading means something. Real data (Open-Meteo, current
   // conditions), fetched after the map settles; nothing is shown when it isn't available.
-  // Ignition candidate projection: if the candidate is a fire, the area it burns by +h hours. The hourly forecast at the marker
+  // Detection candidate projection: if the candidate is a fire, the area it burns by +h hours. The hourly forecast at the marker
   // (Open-Meteo: temperature, wind speed and direction) drives it hour by hour: the head runs downwind (faster with wind and
   // heat), the back creeps upwind and the flanks widen; a gentle wobble (seeded by the place) keeps it from looking drawn by hand.
   /* (Oct 7) a projection that changes horizon (Now / +1 h / +3 h / +6 h) morphs instead of jumping: its points glide from the shape
@@ -1752,7 +1752,7 @@ class Component extends DCLogic {
         if (Wt && (onWater(Wt.sea) || onWater(Wt.lakes))) return { id, lakes: '', sea: '', url: 'none' };
         return Wt && (Wt.lakes || Wt.sea) ? { id, lakes: Wt.lakes || '', sea: Wt.sea || '', url: 'url(#' + id + ')' } : { id, lakes: '', sea: '', url: 'none' }; })(),
       isRisk, isSpread: mode === 'spread', isPin,
-      // An ignition candidate's pin is 30% smaller than a fire's estimated ignition point
+      // An detection candidate's pin is 30% smaller than a fire's estimated ignition point
       ...(() => { const cand = Array.isArray(p.ignitions) && p.ignitions.some((q) => q.id === p.pinId);
         return cand ? { pinTriR: 8.6 } : { pinTriR: 11.2 }; })(),   /* ignitions are dark outline circles, no fill */
       pinC: (() => { const g = Array.isArray(p.ignitions) ? p.ignitions.find((q) => q.id === p.pinId) : null; return g ? (window.__wfY || '#E5FF00') : '#E86A00'; })(),
@@ -1931,7 +1931,7 @@ class Component extends DCLogic {
         const nearCtrl = top + h > WN.b - 64;
         const w = Math.min(340, W - WN.l - WN.r - 32 - (nearCtrl ? 60 : 0)), lo = WN.l + 16 + w / 2, hi = W - WN.r - 16 - (nearCtrl ? 60 : 0) - w / 2;
         return { w: Math.round(w), l: +(hi < lo ? lo : Math.max(lo, Math.min(hi, o.left))).toFixed(1), ty: below ? '22px' : 'calc(-100% - 22px)' }; })(),
-      fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Ignition candidate IC-0924-07', '87% confidence from 3 detections.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
+      fire: isPin ? withTip(at(PX, PY), 'Estimated ignition point', 'Where the sources’ lines of sight cross.') : (isRisk ? withTip(at(610, 290), 'Detection candidate IC-0924-07', '87% confidence from 3 detections.\nTap to review.') : withTip(at(Number(p.fireX) || 610, Number(p.fireY) || 290), 'Fire origin · ' + (p.fireId || 'F-0924-03'), p.fireId && p.fireId !== 'F-0924-03' ? 'Active fire. Forces dispatched.' : 'Confirmed at 2:40 PM on the north ridge.')),
       fire2: withTip(at(842, 252), 'Possible holdover fire IC-0924-08', '54% confidence. Lightning struck here at 11:40 AM.\nTap to review.'),
       zones: [],
       fdx: (Number(p.fireX) || 610) - 610, fdy: (Number(p.fireY) || 290) - 290,
@@ -1958,7 +1958,7 @@ class Component extends DCLogic {
           })
         };
       })(),
-      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: (window.__wfY || '#E5FF00'), gf: (window.__wfIgn ? window.__wfIgn(g.conf, g.live).fill : '#FFE680'), gp: (window.__wfIgn ? window.__wfIgn(g.conf, g.live).dash : ''), aria: 'Ignition candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% confidence.\nTap the crosshair to cycle to it.')) : [],
+      otherMarks: LY.cands && (isPin && Array.isArray(p.ignitions)) ? p.ignitions.filter((g) => g.id !== p.pinId && vis(g.x, g.y)).sort((a, b) => b.conf - a.conf).slice(0, CAP).map((g) => withTip(at(g.x, g.y, { c: (window.__wfY || '#E5FF00'), gf: (window.__wfIgn ? window.__wfIgn(g.conf, g.live).fill : '#FFE680'), gp: (window.__wfIgn ? window.__wfIgn(g.conf, g.live).dash : ''), aria: 'Detection candidate ' + g.id + ', ' + g.place }), g.place + ' · ' + g.id, g.conf + '% confidence.\nTap the crosshair to cycle to it.')) : [],
       fireMarks: (LY.fires || LY.resolved) && ((isRisk || isPin) && Array.isArray(p.fires)) ? FIRES_V.filter((g) => (g.info && g.info.resolved) ? LY.resolved : LY.fires).map((g) => {
         const ox = tx + g.x * s, oy = ty + g.y * s;
         const zone = { zl: +(ox - 14).toFixed(1), zt: +(oy - 14).toFixed(1), zw: 28, zh: 28, clip: 'none', rad: '50%', flameD: 'block' };   /* the 32px round overflows the 28px tap zone evenly */
@@ -1998,7 +1998,7 @@ class Component extends DCLogic {
             if (!full && (p.incidentLeg === true || p.incidentLeg === 'true')) { const S = 16 + Math.max(this.win().l, this.win().r);   /* (Oct 19, 06:57) an incident's map: the legend (Oct 19, 09:20: left-aligned) at the top of the map's window (under the header), wrapping onto a second row */
               return { legLeftCss: 'calc(' + S + 'px - 8px)', legRightCss: 'calc(' + S + 'px - 8px)', legDir: 'row', legAlign: 'center', legW: 'auto', legOvx: 'visible', legJust: 'flex-start', legWrap: 'wrap' }; }
             return full ? { legLeftCss: 'auto', legRightCss: 'calc(' + (16 + this.win().r) + 'px - 8px)', legDir: 'column', legAlign: 'stretch', legW: 'max-content', legOvx: 'visible', legJust: 'flex-start', legWrap: 'nowrap' } : { legLeftCss: 'calc(' + L + 'px - 8px)', legRightCss: 'calc(' + (EI + this.win().r) + 'px - 8px)', legDir: 'row', legAlign: 'center', legW: 'auto', legOvx: 'auto', legJust: 'flex-start', legWrap: 'nowrap' }; })(),
-          ttlLang: window.__wfLang === 'pt' ? 'pt' : 'en', /* (Oct 13, 08:42) titles over maps wrap to two lines (hyphenated in their language) rather than being cut */ safeT: (p.isFull === true || p.isFull === 'true') ? 'calc(var(--wf-top, 0px) + var(--wf-safe-t, env(safe-area-inset-top, 0px)))' : '0px',   /* (Oct 13, 08:33) plus the frame's top kept above the screen (52px in a browser tab or under an opaque status bar): the legend's first chip (Ignition candidates) and the title card sat hidden up there */   /* (Oct 12) inside the chat's blade (an iframe, no env()) the page passes the chat's inset */ pinWs: FULL0 ? 'normal' : 'nowrap',   /* (Oct 11, 20:45) full screen runs under the status bar: the title card and the legend start below it, so the first chip (the candidates) is never hidden */
+          ttlLang: window.__wfLang === 'pt' ? 'pt' : 'en', /* (Oct 13, 08:42) titles over maps wrap to two lines (hyphenated in their language) rather than being cut */ safeT: (p.isFull === true || p.isFull === 'true') ? 'calc(var(--wf-top, 0px) + var(--wf-safe-t, env(safe-area-inset-top, 0px)))' : '0px',   /* (Oct 13, 08:33) plus the frame's top kept above the screen (52px in a browser tab or under an opaque status bar): the legend's first chip (Detection candidates) and the title card sat hidden up there */   /* (Oct 12) inside the chat's blade (an iframe, no env()) the page passes the chat's inset */ pinWs: FULL0 ? 'normal' : 'nowrap',   /* (Oct 11, 20:45) full screen runs under the status bar: the title card and the legend start below it, so the first chip (the candidates) is never hidden */
           legGap: (p.isFull === true || p.isFull === 'true') ? '8px' : '8px', legPad: '0 16px 0 8px', legBg: 'rgba(255, 255, 255, 0.62)', legSh: '0 0 16px rgba(0,0,0,0.16)',   /* legend chips and the cards over the map: frosted glass (62%, blur 16px), the same on every map (Oct 2) */ ttlTop: Math.round(((p.isFull === true || p.isFull === 'true') ? this.win().t : this.win().t === 0 ? 0 : Math.max(52, this.win().t)) + 16),   /* (Oct 4, 23:19) an embedded map with nothing over its top: the legend 16px from its top edge */ ttlL: LAND16 ? 16 : 16 + (Number(p.clipLeft) || 0), ttlR: 16 + (Number(p.clipRight) || 0), pinTtlLeft: LAND16 ? '16px' : (16 + (Number(p.clipLeft) || 0) + (FULL0 ? this.win().l : 0)) + 'px', pinTtlRight: FULL0 ? 'auto' : (16 + (Number(p.clipRight) || 0)) + 'px', pinTtlMax: FULL0 && legend.length && !noLeg ? 'calc(100% - 48px - ' + ((this._legWpx || 150) + 16) + 'px)' : 'calc(100% - 32px)',   /* (Oct 4) the location / title on the left, the legend on the right, never overlapping */ pinTtlH: FULL0 ? 'auto' : (inT ? 88 : 54) + 'px', pinTtlPad: FULL0 ? '16px' : '8px 16px', pinTtlBg: FULL0 ? 'rgba(255, 255, 255, 0.62)' : 'transparent', pinTtlBf: FULL0 ? 'blur(16px) saturate(180%)' : 'none', pinTtlSh: FULL0 ? '0 0 16px rgba(0,0,0,0.16)' : 'none', ttlLeftCss: LAND16 ? '16px' : (16 + (Number(p.clipLeft) || 0) + (FULL0 && !HDR ? this.win().l : 0)) + 'px', ttlRightCss: 'auto', ttlLegW: FULL0 && !HDR && legend.length && !noLeg && !this._ttlStack ? (this._legWpx || 0) + 16 : 0,   /* full screen: the title on the left, the legend column on the right, never overlapping */ legTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (Number(p.legendOffset) || 0)), ctrlBoxTop: Math.round(Math.max(52, this.win().t) + 8 + TT + (p.ctrlOffset != null && p.ctrlOffset !== '' ? Number(p.ctrlOffset) : (Number(p.legendOffset) || 0))), legTopC: Math.round(((p.isFull === true || p.isFull === 'true') ? this.win().t : this.win().t === 0 ? 0 : Math.max(52, this.win().t)) + EI + TT + (Number(p.legendOffset) || 0) + (FULL0 && !HDR && this._ttlStack ? (this._ttlHpx || 0) + 8 : 0))   /* (Oct 10, 22:52) full screen: 16px under the map's top, level with the title card (no 52px header room) */,   /* (Oct 4, 23:30) embedded map, nothing over its top: legend 16px from the top */ wxTop: Math.round((!(p.isFull === true || p.isFull === 'true') && this.win().t === 0 ? 0 : Math.max(52, this.win().t)) + EI + TT + (Number(p.legendOffset) || 0) + (FULL0 && !HDR && this._ttlStack ? (this._ttlHpx || 0) + 8 : 0))   /* (Oct 8) the weather chips too: 16px from an embedded map's top, as the legend */ + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0), ...(() => { const full = FULL0 && !HDR; if (!full) return { wxTopCss: (Math.round((!(p.isFull === true || p.isFull === 'true') && this.win().t === 0 ? 0 : Math.max(52, this.win().t)) + EI + TT + (Number(p.legendOffset) || 0)) + (legend.length ? ((p.isFull === true || p.isFull === 'true') ? legend.length * 40 : 40) : 0)) + 'px', wxBotCss: 'auto', wxR: EI + this.win().r, wxL: EI + this.win().l, wxDisp: 'flex', wxGap: '6px', wxOvx: 'auto', wxJ: 'flex-start', wxH: '32px', wxPadL: '8px', wxPadR: '16px' }; const WN2 = this.win(), Hh = this.H(); return { wxTopCss: 'auto', wxBotCss: (24 + (Hh - WN2.b)) + 'px', wxR: 16 + WN2.r + 44 + 8, wxL: 16 + WN2.l, wxDisp: 'grid', wxGap: '8px', wxOvx: 'visible', wxJ: 'flex-start', wxH: '44px', wxPadL: '8px', wxPadR: '16px' }; })(),
           optOpen, optStr: optOpen ? 'true' : 'false',
           // Toggle and panel share one width; buttons shrink on short maps so the open panel always fits.
@@ -2021,7 +2021,7 @@ class Component extends DCLogic {
         return withTip(at(g.x, g.y, {
           c, g: window.__wfIgn ? window.__wfIgn(g.conf, g.live) : { fill: c, dash: '' }, rim: '#3A3A3C', r: 7, halo: 14, anim: '7;16', dur: hi ? '2.2s' : '2.8s', conf: g.conf, tagFg: window.__wfConfTag ? window.__wfConfTag(g.conf).fg : '#185A93', tagBg: window.__wfConfTag ? window.__wfConfTag(g.conf).bg : 'rgba(31,111,186,0.12)',
           pulse: !MANY && (!sel || this.props.mode === 'pin'), still: MANY && !sel, _id: g.id, srcTxt: g.src || '', isSel: sel, notSel: !sel, cls: sel ? ('tipwrap igsel' + ((this.state || {}).fireHover ? ' ighide' : '')) : 'tipwrap', hover: () => { if ((this.state || {}).selId !== g.id || (this.state || {}).fireHover) this.setState({ selId: g.id, fireHover: false }); }, z: sel ? 6 : 2, pos: (gi + 1) + ' of ' + list.length, place: g.place, conf: g.conf, moonD: window.__wfNight && window.__wfNight(g.live) ? 'block' : 'none', liveT: g.live, reg: window.__wfRegionUp ? window.__wfRegionUp(g.st, g.co) : (g.reg || ''),
-          aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open ignition candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent' + (window.__wfNight && window.__wfNight(g.live) ? ', night detection' : ''),
+          aria: (sel ? 'Selected, ' + (gi + 1) + ' of ' + list.length + '. ' : '') + 'Open detection candidate ' + g.id + ', ' + g.place + ', ' + g.conf + ' percent' + (window.__wfNight && window.__wfNight(g.live) ? ', night detection' : ''),
           pick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); window.__wfMem = Object.assign(window.__wfMem || {}, { focus: g.id }); try { window.sessionStorage.setItem('wf-focus', g.id); } catch (err) {} }
         }), g.place + ' · ' + g.id, g.conf + '% confidence · ' + g.src + '.\nTap to review.');
       }))(IGN_ALL || [{ id: 'IC-0924-07', x: 610, y: 290, conf: 87, place: 'North ridge', src: '3 detections' }, { id: 'IC-0924-08', x: 842, y: 252, conf: 54, place: 'East canyon', src: 'Tower T-11' }]).map((m, k, all) => this.wfTagPlace(m, k, all, s, W)) : []
