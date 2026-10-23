@@ -125,9 +125,9 @@ class Component extends DCLogic {
     try { fetch('version.txt?t=' + Date.now(), { cache: 'no-store' }).then((r) => (r.ok ? r.text() : '')).then((v) => { const n = parseInt(String(v).trim(), 10); if (n > 1e9) this.setState({ ver: n }); }).catch(() => {}); } catch (e) {}
   }
   renderVals() {
-    const s = this.state || {}, lang = window.__wfLang === 'pt' ? 'pt' : window.__wfLang === 'ja' ? 'ja' : 'en';
+    const s = this.state || {}, lang = window.__wfLang === 'pt' ? 'pt' : 'en';
     // the last two words of every longer text stay together, so no word is ever left alone on a line (also where text-wrap: pretty is missing)
-    const L = (en, pt, ja) => { const t = lang === 'pt' ? pt : lang === 'ja' ? ja : en; return typeof t === 'string' && t.length > 24 ? t.replace(/ (\S+)$/, '\u00A0$1') : t; };
+    const L = (en, pt) => { const t = lang === 'pt' ? pt : en; return typeof t === 'string' && t.length > 24 ? t.replace(/ (\S+)$/, '\u00A0$1') : t; };
     let role = ''; try { role = window.localStorage.getItem('wf-role') || ''; } catch (e) {}
     const M = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], pt: ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'] };
     const d = s.ver ? new Date(s.ver * 1000) : null;
@@ -138,15 +138,15 @@ class Component extends DCLogic {
       deploy: 'M3 16.5V8h10.5v8.5M13.5 11h4l3 3.5v2M3 16.5h1.7M9.3 16.5h4.9M18.8 16.5h1.7M9.3 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0ZM18.8 17a2.3 2.3 0 1 1-4.6 0 2.3 2.3 0 0 1 4.6 0Z'
     };
     const steps = [
-      [IC.detect, L('Detect', 'Detetar', '検知'), L('Exploring which sources can trigger a faster, more accurate detection.', 'Explorar que fontes permitem uma deteção mais rápida e precisa.', 'より速く正確な検知につながる情報源を探ります。')],
-      [IC.confirm, L('Confirm', 'Confirmar', '確認'), L('Checked on the ground by the first engine or by drone, with everyone on the incident in one chat.', 'Confirmada no terreno pelo primeiro veículo ou por drone, com todos os envolvidos numa só conversa.', '最初に到着した消防車やドローンが現場で確認し、関係者全員がひとつのチャットでつながります。')],
-      [IC.deploy, L('Deploy', 'Enviar meios', '出動'), L('Dispatch sends the closest units; command asks for more and places the crews, everyone seeing the same picture.', 'A central despacha os meios mais próximos; o comando pede reforços e coloca as equipas, todos a ver o mesmo.', '指令センターが最寄りの部隊を出動させ、指揮者が増援を要請して部隊を配置します。全員が同じ状況を見ながら。')]
+      [IC.detect, L('Detect', 'Detetar'), L('Exploring which sources can trigger a faster, more accurate detection.', 'Explorar que fontes permitem uma deteção mais rápida e precisa.')],
+      [IC.confirm, L('Confirm', 'Confirmar'), L('Checked on the ground by the first engine or by drone, with everyone on the incident in one chat.', 'Confirmada no terreno pelo primeiro veículo ou por drone, com todos os envolvidos numa só conversa.')],
+      [IC.deploy, L('Deploy', 'Enviar meios'), L('Dispatch sends the closest units; command asks for more and places the crews, everyone seeing the same picture.', 'A central despacha os meios mais próximos; o comando pede reforços e coloca as equipas, todos a ver o mesmo.')]
     ].map(([ic, t, dd], i, a) => ({ ic, t, d: dd, n: i + 1, lineD: i < a.length - 1 ? 'block' : 'none', pb: i < a.length - 1 ? 16 : 0 }));
     const DONE = 'M5 12.5l4.5 4.5L19 7.5', NOW = 'M13.3 12a1.3 1.3 0 1 1-2.6 0 1.3 1.3 0 0 1 2.6 0Z';
     const stages = [
-      [L('Research and scenarios', 'Pesquisa e cenários', '調査とシナリオ'), false],
-      [L('Alpha version', 'Versão alfa', 'アルファ版'), false],
-      [L('Feedback from experts', 'Feedback de especialistas', '専門家からのフィードバック'), true]
+      [L('Research and scenarios', 'Pesquisa e cenários'), false],
+      [L('Alpha version', 'Versão alfa'), false],
+      [L('Feedback from experts', 'Feedback de especialistas'), true]
     ].map(([t, now], i) => ({ t, cur: now ? 'step' : 'false', w: now ? 600 : 400, tagD: now ? 'inline-flex' : 'none', ic: now ? NOW : DONE,
       bg: now ? 'var(--wf-y)' : '#3A3A3C', fg: now ? '#1C1C1E' : '#FFFFFF', bt: '0' }));
     return {
@@ -157,48 +157,38 @@ class Component extends DCLogic {
         try { const ref = document.referrer || ''; if (!role && /Login\.dc\.html/.test(ref) && window.history.length > 1) { if (e && e.preventDefault) e.preventDefault(); window.history.back(); return; } } catch (x) {}
         try { if (window.sessionStorage.getItem('wf-about-from') === 'prefs') window.sessionStorage.setItem('wf-prefs-open', '1'); window.sessionStorage.removeItem('wf-about-from'); } catch (e) {} },
       tx: {
-        back: L('Back', 'Voltar', '戻る'),
-        title: L('About', 'Sobre', 'このアプリについて'),
-        start: L('How it started', 'Como começou', 'はじまり'),
+        back: L('Back', 'Voltar'),
+        title: L('About', 'Sobre'),
+        start: L('How it started', 'Como começou'),
         intro1: L('Wildfires grow larger every year, taking lives, homes and forests, from Nevada City, California, to Porto, Portugal. Could we just sit and watch? We decided we couldn\'t. A year of conversations, scenarios and study of existing tools followed, and as UX specialists we shaped the interface together from the concepts we found along the way.',
-          'Os incêndios florestais crescem todos os anos, levando vidas, casas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Podíamos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários e estudo das ferramentas existentes, e, como especialistas em UX, formulámos juntos a interface a partir dos conceitos que fomos descobrindo.',
-          '山火事は年々大きくなり、カリフォルニアのネバダシティからポルトガルのポルトまで、命や家、森を奪っています。ただ座って見ているだけでいいのか。答えは「いいえ」でした。1年にわたる対話、シナリオ、既存ツールの調査を経て、UXの専門家として、見つけたコンセプトから2人でインターフェースを形にしました。'),
-        by: L('Project by', 'Projeto de', 'プロジェクト'),
-        usa: L('USA', 'EUA', '米国'), pt: L('Portugal', 'Portugal', 'ポルトガル'),
-        desc: L('How the app works, where it stands and how it started.', 'Como a app funciona, em que fase está e como começou.', 'アプリの仕組み、現在の段階、そして始まり。'),
-        idea: L('Goal', 'Objetivo', '目標'),
+          'Os incêndios florestais crescem todos os anos, levando vidas, casas e florestas, de Nevada City, na Califórnia, ao Porto, em Portugal. Podíamos ficar sentados a assistir? Decidimos que não. Seguiu-se um ano de conversas, cenários e estudo das ferramentas existentes, e, como especialistas em UX, formulámos juntos a interface a partir dos conceitos que fomos descobrindo.'),
+        by: L('Project by', 'Projeto de'),
+        usa: L('USA', 'EUA'), pt: L('Portugal', 'Portugal'),
+        desc: L('How the app works, where it stands and how it started.', 'Como a app funciona, em que fase está e como começou.'),
+        idea: L('Goal', 'Objetivo'),
         /* (Oct 11, 19:10) the goal is no longer only speed: one central, simple tool where everyone on a fire sees the same picture */
         goal: L('In a wildfire, every first second counts, and so does everyone seeing the same picture. Our questions are:',
-          'Num incêndio rural, cada primeiro segundo conta, e conta que todos vejam o mesmo. As nossas perguntas são:',
-          '山火事では、最初の一秒一秒が重要です。そして全員が同じ状況を見ていることも。私たちの問いは:'),
+          'Num incêndio rural, cada primeiro segundo conta, e conta que todos vejam o mesmo. As nossas perguntas são:'),
         goalQ2: L('Can one simple, central tool give everyone on a fire the same picture?',
-          'Pode uma ferramenta central e simples dar a todos num incêndio a mesma imagem da situação?',
-          'ひとつのシンプルな共通ツールで、火災に関わる全員が同じ状況を共有できるでしょうか。'),
+          'Pode uma ferramenta central e simples dar a todos num incêndio a mesma imagem da situação?'),
         goalQ: L('Is it possible to reduce the time between ignition and action?',
-          'É possível reduzir o tempo entre a ignição e a ação?',
-          '発火から行動までの時間を短くすることはできるでしょうか。'),
+          'É possível reduzir o tempo entre a ignição e a ação?'),
         chat: L('Can one chat per incident keep everyone aligned?',
-          'Pode uma conversa por incidente manter todos alinhados?',
-          'インシデントごとのひとつのチャットで、全員をつなげられるでしょうか。'),
-        stage: L('Where we are', 'Em que fase estamos', '現在の段階'),
-        now: L('Now', 'Agora', '現在'),
+          'Pode uma conversa por incidente manter todos alinhados?'),
+        stage: L('Where we are', 'Em que fase estamos'),
+        now: L('Now', 'Agora'),
         stage1: L('Look at this prototype as a conversation starter, not an end goal. Our aim now is to get closer to the problem and the people who face it.',
-          'Veja este protótipo como um ponto de partida para a conversa, não como um fim. O nosso objetivo agora é aproximarmo-nos do problema e de quem o enfrenta.',
-          'このプロトタイプを最終形ではなく、会話のきっかけとして見てください。いまの私たちの目的は、課題とそれに向き合う人々に近づくことです。'),
+          'Veja este protótipo como um ponto de partida para a conversa, não como um fim. O nosso objetivo agora é aproximarmo-nos do problema e de quem o enfrenta.'),
         users: L('It\'s designed for regional and station fire leaders, and government bodies such as Proteção Civil in Portugal or Cal OES in California, as examples.',
-          'Foi desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal ou o Cal OES na Califórnia, como exemplos.',
-          '地域・消防署の指揮者、そして行政機関のために設計しています。例として、ポルトガルのProteção CivilやカリフォルニアのCal OESです。'),
+          'Foi desenhado para comandantes regionais e de quartel, e organismos públicos como a Proteção Civil em Portugal ou o Cal OES na Califórnia, como exemplos.'),
         stage2: L('Our goal at this stage is to use this prototype to answer one question only your experience can tell us:',
-          'O nosso objetivo nesta fase é usar este protótipo para responder a uma pergunta a que só a sua experiência pode responder:',
-          'この段階での目標は、あなたの経験だけが答えられるひとつの問いに、このプロトタイプを使って答えることです。'),
+          'O nosso objetivo nesta fase é usar este protótipo para responder a uma pergunta a que só a sua experiência pode responder:'),
         stage2Q: L('What are we missing?',
-          'O que nos está a escapar?',
-          '私たちは何を見落としているのか。'),
-        thanks: L('Thank you.', 'Obrigado.', 'ありがとうございます。'),
+          'O que nos está a escapar?'),
+        thanks: L('Thank you.', 'Obrigado.'),
         story: L('Forest Fire Watch is an idea that grew from more than a year of conversations between two UX designers who know how much our forests matter and could not stand by, watching fires destroy them around the planet year after year. Our thanks to the public platforms that inspired us and to Claude.ai for its key role in shaping this prototype. A special thanks to our colleagues, the people we interviewed and our families, who helped us with feedback, ideas and insights.',
-          'O Forest Fire Watch é uma ideia que nasceu de mais de um ano de conversas entre dois designers de UX que sabem o quanto as nossas florestas importam e não conseguiram ficar parados a ver os incêndios destruí-las por todo o planeta, ano após ano. O nosso obrigado às plataformas públicas que nos inspiraram e ao Claude.ai pelo papel essencial em dar forma a este protótipo. Um agradecimento especial aos nossos colegas, às pessoas que entrevistámos e às nossas famílias, que nos ajudaram com feedback, ideias e perspetivas.',
-          'Forest Fire Watchは、森林を守ることの大切さを知り、世界中で毎年のように森林が火災で失われていくのを黙って見ていられなかった2人のUXデザイナーによる、1年以上の対話から生まれたアイデアです。私たちに着想を与えてくれた公開プラットフォーム、そしてこのプロトタイプを形にするうえで重要な役割を果たしたClaude.aiに感謝します。フィードバックやアイデア、気づきで支えてくれた同僚、インタビューに応じてくださった方々、そして家族に、特に感謝します。'),
-        alpha: L('Alpha version.', 'Versão alfa.', 'アルファ版。')
+          'O Forest Fire Watch é uma ideia que nasceu de mais de um ano de conversas entre dois designers de UX que sabem o quanto as nossas florestas importam e não conseguiram ficar parados a ver os incêndios destruí-las por todo o planeta, ano após ano. O nosso obrigado às plataformas públicas que nos inspiraram e ao Claude.ai pelo papel essencial em dar forma a este protótipo. Um agradecimento especial aos nossos colegas, às pessoas que entrevistámos e às nossas famílias, que nos ajudaram com feedback, ideias e perspetivas.'),
+        alpha: L('Alpha version.', 'Versão alfa.')
       }
     };
   }

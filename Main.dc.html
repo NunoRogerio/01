@@ -23,7 +23,7 @@
 <script src="i18n.js?v=1792679688"></script>
 <script src="live.js?v=1792679688"></script>
 <script src="chat.js?v=1792679688"></script>
-<script src="tour.js?v=1792679688"></script>
+<script src="tour.js?v=1792737989"></script>
 <script src="mapsearch.js?v=1792361770"></script>
 <script src="stats.js?v=1792679688"></script>
 
@@ -1306,7 +1306,7 @@ class Component extends DCLogic {
         /* (Oct 11, 19:30) two menus: signed in, the person's own settings (profile, language, appearance); on the login screen, the app's
            (about, invites, maps, chat settings, data sources), opened from its own menu button */
         const MSECS = window.__wfLoginMenu ? ['about', 'share', 'maps', 'chat', 'ds'] : ['profile', 'lang', 'look'];
-        const TT = { profile: lang === 'pt' ? 'Perfil' : lang === 'ja' ? 'プロフィール' : 'Profile', lang: 'Language', look: 'Appearance', maps: 'Maps', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
+        const TT = { profile: lang === 'pt' ? 'Perfil' : 'Profile', lang: 'Language', look: 'Appearance', maps: 'Maps', share: 'Share', chat: 'Chat settings', ds: 'Connected data sources', about: 'About' };
         const pick = (k) => () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
           if (open && pmSec === k) { if (!MENU) return;   /* (Oct 18) the main screen's menu has no icon column to fold to */ this.setState({ pm: 'rail' }); this.wfMenuPost('rail'); return; }
           this.wfMenuPost('open');   // tapping the open section folds the menu to its icon column
@@ -1384,7 +1384,6 @@ class Component extends DCLogic {
       ds: (() => { const o = true, pt = lang === 'pt', T = (en, p) => (pt ? p : (window.__wfJA ? window.__wfJA(en) : en));
         let c = {}; try { c = JSON.parse(localStorage.getItem('wf-live-fires-v15') || 'null') || {}; } catch (e) {}
         const ago = (t) => { if (!t) return T('Not loaded on this phone yet', 'Ainda não carregado neste telemóvel'); const m = Math.max(0, Math.round((Date.now() - t) / 60000));
-          if (lang === 'ja') return '読み込み: ' + (m < 1 ? 'たった今' : m < 60 ? m + '分前' : m < 1440 ? Math.round(m / 60) + '時間前' : Math.round(m / 1440) + '日前');   // Japanese units
           if (pt && m < 1) return 'Carregado agora';
           return T('Loaded ', 'Carregado há ') + (m < 1 ? T('just now', 'instantes') : m < 60 ? m + ' min' + T(' ago', '') : m < 1440 ? Math.round(m / 60) + ' h' + T(' ago', '') : Math.round(m / 1440) + ' d' + T(' ago', '')); };
         // (Oct 4) What each source brings: the markers, tags and shapes it draws, as the app draws them, and real examples from the data loaded on this phone (nothing invented)
@@ -1450,7 +1449,7 @@ class Component extends DCLogic {
           toggle: () => { if (lock || !D) return; this.setState({ aiAsk: (on ? 'dsoff:' : 'dson:') + key, aiAskName: name }); },
           // annotation: when the source was added to the app (September 2026, from the project history)
           added: (() => { const yr = new Date().getFullYear() === 2026 ? '' : ' 2026';   // the year only when it is not this year (keeps the line short)
-            const m = mon || 9; return lang === 'ja' ? (yr ? '2026年' : '') + m + '月' + day + '日に追加' : pt ? 'Adicionada a ' + day + (m === 10 ? ' out' : ' set') + yr : 'Added ' + day + (m === 10 ? ' Oct' : ' Sep') + yr; })() }; });
+            const m = mon || 9; return pt ? 'Adicionada a ' + day + (m === 10 ? ' out' : ' set') + yr : 'Added ' + day + (m === 10 ? ' Oct' : ' Sep') + yr; })() }; });
         items.forEach((it, ix) => { it.liPad = ix ? '32px 0 0' : '0'; it.liBd = ix ? '1px solid rgba(60,60,67,0.22)' : '0'; });   /* (Oct 5) a line between the sources */
         return { title: T('Manage data sources', 'Gerir fontes de dados'), count: String(items.length), subW: T('data sources connected', 'fontes de dados ligadas'), items, listLabel: T('Connected data sources', 'Fontes de dados ligadas'),
           str: o ? 'true' : 'false', hid: o ? 'false' : 'true', rot: o ? '90deg' : '0deg', rows: o ? '1fr' : '0fr',
@@ -1460,43 +1459,43 @@ class Component extends DCLogic {
           add: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsAddTried: true }); },
           toggle: () => { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} this.setState({ dsOpen: !o, chatSet: false }); } }; })(),   // one drawer open at a time
       // Confirmation before changing role-play or removing the key: a bottom sheet over a glass overlay
-      aic: (() => { const k = s.aiAsk || this._aiAskLast || 'off', open = !!s.aiAsk, A = window.__wfChat && window.__wfChat.ai, pt = lang === 'pt', ja = lang === 'ja';
+      aic: (() => { const k = s.aiAsk || this._aiAskLast || 'off', open = !!s.aiAsk, A = window.__wfChat && window.__wfChat.ai, pt = lang === 'pt';
         if (s.aiAsk) this._aiAskLast = s.aiAsk;
-        const L = (en, p, j) => (ja ? j : pt ? p : en);
-        const nm = s.aiAskName || '', dsk = /^ds(on|off):/.test(k) ? k.replace(/^ds(on|off):/, '') : null, what = dsk === 'SAT' ? L('detection candidates', 'candidatos de deteção', '発火候補') : L('fires', 'incêndios', '火災');
+        const L = (en, p) => (pt ? p : en);
+        const nm = s.aiAskName || '', dsk = /^ds(on|off):/.test(k) ? k.replace(/^ds(on|off):/, '') : null, what = dsk === 'SAT' ? L('detection candidates', 'candidatos de deteção') : L('fires', 'incêndios');
         const dsT = dsk ? (/^dsoff/.test(k)
-          ? [L('Turn off ' + nm + '?', 'Desligar ' + nm + '?', nm + 'をオフにしますか?'), L('Its ' + what + ' are hidden from the map and the lists.', 'Os ' + what + ' desta fonte deixam de aparecer no mapa e nas listas.', 'この' + what + 'は地図とリストに表示されなくなります。'), L('Nothing is deleted: turn it on again to see them.', 'Nada é apagado: volte a ligar para os ver.', '削除はされません。再びオンにすると表示されます。'), L('Turn off', 'Desligar', 'オフにする')]
-          : [L('Turn on ' + nm + '?', 'Ligar ' + nm + '?', nm + 'をオンにしますか?'), L('Its ' + what + ' show again on the map and in the lists.', 'Os ' + what + ' desta fonte voltam a aparecer no mapa e nas listas.', 'この' + what + 'が再び地図とリストに表示されます。'), '', L('Turn on', 'Ligar', 'オンにする')]) : null;
+          ? [L('Turn off ' + nm + '?', 'Desligar ' + nm + '?'), L('Its ' + what + ' are hidden from the map and the lists.', 'Os ' + what + ' desta fonte deixam de aparecer no mapa e nas listas.'), L('Nothing is deleted: turn it on again to see them.', 'Nada é apagado: volte a ligar para os ver.'), L('Turn off', 'Desligar')]
+          : [L('Turn on ' + nm + '?', 'Ligar ' + nm + '?'), L('Its ' + what + ' show again on the map and in the lists.', 'Os ' + what + ' desta fonte voltam a aparecer no mapa e nas listas.'), '', L('Turn on', 'Ligar')]) : null;
         const txt = dsT || {
-          on: [L('Turn on role-play?', 'Ligar a encenação?', 'ロールプレイをオンにしますか?'),
-            L('Claude will write the officers\u2019 and crews\u2019 replies in the assignments.', 'O Claude vai escrever as respostas das chefias e equipas nas atribuições.', 'インシデントチャットの隊指揮者の返信をClaudeが書きます。'),
-            L('Calls are billed to your Anthropic account.', 'As chamadas são cobradas na sua conta Anthropic.', '料金はお客様のAnthropicアカウントに請求されます。'),
-            L('Turn on', 'Ligar', 'オンにする')],
-          off: [L('Turn off role-play?', 'Desligar a encenação?', 'ロールプレイをオフにしますか?'),
-            L('Officers and crews will answer with the in-app replies instead of Claude.', 'As chefias e equipas passam a responder com as respostas da app em vez do Claude.', '隊指揮者はClaudeではなくアプリ内の返信で答えます。'),
-            L('Your key stays saved on this phone.', 'A chave continua guardada neste telemóvel.', 'キーはこの端末に保存されたままです。'),
-            L('Turn off', 'Desligar', 'オフにする')],
-          rep: [L('Replace the key?', 'Substituir a chave?', 'キーを置き換えますか?'),
-            L('Paste a new key to use instead of the one saved on this phone.', 'Cole uma nova chave para usar em vez da que está guardada neste telemóvel.', 'この端末に保存されているキーの代わりに使う新しいキーを貼り付けてください。'),
-            L('The current key keeps working until the new one is saved and tested.', 'A chave atual continua a funcionar até a nova ser guardada e testada.', '新しいキーが保存・テストされるまで、現在のキーが使われます。'),
-            L('Replace', 'Substituir', '置き換える')],
-          rm: [L('Remove the key?', 'Remover a chave?', 'キーを削除しますか?'),
-            L('The key is deleted from this phone and role-play stops.', 'A chave é apagada deste telemóvel e a encenação para.', 'キーはこの端末から削除され、ロールプレイは停止します。'),
-            L('To use it again you will need to paste the key again.', 'Para voltar a usá-la terá de colar a chave de novo.', '再び使うにはキーをもう一度貼り付ける必要があります。'),
-            L('Remove', 'Remover', '削除')],
-          mtrep: [L('Replace the MapTiler key?', 'Substituir a chave MapTiler?', 'MapTilerキーを置き換えますか?'),
-            L('Paste a new key to use instead of the one saved on this phone.', 'Cole uma nova chave para usar em vez da que está guardada neste telemóvel.', 'この端末に保存されているキーの代わりに使う新しいキーを貼り付けてください。'),
-            L('The current key keeps working until the new one is saved and tested.', 'A chave atual continua a funcionar até a nova ser guardada e testada.', '新しいキーが保存・テストされるまで、現在のキーが使われます。'),
-            L('Replace', 'Substituir', '置き換える')],
-          mtrm: [L('Remove your MapTiler key?', 'Remover a sua chave MapTiler?', 'MapTilerキーを削除しますか?'),
-            L('The key is deleted from this phone and the maps go back to the app\'s shared key.', 'A chave é apagada deste telemóvel e os mapas voltam à chave partilhada da app.', 'キーはこの端末から削除され、地図はアプリの共有キーに戻ります。'),
-            '', L('Remove', 'Remover', '削除')],
+          on: [L('Turn on role-play?', 'Ligar a encenação?'),
+            L('Claude will write the officers\u2019 and crews\u2019 replies in the assignments.', 'O Claude vai escrever as respostas das chefias e equipas nas atribuições.'),
+            L('Calls are billed to your Anthropic account.', 'As chamadas são cobradas na sua conta Anthropic.'),
+            L('Turn on', 'Ligar')],
+          off: [L('Turn off role-play?', 'Desligar a encenação?'),
+            L('Officers and crews will answer with the in-app replies instead of Claude.', 'As chefias e equipas passam a responder com as respostas da app em vez do Claude.'),
+            L('Your key stays saved on this phone.', 'A chave continua guardada neste telemóvel.'),
+            L('Turn off', 'Desligar')],
+          rep: [L('Replace the key?', 'Substituir a chave?'),
+            L('Paste a new key to use instead of the one saved on this phone.', 'Cole uma nova chave para usar em vez da que está guardada neste telemóvel.'),
+            L('The current key keeps working until the new one is saved and tested.', 'A chave atual continua a funcionar até a nova ser guardada e testada.'),
+            L('Replace', 'Substituir')],
+          rm: [L('Remove the key?', 'Remover a chave?'),
+            L('The key is deleted from this phone and role-play stops.', 'A chave é apagada deste telemóvel e a encenação para.'),
+            L('To use it again you will need to paste the key again.', 'Para voltar a usá-la terá de colar a chave de novo.'),
+            L('Remove', 'Remover')],
+          mtrep: [L('Replace the MapTiler key?', 'Substituir a chave MapTiler?'),
+            L('Paste a new key to use instead of the one saved on this phone.', 'Cole uma nova chave para usar em vez da que está guardada neste telemóvel.'),
+            L('The current key keeps working until the new one is saved and tested.', 'A chave atual continua a funcionar até a nova ser guardada e testada.'),
+            L('Replace', 'Substituir')],
+          mtrm: [L('Remove your MapTiler key?', 'Remover a sua chave MapTiler?'),
+            L('The key is deleted from this phone and the maps go back to the app\'s shared key.', 'A chave é apagada deste telemóvel e os mapas voltam à chave partilhada da app.'),
+            '', L('Remove', 'Remover')],
           // (Oct 3, 22:07) signing out asks first
-          out: [L('Sign out?', 'Terminar sessão?', 'サインアウトしますか?'),
-            L('You will need to sign in again to use the app.', 'Terá de voltar a entrar para usar a aplicação.', 'アプリを使うには再度サインインが必要です。'),
-            '', L('Sign out', 'Terminar sessão', 'サインアウト')] }[k];
+          out: [L('Sign out?', 'Terminar sessão?'),
+            L('You will need to sign in again to use the app.', 'Terá de voltar a entrar para usar a aplicação.'),
+            '', L('Sign out', 'Terminar sessão')] }[k];
         const close = () => this.setState({ aiAsk: null });
-        return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], okCls: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'wf-rm' : 'btn primary', okBg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgb(215, 0, 21)' : 'rgb(58, 58, 60)', okFg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgb(255, 255, 255)' : 'rgb(255, 255, 255)',   /* (Oct 18) a Remove asks with the Remove look; (Oct 21) solid red, white label */ cancel: L('Cancel', 'Cancelar', 'キャンセル'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
+        return { title: txt[0], body: txt[1], note: txt[2] || '', noteD: txt[2] ? 'block' : 'none', ok: txt[3], okCls: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'wf-rm' : 'btn primary', okBg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgb(215, 0, 21)' : 'rgb(58, 58, 60)', okFg: /^(rm|mtrm)$/.test(k) || /^(Remove|Remover)$/.test(txt[3]) ? 'rgb(255, 255, 255)' : 'rgb(255, 255, 255)',   /* (Oct 18) a Remove asks with the Remove look; (Oct 21) solid red, white label */ cancel: L('Cancel', 'Cancelar'), hidden: open ? 'false' : 'true', pe: open ? 'auto' : 'none', op: open ? 1 : 0,
           y: open ? '0%' : 'calc(100% + 120px)', dur: open ? '.5s' : '.4s', ease: open ? 'cubic-bezier(.2,.8,.2,1)' : 'cubic-bezier(.4,0,.8,.4)', close,
           hap: (k === 'on' || k === 'off' || /^ds/.test(k)) ? 'late' : 'now',   // turning role-play on/off: the vibration comes when the toggle lands
           confirm: () => { const kk = s.aiAsk; if (kk === 'out') { try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {} close(); this.wfSignOutNow(); return; }
@@ -2021,7 +2020,7 @@ class Component extends DCLogic {
     rows.forEach((r) => { if (!r.nameW) r.nameW = brObj ? 400 : 600; });
     let allState = brObj ? { name: brObj.name, nCounties: brObj.n, nLbl: unitN(brObj), ...selSty(allSel), arrowC: '#545458', fires: brObj.fires, cands: brObj.cands, firesC: NUMC, candsC: NUMC,
       bd: allSel ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: allSel ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: allSel ? 1 : 0,
-      aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' active fires, ' + brObj.cands + ' detection candidates',
+      aria: brObj.name + (brObj.country === 'US' ? ' state, ' : ', ') + brObj.fires + ' confirmed fires, ' + brObj.cands + ' detection candidates',
       pick: () => { this.wfSetScope({ st: brObj.id, co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false } : atUS ? (() => { const t = sumOf(usD); const on = selState === 'US'; return { name: 'United States', nCounties: usD.length, nLbl: usD.length + (usD.length === 1 ? ' state' : ' states'), ...selSty(on), arrowC: '#545458', fires: t.fires, cands: t.cands, firesC: NUMC, candsC: NUMC,
       bd: on ? 'rgba(0,122,255,0.6)' : 'rgba(60,60,67,0.0)', bg: on ? 'rgba(0,122,255,0.14)' : '#FFFFFF', tick: on ? 1 : 0, aria: 'United States, ' + t.fires + ' confirmed fires, ' + t.cands + ' detection candidates. Show the whole country',
       pick: () => { this.wfSetScope({ st: 'US', co: null }); this.wfListFlag(false); this.setState({ scOpen: false, list: false }); }, dis: false }; })() : { dis: true, name: '', nCounties: 0, nLbl: '', risk: 0, riskC: '', fires: 0, cands: 0, firesC: '', candsC: '', bd: '', bg: '', tick: 0, aria: '', pick: null };

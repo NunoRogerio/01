@@ -2413,3 +2413,9 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - **Detection candidate everywhere** (Nuno: always the same term): every "ignition candidate" / "candidato a ignição" in screens, chats, notifications, statistics, tour and spoken labels now reads "detection candidate" / "candidato de deteção"; the notification title is "New detection candidate" (PT "Novo candidato de deteção"). The main screen's spoken area and stack labels say "confirmed fires" with it.
 - The incidents list's empty line: "No detection candidates to verify." (PT "Sem candidatos de deteção por verificar.").
 - **Candidate page line under the title:** "Detection candidate. Santa Clara", the word the main screen's card uses, so the card and the page it opens match; a full stop, never "•".
+
+## Oct 23 (morning consistency pass; Nuno's go-ahead)
+- Back to the type scale: the tour card's title, the tour's hint text and the "Tour under construction" card are 17px (were 18px); the drone feed's REC time in the chat is 14px Footnote (was 13px).
+- The main screen's spoken area label says "confirmed fires" like every other count (was "active fires" on the chosen region).
+- Japanese leftovers removed from About and the main screen's dialogs (English and Portuguese only since Oct 21).
+- Open: the chat's suggestion chips do not swell on press. A 30% swell on a wide chip is clipped by the sideways-scrolling row and covers its neighbours (8px apart), so they wait for Nuno's call.
