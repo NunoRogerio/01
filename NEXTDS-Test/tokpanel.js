@@ -113,6 +113,12 @@
     x.defs.forEach(d => d.rule.style.setProperty(x.name, val, d.prio));
     x.value = val; remember('v', x.name, val);
   }
+  /* a font to try: loaded from its link, laid over the app's own letter everywhere (icons are drawings, they stay) */
+  function setFont(f) { let st = document.getElementById('tokp-font'), ln = document.getElementById('tokp-fontl');
+    if (!f) { if (st) st.remove(); if (ln) ln.remove(); remember('f', 'font', ''); return; }
+    if (f.href) { if (!ln) { ln = document.createElement('link'); ln.id = 'tokp-fontl'; ln.rel = 'stylesheet'; document.head.appendChild(ln); } ln.href = f.href; }
+    if (!st) { st = document.createElement('style'); st.id = 'tokp-font'; document.head.appendChild(st); }
+    st.textContent = 'html body,html body *:not(svg):not(svg *){font-family:' + f.family + ' !important}'; remember('f', 'font', f.name); }
   /* changes are kept per app and theme, and come back when the page opens again */
   function load() { try { return JSON.parse(LS.get(KEY()) || '{}'); } catch (e) { return {}; } }
   function remember(t, id, val) { const s = load(); s[t + ':' + id] = val; LS.set(KEY(), JSON.stringify(s)); }
@@ -121,6 +127,7 @@
     Object.keys(s).forEach(k => { const i = k.indexOf(':'), t = k.slice(0, i), id = k.slice(i + 1), v = s[k];
       if (t === 'g') { const g = DB.groups.get(id); if (g) setGroup(g, v); }
       else if (t === 'v') { const x = DB.vars.get(id) || { name: id, defs: [], value: '' }; setVar(x, v); }
+      else if (t === 'f') { const fo = (CFG.fonts || []).find(x => x.name === v); if (fo) setFont(fo); }
       else if (t === 'x') { const it = extraItem(id); if (it) { try { it.set(v); it.value = v; } catch (e) {} } } });
   }
   function extraGroups() { try { return (CFG.extras && CFG.extras()) || []; } catch (e) { return []; } }
@@ -172,6 +179,10 @@
     .rz{position:absolute;right:0;bottom:0;width:28px;height:28px;cursor:nwse-resize;touch-action:none}
     .rz::after{content:'';position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-right:2px solid #666;border-bottom:2px solid #666}
     .msg{color:#8C8C8C;padding:16px 0}
+    .fo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:52px;padding:8px 12px;margin:0 0 4px;border:1px solid #222;border-radius:8px;background:#121212;color:#EDEDED;text-align:left;cursor:pointer}
+    .fo b{font-size:18px;font-weight:700;line-height:24px}
+    .fo span{font-size:11px;color:#8C8C8C}
+    .fo.on{border-color:#F2F2F2}
     .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#F2F2F2;color:#0B0B0B;padding:8px 16px;border-radius:16px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .2s}
     .toast.on{opacity:1}
   ` + '</style>' +
@@ -234,6 +245,9 @@
     /* the app's own groups (e.g. category colours) */
     extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : 'space'); }); });
     if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x }; h += x.kind === 'colour' ? rowCol(id, x.name, '', x.value) : rowLen(id, x.name, '', x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
+    if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
+      h += '<h2>' + (EN ? 'Font' : 'Letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join('');
+      (CFG.fonts || []).forEach(f => { if (f.href && !document.getElementById('tokp-pv-' + f.name.replace(/\W/g, ''))) { const l = document.createElement('link'); l.id = 'tokp-pv-' + f.name.replace(/\W/g, ''); l.rel = 'stylesheet'; l.href = f.href; document.head.appendChild(l); root.appendChild(l.cloneNode()); } }); }
     if (tab === 'text' && DB.styles.size) { h += '<h2>' + L.styles + '</h2>'; [...DB.styles.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40).forEach(([k, n]) => { const [fs, lh, fw] = k.split(' / ');
       h += '<div class="sty"><p style="font-size:' + esc(/var\(/.test(fs) ? getComputedStyle(document.documentElement).getPropertyValue(fs.slice(4, -1)) || '13px' : fs) + ';font-weight:' + esc(fw === '—' ? 400 : fw) + '">Pocket Aa 123</p><span>' + esc(k) + '. ' + L.uses(n) + '</span></div>'; }); }
     if (gs.length) {
@@ -250,7 +264,8 @@
   }
   function apply(id, val) { const o = IDX[id]; if (!o) return; if (o.g && !o.x) setGroup(o.g, val); else if (o.v) setVar(o.v, val); else if (o.x) { try { o.x.set(val); o.x.value = val; remember('x', o.g.title + '/' + o.x.label, val); } catch (e) {} } }
   function step(v, d) { const m = String(v).match(/^(-?\d*\.?\d+)([a-z%]*)$/i); if (!m) { const n = parseFloat(v); return isNaN(n) ? v : String(n + d); } const n = +m[1], u = m[2]; const s = u === '' && n > 99 ? 100 : u === 'em' || u === 'rem' ? .05 : 1; return (Math.round((n + d * s) * 100) / 100) + u; }
-  $('bd').addEventListener('click', e => { const b = e.target.closest('.st button'); if (!b) return; const row = b.closest('.row'), inp = row.querySelector('.in'); inp.value = step(inp.value, +b.dataset.d); apply(row.dataset.id, inp.value); refreshRow(row, inp.value); });
+  $('bd').addEventListener('click', e => { const fb = e.target.closest('.fo'); if (fb) { const fo = (CFG.fonts || []).find(x => x.name === fb.dataset.f); setFont(fo || null); root.querySelectorAll('.fo').forEach(x => x.classList.toggle('on', x === fb)); setTimeout(() => { scan(); }, 400); return; }
+    const b = e.target.closest('.st button'); if (!b) return; const row = b.closest('.row'), inp = row.querySelector('.in'); inp.value = step(inp.value, +b.dataset.d); apply(row.dataset.id, inp.value); refreshRow(row, inp.value); });
   $('bd').addEventListener('change', e => { const row = e.target.closest('.row'); if (!row) return;
     if (e.target.type === 'color') { const inp = row.querySelector('.in'); inp.value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); }
     else if (e.target.classList.contains('in')) { apply(row.dataset.id, e.target.value.trim()); refreshRow(row, e.target.value.trim()); } });
