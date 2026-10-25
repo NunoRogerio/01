@@ -3,7 +3,8 @@
    buttons and fields — read live from the page's own style sheets, and lets each one be changed on the spot.
    Changes apply at once, are kept on this device (per app and theme) and can be copied to hand over.
    Nothing here is app-specific: an app can add its own groups through window.TOKP.extras().
-   Settings (window.TOKP, before this file loads): { lang: 'pt'|'en', always: bool, key: 'name', extras: () => [...], flag: { left, top } } */
+   Settings (window.TOKP, before this file loads): { lang: 'pt'|'en', always: bool, when: () => bool, key: 'name', extras: () => [...], fonts: [...], reveal: el => ms, flag: { left, top } }
+   The flag and the panel live in their own frames: a tap on them never reaches the app (which would take it for a tap outside its panels and close them). */
 (function () {
   'use strict';
   const CFG = window.TOKP || {}, EN = CFG.lang === 'en';
@@ -56,7 +57,7 @@
 
   let DB = null, DB_U = null;
   function computedUse() {
-    const c = new Map(), t = new Map(), rr = new Map(), sp = new Map(), sty = new Map(); let cur = null; const add = (m, k) => { if (!k) return; let a = m.get(k); if (!a) m.set(k, a = []); if (a[a.length - 1] !== cur) a.push(cur); };
+    const c = new Map(), t = new Map(), rr = new Map(), sp = new Map(), sty = new Map(), ff = new Map(); let cur = null; const add = (m, k) => { if (!k) return; let a = m.get(k); if (!a) m.set(k, a = []); if (a[a.length - 1] !== cur) a.push(cur); };
     const col = v => { if (!v || v === 'transparent' || /rgba\([^)]*,\s*0\)$/.test(v)) return ''; return colKey(v); };
     const look = (st, el, isSvg, ownText) => {
       if (ownText) add(c, col(st.color));
@@ -67,19 +68,19 @@
       if (isSvg) { if (st.fill && st.fill !== 'none' && !/url/.test(st.fill)) add(c, col(st.fill)); if (st.stroke && st.stroke !== 'none' && !/url/.test(st.stroke)) add(c, col(st.stroke)); }
       if (st.boxShadow !== 'none') (st.boxShadow.match(COL_RE) || []).forEach(x => add(c, col(x))); COL_RE.lastIndex = 0;
       if (st.textDecorationLine && st.textDecorationLine !== 'none' && ownText) add(c, col(st.textDecorationColor));
-      if (ownText) { add(sty, st.fontSize + ' / ' + st.lineHeight + ' / ' + st.fontWeight); add(t, 'font-size|' + st.fontSize); add(t, 'font-weight|' + st.fontWeight); add(t, 'line-height|' + st.lineHeight); if (st.letterSpacing !== 'normal') add(t, 'letter-spacing|' + st.letterSpacing); }
+      if (ownText) { add(ff, (st.fontFamily.split(',')[0] || '').trim().replace(/["']/g, '')); add(sty, st.fontSize + ' / ' + st.lineHeight + ' / ' + st.fontWeight); add(t, 'font-size|' + st.fontSize); add(t, 'font-weight|' + st.fontWeight); add(t, 'line-height|' + st.lineHeight); if (st.letterSpacing !== 'normal') add(t, 'letter-spacing|' + st.letterSpacing); }
       ['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight'].forEach(k => { const v = st['border' + k + 'Radius']; if (v && v !== '0px') (v.match(/-?\d*\.?\d+(px|%)/g) || []).forEach(x => add(rr, x)); });
       ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'rowGap', 'columnGap'].forEach(k => { const v = st[k]; if (v && /px$/.test(v) && v !== '0px') add(sp, v.replace('-', '')); }); };
     const all = document.querySelectorAll('html, body, body *');
     for (const el of all) {
-      if (el.id === 'tokp-host' || el.closest('#tokp-host,.leaflet-tile-pane,script,style,head')) continue;
+      if (el.closest('.tokp,.leaflet-tile-pane,script,style,head')) continue;
       if (!el.getClientRects().length && el !== document.documentElement) continue;   /* not on the page (display: none here or above) */
       const st = getComputedStyle(el), isSvg = el instanceof SVGElement, ownText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
       if (st.visibility === 'hidden' && !ownText) { /* still part of the theme */ }
       cur = el; look(st, el, isSvg, ownText);
       for (const ps of ['::before', '::after']) { const p = getComputedStyle(el, ps); if (p.content && p.content !== 'none' && p.display !== 'none') look(p, el, false, p.content !== '""' && p.content !== "''"); }
     }
-    return { c, t, r: rr, s: sp, sty };
+    return { c, t, r: rr, s: sp, sty, ff };
   }   // { groups: Map(id -> group), vars: Map(name -> var) }
   function scan() {
     selCache.clear();
@@ -166,21 +167,17 @@
   function extraGroups() { try { return (CFG.extras && CFG.extras()) || []; } catch (e) { return []; } }
   function extraItem(id) { for (const g of extraGroups()) for (const it of g.items || []) if ((g.title + '/' + it.label) === id) return it; return null; }
 
-  /* ---------- the flag and the panel (in a shadow root: the app's styles never reach it) ---------- */
-  const host = document.createElement('div'); host.id = 'tokp-host'; host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2147483000';
-  const root = host.attachShadow({ mode: 'open' });
-  root.innerHTML = '<style>' + `
-    :host{all:initial}
+  /* ---------- the flag and the panel: each in a frame of its own (the app's styles and taps never mix with them) ---------- */
+  const CSS = `
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-    .flag{position:fixed;width:48px;height:48px;border-radius:50%;background:#0B0B0B;color:#F2F2F2;border:0;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:grab;touch-action:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+    html,body{background:transparent;overflow:hidden;height:100%}
+    .flag{position:absolute;inset:0;width:48px;height:48px;border-radius:50%;background:#0B0B0B;color:#F2F2F2;border:0;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none}
     .flag svg{width:28px;height:28px}
-    .pn{position:fixed;display:none;flex-direction:column;background:#0B0B0B;color:#EDEDED;border-radius:12px;pointer-events:auto;box-shadow:0 12px 40px rgba(0,0,0,.45);overflow:hidden;font-size:13px;line-height:20px;min-width:280px;min-height:240px}
-    .pn.on{display:flex}
+    .pn{position:absolute;inset:0;display:flex;flex-direction:column;background:#0B0B0B;color:#EDEDED;border-radius:12px;overflow:hidden;font-size:13px;line-height:20px}
     .hd{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 16px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;border-bottom:1px solid #222}
     .hd h1{font-size:15px;font-weight:600;flex:1;color:#FFF}
     .hd small{font-size:11px;color:#8C8C8C;font-weight:400;margin-left:8px}
     .ib{width:40px;height:40px;border:0;border-radius:8px;background:transparent;color:#EDEDED;display:flex;align-items:center;justify-content:center;cursor:pointer}
-    .ib:active{background:#222}
     .tabs{display:flex;gap:4px;padding:8px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #222;flex:none}
     .tabs::-webkit-scrollbar{display:none}
     .tb{flex:none;height:32px;padding:0 12px;border-radius:16px;border:0;background:#1A1A1A;color:#BDBDBD;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
@@ -190,7 +187,6 @@
     .row{display:flex;align-items:center;gap:8px;min-height:44px;border-bottom:1px solid #1A1A1A}
     .pv{flex:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative}
     .sw{width:28px;height:28px;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);background:#000}
-    .sw input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
     .nm{flex:1;min-width:0;display:flex;flex-direction:column}
     .nm b{font-weight:500;color:#EDEDED;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .nm span{font-size:11px;color:#8C8C8C}
@@ -213,53 +209,59 @@
     .rz::after{content:'';position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-right:2px solid #666;border-bottom:2px solid #666}
     .msg{color:#8C8C8C;padding:16px 0}
     .cnt{cursor:pointer;text-decoration:underline;text-decoration-color:#444;text-underline-offset:3px}
-    .hl{position:fixed;display:none;pointer-events:none;border:2px solid #FF2BD6;box-shadow:0 0 0 9999px rgba(0,0,0,.18);border-radius:2px}
-    .hlb{position:fixed;left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 32px);background:#0B0B0B;color:#FFF;font:12px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:16px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .hlb.on{opacity:1}
-    .dead{font:11px/18px ui-monospace,Menlo,monospace;color:#6E6E6E;word-break:break-word}
     .fo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:52px;padding:8px 12px;margin:0 0 4px;border:1px solid #222;border-radius:8px;background:#121212;color:#EDEDED;text-align:left;cursor:pointer}
     .fo b{font-size:18px;font-weight:700;line-height:24px}
     .fo span{font-size:11px;color:#8C8C8C}
-    .fo.on{border-color:#F2F2F2}
-    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#F2F2F2;color:#0B0B0B;padding:8px 16px;border-radius:16px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .2s}
-    .toast.on{opacity:1}
-  ` + '</style>' +
-    '<button class="flag" id="flag" aria-label="Tokens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3"/><path d="M4 4h15l-2.5 4.5L19 13H4"/><circle cx="11.5" cy="7.6" r="2"/><path d="M10.6 9.4v.9M12.4 9.4v.9"/><path d="M8.6 10.9l5.8 1.4M14.4 10.9l-5.8 1.4"/></svg></button>' +
-    '<section class="pn" id="pn" role="dialog" aria-label="Tokens"><div class="hd" id="hd"><h1>' + L.title + '<small id="th"></small></h1><button class="ib" id="x" aria-label="' + L.close + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
-    '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section><div class="toast" id="toast"></div><div class="hl" id="hl"></div><div class="hlb" id="hlb"></div>';
-  const $ = id => root.getElementById(id);
+    .fo.on{border-color:#F2F2F2}`;
+  const FLAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3"/><path d="M4 4h15l-2.5 4.5L19 13H4"/><circle cx="11.5" cy="7.6" r="2"/><path d="M10.6 9.4v.9M12.4 9.4v.9"/><path d="M8.6 10.9l5.8 1.4M14.4 10.9l-5.8 1.4"/></svg>';
+  function frame(w, h, html) { const fr = document.createElement('iframe'); fr.className = 'tokp'; fr.setAttribute('title', 'Tokens'); fr.setAttribute('allowtransparency', 'true');
+    fr.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;border:0;margin:0;padding:0;background:transparent;z-index:2147483000;color-scheme:normal;box-shadow:none';
+    document.body.appendChild(fr); const d = fr.contentDocument; d.open(); d.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>' + CSS + '</style></head><body>' + html + '</body></html>'); d.close(); return { fr, d }; }
+  /* the outline, its label and the little messages sit on the page itself, never in the way of a tap */
+  const over = (id, css) => { const e = document.createElement('div'); e.id = id; e.className = 'tokp'; e.style.cssText = 'position:fixed;pointer-events:none;z-index:2147482999;' + css; return e; };
+  const HL = over('tokp-hl', 'display:none;border:2px solid #FF2BD6;box-shadow:0 0 0 9999px rgba(0,0,0,.18);border-radius:2px');
+  const HLB = over('tokp-hlb', 'left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 32px);background:#0B0B0B;color:#FFF;font:12px/20px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:16px;opacity:0;transition:opacity .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis');
+  const TOAST = over('tokp-toast', 'left:50%;bottom:24px;transform:translateX(-50%);background:#F2F2F2;color:#0B0B0B;padding:8px 16px;border-radius:16px;font:12px/20px -apple-system,sans-serif;opacity:0;transition:opacity .2s');
+  const toast = t => { TOAST.textContent = t; TOAST.style.opacity = '1'; clearTimeout(TOAST._t); TOAST._t = setTimeout(() => TOAST.style.opacity = '0', 1600); };
+  let F = null, P = null, $ = id => P.d.getElementById(id);
   const TABS = [['colours', L.colours], ['text', L.text], ['corners', L.corners], ['spaces', L.spaces], ['controls', L.controls]];
   let tab = LS.get('tokp-tab') || 'colours';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const toast = t => { const e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('on'), 1600); };
 
   /* geometry: the panel and the flag stay where they were left */
   const geo = (() => { try { return JSON.parse(LS.get('tokp-geo') || 'null'); } catch (e) { return null; } })() || {};
+  let isOpen = false;
   function place() {
-    const W = innerWidth, H = innerHeight, pn = $('pn'), w = Math.min(geo.w || 360, W - 16), h = Math.min(geo.h || Math.round(H * .6), H - 16);
+    const W = innerWidth, H = innerHeight, w = Math.min(geo.w || 360, W - 16), h = Math.min(geo.h || Math.round(H * .6), H - 16);
     const x = Math.max(8, Math.min(geo.x != null ? geo.x : W - w - 8, W - w - 8)), y = Math.max(8, Math.min(geo.y != null ? geo.y : H - h - 8, H - h - 8));
-    Object.assign(pn.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
-    const f = $('flag'), fx = geo.fx != null ? geo.fx : (CFG.flag && CFG.flag.left != null ? CFG.flag.left : 8), fy = geo.fy != null ? geo.fy : (CFG.flag && CFG.flag.top != null ? CFG.flag.top : Math.round(H * .5));
-    Object.assign(f.style, { left: Math.max(4, Math.min(fx, W - 52)) + 'px', top: Math.max(4, Math.min(fy, H - 52)) + 'px' });
+    if (P) Object.assign(P.fr.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px', display: isOpen ? 'block' : 'none', borderRadius: '12px', boxShadow: '0 12px 40px rgba(0,0,0,.45)' });
+    const fx = geo.fx != null ? geo.fx : (CFG.flag && CFG.flag.left != null ? CFG.flag.left : 8), fy = geo.fy != null ? geo.fy : (CFG.flag && CFG.flag.top != null ? CFG.flag.top : Math.round(H * .5));
+    if (F) Object.assign(F.fr.style, { left: Math.max(4, Math.min(fx, W - 52)) + 'px', top: Math.max(4, Math.min(fy, H - 52)) + 'px', borderRadius: '50%', boxShadow: '0 2px 8px rgba(0,0,0,.25)' });
   }
   const saveGeo = () => LS.set('tokp-geo', JSON.stringify(geo));
+  /* dragging inside a frame that moves with the finger: measured on the screen, not in the frame */
   function dragger(el, onMove, onEnd, onTap) {
-    el.addEventListener('pointerdown', e => { if (e.target.closest('.ib')) return; e.preventDefault(); el.setPointerCapture(e.pointerId); const sx = e.clientX, sy = e.clientY; let moved = false;
-      const mv = ev => { const dx = ev.clientX - sx, dy = ev.clientY - sy; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true; if (moved) onMove(dx, dy); };
+    el.addEventListener('pointerdown', e => { if (e.target.closest('.ib')) return; e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch (x) {} const sx = e.screenX, sy = e.screenY; let moved = false;
+      const mv = ev => { const dx = ev.screenX - sx, dy = ev.screenY - sy; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true; if (moved) onMove(dx, dy); };
       const up = () => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); if (moved) onEnd(); else if (onTap) onTap(); };
       el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); });
   }
-  { let b = null; dragger($('flag'), (dx, dy) => { if (!b) b = $('flag').getBoundingClientRect(); geo.fx = b.left + dx; geo.fy = b.top + dy; place(); }, () => { b = null; saveGeo(); }, () => toggle()); }
-  { let b = null; dragger($('hd'), (dx, dy) => { if (!b) b = $('pn').getBoundingClientRect(); geo.x = b.left + dx; geo.y = b.top + dy; place(); }, () => { b = null; saveGeo(); }); }
-  { let b = null; dragger($('rz'), (dx, dy) => { if (!b) b = $('pn').getBoundingClientRect(); geo.x = b.left; geo.y = b.top; geo.w = Math.max(280, b.width + dx); geo.h = Math.max(240, b.height + dy); place(); }, () => { b = null; saveGeo(); }); }
-  addEventListener('resize', place);
+  function build() {
+    F = frame(48, 48, '<button class="flag" id="flag" aria-label="Tokens">' + FLAG_SVG + '</button>');
+    P = frame(360, 400, '<section class="pn" id="pn" role="dialog" aria-label="Tokens"><div class="hd" id="hd"><h1>' + L.title + '<small id="th"></small></h1><button class="ib" id="x" aria-label="' + L.close + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
+      '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section>');
+    document.body.append(HL, HLB, TOAST);
+    { let b = null; dragger(F.d.getElementById('flag'), (dx, dy) => { if (!b) b = F.fr.getBoundingClientRect(); geo.fx = b.left + dx; geo.fy = b.top + dy; place(); }, () => { b = null; saveGeo(); }, () => toggle()); }
+    { let b = null; dragger($('hd'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left + dx; geo.y = b.top + dy; place(); }, () => { b = null; saveGeo(); }); }
+    { let b = null; dragger($('rz'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left; geo.y = b.top; geo.w = Math.max(280, b.width + dx); geo.h = Math.max(240, b.height + dy); place(); }, () => { b = null; saveGeo(); }); }
+    $('x').onclick = () => toggle(false);
+    $('tabs').innerHTML = TABS.map(([k, n]) => '<button class="tb" data-t="' + k + '">' + n + '</button>').join('');
+    $('tabs').onclick = e => { const b = e.target.closest('.tb'); if (!b) return; tab = b.dataset.t; LS.set('tokp-tab', tab); draw(); };
+    wire(); place(); addEventListener('resize', place);
+  }
+  function toggle(on) { isOpen = on == null ? !isOpen : on; place(); LS.set('tokp-open', isOpen ? '1' : null); if (isOpen) { fontsUp(); $('bd').innerHTML = '<p class="msg">' + L.scanning + '</p>'; setTimeout(() => { scan(); draw(); }, 30); } }
 
-  function toggle(on) { const pn = $('pn'); on = on == null ? !pn.classList.contains('on') : on; pn.classList.toggle('on', on); LS.set('tokp-open', on ? '1' : null); if (on) { fontsUp(); $('bd').innerHTML = '<p class="msg">' + L.scanning + '</p>'; setTimeout(() => { scan(); draw(); }, 30); } }
-  $('x').onclick = () => toggle(false);
-  $('tabs').innerHTML = TABS.map(([k, n]) => '<button class="tb" data-t="' + k + '">' + n + '</button>').join('');
-  $('tabs').onclick = e => { const b = e.target.closest('.tb'); if (!b) return; tab = b.dataset.t; LS.set('tokp-tab', tab); draw(); };
-
-  /* ---------- drawing a tab ---------- */
+  /* ---------- drawing a tab: only what this theme really shows ---------- */
   const pxOf = v => parseFloat(v);
   function rowLen(id, label, sub, val, kind, bad) {
     const n = pxOf(val), pv = kind === 'text' ? '<span class="aa" style="font-size:' + Math.min(28, Math.max(8, n || 13)) + 'px">Aa</span>' : kind === 'corner' ? '<span class="sq" style="border-radius:' + Math.min(14, n || 0) + 'px"></span>' : kind === 'space' ? '<span class="bar" style="width:' + Math.min(32, Math.max(2, n || 0)) + 'px"></span>' : '';
@@ -276,67 +278,69 @@
   function draw() {
     if (!DB) scan();
     $('th').textContent = themeSig() === 'base' ? '' : themeSig();
-    root.querySelectorAll('.tb').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+    P.d.querySelectorAll('.tb').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     IDX = {}; let h = '';
     const vs = [...DB.vars.values()].filter(x => x.value && x.uses.size && x.els && x.els.length && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
-    const gAll = [...DB.groups.values()].filter(g => g.tab === tab), gs = gAll.filter(g => g.live > 0), gDead = gAll.filter(g => !g.live);
-    /* the app's own groups (e.g. category colours) */
+    const gs = [...DB.groups.values()].filter(g => g.tab === tab && g.live > 0);
     extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : 'space'); }); });
-    if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x, els: x.els }; h += x.kind === 'colour' ? rowCol(id, x.name, L.uses(x.els.length), x.value) : rowLen(id, x.name, L.uses(x.els.length), x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
+    if (tab === 'text' && DB_U && DB_U.ff.size) { h += '<h2>' + (EN ? 'Fonts in use' : 'Letras em uso') + '</h2>'; [...DB_U.ff.entries()].sort((a, b) => b[1].length - a[1].length).forEach(([k, arr]) => { const id = 'ff:' + k; IDX[id] = { els: arr };
+      h += '<div class="sty" data-id="' + esc(id) + '"><p style="font-family:\'' + esc(k) + '\';font-size:18px">' + esc(k) + '</p><span class="cnt">' + L.uses(arr.length) + '</span></div>'; }); }
     if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
-      h += '<h2>' + (EN ? 'Font' : 'Letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join('');
-      (CFG.fonts || []).forEach(f => { if (f.href && !document.getElementById('tokp-pv-' + f.name.replace(/\W/g, ''))) { const l = document.createElement('link'); l.id = 'tokp-pv-' + f.name.replace(/\W/g, ''); l.rel = 'stylesheet'; l.href = f.href; document.head.appendChild(l); root.appendChild(l.cloneNode()); } }); }
-    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 40).forEach(([k, arr]) => { const n = arr.length, sid = 's:' + k; IDX[sid] = { els: arr }; const [fs, lh, fw] = k.split(' / ');
-      h += '<div class="sty" data-id="' + esc(sid) + '"><p style="font-size:' + esc(/var\(/.test(fs) ? getComputedStyle(document.documentElement).getPropertyValue(fs.slice(4, -1)) || '13px' : fs) + ';font-weight:' + esc(fw === '—' ? 400 : fw) + '">Pocket Aa 123</p><span class="cnt">' + esc(k) + '. ' + L.uses(n) + '</span></div>'; }); }
+      h += '<h2>' + (EN ? 'Try a font' : 'Experimentar uma letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join(''); }
+    if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x, els: x.els }; h += x.kind === 'colour' ? rowCol(id, x.name, L.uses(x.els.length), x.value) : rowLen(id, x.name, L.uses(x.els.length), x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
+    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 40).forEach(([k, arr]) => { const sid = 's:' + k; IDX[sid] = { els: arr }; const [fs, lh, fw] = k.split(' / ');
+      h += '<div class="sty" data-id="' + esc(sid) + '"><p style="font-size:' + esc(fs) + ';font-weight:' + esc(fw) + '">Pocket Aa 123</p><span class="cnt">' + esc(k) + '. ' + L.uses(arr.length) + '</span></div>'; }); }
     if (gs.length) {
       h += '<h2>' + L.values + '</h2>';
-      if (tab === 'colours') gs.sort((a, b) => b.n - a.n).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.live || 0), g.cur); });
+      if (tab === 'colours') gs.sort((a, b) => b.live - a.live).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.live), g.cur); });
       else if (tab === 'text') { const by = {}; gs.forEach(g => (by[g.prop] = by[g.prop] || []).push(g));
-        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowLen(id, g.cur, L.uses(g.live || 0), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
+        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowLen(id, g.cur, L.uses(g.live), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
       else if (tab === 'controls') { const by = {}; gs.forEach(g => (by[g.sub] = by[g.sub] || []).push(g));
-        [['colour', L.colours], ['text', L.text], ['corner', L.corners], ['space', L.spaces], ['size', L.size]].forEach(([s, nm]) => { if (!by[s]) return; h += '<h2>' + nm + '</h2>';
-          by[s].sort(s === 'colour' ? (a, b) => b.n - a.n : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += s === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.live || 0), g.cur) : rowLen(id, s === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.live || 0), g.cur, s === 'text' ? '' : s, s === 'space' && offGrid(g.cur)); }); }); }
-      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.live || 0) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
+        [['colour', L.colours], ['text', L.text], ['corner', L.corners], ['space', L.spaces], ['size', L.size]].forEach(([sb, nm]) => { if (!by[sb]) return; h += '<h2>' + nm + '</h2>';
+          by[sb].sort(sb === 'colour' ? (a, b) => b.live - a.live : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += sb === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.live), g.cur) : rowLen(id, sb === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.live), g.cur, sb === 'text' ? '' : sb, sb === 'space' && offGrid(g.cur)); }); }); }
+      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.live) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
     }
-    if (gDead.length) h += '<h2>' + (EN ? 'Declared but not showing here' : 'Declarados mas sem efeito aqui') + ' (' + gDead.length + ')</h2><p class="dead">' + gDead.map(g => esc(tab === 'colours' || g.sub === 'colour' ? toHex(g.key) : (g.prop ? g.prop + ' ' : '') + g.key)).join(', ') + '</p>';
     $('bd').innerHTML = h || '<p class="msg">' + L.none + '</p>';
   }
   function apply(id, val) { const o = IDX[id]; if (!o) return; if (o.g && !o.x) setGroup(o.g, val); else if (o.v) setVar(o.v, val); else if (o.x) { try { o.x.set(val); o.x.value = val; remember('x', o.g.title + '/' + o.x.label, val); } catch (e) {} } }
   function step(v, d) { const m = String(v).match(/^(-?\d*\.?\d+)([a-z%]*)$/i); if (!m) { const n = parseFloat(v); return isNaN(n) ? v : String(n + d); } const n = +m[1], u = m[2]; const s = u === '' && n > 99 ? 100 : u === 'em' || u === 'rem' ? .05 : 1; return (Math.round((n + d * s) * 100) / 100) + u; }
-  /* tap the count: the page shows each element wearing that value, one per tap (it scrolls to it and outlines it) */
+  /* tap the count: the page shows each element wearing that value, one per tap (opening its panel when it is closed) */
   let SHOW = { id: '', i: -1, raf: 0, t: 0 };
   function showEl(id) { const o = IDX[id]; if (!o || !o.els || !o.els.length) return; if (SHOW.id !== id) SHOW = { id, i: -1, raf: 0, t: 0 }; SHOW.i = (SHOW.i + 1) % o.els.length;
-    const el = o.els[SHOW.i], hl = $('hl'), lb = $('hlb'); try { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); } catch (x) {}
+    const el = o.els[SHOW.i], hl = HL, lb = HLB;
     const nm = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '');
     let up = el.parentElement; while (up && !up.id) up = up.parentElement; const where = up && up !== el ? (EN ? ' in #' : ' em #') + up.id : '';
-    cancelAnimationFrame(SHOW.raf); clearTimeout(SHOW.t); const t0 = performance.now();
-    const follow = () => { const r = el.getBoundingClientRect(), off = !r.width && !r.height;
+    cancelAnimationFrame(SHOW.raf); clearTimeout(SHOW.t); let t0 = performance.now();
+    const hidden = () => { const r = el.getBoundingClientRect(); if (!r.width && !r.height) return true; for (let a = el; a && a !== document.documentElement; a = a.parentElement) { const cs = getComputedStyle(a); if (cs.visibility === 'hidden' || +cs.opacity < .05) return true; } return false; };
+    const follow = () => { const r = el.getBoundingClientRect(), off = hidden();
       hl.style.display = off ? 'none' : 'block'; Object.assign(hl.style, { left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
-      lb.textContent = (SHOW.i + 1) + '/' + o.els.length + '  ' + nm + where + (off ? (EN ? '  (hidden now)' : '  (escondido agora)') : ''); lb.classList.add('on');
+      lb.textContent = (SHOW.i + 1) + '/' + o.els.length + '  ' + nm + where + (off ? (EN ? '  (hidden now)' : '  (escondido agora)') : ''); lb.style.opacity = '1';
       if (performance.now() - t0 < 1200) SHOW.raf = requestAnimationFrame(follow); };
-    follow(); SHOW.t = setTimeout(() => { hl.style.display = 'none'; lb.classList.remove('on'); }, 5000); }
-  $('bd').addEventListener('click', e => { const cn = e.target.closest('.cnt'); if (cn) { const row = cn.closest('[data-id]'); if (row) { showEl(row.dataset.id); return; } }
-    const fb = e.target.closest('.fo'); if (fb) { const fo = (CFG.fonts || []).find(x => x.name === fb.dataset.f); setFont(fo || null); root.querySelectorAll('.fo').forEach(x => x.classList.toggle('on', x === fb)); setTimeout(() => { scan(); }, 400); return; }
-    const b = e.target.closest('.st button'); if (!b) return; const row = b.closest('.row'), inp = row.querySelector('.in'); inp.value = step(inp.value, +b.dataset.d); apply(row.dataset.id, inp.value); refreshRow(row, inp.value); });
-  $('bd').addEventListener('change', e => { const row = e.target.closest('.row'); if (!row) return;
-    if (e.target.type === 'color') { const inp = row.querySelector('.in'); inp.value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); }
-    else if (e.target.classList.contains('in')) { apply(row.dataset.id, e.target.value.trim()); refreshRow(row, e.target.value.trim()); } });
-  $('bd').addEventListener('input', e => { if (e.target.type !== 'color') return; const row = e.target.closest('.row'); row.querySelector('.in').value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); });
-  $('bd').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList.contains('in')) e.target.blur(); });
+    const go = () => { try { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); } catch (x) {} t0 = performance.now(); follow(); SHOW.t = setTimeout(() => { hl.style.display = 'none'; lb.style.opacity = '0'; }, 5000); };
+    let ms = 0; if (CFG.reveal) try { ms = CFG.reveal(el) || 0; } catch (x) {}
+    if (ms) { lb.textContent = EN ? 'Opening its panel…' : 'A abrir o painel…'; lb.style.opacity = '1'; hl.style.display = 'none'; SHOW.t = setTimeout(go, ms); } else go(); }
+  function wire() {
+    $('bd').addEventListener('click', e => { const cn = e.target.closest('.cnt'); if (cn) { const row = cn.closest('[data-id]'); if (row) { showEl(row.dataset.id); return; } }
+      const fb = e.target.closest('.fo'); if (fb) { const fo = (CFG.fonts || []).find(x => x.name === fb.dataset.f); setFont(fo || null); P.d.querySelectorAll('.fo').forEach(x => x.classList.toggle('on', x === fb)); setTimeout(() => { scan(); }, 500); return; }
+      const b = e.target.closest('.st button'); if (!b) return; const row = b.closest('.row'), inp = row.querySelector('.in'); inp.value = step(inp.value, +b.dataset.d); apply(row.dataset.id, inp.value); refreshRow(row, inp.value); });
+    $('bd').addEventListener('change', e => { const row = e.target.closest('.row'); if (!row) return;
+      if (e.target.type === 'color') { const inp = row.querySelector('.in'); inp.value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); }
+      else if (e.target.classList.contains('in')) { apply(row.dataset.id, e.target.value.trim()); refreshRow(row, e.target.value.trim()); } });
+    $('bd').addEventListener('input', e => { if (e.target.type !== 'color') return; const row = e.target.closest('.row'); row.querySelector('.in').value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); });
+    $('bd').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.classList.contains('in')) e.target.blur(); });
+    /* copy: every change on this device, as text to hand over (to Claude, say) */
+    $('cp').onclick = async () => { const s = load(), ks = Object.keys(s);
+      const txt = ks.length ? (EN ? 'Token changes' : 'Alterações de tokens') + ' (' + APP + ', ' + themeSig() + '):\n' + ks.map(k => { const t = k[0], id = k.slice(2), g = t === 'g' && DB && DB.groups.get(id);
+        return '- ' + (t === 'v' || t === 'x' || t === 'f' ? id : g ? (g.tab + ' ' + (g.prop || '') + ' ' + g.key).replace(/\s+/g, ' ') : id) + ' → ' + s[k]; }).join('\n') : L.nochg;
+      try { await navigator.clipboard.writeText(txt); toast(ks.length ? L.copied : L.nochg); } catch (e) { prompt(L.copy, txt); } };
+    $('rs').onclick = () => { if (!confirm(L.resetQ)) return; LS.set(KEY(), null); location.reload(); };
+  }
   function refreshRow(row, v) { const sw = row.querySelector('.sw'); if (sw) sw.style.background = v; const aa = row.querySelector('.aa'); if (aa) aa.style.fontSize = Math.min(28, Math.max(8, pxOf(v) || 13)) + 'px';
     const sq = row.querySelector('.sq'); if (sq) sq.style.borderRadius = Math.min(14, pxOf(v) || 0) + 'px'; const bar = row.querySelector('.bar'); if (bar) bar.style.width = Math.min(32, Math.max(2, pxOf(v) || 0)) + 'px'; }
-
-  /* copy: every change on this device, as text to hand over (to Claude, say) */
-  $('cp').onclick = async () => { const s = load(), ks = Object.keys(s);
-    const txt = ks.length ? (EN ? 'Token changes' : 'Alterações de tokens') + ' (' + APP + ', ' + themeSig() + '):\n' + ks.map(k => { const t = k[0], id = k.slice(2), g = t === 'g' && DB && DB.groups.get(id);
-      return '- ' + (t === 'v' ? id : t === 'x' ? id : g ? (g.tab + ' ' + (g.prop || '') + ' ' + g.key).replace(/\s+/g, ' ') : id) + ' → ' + s[k]; }).join('\n') : L.nochg;
-    try { await navigator.clipboard.writeText(txt); toast(ks.length ? L.copied : L.nochg); } catch (e) { prompt(L.copy, txt); } };
-  $('rs').onclick = () => { if (!confirm(L.resetQ)) return; LS.set(KEY(), null); location.reload(); };
-
-  function fontsUp() { const fs = CFG.fonts || []; if (!fs.length) return;
-    fs.forEach(f => { if (f.href && !document.querySelector('link[data-tokpf="' + f.name + '"]')) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = f.href; l.dataset.tokpf = f.name; document.head.appendChild(l);
-      l.onload = () => { try { document.fonts.load('700 18px "' + f.name + '"').then(() => { if (tab === 'text' && $('pn').classList.contains('on')) draw(); }); } catch (e) {} }; } }); }
-  function start() { document.body.appendChild(host); place(); setTimeout(() => { try { scan(); reapply(); } catch (e) {} if (LS.get('tokp-open') === '1') toggle(true); }, 1200); }
+  /* the fonts to try load when the panel opens: on the page (to apply) and in the panel (for their samples) */
+  function fontsUp() { (CFG.fonts || []).forEach(f => { if (!f.href) return; [document, P.d].forEach(d => { if (d.querySelector('link[data-tokpf="' + f.name + '"]')) return; const l = d.createElement('link'); l.rel = 'stylesheet'; l.href = f.href; l.dataset.tokpf = f.name; d.head.appendChild(l);
+      if (d === P.d) l.onload = () => { try { P.d.fonts.load('700 18px "' + f.name + '"').then(() => { if (tab === 'text' && isOpen) draw(); }); } catch (e) {} }; }); }); }
+  function start() { if (CFG.when && !CFG.when()) return; build(); setTimeout(() => { try { scan(); reapply(); } catch (e) {} if (LS.get('tokp-open') === '1') toggle(true); }, 1200); }
   if (document.readyState === 'complete') start(); else addEventListener('load', start);
   window.TOKP_PANEL = { open: () => toggle(true), close: () => toggle(false), rescan: () => { scan(); draw(); } };
 })();
