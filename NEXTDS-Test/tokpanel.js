@@ -9,9 +9,9 @@
   const CFG = window.TOKP || {}, EN = CFG.lang === 'en';
   const L = EN
     ? { title: 'Tokens', colours: 'Colours', text: 'Text', corners: 'Corners', spaces: 'Spaces', controls: 'Buttons and fields', vars: 'Variables', values: 'Values in use', styles: 'Text styles in use',
-        copy: 'Copy changes', copied: 'Changes copied.', reset: 'Reset', resetQ: 'Undo every change on this device?', none: 'Nothing here.', uses: n => n + (n === 1 ? ' use' : ' uses'), off: 'Off the 4px grid', close: 'Close', size: 'Size', weight: 'Weight', lh: 'Line height', ls: 'Letter spacing', nochg: 'No changes yet.', scanning: 'Reading the styles…' }
+        copy: 'Copy changes', copied: 'Changes copied.', reset: 'Reset', resetQ: 'Undo every change on this device?', none: 'Nothing here.', uses: n => n + (n === 1 ? ' element' : ' elements'), off: 'Off the 4px grid', close: 'Close', size: 'Size', weight: 'Weight', lh: 'Line height', ls: 'Letter spacing', nochg: 'No changes yet.', scanning: 'Reading the styles…' }
     : { title: 'Tokens', colours: 'Cores', text: 'Texto', corners: 'Cantos', spaces: 'Espaços', controls: 'Botões e campos', vars: 'Variáveis', values: 'Valores em uso', styles: 'Estilos de texto em uso',
-        copy: 'Copiar alterações', copied: 'Alterações copiadas.', reset: 'Repor', resetQ: 'Desfazer todas as alterações neste aparelho?', none: 'Nada aqui.', uses: n => n + (n === 1 ? ' uso' : ' usos'), off: 'Fora da grelha de 4px', close: 'Fechar', size: 'Tamanho', weight: 'Peso', lh: 'Entrelinha', ls: 'Espaçamento', nochg: 'Ainda sem alterações.', scanning: 'A ler os estilos…' };
+        copy: 'Copiar alterações', copied: 'Alterações copiadas.', reset: 'Repor', resetQ: 'Desfazer todas as alterações neste aparelho?', none: 'Nada aqui.', uses: n => n + (n === 1 ? ' elemento' : ' elementos'), off: 'Fora da grelha de 4px', close: 'Fechar', size: 'Tamanho', weight: 'Peso', lh: 'Entrelinha', ls: 'Espaçamento', nochg: 'Ainda sem alterações.', scanning: 'A ler os estilos…' };
 
   /* ---------- where it is on: ?dev=1 turns it on for this device, ?dev=0 off; CFG.always shows it always ---------- */
   const LS = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} } };
@@ -54,7 +54,33 @@
   function colKey(t) { try { cvs.fillStyle = '#000'; cvs.fillStyle = t; const v = cvs.fillStyle; return v; } catch (e) { return t.toLowerCase(); } }   // '#rrggbb' or 'rgba(r, g, b, a)'
   function toHex(k) { if (k[0] === '#') return k; const m = k.match(/[\d.]+/g); if (!m) return '#000000'; return '#' + m.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join(''); }
 
-  let DB = null;   // { groups: Map(id -> group), vars: Map(name -> var) }
+  let DB = null, DB_U = null;
+  function computedUse() {
+    const c = new Map(), t = new Map(), rr = new Map(), sp = new Map(), sty = new Map(), add = (m, k) => { if (k) m.set(k, (m.get(k) || 0) + 1); };
+    const col = v => { if (!v || v === 'transparent' || /rgba\([^)]*,\s*0\)$/.test(v)) return ''; return colKey(v); };
+    const look = (st, el, isSvg, ownText) => {
+      if (ownText) add(c, col(st.color));
+      add(c, col(st.backgroundColor));
+      (st.backgroundImage.match(COL_RE) || []).forEach(x => add(c, col(x))); COL_RE.lastIndex = 0;
+      ['Top', 'Right', 'Bottom', 'Left'].forEach(sd => { if (parseFloat(st['border' + sd + 'Width']) > 0 && st['border' + sd + 'Style'] !== 'none') add(c, col(st['border' + sd + 'Color'])); });
+      if (st.outlineStyle !== 'none' && parseFloat(st.outlineWidth) > 0) add(c, col(st.outlineColor));
+      if (isSvg) { if (st.fill && st.fill !== 'none' && !/url/.test(st.fill)) add(c, col(st.fill)); if (st.stroke && st.stroke !== 'none' && !/url/.test(st.stroke)) add(c, col(st.stroke)); }
+      if (st.boxShadow !== 'none') (st.boxShadow.match(COL_RE) || []).forEach(x => add(c, col(x))); COL_RE.lastIndex = 0;
+      if (st.textDecorationLine && st.textDecorationLine !== 'none' && ownText) add(c, col(st.textDecorationColor));
+      if (ownText) { add(sty, st.fontSize + ' / ' + st.lineHeight + ' / ' + st.fontWeight); add(t, 'font-size|' + st.fontSize); add(t, 'font-weight|' + st.fontWeight); add(t, 'line-height|' + st.lineHeight); if (st.letterSpacing !== 'normal') add(t, 'letter-spacing|' + st.letterSpacing); }
+      ['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight'].forEach(k => { const v = st['border' + k + 'Radius']; if (v && v !== '0px') (v.match(/-?\d*\.?\d+(px|%)/g) || []).forEach(x => add(rr, x)); });
+      ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'rowGap', 'columnGap'].forEach(k => { const v = st[k]; if (v && /px$/.test(v) && v !== '0px') add(sp, v.replace('-', '')); }); };
+    const all = document.querySelectorAll('html, body, body *');
+    for (const el of all) {
+      if (el.id === 'tokp-host' || el.closest('#tokp-host,.leaflet-tile-pane,script,style,head')) continue;
+      if (!el.getClientRects().length && el !== document.documentElement) continue;   /* not on the page (display: none here or above) */
+      const st = getComputedStyle(el), isSvg = el instanceof SVGElement, ownText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
+      if (st.visibility === 'hidden' && !ownText) { /* still part of the theme */ }
+      look(st, el, isSvg, ownText);
+      for (const ps of ['::before', '::after']) { const p = getComputedStyle(el, ps); if (p.content && p.content !== 'none' && p.display !== 'none') look(p, el, false, p.content !== '""' && p.content !== "''"); }
+    }
+    return { c, t, r: rr, s: sp, sty };
+  }   // { groups: Map(id -> group), vars: Map(name -> var) }
   function scan() {
     selCache.clear();
     const groups = new Map(), vars = new Map(), styles = new Map();
@@ -95,6 +121,11 @@
       x.kind = COL_RE.test(x.value) && x.value.match(COL_RE)[0] === x.value ? 'colour' : (COL_RE.lastIndex = 0, x.uses.has('colour') && !/px/.test(x.value) ? 'colour' : x.uses.has('text') ? 'text' : x.uses.has('corner') ? 'corner' : x.uses.has('space') ? 'space' : /px$/.test(x.value) ? 'space' : 'other');
       COL_RE.lastIndex = 0; });
     groups.forEach(g => { g.cur = g.key; g.n = g.occ.length; });
+    /* what really shows: the computed styles of the elements on this page, in this theme (a rule that another rule overrides doesn't count) */
+    const U = computedUse();
+    groups.forEach(g => { g.live = g.tab === 'colours' || g.sub === 'colour' ? U.c.get(g.key) || 0 : g.tab === 'text' || g.sub === 'text' ? U.t.get(g.prop + '|' + g.key) || 0
+      : g.tab === 'corners' || g.sub === 'corner' ? U.r.get(g.key) || 0 : U.s.get(g.key) || 0; });
+    DB_U = U;
     DB = { groups, vars, styles };
   }
 
@@ -179,6 +210,7 @@
     .rz{position:absolute;right:0;bottom:0;width:28px;height:28px;cursor:nwse-resize;touch-action:none}
     .rz::after{content:'';position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-right:2px solid #666;border-bottom:2px solid #666}
     .msg{color:#8C8C8C;padding:16px 0}
+    .dead{font:11px/18px ui-monospace,Menlo,monospace;color:#6E6E6E;word-break:break-word}
     .fo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:52px;padding:8px 12px;margin:0 0 4px;border:1px solid #222;border-radius:8px;background:#121212;color:#EDEDED;text-align:left;cursor:pointer}
     .fo b{font-size:18px;font-weight:700;line-height:24px}
     .fo span{font-size:11px;color:#8C8C8C}
@@ -240,26 +272,27 @@
     $('th').textContent = themeSig() === 'base' ? '' : themeSig();
     root.querySelectorAll('.tb').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     IDX = {}; let h = '';
-    const vs = [...DB.vars.values()].filter(x => x.value && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
-    const gs = [...DB.groups.values()].filter(g => g.tab === tab);
+    const vs = [...DB.vars.values()].filter(x => x.value && x.uses.size && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
+    const gAll = [...DB.groups.values()].filter(g => g.tab === tab), gs = gAll.filter(g => g.live > 0), gDead = gAll.filter(g => !g.live);
     /* the app's own groups (e.g. category colours) */
     extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : 'space'); }); });
     if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x }; h += x.kind === 'colour' ? rowCol(id, x.name, '', x.value) : rowLen(id, x.name, '', x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
     if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
       h += '<h2>' + (EN ? 'Font' : 'Letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join('');
       (CFG.fonts || []).forEach(f => { if (f.href && !document.getElementById('tokp-pv-' + f.name.replace(/\W/g, ''))) { const l = document.createElement('link'); l.id = 'tokp-pv-' + f.name.replace(/\W/g, ''); l.rel = 'stylesheet'; l.href = f.href; document.head.appendChild(l); root.appendChild(l.cloneNode()); } }); }
-    if (tab === 'text' && DB.styles.size) { h += '<h2>' + L.styles + '</h2>'; [...DB.styles.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40).forEach(([k, n]) => { const [fs, lh, fw] = k.split(' / ');
+    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40).forEach(([k, n]) => { const [fs, lh, fw] = k.split(' / ');
       h += '<div class="sty"><p style="font-size:' + esc(/var\(/.test(fs) ? getComputedStyle(document.documentElement).getPropertyValue(fs.slice(4, -1)) || '13px' : fs) + ';font-weight:' + esc(fw === '—' ? 400 : fw) + '">Pocket Aa 123</p><span>' + esc(k) + '. ' + L.uses(n) + '</span></div>'; }); }
     if (gs.length) {
       h += '<h2>' + L.values + '</h2>';
-      if (tab === 'colours') gs.sort((a, b) => b.n - a.n).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.n), g.cur); });
+      if (tab === 'colours') gs.sort((a, b) => b.n - a.n).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.live || 0), g.cur); });
       else if (tab === 'text') { const by = {}; gs.forEach(g => (by[g.prop] = by[g.prop] || []).push(g));
-        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowLen(id, g.cur, L.uses(g.n), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
+        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowLen(id, g.cur, L.uses(g.live || 0), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
       else if (tab === 'controls') { const by = {}; gs.forEach(g => (by[g.sub] = by[g.sub] || []).push(g));
         [['colour', L.colours], ['text', L.text], ['corner', L.corners], ['space', L.spaces], ['size', L.size]].forEach(([s, nm]) => { if (!by[s]) return; h += '<h2>' + nm + '</h2>';
-          by[s].sort(s === 'colour' ? (a, b) => b.n - a.n : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += s === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.n), g.cur) : rowLen(id, s === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.n), g.cur, s === 'text' ? '' : s, s === 'space' && offGrid(g.cur)); }); }); }
-      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.n) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
+          by[s].sort(s === 'colour' ? (a, b) => b.n - a.n : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += s === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.live || 0), g.cur) : rowLen(id, s === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.live || 0), g.cur, s === 'text' ? '' : s, s === 'space' && offGrid(g.cur)); }); }); }
+      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.live || 0) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
     }
+    if (gDead.length) h += '<h2>' + (EN ? 'Declared but not showing here' : 'Declarados mas sem efeito aqui') + ' (' + gDead.length + ')</h2><p class="dead">' + gDead.map(g => esc(tab === 'colours' || g.sub === 'colour' ? toHex(g.key) : (g.prop ? g.prop + ' ' : '') + g.key)).join(', ') + '</p>';
     $('bd').innerHTML = h || '<p class="msg">' + L.none + '</p>';
   }
   function apply(id, val) { const o = IDX[id]; if (!o) return; if (o.g && !o.x) setGroup(o.g, val); else if (o.v) setVar(o.v, val); else if (o.x) { try { o.x.set(val); o.x.value = val; remember('x', o.g.title + '/' + o.x.label, val); } catch (e) {} } }
