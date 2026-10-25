@@ -220,7 +220,43 @@
   /* the outline, its label and the little messages sit on the page itself, never in the way of a tap */
   const over = (id, css) => { const e = document.createElement('div'); e.id = id; e.className = 'tokp'; e.style.cssText = 'position:fixed;pointer-events:none;z-index:2147482999;' + css; return e; };
   const HL = over('tokp-hl', 'display:none;border:2px solid #FF2BD6;box-shadow:0 0 0 9999px rgba(0,0,0,.18);border-radius:2px');
-  const HLB = over('tokp-hlb', 'left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 32px);background:#0B0B0B;color:#FFF;font:12px/20px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:16px;opacity:0;transition:opacity .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis');
+  const HLB = over('tokp-hlb', 'left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 32px);background:#0B0B0B;color:#FFF;font:12px/20px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:16px;opacity:0;transition:opacity .2s;white-space:normal;overflow-wrap:anywhere');
+  const LIFT = over('tokp-lift', 'display:none;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.35);border-radius:2px');
+  /* Oct 25: an element that can't be seen (hidden, behind another layer, off screen, size 0) is brought up: its parents are unhidden for an instant,
+     it is copied with every style it wears, and the copy is shown on top of everything, where it sits (or in the middle when that is off screen) */
+  function lift(el) {
+    const tool = n => n && n.closest && n.closest('.tokp');
+    const seen = () => { const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return false; if (r.bottom < 0 || r.right < 0 || r.top > innerHeight || r.left > innerWidth) return false;
+      for (let a = el; a && a !== document.documentElement; a = a.parentElement) { const cs = getComputedStyle(a); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < .05) return false; }
+      const x = Math.min(innerWidth - 1, Math.max(0, r.left + r.width / 2)), y = Math.min(innerHeight - 1, Math.max(0, r.top + r.height / 2));
+      const top = (document.elementsFromPoint(x, y) || []).find(n => !tool(n)); return !top || top === el || el.contains(top) || top.contains(el) && !top.children.length; };
+    if (seen()) return null;
+    const undo = [];
+    for (let a = el; a && a !== document.body; a = a.parentElement) { const cs = getComputedStyle(a), st = a.getAttribute('style'), hid = a.hasAttribute('hidden'); let ch = false;
+      if (hid) { a.removeAttribute('hidden'); ch = true; }
+      if (cs.display === 'none' || getComputedStyle(a).display === 'none') { a.style.setProperty('display', /^(SPAN|A|B|I|EM|STRONG|LABEL)$/.test(a.tagName) ? 'inline-block' : 'block', 'important'); ch = true; }
+      if (cs.visibility === 'hidden') { a.style.setProperty('visibility', 'visible', 'important'); ch = true; }
+      if (+cs.opacity < .05) { a.style.setProperty('opacity', '1', 'important'); ch = true; }
+      if (ch) undo.push([a, st, hid]); }
+    const r = el.getBoundingClientRect(); let n = 0;
+    const copy = src => { if (src.nodeType === 3) return src.cloneNode(); if (src.nodeType !== 1 || ++n > 400) return null; const d = src.cloneNode(false), cs = getComputedStyle(src); let t = '';
+      for (let i = 0; i < cs.length; i++) t += cs[i] + ':' + cs.getPropertyValue(cs[i]) + ';'; d.setAttribute('style', t + 'animation:none;transition:none;pointer-events:none'); d.removeAttribute('id');
+      src.childNodes.forEach(c => { const k = copy(c); if (k) d.appendChild(k); }); return d; };
+    const node = copy(el);
+    let bg = 'rgb(255, 255, 255)'; for (let a = el; a; a = a.parentElement) { const b = getComputedStyle(a).backgroundColor; if (b && !/rgba\(.*,\s*0\)$|transparent/.test(b)) { bg = b; break; } }
+    undo.forEach(([a, st, hid]) => { if (st == null) a.removeAttribute('style'); else a.setAttribute('style', st); if (hid) a.setAttribute('hidden', ''); });
+    if (!node) return null;
+    const on = r.width >= 1 && r.height >= 1 && r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth;
+    Object.assign(node.style, { position: 'static', margin: '0', transform: 'none', left: 'auto', top: 'auto', right: 'auto', bottom: 'auto', opacity: '1', visibility: 'visible', maxWidth: 'none', maxHeight: 'none',
+      width: r.width >= 1 ? 'auto' : 'max-content', minWidth: Math.max(r.width, 24) + 'px', height: 'auto', minHeight: Math.max(r.height, 16) + 'px', boxSizing: 'border-box' });
+    LIFT.innerHTML = ''; LIFT.appendChild(node);
+    Object.assign(LIFT.style, { display: 'block', background: bg, width: 'max-content', height: 'auto', left: '0px', top: '0px' });
+    node.style.transformOrigin = '0 0';
+    const w = Math.max(node.offsetWidth, 24), h = Math.max(node.offsetHeight, 16), k = Math.min(1, (innerWidth - 32) / w, (innerHeight * .5) / h);
+    if (k < 1) node.style.transform = 'scale(' + k + ')';
+    Object.assign(LIFT.style, { width: w * k + 'px', height: h * k + 'px', left: (on ? Math.min(r.left, innerWidth - w * k - 8) : (innerWidth - w * k) / 2) + 'px', top: (on ? r.top : (innerHeight - h * k) / 2) + 'px' });
+    return true; }
+  window.__tokpLift = el => lift(el);
   const TOAST = over('tokp-toast', 'left:50%;bottom:24px;transform:translateX(-50%);background:#F2F2F2;color:#0B0B0B;padding:8px 16px;border-radius:16px;font:12px/20px -apple-system,sans-serif;opacity:0;transition:opacity .2s');
   const toast = t => { TOAST.textContent = t; TOAST.style.opacity = '1'; clearTimeout(TOAST._t); TOAST._t = setTimeout(() => TOAST.style.opacity = '0', 1600); };
   let F = null, P = null, $ = id => P.d.getElementById(id);
@@ -251,7 +287,7 @@
     F.fr.style.zIndex = '2147483001';   /* the flag always above the panel, so it can always close it */
     P = frame(360, 400, '<section class="pn" id="pn" role="dialog" aria-label="Tokens"><div class="hd" id="hd"><h1>' + L.title + '<small id="th"></small></h1><button class="ib" id="x" aria-label="' + L.close + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
       '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section>');
-    document.body.append(HL, HLB, TOAST);
+    document.body.append(LIFT, HL, HLB, TOAST);
     { let b = null; dragger(F.d.getElementById('flag'), (dx, dy) => { if (!b) b = F.fr.getBoundingClientRect(); geo.fx = b.left + dx; geo.fy = b.top + dy; place(); }, () => { b = null; saveGeo(); }, () => toggle()); }
     { let b = null; dragger($('hd'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left + dx; geo.y = b.top + dy; place(); }, () => { b = null; saveGeo(); }); }
     { let b = null; dragger($('rz'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left; geo.y = b.top; geo.w = Math.max(280, b.width + dx); geo.h = Math.max(240, b.height + dy); place(); }, () => { b = null; saveGeo(); }); }
@@ -311,13 +347,14 @@
     const el = o.els[SHOW.i], hl = HL, lb = HLB;
     const nm = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '');
     let up = el.parentElement; while (up && !up.id) up = up.parentElement; const where = up && up !== el ? (EN ? ' in #' : ' em #') + up.id : '';
-    cancelAnimationFrame(SHOW.raf); clearTimeout(SHOW.t); let t0 = performance.now();
+    cancelAnimationFrame(SHOW.raf); clearTimeout(SHOW.t); LIFT.style.display = 'none'; let t0 = performance.now();
     const hidden = () => { const r = el.getBoundingClientRect(); if (!r.width && !r.height) return true; for (let a = el; a && a !== document.documentElement; a = a.parentElement) { const cs = getComputedStyle(a); if (cs.visibility === 'hidden' || +cs.opacity < .05) return true; } return false; };
-    const follow = () => { const r = el.getBoundingClientRect(), off = hidden();
+    let up2 = false;
+    const follow = () => { const r = up2 ? LIFT.getBoundingClientRect() : el.getBoundingClientRect(), off = !up2 && hidden();
       hl.style.display = off ? 'none' : 'block'; Object.assign(hl.style, { left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
-      lb.textContent = (SHOW.i + 1) + '/' + o.els.length + '  ' + nm + where + (off ? (EN ? '  (hidden now)' : '  (escondido agora)') : ''); lb.style.opacity = '1';
+      lb.textContent = (SHOW.i + 1) + '/' + o.els.length + '  ' + nm + where + (up2 ? (!el.textContent.trim() && !el.querySelector('img,svg,canvas,video') ? (EN ? '  (hidden and empty now)' : '  (escondido e vazio agora)') : (EN ? '  (hidden: brought up)' : '  (escondido: trazido para cima)')) : off ? (EN ? '  (hidden now)' : '  (escondido agora)') : ''); lb.style.opacity = '1';
       if (performance.now() - t0 < 1200) SHOW.raf = requestAnimationFrame(follow); };
-    const go = () => { try { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); } catch (x) {} t0 = performance.now(); follow(); SHOW.t = setTimeout(() => { hl.style.display = 'none'; lb.style.opacity = '0'; }, 5000); };
+    const go = () => { try { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); } catch (x) {} setTimeout(() => { try { up2 = !!lift(el); } catch (x) { up2 = false; } t0 = performance.now(); follow(); }, 450); SHOW.t = setTimeout(() => { hl.style.display = 'none'; lb.style.opacity = '0'; LIFT.style.display = 'none'; }, 5000); };
     let ms = 0; if (CFG.reveal) try { ms = CFG.reveal(el) || 0; } catch (x) {}
     if (ms) { lb.textContent = EN ? 'Opening its panel…' : 'A abrir o painel…'; lb.style.opacity = '1'; hl.style.display = 'none'; SHOW.t = setTimeout(go, ms); } else go(); }
   function wire() {
