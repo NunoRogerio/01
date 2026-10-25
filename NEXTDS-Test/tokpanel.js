@@ -170,7 +170,6 @@
   /* ---------- the flag and the panel: each in a frame of its own (the app's styles and taps never mix with them) ---------- */
   const CSS = `
     *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
-    html,body{background:transparent;overflow:hidden;height:100%}
     .flag{position:absolute;inset:0;width:48px;height:48px;border-radius:50%;background:#0B0B0B;color:#F2F2F2;border:0;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none}
     .flag svg{width:28px;height:28px}
     .pn{position:absolute;inset:0;display:flex;flex-direction:column;background:#0B0B0B;color:#EDEDED;border-radius:12px;overflow:hidden;font-size:13px;line-height:20px}
@@ -214,9 +213,10 @@
     .fo span{font-size:11px;color:#8C8C8C}
     .fo.on{border-color:#F2F2F2}`;
   const FLAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3"/><path d="M4 4h15l-2.5 4.5L19 13H4"/><circle cx="11.5" cy="7.6" r="2"/><path d="M10.6 9.4v.9M12.4 9.4v.9"/><path d="M8.6 10.9l5.8 1.4M14.4 10.9l-5.8 1.4"/></svg>';
-  function frame(w, h, html) { const fr = document.createElement('iframe'); fr.className = 'tokp'; fr.setAttribute('title', 'Tokens'); fr.setAttribute('allowtransparency', 'true');
-    fr.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;border:0;margin:0;padding:0;background:transparent;z-index:2147483000;color-scheme:normal;box-shadow:none';
-    document.body.appendChild(fr); const d = fr.contentDocument; d.open(); d.write('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>' + CSS + '</style></head><body>' + html + '</body></html>'); d.close(); return { fr, d }; }
+  /* each piece in a host of its own with a shadow root (the app's styles never reach it; the app is told to leave taps on '.tokp' alone) */
+  function frame(w, h, html) { const fr = document.createElement('div'); fr.className = 'tokp'; fr.setAttribute('aria-label', 'Tokens');
+    fr.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;margin:0;padding:0;z-index:2147483000;overflow:hidden';
+    document.body.appendChild(fr); const d = fr.attachShadow({ mode: 'open' }); d.innerHTML = '<style>:host{all:initial}' + CSS + '</style>' + html; d.head = d; d.createElement = t => document.createElement(t); d.fonts = document.fonts; return { fr, d }; }
   /* the outline, its label and the little messages sit on the page itself, never in the way of a tap */
   const over = (id, css) => { const e = document.createElement('div'); e.id = id; e.className = 'tokp'; e.style.cssText = 'position:fixed;pointer-events:none;z-index:2147482999;' + css; return e; };
   const HL = over('tokp-hl', 'display:none;border:2px solid #FF2BD6;box-shadow:0 0 0 9999px rgba(0,0,0,.18);border-radius:2px');
@@ -248,6 +248,7 @@
   }
   function build() {
     F = frame(48, 48, '<button class="flag" id="flag" aria-label="Tokens">' + FLAG_SVG + '</button>');
+    F.fr.style.zIndex = '2147483001';   /* the flag always above the panel, so it can always close it */
     P = frame(360, 400, '<section class="pn" id="pn" role="dialog" aria-label="Tokens"><div class="hd" id="hd"><h1>' + L.title + '<small id="th"></small></h1><button class="ib" id="x" aria-label="' + L.close + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
       '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section>');
     document.body.append(HL, HLB, TOAST);
