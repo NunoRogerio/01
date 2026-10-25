@@ -56,7 +56,7 @@
 
   let DB = null, DB_U = null;
   function computedUse() {
-    const c = new Map(), t = new Map(), rr = new Map(), sp = new Map(), sty = new Map(), add = (m, k) => { if (k) m.set(k, (m.get(k) || 0) + 1); };
+    const c = new Map(), t = new Map(), rr = new Map(), sp = new Map(), sty = new Map(); let cur = null; const add = (m, k) => { if (!k) return; let a = m.get(k); if (!a) m.set(k, a = []); if (a[a.length - 1] !== cur) a.push(cur); };
     const col = v => { if (!v || v === 'transparent' || /rgba\([^)]*,\s*0\)$/.test(v)) return ''; return colKey(v); };
     const look = (st, el, isSvg, ownText) => {
       if (ownText) add(c, col(st.color));
@@ -76,7 +76,7 @@
       if (!el.getClientRects().length && el !== document.documentElement) continue;   /* not on the page (display: none here or above) */
       const st = getComputedStyle(el), isSvg = el instanceof SVGElement, ownText = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
       if (st.visibility === 'hidden' && !ownText) { /* still part of the theme */ }
-      look(st, el, isSvg, ownText);
+      cur = el; look(st, el, isSvg, ownText);
       for (const ps of ['::before', '::after']) { const p = getComputedStyle(el, ps); if (p.content && p.content !== 'none' && p.display !== 'none') look(p, el, false, p.content !== '""' && p.content !== "''"); }
     }
     return { c, t, r: rr, s: sp, sty };
@@ -123,8 +123,10 @@
     groups.forEach(g => { g.cur = g.key; g.n = g.occ.length; });
     /* what really shows: the computed styles of the elements on this page, in this theme (a rule that another rule overrides doesn't count) */
     const U = computedUse();
-    groups.forEach(g => { g.live = g.tab === 'colours' || g.sub === 'colour' ? U.c.get(g.key) || 0 : g.tab === 'text' || g.sub === 'text' ? U.t.get(g.prop + '|' + g.key) || 0
-      : g.tab === 'corners' || g.sub === 'corner' ? U.r.get(g.key) || 0 : U.s.get(g.key) || 0; });
+    groups.forEach(g => { g.els = (g.tab === 'colours' || g.sub === 'colour' ? U.c.get(g.key) : g.tab === 'text' || g.sub === 'text' ? U.t.get(g.prop + '|' + g.key)
+      : g.tab === 'corners' || g.sub === 'corner' ? U.r.get(g.key) : U.s.get(g.key)) || []; g.live = g.els.length; });
+    /* a variable counts when its value really shows (a blue that nothing on this page wears is not this theme's) */
+    vars.forEach(x => { const v = x.value; x.els = (x.kind === 'colour' ? U.c.get(colKey(v)) : x.kind === 'text' ? (U.t.get('font-size|' + v) || U.t.get('line-height|' + v) || U.t.get('font-weight|' + v)) : x.kind === 'corner' ? U.r.get(v) : x.kind === 'space' ? U.s.get(v) : null) || []; });
     DB_U = U;
     DB = { groups, vars, styles };
   }
@@ -149,7 +151,7 @@
     if (!f) { if (st) st.remove(); if (ln) ln.remove(); remember('f', 'font', ''); return; }
     if (f.href) { if (!ln) { ln = document.createElement('link'); ln.id = 'tokp-fontl'; ln.rel = 'stylesheet'; document.head.appendChild(ln); } ln.href = f.href; }
     if (!st) { st = document.createElement('style'); st.id = 'tokp-font'; document.head.appendChild(st); }
-    st.textContent = 'html body,html body *:not(svg):not(svg *){font-family:' + f.family + ' !important}'; remember('f', 'font', f.name); }
+    st.textContent = 'html:not(#tp1):not(#tp2):not(#tp3) body,html:not(#tp1):not(#tp2):not(#tp3) body *:not(svg):not(svg *){font-family:' + f.family + ' !important}'; remember('f', 'font', f.name); }
   /* changes are kept per app and theme, and come back when the page opens again */
   function load() { try { return JSON.parse(LS.get(KEY()) || '{}'); } catch (e) { return {}; } }
   function remember(t, id, val) { const s = load(); s[t + ':' + id] = val; LS.set(KEY(), JSON.stringify(s)); }
@@ -210,6 +212,10 @@
     .rz{position:absolute;right:0;bottom:0;width:28px;height:28px;cursor:nwse-resize;touch-action:none}
     .rz::after{content:'';position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-right:2px solid #666;border-bottom:2px solid #666}
     .msg{color:#8C8C8C;padding:16px 0}
+    .cnt{cursor:pointer;text-decoration:underline;text-decoration-color:#444;text-underline-offset:3px}
+    .hl{position:fixed;display:none;pointer-events:none;border:2px solid #FF2BD6;box-shadow:0 0 0 9999px rgba(0,0,0,.18);border-radius:2px}
+    .hlb{position:fixed;left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 32px);background:#0B0B0B;color:#FFF;font:12px ui-monospace,Menlo,monospace;padding:8px 12px;border-radius:16px;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .hlb.on{opacity:1}
     .dead{font:11px/18px ui-monospace,Menlo,monospace;color:#6E6E6E;word-break:break-word}
     .fo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;min-height:52px;padding:8px 12px;margin:0 0 4px;border:1px solid #222;border-radius:8px;background:#121212;color:#EDEDED;text-align:left;cursor:pointer}
     .fo b{font-size:18px;font-weight:700;line-height:24px}
@@ -220,7 +226,7 @@
   ` + '</style>' +
     '<button class="flag" id="flag" aria-label="Tokens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3"/><path d="M4 4h15l-2.5 4.5L19 13H4"/><circle cx="11.5" cy="7.6" r="2"/><path d="M10.6 9.4v.9M12.4 9.4v.9"/><path d="M8.6 10.9l5.8 1.4M14.4 10.9l-5.8 1.4"/></svg></button>' +
     '<section class="pn" id="pn" role="dialog" aria-label="Tokens"><div class="hd" id="hd"><h1>' + L.title + '<small id="th"></small></h1><button class="ib" id="x" aria-label="' + L.close + '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>' +
-    '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section><div class="toast" id="toast"></div>';
+    '<nav class="tabs" id="tabs"></nav><div class="bd" id="bd"></div><div class="ft"><button id="cp">' + L.copy + '</button><button id="rs">' + L.reset + '</button></div><div class="rz" id="rz"></div></section><div class="toast" id="toast"></div><div class="hl" id="hl"></div><div class="hlb" id="hlb"></div>';
   const $ = id => root.getElementById(id);
   const TABS = [['colours', L.colours], ['text', L.text], ['corners', L.corners], ['spaces', L.spaces], ['controls', L.controls]];
   let tab = LS.get('tokp-tab') || 'colours';
@@ -248,7 +254,7 @@
   { let b = null; dragger($('rz'), (dx, dy) => { if (!b) b = $('pn').getBoundingClientRect(); geo.x = b.left; geo.y = b.top; geo.w = Math.max(280, b.width + dx); geo.h = Math.max(240, b.height + dy); place(); }, () => { b = null; saveGeo(); }); }
   addEventListener('resize', place);
 
-  function toggle(on) { const pn = $('pn'); on = on == null ? !pn.classList.contains('on') : on; pn.classList.toggle('on', on); LS.set('tokp-open', on ? '1' : null); if (on) { $('bd').innerHTML = '<p class="msg">' + L.scanning + '</p>'; setTimeout(() => { scan(); draw(); }, 30); } }
+  function toggle(on) { const pn = $('pn'); on = on == null ? !pn.classList.contains('on') : on; pn.classList.toggle('on', on); LS.set('tokp-open', on ? '1' : null); if (on) { fontsUp(); $('bd').innerHTML = '<p class="msg">' + L.scanning + '</p>'; setTimeout(() => { scan(); draw(); }, 30); } }
   $('x').onclick = () => toggle(false);
   $('tabs').innerHTML = TABS.map(([k, n]) => '<button class="tb" data-t="' + k + '">' + n + '</button>').join('');
   $('tabs').onclick = e => { const b = e.target.closest('.tb'); if (!b) return; tab = b.dataset.t; LS.set('tokp-tab', tab); draw(); };
@@ -257,12 +263,12 @@
   const pxOf = v => parseFloat(v);
   function rowLen(id, label, sub, val, kind, bad) {
     const n = pxOf(val), pv = kind === 'text' ? '<span class="aa" style="font-size:' + Math.min(28, Math.max(8, n || 13)) + 'px">Aa</span>' : kind === 'corner' ? '<span class="sq" style="border-radius:' + Math.min(14, n || 0) + 'px"></span>' : kind === 'space' ? '<span class="bar" style="width:' + Math.min(32, Math.max(2, n || 0)) + 'px"></span>' : '';
-    return '<div class="row" data-id="' + esc(id) + '"><span class="pv">' + pv + '</span><span class="nm"><b>' + esc(label) + '</b><span' + (bad ? ' class="bad"' : '') + '>' + esc(sub) + '</span></span>' +
+    return '<div class="row" data-id="' + esc(id) + '"><span class="pv">' + pv + '</span><span class="nm"><b>' + esc(label) + '</b><span class="cnt' + (bad ? ' bad' : '') + '">' + esc(sub) + '</span></span>' +
       '<span class="st"><button data-d="-1">−</button><input class="in" value="' + esc(val) + '"><button data-d="1">+</button></span></div>';
   }
   function rowCol(id, label, sub, val) {
     const hex = toHex(colKey(val));
-    return '<div class="row" data-id="' + esc(id) + '"><span class="pv"><span class="sw" style="background:' + esc(val) + '"></span><input type="color" value="' + hex + '" style="position:absolute;inset:0;opacity:0;width:32px;height:32px;border:0;padding:0"></span><span class="nm"><b>' + esc(label) + '</b><span>' + esc(sub) + '</span></span><input class="in" value="' + esc(val) + '"></div>';
+    return '<div class="row" data-id="' + esc(id) + '"><span class="pv"><span class="sw" style="background:' + esc(val) + '"></span><input type="color" value="' + hex + '" style="position:absolute;inset:0;opacity:0;width:32px;height:32px;border:0;padding:0"></span><span class="nm"><b>' + esc(label) + '</b><span class="cnt">' + esc(sub) + '</span></span><input class="in" value="' + esc(val) + '"></div>';
   }
   const offGrid = v => { const n = Math.abs(pxOf(v)); return /px$/.test(v) && n > 0 && n % 4 !== 0 && n !== 1 && n !== 2; };
   const sortLen = (a, b) => pxOf(a.cur) - pxOf(b.cur);
@@ -272,32 +278,45 @@
     $('th').textContent = themeSig() === 'base' ? '' : themeSig();
     root.querySelectorAll('.tb').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     IDX = {}; let h = '';
-    const vs = [...DB.vars.values()].filter(x => x.value && x.uses.size && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
+    const vs = [...DB.vars.values()].filter(x => x.value && x.uses.size && x.els && x.els.length && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
     const gAll = [...DB.groups.values()].filter(g => g.tab === tab), gs = gAll.filter(g => g.live > 0), gDead = gAll.filter(g => !g.live);
     /* the app's own groups (e.g. category colours) */
     extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : 'space'); }); });
-    if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x }; h += x.kind === 'colour' ? rowCol(id, x.name, '', x.value) : rowLen(id, x.name, '', x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
+    if (vs.length) { h += '<h2>' + L.vars + '</h2>'; vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x, els: x.els }; h += x.kind === 'colour' ? rowCol(id, x.name, L.uses(x.els.length), x.value) : rowLen(id, x.name, L.uses(x.els.length), x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
     if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
       h += '<h2>' + (EN ? 'Font' : 'Letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join('');
       (CFG.fonts || []).forEach(f => { if (f.href && !document.getElementById('tokp-pv-' + f.name.replace(/\W/g, ''))) { const l = document.createElement('link'); l.id = 'tokp-pv-' + f.name.replace(/\W/g, ''); l.rel = 'stylesheet'; l.href = f.href; document.head.appendChild(l); root.appendChild(l.cloneNode()); } }); }
-    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1] - a[1]).slice(0, 40).forEach(([k, n]) => { const [fs, lh, fw] = k.split(' / ');
-      h += '<div class="sty"><p style="font-size:' + esc(/var\(/.test(fs) ? getComputedStyle(document.documentElement).getPropertyValue(fs.slice(4, -1)) || '13px' : fs) + ';font-weight:' + esc(fw === '—' ? 400 : fw) + '">Pocket Aa 123</p><span>' + esc(k) + '. ' + L.uses(n) + '</span></div>'; }); }
+    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 40).forEach(([k, arr]) => { const n = arr.length, sid = 's:' + k; IDX[sid] = { els: arr }; const [fs, lh, fw] = k.split(' / ');
+      h += '<div class="sty" data-id="' + esc(sid) + '"><p style="font-size:' + esc(/var\(/.test(fs) ? getComputedStyle(document.documentElement).getPropertyValue(fs.slice(4, -1)) || '13px' : fs) + ';font-weight:' + esc(fw === '—' ? 400 : fw) + '">Pocket Aa 123</p><span class="cnt">' + esc(k) + '. ' + L.uses(n) + '</span></div>'; }); }
     if (gs.length) {
       h += '<h2>' + L.values + '</h2>';
-      if (tab === 'colours') gs.sort((a, b) => b.n - a.n).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.live || 0), g.cur); });
+      if (tab === 'colours') gs.sort((a, b) => b.n - a.n).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowCol(id, toHex(g.key) + (g.key.startsWith('rgba') ? ' ' + g.key.match(/[\d.]+\)$/)[0].slice(0, -1) : ''), L.uses(g.live || 0), g.cur); });
       else if (tab === 'text') { const by = {}; gs.forEach(g => (by[g.prop] = by[g.prop] || []).push(g));
-        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += rowLen(id, g.cur, L.uses(g.live || 0), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
+        [['font-size', L.size], ['line-height', L.lh], ['font-weight', L.weight], ['letter-spacing', L.ls]].forEach(([p, nm]) => { if (!by[p]) return; h += '<h2>' + nm + '</h2>'; by[p].sort((a, b) => pxOf(a.cur) - pxOf(b.cur)).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += rowLen(id, g.cur, L.uses(g.live || 0), g.cur, p === 'font-size' ? 'text' : ''); }); }); }
       else if (tab === 'controls') { const by = {}; gs.forEach(g => (by[g.sub] = by[g.sub] || []).push(g));
         [['colour', L.colours], ['text', L.text], ['corner', L.corners], ['space', L.spaces], ['size', L.size]].forEach(([s, nm]) => { if (!by[s]) return; h += '<h2>' + nm + '</h2>';
-          by[s].sort(s === 'colour' ? (a, b) => b.n - a.n : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; h += s === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.live || 0), g.cur) : rowLen(id, s === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.live || 0), g.cur, s === 'text' ? '' : s, s === 'space' && offGrid(g.cur)); }); }); }
-      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.live || 0) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
+          by[s].sort(s === 'colour' ? (a, b) => b.n - a.n : sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; h += s === 'colour' ? rowCol(id, toHex(g.key), L.uses(g.live || 0), g.cur) : rowLen(id, s === 'text' ? g.prop + ' ' + g.key : g.key, L.uses(g.live || 0), g.cur, s === 'text' ? '' : s, s === 'space' && offGrid(g.cur)); }); }); }
+      else gs.sort(sortLen).forEach(g => { const id = 'g:' + g.id; IDX[id] = { g, els: g.els }; const bad = tab === 'spaces' && offGrid(g.cur); h += rowLen(id, g.key, L.uses(g.live || 0) + (bad ? '. ' + L.off : ''), g.cur, tab === 'corners' ? 'corner' : 'space', bad); });
     }
     if (gDead.length) h += '<h2>' + (EN ? 'Declared but not showing here' : 'Declarados mas sem efeito aqui') + ' (' + gDead.length + ')</h2><p class="dead">' + gDead.map(g => esc(tab === 'colours' || g.sub === 'colour' ? toHex(g.key) : (g.prop ? g.prop + ' ' : '') + g.key)).join(', ') + '</p>';
     $('bd').innerHTML = h || '<p class="msg">' + L.none + '</p>';
   }
   function apply(id, val) { const o = IDX[id]; if (!o) return; if (o.g && !o.x) setGroup(o.g, val); else if (o.v) setVar(o.v, val); else if (o.x) { try { o.x.set(val); o.x.value = val; remember('x', o.g.title + '/' + o.x.label, val); } catch (e) {} } }
   function step(v, d) { const m = String(v).match(/^(-?\d*\.?\d+)([a-z%]*)$/i); if (!m) { const n = parseFloat(v); return isNaN(n) ? v : String(n + d); } const n = +m[1], u = m[2]; const s = u === '' && n > 99 ? 100 : u === 'em' || u === 'rem' ? .05 : 1; return (Math.round((n + d * s) * 100) / 100) + u; }
-  $('bd').addEventListener('click', e => { const fb = e.target.closest('.fo'); if (fb) { const fo = (CFG.fonts || []).find(x => x.name === fb.dataset.f); setFont(fo || null); root.querySelectorAll('.fo').forEach(x => x.classList.toggle('on', x === fb)); setTimeout(() => { scan(); }, 400); return; }
+  /* tap the count: the page shows each element wearing that value, one per tap (it scrolls to it and outlines it) */
+  let SHOW = { id: '', i: -1, raf: 0, t: 0 };
+  function showEl(id) { const o = IDX[id]; if (!o || !o.els || !o.els.length) return; if (SHOW.id !== id) SHOW = { id, i: -1, raf: 0, t: 0 }; SHOW.i = (SHOW.i + 1) % o.els.length;
+    const el = o.els[SHOW.i], hl = $('hl'), lb = $('hlb'); try { el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }); } catch (x) {}
+    const nm = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (typeof el.className === 'string' && el.className.trim() ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.') : '');
+    let up = el.parentElement; while (up && !up.id) up = up.parentElement; const where = up && up !== el ? (EN ? ' in #' : ' em #') + up.id : '';
+    cancelAnimationFrame(SHOW.raf); clearTimeout(SHOW.t); const t0 = performance.now();
+    const follow = () => { const r = el.getBoundingClientRect(), off = !r.width && !r.height;
+      hl.style.display = off ? 'none' : 'block'; Object.assign(hl.style, { left: r.left - 3 + 'px', top: r.top - 3 + 'px', width: r.width + 6 + 'px', height: r.height + 6 + 'px' });
+      lb.textContent = (SHOW.i + 1) + '/' + o.els.length + '  ' + nm + where + (off ? (EN ? '  (hidden now)' : '  (escondido agora)') : ''); lb.classList.add('on');
+      if (performance.now() - t0 < 1200) SHOW.raf = requestAnimationFrame(follow); };
+    follow(); SHOW.t = setTimeout(() => { hl.style.display = 'none'; lb.classList.remove('on'); }, 5000); }
+  $('bd').addEventListener('click', e => { const cn = e.target.closest('.cnt'); if (cn) { const row = cn.closest('[data-id]'); if (row) { showEl(row.dataset.id); return; } }
+    const fb = e.target.closest('.fo'); if (fb) { const fo = (CFG.fonts || []).find(x => x.name === fb.dataset.f); setFont(fo || null); root.querySelectorAll('.fo').forEach(x => x.classList.toggle('on', x === fb)); setTimeout(() => { scan(); }, 400); return; }
     const b = e.target.closest('.st button'); if (!b) return; const row = b.closest('.row'), inp = row.querySelector('.in'); inp.value = step(inp.value, +b.dataset.d); apply(row.dataset.id, inp.value); refreshRow(row, inp.value); });
   $('bd').addEventListener('change', e => { const row = e.target.closest('.row'); if (!row) return;
     if (e.target.type === 'color') { const inp = row.querySelector('.in'); inp.value = e.target.value; apply(row.dataset.id, e.target.value); refreshRow(row, e.target.value); }
@@ -314,6 +333,9 @@
     try { await navigator.clipboard.writeText(txt); toast(ks.length ? L.copied : L.nochg); } catch (e) { prompt(L.copy, txt); } };
   $('rs').onclick = () => { if (!confirm(L.resetQ)) return; LS.set(KEY(), null); location.reload(); };
 
+  function fontsUp() { const fs = CFG.fonts || []; if (!fs.length) return;
+    fs.forEach(f => { if (f.href && !document.querySelector('link[data-tokpf="' + f.name + '"]')) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = f.href; l.dataset.tokpf = f.name; document.head.appendChild(l);
+      l.onload = () => { try { document.fonts.load('700 18px "' + f.name + '"').then(() => { if (tab === 'text' && $('pn').classList.contains('on')) draw(); }); } catch (e) {} }; } }); }
   function start() { document.body.appendChild(host); place(); setTimeout(() => { try { scan(); reapply(); } catch (e) {} if (LS.get('tokp-open') === '1') toggle(true); }, 1200); }
   if (document.readyState === 'complete') start(); else addEventListener('load', start);
   window.TOKP_PANEL = { open: () => toggle(true), close: () => toggle(false), rescan: () => { scan(); draw(); } };
