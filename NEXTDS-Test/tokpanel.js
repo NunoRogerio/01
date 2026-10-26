@@ -9,9 +9,9 @@
   'use strict';
   const CFG = window.TOKP || {}, EN = CFG.lang === 'en';
   const L = EN
-    ? { title: 'Tokens', colours: 'Colours', text: 'Text', corners: 'Corners', spaces: 'Spaces', controls: 'Buttons and fields', vars: 'Variables', values: 'Values in use', styles: 'Text styles in use',
+    ? { title: 'Tokens', icons: 'Icons', colours: 'Colours', text: 'Text', corners: 'Corners', spaces: 'Spaces', controls: 'Buttons and fields', vars: 'Variables', values: 'Values in use', styles: 'Text styles in use',
         copy: 'Copy changes', copied: 'Changes copied.', reset: 'Reset', resetQ: 'Undo every change on this device?', none: 'Nothing here.', uses: n => n + (n === 1 ? ' element' : ' elements'), off: 'Off the 4px grid', close: 'Close', size: 'Size', weight: 'Weight', lh: 'Line height', ls: 'Letter spacing', nochg: 'No changes yet.', scanning: 'Reading the styles…' }
-    : { title: 'Tokens', colours: 'Cores', text: 'Texto', corners: 'Cantos', spaces: 'Espaços', controls: 'Botões e campos', vars: 'Variáveis', values: 'Valores em uso', styles: 'Estilos de texto em uso',
+    : { title: 'Tokens', icons: 'Ícones', colours: 'Cores', text: 'Texto', corners: 'Cantos', spaces: 'Espaços', controls: 'Botões e campos', vars: 'Variáveis', values: 'Valores em uso', styles: 'Estilos de texto em uso',
         copy: 'Copiar alterações', copied: 'Alterações copiadas.', reset: 'Repor', resetQ: 'Desfazer todas as alterações neste aparelho?', none: 'Nada aqui.', uses: n => n + (n === 1 ? ' elemento' : ' elementos'), off: 'Fora da grelha de 4px', close: 'Fechar', size: 'Tamanho', weight: 'Peso', lh: 'Entrelinha', ls: 'Espaçamento', nochg: 'Ainda sem alterações.', scanning: 'A ler os estilos…' };
 
   /* ---------- where it is on: ?dev=1 turns it on for this device, ?dev=0 off; CFG.always shows it always ---------- */
@@ -262,7 +262,7 @@
   const TOAST = over('tokp-toast', 'left:50%;bottom:24px;transform:translateX(-50%);background:#F2F2F2;color:#0B0B0B;padding:8px 16px;border-radius:16px;font:12px/20px -apple-system,sans-serif;opacity:0;transition:opacity .2s');
   const toast = t => { TOAST.textContent = t; TOAST.style.opacity = '1'; clearTimeout(TOAST._t); TOAST._t = setTimeout(() => TOAST.style.opacity = '0', 1600); };
   let F = null, P = null, $ = id => P.d.getElementById(id);
-  const TABS = [['colours', L.colours], ['text', L.text], ['corners', L.corners], ['spaces', L.spaces], ['controls', L.controls]];
+  const TABS = [['colours', L.colours], ['text', L.text], ['corners', L.corners], ['spaces', L.spaces], ['icons', L.icons], ['controls', L.controls]];
   let tab = LS.get('tokp-tab') || 'colours';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -294,7 +294,8 @@
     { let b = null; dragger($('hd'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left + dx; geo.y = b.top + dy; place(); }, () => { b = null; saveGeo(); }); }
     { let b = null; dragger($('rz'), (dx, dy) => { if (!b) b = P.fr.getBoundingClientRect(); geo.x = b.left; geo.y = b.top; geo.w = Math.max(280, b.width + dx); geo.h = Math.max(240, b.height + dy); place(); }, () => { b = null; saveGeo(); }); }
     $('x').onclick = () => toggle(false);
-    $('tabs').innerHTML = TABS.map(([k, n]) => '<button class="tb" data-t="' + k + '">' + n + '</button>').join('');
+    /* Oct 26: the Icons tab only when the app gives icon tokens (e.g. the line weight) */
+    $('tabs').innerHTML = TABS.filter(([k]) => k !== 'icons' || extraGroups().some(g => g.tab === 'icons')).map(([k, n]) => '<button class="tb" data-t="' + k + '">' + n + '</button>').join('');
     $('tabs').onclick = e => { const b = e.target.closest('.tb'); if (!b) return; tab = b.dataset.t; LS.set('tokp-tab', tab); draw(); };
     wire(); place(); addEventListener('resize', place);
   }
@@ -321,7 +322,7 @@
     IDX = {}; let h = '';
     const vs = [...DB.vars.values()].filter(x => x.value && x.uses.size && x.els && x.els.length && (tab === 'colours' ? x.kind === 'colour' : tab === 'text' ? x.kind === 'text' : tab === 'corners' ? x.kind === 'corner' : tab === 'spaces' ? x.kind === 'space' : false)).sort((a, b) => a.name.localeCompare(b.name));
     const gs = [...DB.groups.values()].filter(g => g.tab === tab && g.live > 0);
-    extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : 'space'); }); });
+    extraGroups().filter(g => g.tab === tab).forEach(g => { h += '<h2>' + esc(g.title) + '</h2>'; (g.items || []).forEach(it => { const id = 'x:' + g.title + '/' + it.label; IDX[id] = { x: it, g }; h += it.kind === 'colour' || g.tab === 'colours' ? rowCol(id, it.label, '', it.value) : rowLen(id, it.label, '', it.value, g.tab === 'text' ? 'text' : g.tab === 'icons' ? '' : 'space'); }); });
     if (tab === 'text' && DB_U && DB_U.ff.size) { h += '<h2>' + (EN ? 'Fonts in use' : 'Letras em uso') + '</h2>'; [...DB_U.ff.entries()].sort((a, b) => b[1].length - a[1].length).forEach(([k, arr]) => { const id = 'ff:' + k; IDX[id] = { els: arr };
       h += '<div class="sty" data-id="' + esc(id) + '"><p style="font-family:\'' + esc(k) + '\';font-size:18px">' + esc(k) + '</p><span class="cnt">' + L.uses(arr.length) + '</span></div>'; }); }
     if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
@@ -344,7 +345,7 @@
     $('bd').innerHTML = h || '<p class="msg">' + L.none + '</p>';
   }
   function apply(id, val) { const o = IDX[id]; if (!o) return; if (o.g && !o.x) setGroup(o.g, val); else if (o.v) setVar(o.v, val); else if (o.x) { try { o.x.set(val); o.x.value = val; remember('x', o.g.title + '/' + o.x.label, val); } catch (e) {} } }
-  function step(v, d) { const m = String(v).match(/^(-?\d*\.?\d+)([a-z%]*)$/i); if (!m) { const n = parseFloat(v); return isNaN(n) ? v : String(n + d); } const n = +m[1], u = m[2]; const s = u === '' && n > 99 ? 100 : u === 'em' || u === 'rem' ? .05 : 1; return (Math.round((n + d * s) * 100) / 100) + u; }
+  function step(v, d) { const m = String(v).match(/^(-?\d*\.?\d+)([a-z%]*)$/i); if (!m) { const n = parseFloat(v); return isNaN(n) ? v : String(n + d); } const n = +m[1], u = m[2]; const s = u === '' && n > 99 ? 100 : u === 'em' || u === 'rem' ? .05 : u === 'px' && Math.abs(n) < 4 ? .5 : 1;   /* Oct 26: fine values (line weights) in half pixels */ return (Math.round((n + d * s) * 100) / 100) + u; }
   /* tap the count: the page shows each element wearing that value, one per tap (opening its panel when it is closed) */
   let SHOW = { id: '', i: -1, raf: 0, t: 0 };
   function showEl(id) { const o = IDX[id]; if (!o || !o.els || !o.els.length) return; if (SHOW.id !== id) SHOW = { id, i: -1, raf: 0, t: 0 }; SHOW.i = (SHOW.i + 1) % o.els.length;
