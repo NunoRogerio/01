@@ -199,6 +199,7 @@
     .bar{height:8px;background:#F2F2F2;border-radius:2px;max-width:32px}
     .sq{width:28px;height:28px;border:1.5px solid #F2F2F2}
     .sty{padding:8px 0;border-bottom:1px solid #1A1A1A}
+    .szh{margin:16px 0 0;font-size:11px;line-height:16px;font-weight:500;color:#8C8C8C;font-family:ui-monospace,Menlo,monospace}
     .sty p{color:#FFF;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .sty span{font-size:11px;color:#8C8C8C;font-family:ui-monospace,Menlo,monospace}
     .ft{display:flex;gap:8px;padding:8px 16px;border-top:1px solid #222;flex:none}
@@ -212,7 +213,8 @@
     .fo b{font-size:18px;font-weight:700;line-height:24px}
     .fo span{font-size:11px;color:#8C8C8C}
     .fo.on{border-color:#F2F2F2}`;
-  const FLAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V3"/><path d="M4 4h15l-2.5 4.5L19 13H4"/><circle cx="11.5" cy="7.6" r="2"/><path d="M10.6 9.4v.9M12.4 9.4v.9"/><path d="M8.6 10.9l5.8 1.4M14.4 10.9l-5.8 1.4"/></svg>';
+  /* Oct 26: the button is a skull (no flag) */
+  const FLAG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C7.6 3 4 6.2 4 10.4c0 2.4 1.2 4.4 3 5.6V19a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3c1.8-1.2 3-3.2 3-5.6C20 6.2 16.4 3 12 3z"/><circle cx="9" cy="11" r="1.6"/><circle cx="15" cy="11" r="1.6"/><path d="M12 13.6l-.8 1.6h1.6z"/><path d="M10 17.5V20M12 17.5V20M14 17.5V20"/></svg>';
   /* each piece in a host of its own with a shadow root (the app's styles never reach it; the app is told to leave taps on '.tokp' alone) */
   function frame(w, h, html) { const fr = document.createElement('div'); fr.className = 'tokp'; fr.setAttribute('aria-label', 'Tokens');
     fr.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;margin:0;padding:0;z-index:2147483000;overflow:hidden';
@@ -325,7 +327,9 @@
     if (tab === 'text' && CFG.fonts && CFG.fonts.length) { const cur = load()['f:font'] || '';
       h += '<h2>' + (EN ? 'Try a font' : 'Experimentar uma letra') + '</h2>' + [{ name: '', label: EN ? 'The app\'s own' : 'A da app' }].concat(CFG.fonts).map(f => '<button class="fo' + (cur === f.name ? ' on' : '') + '" data-f="' + esc(f.name) + '"><b style="font-family:' + esc(f.family || 'inherit') + '">' + esc(f.label || f.name) + '</b>' + (f.note ? '<span>' + esc(f.note) + '</span>' : '') + '</button>').join(''); }
     if (false && vs.length) { h += '<h2>' + L.vars + '</h2>';   /* Oct 25: no variables: only the values that show */ vs.forEach(x => { const id = 'v:' + x.name; IDX[id] = { v: x, els: x.els }; h += x.kind === 'colour' ? rowCol(id, x.name, L.uses(x.els.length), x.value) : rowLen(id, x.name, L.uses(x.els.length), x.value, x.kind, offGrid(x.value) && x.kind === 'space'); }); }
-    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; [...DB_U.sty.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 40).forEach(([k, arr]) => { const sid = 's:' + k; IDX[sid] = { els: arr }; const [fs, lh, fw] = k.split(' / ');
+    if (tab === 'text' && DB_U && DB_U.sty.size) { h += '<h2>' + L.styles + '</h2>'; /* Oct 26: largest first, the styles of one size together under that size */
+      let lastFs = ''; [...DB_U.sty.entries()].sort((a, b) => { const A = a[0].split(' / '), B = b[0].split(' / '); return parseFloat(B[0]) - parseFloat(A[0]) || parseFloat(B[2]) - parseFloat(A[2]) || parseFloat(B[1]) - parseFloat(A[1]) || b[1].length - a[1].length; }).slice(0, 40).forEach(([k, arr]) => { const sid = 's:' + k; IDX[sid] = { els: arr }; const [fs, lh, fw] = k.split(' / ');
+      if (fs !== lastFs) { lastFs = fs; h += '<h3 class="szh">' + esc(fs) + '</h3>'; }
       h += '<div class="sty" data-id="' + esc(sid) + '"><p style="font-size:' + esc(fs) + ';font-weight:' + esc(fw) + '">Pocket Aa 123</p><span class="cnt">' + esc(k) + '. ' + L.uses(arr.length) + '</span></div>'; }); }
     if (gs.length) {
       h += '<h2>' + L.values + '</h2>';
