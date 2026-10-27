@@ -735,10 +735,9 @@ function FilterGroupPanel({ columns, model, onApply, onClose, style, panelRef, f
     const cy = Math.min(Math.max(ny, offset.y + 8 - r.top), offset.y + window.innerHeight - 56 - r.top);
     d.last = { x: cx, y: cy };
     onOffset(d.last);
-    const tr = getTrigger && getTrigger(), mx = cx - offset.x, my = cy - offset.y; // where the panel lands with this move
-    const pr = { left: r.left + mx, right: r.right + mx, top: r.top + my, bottom: r.bottom + my };
-    const inside = !!tr && pr.left < tr.right && pr.right > tr.left && pr.top < tr.bottom && pr.bottom > tr.top; // the panel touches the button
-    if (!inside) d.left = true; // it counts once the panel has been away from the button
+    const tr = getTrigger && getTrigger();
+    const inside = !!tr && e.clientX >= tr.left && e.clientX <= tr.right && e.clientY >= tr.top && e.clientY <= tr.bottom; // the pointer (not the whole panel) is over the Filters button, so the panel can be placed right beside it
+    if (!inside) d.left = true; // it counts once the pointer has been away from the button
     d.hot = inside && d.left;
     if (onHot) onHot(d.hot);
   };
@@ -1729,8 +1728,8 @@ export function DataTable({
     d.dx = e.clientX - d.sx; d.dy = e.clientY - d.sy;
     if (!d.active) { if (Math.abs(d.dx) + Math.abs(d.dy) < 6) return; d.activate(); return; }
     setFgPos({ x: d.base.x + d.dx, y: d.base.y + d.dy });
-    const tr = e.currentTarget.getBoundingClientRect(), pr = panelRef.current && panelRef.current.getBoundingClientRect();
-    const inside = !!pr && pr.left < tr.right && pr.right > tr.left && pr.top < tr.bottom && pr.bottom > tr.top; // the panel touches the button
+    const tr = e.currentTarget.getBoundingClientRect();
+    const inside = e.clientX >= tr.left && e.clientX <= tr.right && e.clientY >= tr.top && e.clientY <= tr.bottom; // the pointer (not the whole panel) is over the button
     if (!inside) d.left = true;
     d.hot = inside && !!d.left;
     setTrigHot(d.hot);
