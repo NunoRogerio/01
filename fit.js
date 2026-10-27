@@ -674,7 +674,7 @@ window.__wfConfirm=function(o){
     var w=document.createElement('div');w.className='wf-cfm';w.style.cssText='position:absolute;inset:0;z-index:2147482000';   /* (Oct 8, 22:28) a dialog is on top of everything */
     var sc=document.createElement('div');sc.setAttribute('aria-hidden','true');sc.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,0.32);opacity:0;transition:opacity .35s ease';
     var p=document.createElement('section');p.className='wf-dlg';p.setAttribute('role','alertdialog');p.setAttribute('aria-modal','true');p.setAttribute('data-swipe','down');
-    p.style.cssText='position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;box-sizing:border-box;padding:30px 24px 72px;border-radius:var(--wf-r, 16px) var(--wf-r, 16px) 48px 48px;background:#F2F2F7;box-shadow:0 0 16px rgba(0,0,0,0.16);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
+    p.style.cssText='position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;box-sizing:border-box;padding:32px 24px 72px;border-radius:var(--wf-r, 16px) var(--wf-r, 16px) 48px 48px;background:#F2F2F7;box-shadow:0 0 16px rgba(0,0,0,0.16);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
     var h=document.createElement('h2');h.textContent=o.title||'';h.style.cssText='margin:0;font-size:28px;line-height:34px;font-weight:700;letter-spacing:0;color:#000000';   /* (Oct 18) Title 1 and Body, as every dialog; the panel floats 12px clear with the phone's 48px foot corners on every screen (Login has no prefs.js) */
     var b=document.createElement('p');b.textContent=o.body||'';b.style.cssText='margin:4px 0 0;font-size:17px;line-height:22px;color:#000000';if(!o.body)b.style.display='none';
     var a=document.createElement('div');a.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px';
@@ -796,6 +796,8 @@ window.__wfConfirm=function(o){
     var k=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--wf-round-pop'))||1.3,leg=!!(el.closest&&el.closest('[data-wf-leg]'));
     /* (Oct 18, 10:16, trial on the map legend) a legend chip only swells half as much (15%) and gives no outline pulse: a subtle swell as it turns on or off */
     if(leg)k=1+(k-1)/2;
+    /* (Oct 27, Nuno) data-round="soft": a wide chip in a sideways-scrolling row (the chat's suggestions) swells only 6% and gives no outline pulse, so it is never clipped and never covers its neighbours */
+    var soft=el.getAttribute('data-round')==='soft';if(soft)k=1+(k-1)/5;
     try{if(navigator.vibrate)navigator.vibrate(8);}catch(x){}
     // An X (close) button, and the + that adds cards, also turn a gentle quarter turn, as the notifications X does (unless the page already turns it)
     try{var sv=el.querySelector('svg'),pd=sv&&sv.querySelector('path'),d=pd?pd.getAttribute('d')||'':'';
@@ -804,7 +806,7 @@ window.__wfConfirm=function(o){
     (function(b){setTimeout(function(){try{var f=document.activeElement;if(f&&(f===b||b.contains(f)||f.contains(b)))f.blur();}catch(x){}},520);})(el);
     try{if(el.__wfPop)el.__wfPop.cancel();el.__wfPop=el.animate([{scale:'1',easing:'cubic-bezier(.2,.9,.3,1)'},{scale:String(k),offset:0.18,easing:'cubic-bezier(.4,0,.2,1)'},{scale:'1'}],{duration:480});}catch(x){}
     // and a 2px dark grey outline pulses out once from its edge: fully visible at the start, 50% larger at the end, where it has faded out
-    if(!leg)try{var bgc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),dkb=bgc.length>2&&(bgc[3]==null||bgc[3]>0.4)&&(0.299*bgc[0]+0.587*bgc[1]+0.114*bgc[2])<90;   // a dark round button (map controls, drone feed)
+    if(!leg&&!soft)try{var bgc=(getComputedStyle(el).backgroundColor.match(/[\d.]+/g)||[]).map(Number),dkb=bgc.length>2&&(bgc[3]==null||bgc[3]>0.4)&&(0.299*bgc[0]+0.587*bgc[1]+0.114*bgc[2])<90;   // a dark round button (map controls, drone feed)
       if(dkb)el.classList.add('wf-dkbtn');
       var g=document.createElement('i'),dk=document.documentElement.classList.contains('wf-dark'),rad=pill?(r.height/2)+'px':'50%',W=r.width,H=r.height,X=r.left,Y=r.top,G=0.5;
       // a dark button would hide its dark line while it swells (the line is drawn over it, dark on dark): the line starts at the swollen edge instead, so it shows from the first moment and still ends 50% beyond the button

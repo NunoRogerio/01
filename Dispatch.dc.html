@@ -27,9 +27,9 @@ window.__wfPeekIn = (el, from) => el.animate([
   { translate: '0 5px', offset: 0.8, easing: 'cubic-bezier(.4,0,.6,1)' },
   { translate: '0 0' }], { duration: 580 });
 </script>
-<script src="fit.js?v=1792679688"></script>
+<script src="fit.js?v=1793101186"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1792563502"></script>
+<script src="prefs.js?v=1793101186"></script>
 <script src="station.js?v=1792679688"></script>
 <script src="i18n.js?v=1792679688"></script>
 <script src="live.js?v=1792679688"></script>
@@ -2489,7 +2489,7 @@ class Component extends DCLogic {
         rows.push(...this.wfCondCards(SI, frow, INFO, 'Estimate')); }
       else if (M && M.snaps && M.snaps[0]) {   /* a model still without snapshots draws nothing yet */
         const S0 = M.snaps[0] || {}, Sh = M.snaps[hz] || S0, I = M.info || {};
-        rows.push(M.assumed ? row('Perimeter', 'Estimated', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
+        rows.push(M.assumed ? row('Perimeter', 'Estimate', (M.src.indexOf('ha reported') > 0 ? 'Drawn from the reported ' + M.src.replace(/^.*· /, '') : 'Drawn from a typical size for its state') + ' · no public polygon for this fire yet', '#875800') : row(HELD ? 'Burned area' : 'Burned area now', (S0.ha != null ? S0.ha.toLocaleString() : '—') + ' ha', M.src, '#C2372E'));
         if (!HELD && hz > 0) rows.push(row('Predicted in ' + hz + ' h', '~' + (Sh.ha != null ? Sh.ha.toLocaleString() : '—') + ' ha', Sh.active + '% of the edge still active · model estimate'));
         const etr = M.noRes ? 'Not estimable' : M.etrMin === 0 ? 'Contained' : M.etrMin == null ? '> 72 h' : (M.etrMin < 60 ? M.etrMin + ' min' : '~' + (Math.round(M.etrMin / 30) / 2) + ' h');
         if (!HELD) rows.push(row('Expected containment', etr, M.noRes ? 'Resources not published' : (M.etrAt && M.etrMin > 0 ? 'Around ' + M.etrAt.toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + ' · ' : '') + 'from ' + M.startPct + '% held now, spread vs. fireline of the reported forces', '#186B2D'));

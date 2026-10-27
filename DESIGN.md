@@ -137,7 +137,7 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 ### Dialogs
 
 - **Shape:** a panel reaching the bottom edge, with 28px top corners.
-- **Padding:** 30px top, 24px sides, 32px bottom.
+- **Padding:** 32px top (was 30px; Oct 27, on the spacing scale), 24px sides, 32px bottom.
 - **Spacing:** 24px between the text and the buttons.
 - **Surface:** the same shadow as the settings panel, with no outline.
 
@@ -2419,3 +2419,11 @@ Rows edge to edge between full-width dividers: the name in Title S, one grey ann
 - The main screen's spoken area label says "confirmed fires" like every other count (was "active fires" on the chosen region).
 - Japanese leftovers removed from About and the main screen's dialogs (English and Portuguese only since Oct 21).
 - Open: the chat's suggestion chips do not swell on press. A 30% swell on a wide chip is clipped by the sideways-scrolling row and covers its neighbours (8px apart), so they wait for Nuno's call.
+
+## Oct 27 (morning consistency pass; Nuno's go-ahead)
+- **Estimate:** the projection's assumed perimeter row reads "Estimate" (PT Estimativa), the one word for estimated figures (was "Estimated", which had no Portuguese).
+- **One mid grey:** the chat sender's unit line (was #6C6C70) uses the secondary grey #6E6E73 (white bubble); the login's disabled field on its frosted card (was #77777C) uses the tinted-surface grey #636366 (`--wf-mid-grey-tint`); both follow the palette.
+- **About in the menu, dark theme:** its background is the current dark surface (`--wf-surface`, #181818) and its cards the dark fill (`--wf-fill`, #282828), as the panel it sits in (were the retired dark greys #333336 and #262629).
+- **Spacing scale:** the shared dialog's top padding is 32px (was 30px); the chats blade's header 32px above the first card (was 36px).
+- **Chat suggestion chips swell on press, softly** (decides the Oct 23 open item): `data-round="soft"` (fit.js) swells a wide chip in a sideways-scrolling row by 6% (a fifth of --wf-round-pop) with no outline pulse, so it is never clipped and never covers its neighbours; the row has 4px room above and below.
+- Kept as they are (states, not new tokens): the green button's hover #1F7F37, the list row hover #F7F7F9, and the dark palette's own #3E3E3E and #B3B3B3 in prefs.js. The incidents list header keeps its 60px right padding (44px close button plus 16px). The dispatcher greeting keeps its 28px side padding: it lines it up with the area title above (12px panel inset plus 16px).
