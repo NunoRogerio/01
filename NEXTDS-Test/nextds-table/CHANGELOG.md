@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.6 — 2026-10-27
+
+- The filter panel opens again as it was left: attached, or detached at the same place and size (closing no longer sends it home).
+
 ## 0.6.5 — 2026-10-27
 
 - Dragging the filter panel: it snaps back home only when the pointer is over the Filters button (before, any overlap of the panel with the button did it), so the panel can be placed right beside the button or the table.

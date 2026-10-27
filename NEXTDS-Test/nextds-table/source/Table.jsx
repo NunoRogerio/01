@@ -2744,10 +2744,10 @@ export function DataTable({
   const [draftPage, setDraftPage] = useState("1");
   const [model, setModel] = useState(initialFilterModel);
   const [panel, setPanel] = useState(null); // null | { anchor: "bar" | "title" }
-  const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to
+  const [fgPos, setFgPos] = useState({ x: 0, y: 0 }); // where the filter group panel was dragged to (kept when it closes)
   const [fgSize, setFgSize] = useState(null); // the size the filter group panel was resized to (kept while the table lives)
-  const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button
-  useEffect(() => { if (!panel) { setFgPos({ x: 0, y: 0 }); setFgDetached(false); } }, [panel]);
+  const [fgDetached, setFgDetached] = useState(false); // dragged away from the Filters button (kept when it closes)
+  /* closing the panel keeps where it was left: it opens again attached, or detached at the same place and size */
   /* closing a filter panel folds it back into the button that opened it */
   const closingRef = useRef(false);
   const [folding, setFolding] = useState(false); // the panel is folding back into the Filters button, which grows back to full height at the same time
@@ -5458,7 +5458,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "filter-ptr"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fg-keep"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
