@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.8 — 2026-10-28
+
+- Pagination folds away with an animation when the rows fit one page (e.g. while searching) and unfolds when they no longer do.
+- Filter group panel, narrow: at least 8px between the column name, Advanced and Match; Advanced shortens to "Adv…" first, then the column name truncates.
+
 ## 0.6.7 — 2026-10-28
 
 - Filter group panel: the value list takes all the height left in the panel, so a taller (resized) panel shows more values instead of a fixed 160px list.

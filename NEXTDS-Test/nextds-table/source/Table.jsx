@@ -388,6 +388,10 @@ const CSS = `
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
 /* the pager is compact in every density: every element at the caption's 12px text, 24px controls, a 40px bar */
+.hvt-pagerwrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows .25s cubic-bezier(.4,0,.2,1),opacity .2s ease} /* the pagination folds away (and back) when the rows fit one page, e.g. while searching */
+.hvt-pagerwrap.is-gone{grid-template-rows:0fr;opacity:0;pointer-events:none}
+.hvt-pagerclip{min-height:0}
+.hvt-pagerwrap.is-gone > .hvt-pagerclip{overflow:hidden}
 .hvt-root .hvt-pager,.hvt-root .hvt-pager-left{height:24px}
 .hvt-root .hvt-pager{box-sizing:content-box;height:48px;padding-top:0;padding-bottom:0}
 .hvt-root.is-compact .hvt-pager{height:40px}
@@ -627,8 +631,14 @@ const CSS = `
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
 .hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px}
-.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)} /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
-.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-titlebar{gap:8px} /* narrow panel: at least 8px between the title, Advanced and Match; the texts truncate instead of overlapping */
+.hvt-fg-titlebar > .hvt-fg-title{flex:0 1 auto;min-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-titlebar .hvt-switch{flex:0 1 auto;min-width:84px} /* track 32 + gap 8 + "Adv…" 44 */
+.hvt-fg-titlebar .hvt-switch > span:last-child{min-width:44px;overflow:hidden;text-overflow:ellipsis} /* Advanced shortens to "Adv…" at the least */
+.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(auto,1fr) minmax(84px,auto) minmax(auto,1fr)}
+.hvt-fg-pane{container-type:inline-size}
+@container (max-width: 320px){.hvt-fg-titlebar.is-adv{grid-template-columns:minmax(auto,1fr) 84px minmax(auto,1fr)}} /* narrow: Advanced shortens to "Adv…" first, so the column name keeps its room */ /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
+.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hvt-fg-match{justify-self:end;padding:0 12px;animation:hvt-fade .2s ease}
 @keyframes hvt-fade{from{opacity:0}to{opacity:1}}
 .hvt-fg-matchtxt{display:inline-grid} /* both labels take the same cell: the button keeps the width of the longer one */
@@ -3835,7 +3845,7 @@ export function DataTable({
     root.classList.add("is-measure"); // measure without the stretch that fixes the pager at the bottom
     try {
     const rr = root.getBoundingClientRect(), wr = rows.getBoundingClientRect(), cs = getComputedStyle(root);
-    const pager = root.querySelector(".hvt-pager"), area = root.querySelector(".hvt-area");
+    const pager = root.querySelector(".hvt-pagerwrap:not(.is-gone) .hvt-pager"), area = root.querySelector(".hvt-area");
     const endY = Math.max(pager ? pager.getBoundingClientRect().bottom : 0, area ? area.getBoundingClientRect().bottom : 0);
     const tail = endY ? endY - wr.bottom : 0; // pager, scroll bar, card padding and margins under the rows
     const limit = rr.top + (parseFloat(cs.maxHeight) || window.innerHeight - rr.top - 16); // the table hugs its content, up to the screen
@@ -4355,7 +4365,8 @@ export function DataTable({
 
   /* rows per page only offers sizes the rows can fill: with 12 rows, 5 and 10; with 5 rows or fewer there is nothing to choose */
   const sizeChoices = [...new Set([...pageSizeOptions, pageSize])].filter((n) => n <= total).sort((a, b) => a - b);
-  const pagerEl = paged ? (
+  const pagerEl = showPagination ? (
+    <div className={`hvt-pagerwrap${paged ? "" : " is-gone"}`} aria-hidden={paged ? undefined : true}><div className="hvt-pagerclip">
     <div className="hvt-pager">
       <div className="hvt-pager-left">
         <MenuButton variant="ghost" role="listbox" ariaLabel="Rows per page" title="Number of rows per page" label={String(pageSize)} value={pageSize}
@@ -4398,6 +4409,7 @@ export function DataTable({
                 onClick={() => goTo(pageCount)}>{Icons.Last}</button>
       </div>
     </div>
+    </div></div>
   ) : null;
 
   const tableEl = (
@@ -5460,7 +5472,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fg-listfill"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "pager-fold"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5
@@ -6340,6 +6352,23 @@ export default function App() {
   const rzvRef = useRef(null);
   const canvasRef = useRef(null);
   const [maxOn, setMaxOn] = useState(false);
+  /* searching or filtering never moves the table up: the stage keeps the tallest height the table had since the last control change */
+  const [stageMin, setStageMin] = useState(0);
+  const stageObs = useRef({ el: null, ro: null });
+  const stageSlot = () => stageRef.current && stageRef.current.querySelector(":scope > .hvs-slot");
+  useEffect(() => { const sl = stageSlot(); setStageMin(sl && !sl.classList.contains("is-max") ? sl.offsetHeight : 0); }, [cfg, resetKey]);
+  useEffect(() => {
+    const el = stageRef.current, o = stageObs.current;
+    if (el === o.el) return;
+    if (o.ro) o.ro.disconnect();
+    o.el = el; o.ro = null;
+    const sl = stageSlot();
+    setStageMin(sl ? sl.offsetHeight : 0);
+    if (!sl || typeof ResizeObserver === "undefined") return;
+    o.ro = new ResizeObserver(() => { if (sl.classList.contains("is-max")) return; const h = sl.offsetHeight; setStageMin((m) => (h > m ? h : m)); });
+    o.ro.observe(sl);
+  });
+  useEffect(() => () => { if (stageObs.current.ro) stageObs.current.ro.disconnect(); }, []);
 
   const toggle = (id) => setOpen((o) => ({ ...o, [id]: !o[id] }));
   const setAll = (v) => setOpen(Object.fromEntries(ALL_OPEN_IDS.map((id) => [id, v])));
@@ -6785,7 +6814,7 @@ export default function App() {
                 {Array.from({ length: GRID.columns }, (_, i) => (<i key={i} />))}
               </div>
             )}
-          <div className="hvs-stage" ref={stageRef} style={{ width: tableWidth, maxWidth: cfg.widthMode === "grid" ? undefined : "100%", ...gridPlace }}>
+          <div className="hvs-stage" ref={stageRef} style={{ width: tableWidth, maxWidth: cfg.widthMode === "grid" ? undefined : "100%", ...gridPlace, minHeight: !maxOn && stageMin ? stageMin : undefined }}>
             <div className={`hvs-slot${maxOn ? " is-max" : ""}`}>
             <DataTable
               key={`${resetKey}-${cfg.dataset}`}

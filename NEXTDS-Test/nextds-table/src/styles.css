@@ -376,6 +376,10 @@
 .hvt-pager .hvt-icon,.hvt-pager .hvt-mbtn{border-radius:8px} /* the hover and focus shapes of the pager buttons: 8px corners */
 .hvt-pagenum{display:flex;align-items:center;gap:4px;padding:0 8px}
 /* the pager is compact in every density: every element at the caption's 12px text, 24px controls, a 40px bar */
+.hvt-pagerwrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows .25s cubic-bezier(.4,0,.2,1),opacity .2s ease} /* the pagination folds away (and back) when the rows fit one page, e.g. while searching */
+.hvt-pagerwrap.is-gone{grid-template-rows:0fr;opacity:0;pointer-events:none}
+.hvt-pagerclip{min-height:0}
+.hvt-pagerwrap.is-gone > .hvt-pagerclip{overflow:hidden}
 .hvt-root .hvt-pager,.hvt-root .hvt-pager-left{height:24px}
 .hvt-root .hvt-pager{box-sizing:content-box;height:48px;padding-top:0;padding-bottom:0}
 .hvt-root.is-compact .hvt-pager{height:40px}
@@ -615,8 +619,14 @@
 .hvt-fg-count{min-width:16px;padding:0 5px;border-radius:8px;background:var(--content-primary);color:var(--container-secondary-background);font-size:11px;font-weight:600;line-height:16px;text-align:center}
 .hvt-fg-pane{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;padding:16px}
 .hvt-fg-titlebar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px}
-.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)} /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
-.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-titlebar{gap:8px} /* narrow panel: at least 8px between the title, Advanced and Match; the texts truncate instead of overlapping */
+.hvt-fg-titlebar > .hvt-fg-title{flex:0 1 auto;min-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hvt-fg-titlebar .hvt-switch{flex:0 1 auto;min-width:84px} /* track 32 + gap 8 + "Adv…" 44 */
+.hvt-fg-titlebar .hvt-switch > span:last-child{min-width:44px;overflow:hidden;text-overflow:ellipsis} /* Advanced shortens to "Adv…" at the least */
+.hvt-fg-titlebar.is-adv{display:grid;grid-template-columns:minmax(auto,1fr) minmax(84px,auto) minmax(auto,1fr)}
+.hvt-fg-pane{container-type:inline-size}
+@container (max-width: 320px){.hvt-fg-titlebar.is-adv{grid-template-columns:minmax(auto,1fr) 84px minmax(auto,1fr)}} /* narrow: Advanced shortens to "Adv…" first, so the column name keeps its room */ /* Advanced on: it moves to the centre of the title bar, Match all / any at the far right */
+.hvt-fg-titlebar.is-adv .hvt-fg-title{min-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hvt-fg-match{justify-self:end;padding:0 12px;animation:hvt-fade .2s ease}
 @keyframes hvt-fade{from{opacity:0}to{opacity:1}}
 .hvt-fg-matchtxt{display:inline-grid} /* both labels take the same cell: the button keeps the width of the longer one */

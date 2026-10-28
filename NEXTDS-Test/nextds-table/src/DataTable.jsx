@@ -2755,7 +2755,7 @@ export function DataTable({
     root.classList.add("is-measure"); // measure without the stretch that fixes the pager at the bottom
     try {
     const rr = root.getBoundingClientRect(), wr = rows.getBoundingClientRect(), cs = getComputedStyle(root);
-    const pager = root.querySelector(".hvt-pager"), area = root.querySelector(".hvt-area");
+    const pager = root.querySelector(".hvt-pagerwrap:not(.is-gone) .hvt-pager"), area = root.querySelector(".hvt-area");
     const endY = Math.max(pager ? pager.getBoundingClientRect().bottom : 0, area ? area.getBoundingClientRect().bottom : 0);
     const tail = endY ? endY - wr.bottom : 0; // pager, scroll bar, card padding and margins under the rows
     const limit = rr.top + (parseFloat(cs.maxHeight) || window.innerHeight - rr.top - 16); // the table hugs its content, up to the screen
@@ -3275,7 +3275,8 @@ export function DataTable({
 
   /* rows per page only offers sizes the rows can fill: with 12 rows, 5 and 10; with 5 rows or fewer there is nothing to choose */
   const sizeChoices = [...new Set([...pageSizeOptions, pageSize])].filter((n) => n <= total).sort((a, b) => a - b);
-  const pagerEl = paged ? (
+  const pagerEl = showPagination ? (
+    <div className={`hvt-pagerwrap${paged ? "" : " is-gone"}`} aria-hidden={paged ? undefined : true}><div className="hvt-pagerclip">
     <div className="hvt-pager">
       <div className="hvt-pager-left">
         <MenuButton variant="ghost" role="listbox" ariaLabel="Rows per page" title="Number of rows per page" label={String(pageSize)} value={pageSize}
@@ -3318,6 +3319,7 @@ export function DataTable({
                 onClick={() => goTo(pageCount)}>{Icons.Last}</button>
       </div>
     </div>
+    </div></div>
   ) : null;
 
   const tableEl = (
