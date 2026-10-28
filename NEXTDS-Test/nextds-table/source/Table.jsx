@@ -587,6 +587,8 @@ const CSS = `
 .hvt-root.is-compact .hvt-viz{height:16px}
 /* resizing the filter group panel by its edges and corners */
 .hvt-fg.is-sized .hvt-fg-body{flex:1;min-height:0;max-height:none}
+.hvt-fg-pane > .hvt-checklist{flex:1 1 auto;min-height:0}
+.hvt-fg-pane > .hvt-checklist > .hvt-checklist-body{flex:1 1 auto;min-height:160px;max-height:none} /* in the filter group panel the value list takes all the height left: a taller (resized) panel shows more values */
 .hvt-fg.is-resizing{user-select:none}
 .hvt-fg-rz{position:absolute;z-index:3;touch-action:none}
 .hvt-fg-rz.is-l,.hvt-fg-rz.is-r{top:20px;bottom:20px;width:9px;cursor:ew-resize}
@@ -5458,7 +5460,7 @@ const initCols = (d) =>
   Object.fromEntries([...d.columns, ...(d.pool ? [...TEXT_POOL, ...NUMBER_POOL] : d.extra)].map((c) => [c.key, { visible: true, title: c.title, sortable: c.sortable !== false }]));
 const COL_LOOKUP = Object.fromEntries([...TEXT_POOL, ...NUMBER_POOL, ...DATASETS.flatMap((d) => d.extra)].map((c) => [c.key, c]));
 
-const BUILD = "fg-keep"; // shown in the footer, to tell which version a browser is showing
+const BUILD = "fg-listfill"; // shown in the footer, to tell which version a browser is showing
 const EMPTY_ROWS = [];
 const MAX_PAGE_ROWS = 25; // the most rows per page (for testing)
 const STEP5 = Array.from({ length: MAX_PAGE_ROWS / 5 }, (_, i) => (i + 1) * 5); // rows per page, in steps of 5

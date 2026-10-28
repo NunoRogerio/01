@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.7 — 2026-10-28
+
+- Filter group panel: the value list takes all the height left in the panel, so a taller (resized) panel shows more values instead of a fixed 160px list.
+
 ## 0.6.6 — 2026-10-27
 
 - The filter panel opens again as it was left: attached, or detached at the same place and size (closing no longer sends it home).
