@@ -27,13 +27,13 @@ window.__wfPeekIn = (el, from) => el.animate([
   { translate: '0 5px', offset: 0.8, easing: 'cubic-bezier(.4,0,.6,1)' },
   { translate: '0 0' }], { duration: 580 });
 </script>
-<script src="fit.js?v=1793101186"></script>
+<script src="fit.js?v=1793175293"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1793101186"></script>
+<script src="prefs.js?v=1793175293"></script>
 <script src="station.js?v=1792679688"></script>
-<script src="i18n.js?v=1792679688"></script>
+<script src="i18n.js?v=1793175293"></script>
 <script src="live.js?v=1792679688"></script>
-<script src="chat.js?v=1792679688"></script>
+<script src="chat.js?v=1793175293"></script>
 <script>
 /* (Oct 10, 23:02) a fire with a chat has no stand-alone page: its page opens as the blade over its chat (the chat's stage band opens it).
    Reached from anywhere else (a station card, a map tooltip, a list), this page hands over to the chat with the fire's blade open. */
@@ -223,8 +223,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .fill{transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) .3s both}
 .scan{animation:scan 3.4s linear infinite}
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
-.kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:16px;font-weight:500;letter-spacing:0;color:#545458}
+.kpi{font-size:30px;font-weight:400;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi small{font-size:16px;font-weight:400;letter-spacing:0;color:#545458}
 .lbl{display:flex;align-items:center;gap:8px;margin:0;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;color:#6E6E73}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
@@ -281,8 +281,8 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .btn .go,a.card:hover .go,.btn:hover .go{transform:none!important}
 .btn:hover .spin{transform:none}
 .primary{background:var(--wf-y);color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 24px!important;justify-content:center;gap:8px;box-shadow:none}
-.primary:hover{background:#C9E60F;color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
-.primary.green{background:var(--wf-y);color:#1C1C1E}.primary.green:hover{background:#C9E60F}
+.primary:hover{background:color-mix(in srgb, var(--wf-y) 88%, #000000);color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
+.primary.green{background:var(--wf-y);color:#1C1C1E}.primary.green:hover{background:color-mix(in srgb, var(--wf-y) 88%, #000000)}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
 .ghost{background:rgba(118,118,128,.12);border-color:transparent;color:#0062CC}
@@ -454,7 +454,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Add or edit a station of the dispatch: step 1 the stations (the best one tagged), step 2 its resources (suggested or your own), Apply -->
   <div class="wf-hap-scrim wf-glass" onClick="{{fl.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 72; background: rgba(242,242,247,0.35); -webkit-backdrop-filter: blur(10px) saturate(120%); backdrop-filter: blur(10px) saturate(120%); opacity: {{fl.op}}; pointer-events: {{fl.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-labelledby="flTitle" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px - max(var(--wf-top, 0px), env(safe-area-inset-top, 0px))); box-sizing: border-box; padding: 30px 0 32px; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.16); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-labelledby="flTitle" aria-hidden="{{fl.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 73; display: flex; flex-direction: column; max-height: calc(100% - 48px - max(var(--wf-top, 0px), env(safe-area-inset-top, 0px))); box-sizing: border-box; padding: 32px 0 32px; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.16); transform: translateY({{fl.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{fl.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <!-- The title and subtitle line up with the left edge of the white containers below; 40px to the first element -->
@@ -510,7 +510,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
     <div style="display: flex; flex-direction: column; gap: 4px; padding: 0">
       <!-- Once every order is through, the bar fades away (each station card carries its own check mark) -->
       <!-- Back above the title, as on every screen: returns like Return below -->
-      <a href="Main.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" onClick="{{snd.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-bottom: 20px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
+      <a href="Main.dc.html" data-wf-back="1" class="mbtn" aria-label="Back" onClick="{{snd.back}}" style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-bottom: 24px; padding: 0; border: 0; border-radius: 50%; background: rgba(118,118,128,0.12); color: #3C3C43; text-decoration: none; cursor: pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"></path><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"></path></svg></a>
       <span style="display: flex; align-items: center; gap: 8px"><h2 id="sendTitle" style="flex-grow: 1; min-width: 0; margin: 0; font-size: 28px; font-weight: 700; line-height: 34px; color: {{snd.titleC}}; transition: color .3s ease">{{snd.title}}</h2></span>
       <span style="font-size: 17px; line-height: 22px; color: #000000">{{snd.sub}}</span>
     </div>
@@ -773,7 +773,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <li class="wf-note" style="display: {{ev.noteD}}; align-items: flex-start; gap: 8px; padding: 0 {{ev.noteR}} 16px 16px; font-size: 14px; line-height: 18px; color: #6E6E73"><span aria-label="Forest Fire Watch" style="display: none; align-items: center; gap: 4px; opacity: 0.5; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="min-width: 0">{{ev.note}}</span></li>
               <!-- (Oct 14, 08:42) the FFW tag (no icon) at the card's bottom left; the title says "(civil)": the passive civil system -->
               <!-- (Oct 14, 16:55) in the card's bottom-right corner, 4px from its right and bottom edges; its text a little smaller (14px) -->
-              <span class="wf-simstar" aria-label="Simulation" style="display: {{ev.simD}}">*</span><!-- (Oct 16, 07:21) the captain's card says Simulation with the * in its corner, no footnote -->
+              <span class="wf-simstar" aria-label="Estimate" style="display: {{ev.simD}}">*</span><!-- (Oct 16, 07:21) the captain's card says Simulation with the * in its corner, no footnote -->
               <li style="display: {{ev.ffwD}}; position: absolute; right: 0; bottom: 0; padding: 0"><!-- (Oct 19, 10:47) the Civil tag sits in the card's corner on the note's row: no row of its own, so the note reaches the card's foot --><span aria-label="Civil camera. Forest Fire Watch" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px 0 16px 0; background: {{ev.hbg}}; color: rgb(58, 58, 60); font-size: 14px; font-weight: 600; line-height: 18px">Civil</span></li>
             </ul>
           </sc-for>
@@ -1010,7 +1010,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
               <li class="wf-note" style="display: {{fe.noteD}}; align-items: flex-start; gap: 8px; padding: 0 {{fe.noteR}} 16px 16px; font-size: 14px; line-height: 18px; color: #6E6E73"><span aria-label="Forest Fire Watch" style="display: none; align-items: center; gap: 4px; opacity: 0.5; flex-shrink: 0; font-size: 15px; line-height: 20px; font-weight: 600; color: #1C1C1E"><svg data-wf-ffw="1" width="16" height="20" viewBox="3.4 5 17.2 20.9" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path class="base" fill-rule="evenodd" d="M12 21.5a6 6 0 0 1-6-6c0-3.6 3-5.4 3.6-9 2.4 1.8 3.6 3.6 3.6 5.4 1.2-1 1.8-2.4 1.8-3.6 1.9 1.9 3 4.3 3 7.2a6 6 0 0 1-6 6ZM8.2 15.8Q12 12 15.8 15.8Q12 19.6 8.2 15.8Z" fill="#3A3A3C"></path></svg>FFW</span><span style="min-width: 0">{{fe.note}}</span></li>
               <!-- (Oct 14, 08:42) the FFW tag (no icon) at the card's bottom left; the title says "(civil)": the passive civil system -->
               <!-- (Oct 14, 16:55) in the card's bottom-right corner, 4px from its right and bottom edges; its text a little smaller (14px) -->
-              <span class="wf-simstar" aria-label="Simulation" style="display: {{fe.simD}}">*</span><!-- (Oct 16, 07:21) the captain's card says Simulation with the * in its corner, no footnote -->
+              <span class="wf-simstar" aria-label="Estimate" style="display: {{fe.simD}}">*</span><!-- (Oct 16, 07:21) the captain's card says Simulation with the * in its corner, no footnote -->
               <li style="display: {{fe.ffwD}}; position: absolute; right: 0; bottom: 0; padding: 0"><!-- (Oct 19, 10:47) the Civil tag sits in the card's corner on the note's row: no row of its own, so the note reaches the card's foot --><span aria-label="Civil camera. Forest Fire Watch" style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px 0 16px 0; background: {{fe.hbg}}; color: rgb(58, 58, 60); font-size: 14px; font-weight: 600; line-height: 18px">Civil</span></li>
             </ul>
         <button type="button" class="mbtn" onClick="{{dockEv}}" onPointerDown="{{haloOff}}" aria-label="{{fe.dockAria}}" style="position: absolute; inset: 0; z-index: 2; padding: 0; border: 0; border-radius: var(--wf-r, 16px); background: transparent; cursor: pointer"></button>
@@ -1058,7 +1058,7 @@ nav[aria-label="Main"]{background:rgba(249,249,249,.86)!important;border-color:r
 
   <!-- Cards picker: the group's cards with toggles (shared by every card group on this screen) -->
   <div class="wf-glass scrim" onClick="{{kp.close}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 70; background: rgba(242,242,247,0.35); backdrop-filter: blur(10px) saturate(120%); -webkit-backdrop-filter: blur(10px) saturate(120%); opacity: {{kp.op}}; pointer-events: {{kp.pe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-labelledby="kpTitle" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 30px 16px 32px; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.16); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
+  <section role="dialog" data-wf-keepsp="1" aria-modal="true" aria-labelledby="kpTitle" aria-hidden="{{kp.hidden}}" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 71; display: flex; flex-direction: column; max-height: 70%; box-sizing: border-box; padding: 32px 16px 32px; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #F2F2F7; box-shadow: 0 0 16px rgba(0,0,0,0.16); transform: translateY({{kp.y}}); transition: transform .5s cubic-bezier(.2,.8,.2,1)" data-swipe="down">
     <!-- Grabber, as on the other blades: a tap closes the dialog, a swipe down (on it, or anywhere when the list does not scroll) closes it too -->
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{kp.close}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 40px; padding: 0 16px">
@@ -1178,7 +1178,7 @@ class Component extends DCLogic {
     let crews = Math.max(1, Math.min(10, Math.round(people / (cppl + 1)))), tankers = Math.max(1, Math.min(8, Math.round(veh * 0.4))), engines = 0, airN = air;   /* the crews' own vehicles are the engines */
     if (CNT) { crews = CNT.c; tankers = CNT.t; engines = 0; airN = CNT.a; }   // what was ordered from here
     const DUR = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
-    const T = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'], bad: ['#B0001A', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'] };
+    const T = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'], bad: ['#B3001B', 'rgba(215,0,21,0.12)'], blue: ['#0062CC', 'rgba(0,113,227,0.12)'], grey: ['#545458', 'rgba(118,118,128,0.14)'] };
     const units = []; let tired = 0, low = 0;
     // Crews: arrived at different times since the start; relief is due at 12 h on shift
     for (let i = 0; i < crews; i++) {
@@ -1201,8 +1201,8 @@ class Component extends DCLogic {
     units.sort((a, b) => a.o - b.o || a.k - b.k);   // what needs action first
     // A held or resolved fire: the units that fought it, without their live state (no shift, water or drop status) and no figures
     if (HELD) return { sum: [], units: units.map((u) => ({ ...u, tag: '', sub: u.k === 0 ? (pt ? 'VFCI. ' : 'Type 3. ') + (u.ppl || cppl) + ' firefighters.' : u.k === 1 ? (/VTTF|tender/i.test(u.name) ? (pt ? '10,000 L.' : '7,500 L.') : (pt ? '3,000 L.' : '2,800 L.')) : (/heli/i.test(u.name) ? 'Helicopter.' : 'Air tanker.'), o: u.k })).sort((a, b) => a.k - b.k) };
-    const sum = crews ? [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B0001A' : '#3A3A3C' }] : [];
-    if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders low on water', c: low ? '#B0001A' : '#3A3A3C' });
+    const sum = crews ? [{ v: tired + ' of ' + crews, l: 'Crews need relief', c: tired ? '#B3001B' : '#3A3A3C' }] : [];
+    if (tankers) sum.push({ v: low + ' of ' + tankers, l: 'Tenders low on water', c: low ? '#B3001B' : '#3A3A3C' });
     // Five more crew figures, from the same units: relief coming up, the longest shift, fresh crews, water in the tanks, aircraft dropping
     const cU = units.filter((u) => u.k === 0), wU = units.filter((u) => u.k === 1), aU = units.filter((u) => u.k === 2);
     if (cU.length) { const soon = cU.filter((u) => u.hrs >= 9 && u.hrs < 12).length, maxH = Math.max(...cU.map((u) => u.hrs || 0));
@@ -1783,7 +1783,7 @@ class Component extends DCLogic {
     const isLive = !!c.live, row = (t, ok = true, cmd = false) => {   /* (Oct 16, 09:04) each line a bullet; its values (times, durations, sizes, counts, %) in semibold; the captain taking command is a white strip with a check */
       const P = String(t || '').split(/(~?\d[\d:.,]*(?:\s?(?:min|h|s|km|mi|m|acres?|ha|%|°C|°F|km\/h|mph|ft)(?![A-Za-z]))?)/).filter((q) => q !== '').map((q) => ({ t: q, w: /^~?\d/.test(q) ? 600 : 400 }));
       return { t, parts: P, color: cmd ? 'rgb(0, 0, 0)' : ok ? '#3C3C43' : '#545458', dotD: cmd ? 'none' : 'block', ckD: cmd ? 'block' : 'none', rbg: cmd ? 'rgb(255, 255, 255)' : 'transparent', rpad: cmd ? '8px 16px' : '0px', rfw: cmd ? 600 : 400 }; };
-    const droneStrong = !(c.conf != null && c.conf < 50), droneSeen = isLive && droneStrong, sim = 'Simulation.';
+    const droneStrong = !(c.conf != null && c.conf < 50), droneSeen = isLive && droneStrong, sim = 'Estimate.';
     const h = String(c.id || '').split('').reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
     const at = (min) => new Date((tMs || Date.now()) + min * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
     const la = Number(L.lat), lo = Number(L.lon), dt = tMs ? new Date(tMs).toISOString().slice(0, 10) : '';
@@ -1807,7 +1807,7 @@ class Component extends DCLogic {
     sat.kind = 'sat'; sat.civil = false; sat.at = 0;
     if (isLive) {
       const vid = droneStrong ? 'assets/dronefire.mp4?v=1' : 'assets/dronecalm.mp4?v=1', lab = 'Live. Drone D-5';
-      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = Lx('Anonymized. Only from owners who have FFW active. Simulation.', 'Anonimizado. Só de proprietários com FFW ativo. Simulação.');
+      const UX = (id) => 'https://images.unsplash.com/' + id + '?w=900&q=70&auto=format&fit=crop', anon = Lx('Anonymized. Only from owners who have FFW active. Estimate.', 'Anonimizado. Só de proprietários com FFW ativo. Estimativa.');
       const PC = ['photo-1507680465142-ef2223e23308', 'photo-1632301104173-faab428f1a95', 'photo-1602980068989-cb21869ab2c7', 'photo-1602980085374-7e743fff3cc6', 'photo-1602980069131-51eca8b9557d', 'photo-1602980045636-77b52b335ff0'], c0 = h % 2;
       const brg = (k) => (h >>> k) % 360, km = (k, a, b) => +(a + ((h >>> k) % 100) / 100 * (b - a)).toFixed(1);
       /* car cameras: always asked (the network's backbone on the roads); smoke from before the satellite pass when there is a fire */
@@ -1826,10 +1826,10 @@ class Component extends DCLogic {
           rows: [row(Lx(n + ' photos' + (v ? ' and ' + v + (v === 1 ? ' video' : ' videos') : '') + ' with smoke, taken nearby', n + ' fotografias' + (v ? ' e ' + v + (v === 1 ? ' vídeo' : ' vídeos') : '') + ' com fumo, tiradas perto'))], slides: JSON.stringify(P.slice(0, Math.min(5, n + v)).map((id) => [UX(id), ''])), noteD: 'block', note: anon }); }
       /* the existing network: the forest camera turns to the point once alerted, the drone flies from the nearest station */
       if ((h >>> 5) % 3 < 2) { const cam = UX('photo-1602980085421-578025fd903d'), kk = 4 + h % 9;
-        out.push({ ...th({ thImg: true, src: cam, thAria: Lx('Forest camera image. Open', 'Imagem da câmara florestal. Abrir'), open: (e) => this.wfEv({ image: { src: cam, alt: 'Forest camera image' }, label: Lx('Forest camera', 'Câmara florestal'), who: 'Lookout camera. Simulation.', anchor: e && e.currentTarget }) }),
+        out.push({ ...th({ thImg: true, src: cam, thAria: Lx('Forest camera image. Open', 'Imagem da câmara florestal. Abrir'), open: (e) => this.wfEv({ image: { src: cam, alt: 'Forest camera image' }, label: Lx('Forest camera', 'Câmara florestal'), who: 'Lookout camera. Estimate.', anchor: e && e.currentTarget }) }),
           kind: 'tower', civil: false, at: V + 4 + (h >>> 10) % 6, km: kk, brg: (brg(5) + 160) % 360, title: Lx('Forest camera', 'Câmara florestal'),
           rows: [row(Lx('Lookout camera ' + kk + ' km away, turned to the point', 'Câmara de vigia a ' + kk + ' km, virada para o ponto')), droneStrong ? row(Lx('Smoke rising above the trees', 'Fumo a subir acima das árvores')) : row(Lx('No smoke seen', 'Sem fumo visível'), false)], noteD: 'block', note: sim }); }
-      out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Simulation.', anchor: e && e.currentTarget }) }), kind: 'drone', civil: false, at: V + 6 + (h >>> 12) % 6, title: Lx('Drone scan', 'Varrimento por drone'),
+      out.push({ ...th({ thVid: true, src: vid, thAria: 'Drone feed. Open', open: (e) => this.wfEv({ src: vid, cross: true, label: lab, who: 'Sent automatically from the nearest station. Estimate.', anchor: e && e.currentTarget }) }), kind: 'drone', civil: false, at: V + 6 + (h >>> 12) % 6, title: Lx('Drone scan', 'Varrimento por drone'),
         rows: [row(Lx('Sent automatically from the nearest station', 'Enviado automaticamente do quartel mais próximo')), droneStrong ? row(Lx('Smoke and a hot spot on the thermal feed', 'Fumo e um ponto quente na imagem térmica')) : row(Lx('A warm patch on the thermal feed. No smoke', 'Uma zona morna na imagem térmica. Sem fumo'), false)], noteD: 'block', note: sim });
       if ((h >>> 3) % 5 < 2) out.push({ ...TH, kind: 'call', civil: true, at: 3 + h % (V + 6), title: Lx('911 call', 'Chamada 112'), rows: [row(Lx('Caller reports smoke near ' + (c.place || 'the area') + ' at ' + at(3 + h % (V + 6)), 'Chamada a reportar fumo perto de ' + (c.place || 'a zona') + ' às ' + at(3 + h % (V + 6))))], noteD: 'block', note: sim });
     }
@@ -1879,7 +1879,7 @@ class Component extends DCLogic {
     if (isLive && onScene) { const tr = 9 + (h >>> 7) % 6, ca = D0 + tr, CN = ['Ramirez', 'Nguyen', 'Walsh', 'Ortega', 'Brooks', 'Silva'][(h >>> 4) % 6], ac = 1 + (h >>> 9) % 4;
       capOk = droneStrong;
       const hv = droneStrong ? 'assets/helmetcam.mp4?v=1' : 'assets/helmetcalm.mp4?v=1';   /* (Oct 13, 08:57) what the captain sees: his helmet camera */
-      out.push({ ...th({ thVid: true, src: hv, thAria: Lx('Captain\'s helmet camera. Open', 'Câmara do capacete do chefe. Abrir'), open: (e) => this.wfEv({ src: hv, cross: true, label: Lx('Live. Captain ' + CN, 'Direto. Chefe ' + CN), who: Lx('Helmet camera. Simulation.', 'Câmara do capacete. Simulação.'), anchor: e && e.currentTarget }) }), kind: 'captain', civil: false, at: ca, pct: 100, pctTxt: '100%', ic: 'M3 17h18M5 17v-2a7 7 0 0 1 14 0v2M12 8V5.5M9.5 9.5 12 8l2.5 1.5', title: Lx('Captain on scene', PT ? 'Chefe no local' : 'Captain on scene'),
+      out.push({ ...th({ thVid: true, src: hv, thAria: Lx('Captain\'s helmet camera. Open', 'Câmara do capacete do chefe. Abrir'), open: (e) => this.wfEv({ src: hv, cross: true, label: Lx('Live. Captain ' + CN, 'Direto. Chefe ' + CN), who: Lx('Helmet camera. Estimate.', 'Câmara do capacete. Estimativa.'), anchor: e && e.currentTarget }) }), kind: 'captain', civil: false, at: ca, pct: 100, pctTxt: '100%', ic: 'M3 17h18M5 17v-2a7 7 0 0 1 14 0v2M12 8V5.5M9.5 9.5 12 8l2.5 1.5', title: Lx('Captain on scene', PT ? 'Chefe no local' : 'Captain on scene'),
         /* (Oct 16, 09:04) the captain's size-up in the crews' own words: on scene, the size-up (size, rate of spread, direction) or the cause, and the
            command line (IC, or COS in Portugal) as its own white strip with a check: from here the incident is his */
         rows: [row(Lx('On scene at ' + hm(ca) + '. ' + tr + ' min after dispatch', 'No local às ' + hm(ca) + '. ' + tr + ' min depois do despacho')),
@@ -2087,7 +2087,7 @@ class Component extends DCLogic {
           TG.rl = [PTl ? 'Libertado' : 'Released', '#327936', '#FFFFFF'];   /* a false alarm: the captain finds no fire and every unit is released */
           o.ia = { d: 'flex', ttl: sentAt ? (PTl ? 'Ataque inicial' : 'Initial attack') : (PTl ? 'Ataque inicial proposto' : 'Proposed initial attack'),
             sub: sentAt ? (PTl ? 'Enviado às ' : 'Sent at ') + this.wfStoryHM(cid, sentAt) + '. ' + U.length + (PTl ? ' meios.' : ' units.') : (PTl ? 'Os meios disponíveis mais próximos, do plano de resposta.' : 'The nearest available units, from the response plan.'),
-            note: NR.loading ? (PTl ? 'A carregar os quartéis…' : 'Loading the stations…') : (PTl ? 'Tempos estimados. Números dos meios simulados.' : 'Estimated times. Unit numbers simulated.'),
+            note: NR.loading ? (PTl ? 'A carregar os quartéis…' : 'Loading the stations…') : (PTl ? 'Estimativa: tempos e números dos meios.' : 'Estimate: times and unit numbers.'),
             rows: [] };
           /* (Oct 13, 17:15) the ECC can adjust the response plan before sending (as CAD recommends and the ECC captain augments or reduces):
              Configure turns each unit's tag into a toggle; units switched off are not sent */
@@ -2180,7 +2180,7 @@ class Component extends DCLogic {
                   role: 'button', expStr: crO ? 'true' : 'false', tap: () => { this._chkCrO = Object.assign({}, this._chkCrO, { [cid]: !crO }); this.forceUpdate(); }, mh: 'none', pad: '16px', op: '1', cur: 'pointer', chevD: 'block', chevRot: crO ? '180deg' : '0deg' }]
                   .concat(this.wfChkCrew(cid, ptc, u).map((p) => ({ ic: '', icD: 'none', imgD: p.img ? 'block' : 'none', img: p.img, name: p.name, sub: p.rank + '. ' + u.name, tag: '', tagBg: '', tagFg: '', bt: crO ? '1px' : '0', tagD: 'none', swD: 'none', onStr: 'true', toggle: () => {}, swBg: '', swX: '0px',
                     role: null, expStr: null, tap: null, mh: crO ? '96px' : '0px', pad: crO ? '16px' : '0px', op: crO ? '1' : '0', cur: 'auto', chevD: 'none', chevRot: '0deg' }))) });
-              CK.sub = CK.sub.replace(/\.$/, '') + '. ' + (CK.rows.length - 1) + (PTl ? ' pessoas.' : ' people.'); CK.note = NR.loading ? '' : (PTl ? 'Tempos estimados. Números dos meios e nomes simulados.' : 'Estimated times. Unit numbers and names simulated.');
+              CK.sub = CK.sub.replace(/\.$/, '') + '. ' + (CK.rows.length - 1) + (PTl ? ' pessoas.' : ' people.'); CK.note = NR.loading ? '' : (PTl ? 'Estimativa: tempos, números e nomes dos meios.' : 'Estimate: times, unit numbers and names.');
               /* (Oct 16, 22:34) the smoke check is a detection: its card (the engine, its status and crew) is the first in Detections, and stays there after the initial attack; the top section is the initial attack's only */
               o.sck = Object.assign(CK, { time: this.wfStoryHM(cid, chkAt), ic: 'M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12ZM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6Z', icC: 'rgb(201, 110, 34)' });   /* (Oct 17, 13:55) the Smoke check button's own icon and colour */ if (VD[cid] === 'check') o.ia = Object.assign({}, o.ia, { d: 'none' }); } }
           if (isFinite(nx)) { clearTimeout(this._iaT); this._iaT = setTimeout(() => this.forceUpdate(), Math.max(200, nx + 50)); } } } }
@@ -2563,7 +2563,7 @@ class Component extends DCLogic {
         const ground = FX.units.filter((u) => u.k !== 2), airU = FX.units.filter((u) => u.k === 2);
         // The other unit types a station sends (hand crews, dozers, ambulances, evacuation vans or patrol engines): ordered ones,
         // or on a viewed fire those the station keeps (seeded, about one in two goes out)
-        const KX = this.wfKinds(stC), TX = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], grey: ['#48484A', 'rgba(118,118,128,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'] };
+        const KX = this.wfKinds(stC), TX = { ok: ['#186B2D', 'rgba(52,199,89,0.14)'], grey: ['#545458', 'rgba(118,118,128,0.14)'], warn: ['#745200', 'rgba(204,153,0,0.16)'] };
         const extra = (sid, k, n) => { const out = []; for (let i = 0; i < n; i++) { let hh = 3; for (const ch of String(sid) + k + i) hh = (hh * 31 + ch.charCodeAt(0)) >>> 0; const K = KX[k];
             const st = k === 6 ? (stC === 'PT' ? ['On the line', TX.ok] : ['Cutting line', TX.ok]) : k === 7 ? ['Building line', TX.ok] : k === 8 ? ['Standing by', TX.grey] : stC === 'PT' ? (this.wfEvacOn && this.wfEvacOn() ? ['Evacuating', TX.warn] : ['Standing by', TX.grey]) : ['Patrolling', TX.ok];
             const on = 1 + (hh % 9), pct = Math.max(0, Math.round(100 * (1 - on / 12)));
@@ -2601,8 +2601,8 @@ class Component extends DCLogic {
             u.ic = u.ic0 ? u.ic0 : u.k === 0 ? IC.crew : u.k === 1 ? (/tender|VTTF|autotanque/i.test(nm) ? IC.tender : IC.engine) : (/heli/i.test(nm) ? IC.heli : IC.plane);
             const hasB = u.k === 0 || u.k === 1 || u.bat, on = !hasB ? 0 : Math.max(0, Math.min(8, Math.round((Number(u.pct) || 0) / 100 * 8)));   /* eight bars: black = left, light grey = used */
             u.batD = hasB ? 'block' : 'none'; u.batHi = seg(0, on); u.batLo = seg(on, 8); u.tagRowD = u.tag ? 'flex' : 'none'; })); }
-        { const ci = gOut.some((g) => (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A')); if (ci !== !!this._crewIssue) { this._crewIssue = ci; setTimeout(() => this.forceUpdate(), 0); } }   /* (Oct 8, 23:36) the red dot goes on the Crews label, not on the station card */
-        gOut.forEach((g) => { const k = g.name, open = !!GO[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B0001A');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
+        { const ci = gOut.some((g) => (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B3001B')); if (ci !== !!this._crewIssue) { this._crewIssue = ci; setTimeout(() => this.forceUpdate(), 0); } }   /* (Oct 8, 23:36) the red dot goes on the Crews label, not on the station card */
+        gOut.forEach((g) => { const k = g.name, open = !!GO[k], issue = (g.units || []).some((u) => u.k !== 2 && u.tagFg === '#B3001B');   /* a folded station with a crew needing relief or a tender low on water gets the red dot */
           Object.assign(g, { dotD: 'none', exp: open ? 'true' : 'false', gr: open ? '1fr' : '0fr', rot: open ? '180deg' : '0deg', aria: g.name + (!open && issue ? '. Needs attention' : '') + (open ? '. Fold' : '. Unfold'),
           gk: String(gOut.indexOf(g)),
           tog: () => { try { (window.__wfHaptic || (() => { if (navigator.vibrate) navigator.vibrate(8); }))(); } catch (x) {} const set = () => this.setState({ gpO: { ...((this.state || {}).gpO || {}), [k]: !open } });

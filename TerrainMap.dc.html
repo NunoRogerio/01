@@ -19,11 +19,11 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png?v=4">
 <link rel="icon" href="icon-192.png?v=4">
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1793101186"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1793175293"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1793101186"></script>
+<script src="prefs.js?v=1793175293"></script>
 <script src="station.js?v=1792679688"></script>
-<script src="i18n.js?v=1792679688"></script>
+<script src="i18n.js?v=1793175293"></script>
 <script src="live.js?v=1792679688"></script>
 
 <title>Terrain map</title>
@@ -2066,7 +2066,7 @@ class Component extends DCLogic {
   // Map card for a live fire: state and type, then time, then forces, then data freshness, then actions.
   fireCard(g, m, x, y) {
     const I = g.info, R = g.res || {}, now = Date.now();
-    const TONE = { hot: ['rgba(255,59,48,0.12)', '#BC2D25'], warn: ['rgba(255,149,0,0.15)', '#B35900'], amber: ['rgba(204,153,0,0.16)', '#8A6300'], blue: ['rgba(31,111,178,0.14)', '#185A93'], ok: ['rgba(52,199,89,0.14)', '#186B2D'], watch: ['rgba(0,122,255,0.12)', '#0060C7'], off: ['rgba(120,120,128,0.14)', '#48484A'] }[I.tone] || ['rgba(120,120,128,0.14)', '#48484A'];
+    const TONE = { hot: ['rgba(255,59,48,0.12)', '#BC2D25'], warn: ['rgba(255,149,0,0.15)', '#B35900'], amber: ['rgba(204,153,0,0.16)', '#8A6300'], blue: ['rgba(31,111,178,0.14)', '#185A93'], ok: ['rgba(52,199,89,0.14)', '#186B2D'], watch: ['rgba(0,122,255,0.12)', '#0060C7'], off: ['rgba(120,120,128,0.14)', '#545458'] }[I.tone] || ['rgba(120,120,128,0.14)', '#545458'];
     const D = window.__wfDur || ((ms) => Math.round(ms / 60000) + ' min');
     const clock = (ms) => { const d = new Date(ms); return isNaN(d) ? '' : d.toLocaleString([], { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); };
     const clockT = (ms) => { const d = new Date(ms); return isNaN(d) ? '' : (new Date().toDateString() === d.toDateString() ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : clock(ms)); };

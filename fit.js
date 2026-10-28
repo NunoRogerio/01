@@ -652,7 +652,7 @@ window.__wfBlink=function(path,dur){
 })();
 
 // Confirmation dialog, the app's one shared model (as "Confirm fire?" on the detection candidate): a panel rising from the
-// bottom edge over a dark scrim, 28px top corners, the panel shadow, 30px top / 24px sides / 32px (+48px clear of the home
+// bottom edge over a dark scrim, 28px top corners, the panel shadow, 32px top / 24px sides / 32px (+48px clear of the home
 // indicator) bottom; title (17px semibold) and text (17px regular), 24px, then two pill buttons side by side, 48px tall:
 // secondary (dark, hi-vis text) to step back and the primary (hi-vis) to go ahead. Tap the scrim or swipe down to cancel.
 // window.__wfConfirm({ title, body, cancel, ok, onOk, onCancel })
@@ -728,7 +728,7 @@ window.__wfConfirm=function(o){
     var sc=document.createElement('div');sc.setAttribute('aria-hidden','true');sc.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,0.32);opacity:0;transition:opacity .35s ease';
     var p=document.createElement('section');p.className='wf-dlg';p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('data-swipe','down');p.setAttribute('aria-label',o.title||'');
     p.style.cssText='position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:24px;box-sizing:border-box;max-height:80%;overflow-y:auto;overscroll-behavior:contain;padding:32px 16px 80px;border-radius:var(--wf-r, 16px) var(--wf-r, 16px) 0 0;background:var(--wf-page,#F2F2F7);box-shadow:0 0 16px rgba(0,0,0,0.16);transform:translateY(105%);transition:transform .5s cubic-bezier(.2,.8,.2,1);font-family:inherit';
-    var gb=document.createElement('button');gb.type='button';gb.setAttribute('aria-label','Close');gb.setAttribute('data-swipe-go','1');gb.style.cssText='position:absolute;left:50%;top:0;width:96px;height:24px;margin-left:-48px;padding:0;border:0;background:transparent;cursor:pointer';gb.innerHTML='<span aria-hidden="true" style="display:block;width:36px;height:5px;margin:10px auto 0;border-radius:3px;background:rgba(60,60,67,0.3);opacity:0"></span>';p.appendChild(gb);
+    var gb=document.createElement('button');gb.type='button';gb.setAttribute('aria-label','Close');gb.setAttribute('data-swipe-go','1');gb.style.cssText='position:absolute;left:50%;top:0;width:96px;height:24px;margin-left:-48px;padding:0;border:0;background:transparent;cursor:pointer';gb.innerHTML='<span aria-hidden="true" style="display:block;width:36px;height:5px;margin:8px auto 0;border-radius:3px;background:rgba(60,60,67,0.3);opacity:0"></span>';p.appendChild(gb);
     var h=document.createElement('h2');h.textContent=o.title||'';h.style.cssText='margin:0 8px;font-size:28px;line-height:34px;font-weight:700;letter-spacing:0;color:var(--wf-ink,#000000)';p.appendChild(h);
     var done=false,close=function(fn){if(done)return;done=true;sc.style.opacity='0';p.style.transform='translateY(105%)';setTimeout(function(){w.remove();},520);if(fn)setTimeout(function(){try{fn();}catch(x){}},120);};
     (o.groups||[]).forEach(function(g){if(!g.items||!g.items.length)return;var box=document.createElement('div');box.style.cssText='display:flex;flex-direction:column;gap:8px';

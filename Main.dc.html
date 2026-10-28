@@ -16,13 +16,13 @@
 <link rel="icon" href="icon-192.png?v=4">
 <meta name="wf-layout" content="fluid">
 <script>window.__wfMenuOnly = /[?&]menu=1/.test(location.search); window.__wfLoginMenu = /[?&]login=1/.test(location.search);   /* (Oct 11, 19:30) the login screen's menu: the app's settings (about, invites, maps, chat, data sources) */</script>
-<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1793101186"></script>
+<link rel="preconnect" href="https://api.maptiler.com"><link rel="preconnect" href="https://tile.openstreetmap.org"><script src="fit.js?v=1793175293"></script>
 <script src="avatar.js?v=1792322188"></script>
-<script src="prefs.js?v=1793101186"></script>
+<script src="prefs.js?v=1793175293"></script>
 <script src="station.js?v=1792679688"></script>
-<script src="i18n.js?v=1792679688"></script>
+<script src="i18n.js?v=1793175293"></script>
 <script src="live.js?v=1792679688"></script>
-<script src="chat.js?v=1792679688"></script>
+<script src="chat.js?v=1793175293"></script>
 <script src="tour.js?v=1792737989"></script>
 <script src="mapsearch.js?v=1792361770"></script>
 <script src="stats.js?v=1792679688"></script>
@@ -81,8 +81,8 @@ a.card:hover{transform:translateY(-3px);border-color:rgba(232,106,0,0.55);box-sh
 .fill{transform-origin:left center;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) .3s both}
 .scan{animation:scan 3.4s linear infinite}
 .shimmer{background:linear-gradient(90deg,rgba(60,60,67,0.0) 0%,rgba(60,60,67,0.154) 50%,rgba(60,60,67,0.0) 100%);background-size:200% 100%;animation:shimmer 2.4s linear infinite}
-.kpi{font-size:30px;font-weight:300;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
-.kpi small{font-size:16px;font-weight:500;letter-spacing:0;color:#545458}
+.kpi{font-size:30px;font-weight:400;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi small{font-size:16px;font-weight:400;letter-spacing:0;color:#545458}
 .lbl{display:flex;align-items:center;gap:8px;margin:0;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;color:#6E6E73}
 .sheet{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .scrim{transition:opacity .35s ease}
@@ -153,7 +153,7 @@ a{color:#0062CC}a:hover{color:#004FA3}
 .btn .go,a.card:hover .go,.btn:hover .go{transform:none!important}
 .btn:hover .spin{transform:none}
 .primary{background:var(--wf-y);color:#1C1C1E;}.primary,.primary.green{animation:none!important;padding:0 24px!important;justify-content:center;gap:8px;box-shadow:none}
-.primary:hover{background:#C9E60F;color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
+.primary:hover{background:color-mix(in srgb, var(--wf-y) 88%, #000000);color:#1C1C1E;box-shadow:none}.primary.green:hover{box-shadow:none}
 .primary.green{background:#248A3D;color:#FFFFFF}.primary.green:hover{background:#1F7F37}
 .primary .go{display:none!important}
 .primary>span{flex-grow:0!important;text-align:center!important}
@@ -268,7 +268,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <!-- (Oct 18, 11:12) the icons sit 16px from the glass's top and right edges (the icon itself, not its 44px touch area), as the title sits 16px from the left; the title row follows them up -->
   <header class="fade" data-pull="down" data-wf-keepsp="1" style="position: relative; display: flex; align-items: flex-start; gap: 8px; margin-top: calc(max(var(--wf-top, 0px), env(safe-area-inset-top, 0px)) - 54px); padding: 0 18px 16px 28px; min-height: var(--wf-tophd-min, 0px); box-sizing: border-box">
     <h1 style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">Incidents in {{scope.title}}</h1>
-    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 10px 8px 16px; border: 0; border-radius: var(--wf-r, 16px); background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+    <button type="button" class="opt" onClick="{{openScope}}" onPointerDown="{{pScope.down}}" onPointerMove="{{pScope.move}}" onPointerUp="{{pScope.up}}" onPointerCancel="{{pScope.up}}" aria-haspopup="dialog" aria-expanded="{{scopeStr}}" aria-label="{{scopeAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: flex-start; gap: 0; flex: 0 1 auto; min-width: 0; margin-left: -8px; padding: 8px 8px 16px; border: 0; border-radius: var(--wf-r, 16px); background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
       <span style="display: flex; align-items: center; gap: 8px; min-height: 24px; max-width: 100%; min-width: 0"><!-- (Oct 18, 10:22) the title's first line centred on the icons' row, the description 4px under it (title and description sit close, as everywhere) -->
         <span class="wf-title-m" style="font-size: 20px; font-weight: 700; letter-spacing: 0; white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 6 3 3; line-height: 24px">{{scope.hT}}</span>
       </span>
@@ -366,7 +366,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
     </div>
     <!-- Collapsed bottom blade: a grabber at the top says it expands; 48px under the text to the screen edge, clear of the home indicator -->
     <div style="position: relative; display: flex; align-items: stretch; gap: 8px; box-sizing: border-box; height: {{barHNow}}px; padding: 0 16px; flex-shrink: 0; overflow: hidden; opacity: {{barOp}}; transition: height .5s cubic-bezier(.2,.8,.2,1), opacity .25s ease">
-      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-grow: 1; align-self: stretch; min-width: 0; padding: 28px 8px 12px; border: 0; border-radius: var(--wf-r, 16px); background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
+      <button type="button" class="opt" onClick="{{toggleList}}" onPointerDown="{{pList.down}}" onPointerMove="{{pList.move}}" onPointerUp="{{pList.up}}" onPointerCancel="{{pList.up}}" aria-haspopup="dialog" aria-expanded="{{listStr}}" aria-label="{{stackAria}}" style="position: relative; touch-action: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-grow: 1; align-self: stretch; min-width: 0; padding: 24px 8px 16px; border: 0; border-radius: var(--wf-r, 16px); background: transparent; color: #000000; text-align: left; font: inherit; cursor: pointer">
         <!-- (Oct 17, 15:41) the counts centred in the blade, each led by its map marker: a candidate's round, an active fire's round -->
         <!-- (Oct 17, 16:25) one block centred in the blade, its two lines aligned left so the markers and numbers line up; both semibold; "N candidates" / "N fires", the same counts as the incidents list it opens -->
         <!-- (Oct 17, 16:41) the counts centred in the blade's visible glass, vertically too (padding 32 / 8: the glass starts 16px below the bar) -->
@@ -889,7 +889,7 @@ button[data-wf-burger][data-wf-x]{background:#1C1C1E!important;color:#FFFFFF!imp
   <!-- More colours (Oct 5): a bottom dialog like the KPI picker. Colours are round colour buttons (44px, the round buttons' press);
        the chosen one carries the check. Only colours keeping the dark labels at 4.5:1 or more are offered. -->
   <div class="wf-glass scrim" onClick="{{ap.gClose}}" aria-hidden="true" style="position: absolute; inset: 0; z-index: 50; opacity: {{ap.gOp}}; pointer-events: {{ap.gPe}}; transition: opacity .35s ease"></div>
-  <section role="dialog" aria-modal="true" aria-labelledby="gpTitle" aria-hidden="{{ap.gHidden}}" data-swipe="down" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 30px 0 0; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #FFFFFF; box-shadow: 0 0 16px rgba(0,0,0,0.16); pointer-events: {{ap.gPe}}; transform: translateY({{ap.gY}}); transition: transform {{ap.gDur}} {{ap.gEase}}">
+  <section role="dialog" aria-modal="true" aria-labelledby="gpTitle" aria-hidden="{{ap.gHidden}}" data-swipe="down" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; display: flex; flex-direction: column; max-height: 80%; box-sizing: border-box; padding: 32px 0 0; border-radius: var(--wf-r, 16px) var(--wf-r, 16px) 0 0; background: #FFFFFF; box-shadow: 0 0 16px rgba(0,0,0,0.16); pointer-events: {{ap.gPe}}; transform: translateY({{ap.gY}}); transition: transform {{ap.gDur}} {{ap.gEase}}">
     <div role="button" tabindex="0" aria-label="Close" data-grab-close data-swipe-go onClick="{{ap.gClose}}" style="position: absolute; left: 0; right: 0; top: 0; height: 24px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; box-sizing: border-box; cursor: grab; touch-action: none; z-index: 2"><span aria-hidden="true" style="width: 86px; height: 3px; border-radius: 999px; background: rgba(60,60,67,0.2)"></span></div>
     <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 40px; padding: 0 32px">
       <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><h2 id="gpTitle" style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: 0; line-height: 34px; color: #000000">{{ap.gTitle}}</h2><span style="font-size: 17px; line-height: 22px; color: #000000">{{ap.gSub}}</span></span>
@@ -1510,7 +1510,7 @@ class Component extends DCLogic {
         return { title: T('Role-play with Claude', 'Encenação com o Claude'),
           sub: T('Officers and crews in the incident chats answer in character, written by Claude from the state of the fire.', 'As chefias e equipas nas conversas dos incidentes respondem em personagem, escritas pelo Claude a partir do estado do incêndio.'),
           pill: busy ? T('Checking', 'A verificar') : bad ? T('Error', 'Erro') : has ? T('On', 'Ligado') : T('Off', 'Desligado'),
-          pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#48484A' : bad ? '#B3001B' : has ? '#186B2D' : '#48484A',
+          pillBg: busy ? 'rgba(118,118,128,0.14)' : bad ? 'rgba(215,0,21,0.10)' : has ? 'rgba(52,199,89,0.14)' : 'rgba(118,118,128,0.14)', pillFg: busy ? '#545458' : bad ? '#B3001B' : has ? '#186B2D' : '#545458',
           onStr: on ? 'true' : 'false', swBg: on ? (window.__wfTogY ? window.__wfTogY() : '#DCF500') : 'rgba(120,120,128,0.24)', swX: on ? '24px' : '0px', swOp: has ? 1 : 0.4,
           toggle: () => { if (!A || !has) return; this.setState({ aiAsk: on ? 'off' : 'on' }); },   // opens the confirmation (the tap vibrates as usual)   // asks first (avoids mis-taps)
           ph: rep ? T('Paste the new key (sk-ant-…)', 'Cole a nova chave (sk-ant-…)') : has ? T('Key saved on this phone', 'Chave guardada neste telemóvel') : T('Anthropic API key (sk-ant-…)', 'Chave da API Anthropic (sk-ant-…)'), draft: s.aiDraft || '', okD: has && !rep && !(s.aiDraft || '') ? 'flex' : 'none',
@@ -1933,7 +1933,7 @@ class Component extends DCLogic {
     const riskC = (r) => r >= 60 ? '#E86A00' : (r >= 40 ? '#745200' : '#545458');
     const selSty = (on) => ({ selRing: on ? 'inset 0 0 0 1px #3A3A3C' : 'none', selBg: on ? '#FFFFFF' : 'transparent', selA: on ? 'true' : 'false', fg: '#000000', subC: '#545458' });
     const riskLvl = (r) => r >= 70 ? 'Extreme' : r >= 55 ? 'High' : r >= 35 ? 'Moderate' : 'Low';
-    const RISKP = { Extreme: ['rgba(215,0,21,0.12)', '#B0001A'], High: ['rgba(232,106,0,0.14)', '#B34F00'], Moderate: ['rgba(204,153,0,0.16)', '#745200'], Low: ['rgba(60,60,67,0.08)', '#3C3C43'] };
+    const RISKP = { Extreme: ['rgba(215,0,21,0.12)', '#B3001B'], High: ['rgba(232,106,0,0.14)', '#B34F00'], Moderate: ['rgba(204,153,0,0.16)', '#745200'], Low: ['rgba(60,60,67,0.08)', '#3C3C43'] };
     const riskTag = (r, on) => { const l = riskLvl(r); const P = RISKP[l]; return { riskLbl: l, riskTxt: l, riskBg: 'transparent', riskFg: P[1] }; };
     const selState = SC.sc.st;
     const selCounty = SC.sc.co || null;
